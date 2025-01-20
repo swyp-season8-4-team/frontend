@@ -8,7 +8,7 @@ async function initMSW() {
     const { worker } = await import("./browser");
 
     console.log("broswer mock");
-    worker.start();
+    await worker.start();
   }
 }
 

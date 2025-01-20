@@ -1,9 +1,13 @@
 "use client";
 
-import { PropsWithChildren, useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { initMSW } from ".";
 
-export const MockProvider = ({ children }: PropsWithChildren) => {
+interface MockProviderProp {
+  children: ReactNode;
+}
+
+export const MockProvider = ({ children }: MockProviderProp) => {
   const [mockingEnabled, enableMocking] = useState(false);
 
   useEffect(() => {
