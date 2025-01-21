@@ -4,8 +4,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "cross-env NEXT_PUBLIC_WEB_ENV=development next dev --turbopack",
-    "build": "cross-env NEXT_PUBLIC_WEB_ENV=prod next build",
+    "dev": "cross-env NODE_ENV=development next dev --turbopack",
+    "build": "cross-env NODE_ENV=prod next build",
     "start": "next start",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit"
