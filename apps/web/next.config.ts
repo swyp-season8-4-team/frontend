@@ -13,7 +13,7 @@ const NextFunctionConfig = async (phase: any) => {
 
   /** @type {import('next').NextConfig} */
   const nextConfig: NextConfig = {
-    webpack: (config: any, { isServer }: { isServer: boolean }) => {
+    webpack: (config, { isServer }: { isServer: boolean }) => {
       if (isServer) {
         config.resolve.alias['msw/browser'] = false
       } else {

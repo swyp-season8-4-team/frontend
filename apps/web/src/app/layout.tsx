@@ -31,7 +31,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {process.env.NODE_ENV === "development" && <MockInitializer />}
+        {/* {process.env.NODE_ENV === "development" && <MockInitializer />} */}
         {children}
       </body>
     </html>
