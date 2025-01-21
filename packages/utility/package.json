@@ -1,0 +1,20 @@
+{
+  "name": "@repo/utility",
+  "version": "0.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "author": "SeungHoon Jeong",
+  "scripts": {
+    "lint": "eslint \"**/*.ts\"",
+    "test": "vitest --passWithNoTests",
+    "test:watch": "vitest --watch --passWithNoTests"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.7",
+    "@babel/preset-env": "^7.23.8",
+    "@babel/preset-typescript": "^7.23.3",
+    "vite-tsconfig-paths": "^4.3.2",
+    "vitest": "^1.6.0",
+    "@repo/typescript-config": "workspace:*"
+  }
+}
