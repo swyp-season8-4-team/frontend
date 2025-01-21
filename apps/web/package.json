@@ -4,14 +4,15 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
+    "dev": "cross-env NEXT_PUBLIC_WEB_ENV=development next dev --turbopack",
+    "build": "cross-env NEXT_PUBLIC_WEB_ENV=prod next build",
     "start": "next start",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
     "@repo/ui": "workspace:*",
+    "cross-env": "^7.0.3",
     "next": "^15.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

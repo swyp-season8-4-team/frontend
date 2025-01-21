@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { MockProvider } from "../mocks/MockProvider";
+import { MockInitializer } from "../mocks/MockInitializer";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,7 +25,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <MockProvider>{children}</MockProvider>
+        {process.env.NEXT_PUBLIC_WEB_ENV === "development" && (
+          <MockInitializer />
+        )}
+        {children}
       </body>
     </html>
   );

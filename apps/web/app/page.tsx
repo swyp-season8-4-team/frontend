@@ -1,8 +1,6 @@
-"use client";
 import Image, { type ImageProps } from "next/image";
 import { Button } from "@repo/ui/button";
 import styles from "./page.module.css";
-import { useEffect } from "react";
 
 type Props = Omit<ImageProps, "src"> & {
   srcLight: string;
@@ -20,19 +18,7 @@ const ThemeImage = (props: Props) => {
   );
 };
 
-export default function Home() {
-  // msw test
-  useEffect(() => {
-    fetch("/user")
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(JSON.stringify(data));
-      })
-      .catch((error) => {
-        console.error("Error fetching user data:", error);
-      });
-  }, []);
-
+export default async function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
