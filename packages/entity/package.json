@@ -1,0 +1,13 @@
+{
+  "name": "@repo/entity",
+  "version": "0.0.0",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "author": "SeungHoon Jeong",
+  "scripts": {
+    "lint": "eslint \"**/*.ts\""
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*"
+  }
+}
