@@ -20,6 +20,20 @@ const ThemeImage = (props: Props) => {
 };
 
 export default async function Home() {
+  const getUser = async () => {
+    'use server';
+    const response = await fetch("http://localhost:3000/user", {
+      cache: "no-cache",
+    });
+
+    console.log(response);
+
+    const data = await response.json();
+    console.log(data);
+  };
+
+  await getUser();
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
