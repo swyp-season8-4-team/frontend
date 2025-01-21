@@ -5,7 +5,9 @@
       "@/*": ["./src/*"],
       "#/*": ["./test/*"],
       "e2e/*": ["./e2e/*"]
-    }
+    },
+    "moduleResolution": "bundler",
+    "baseUrl": "."
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

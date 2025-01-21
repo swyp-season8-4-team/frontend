@@ -4,12 +4,16 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development next dev --turbopack",
-    "build": "cross-env NODE_ENV=prod next build",
-    "start": "next start",
+    "dev": "cross-env NODE_ENV=development && env-cmd -f .env.dev next dev --turbopack",
+    "dev:test": "cross-env NODE_ENV=test && env-cmd -f .env.test next dev",
+    "build": "cross-env NODE_ENV=production && env-cmd -f .env.prod next build",
+    "build:dev": "cross-env NODE_ENV=development && env-cmd -f .env.dev next build",
+    "build:test": "cross-env NODE_ENV=test && env-cmd -f .env.test next build",
+    "start": "cross-env NODE_ENV=production && env-cmd -f .env.prod next start",
+    "start:test": "cross-env NODE_ENV=test && env-cmd -f .env.test next start",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "build:css": "npx tailwindcss -i ./app/styles/globals.css -o ./app/styles/output.css --watch"
+    "build:css": "tailwindcss -i ./app/styles/globals.css -o ./app/styles/output.css --watch"
   },
   "dependencies": {
     "@repo/ui": "workspace:*",
@@ -22,6 +26,7 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^20",
+    "env-cmd": "^10.1.0",
     "msw": "^2.7.0",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5.1",
