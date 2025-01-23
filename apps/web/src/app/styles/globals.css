@@ -3,8 +3,7 @@
 @tailwind utilities;
 
 @layer base {
-}
-
-.dark {
-  @apply bg-black text-white;
+  .dark {
+    @apply bg-primary-dark text-content-dark;
+  }
 }

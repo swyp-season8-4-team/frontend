@@ -14,7 +14,6 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    themes: {},
   },
   loaders: [mswLoader],
 };
