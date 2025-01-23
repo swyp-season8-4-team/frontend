@@ -20,12 +20,27 @@ importers:
 
   apps/web:
     dependencies:
+      '@formatjs/intl-localematcher':
+        specifier: ^0.5.10
+        version: 0.5.10
+      '@repo/entity':
+        specifier: workspace:*
+        version: link:../../packages/entity
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@repo/usecase':
+        specifier: workspace:*
+        version: link:../../packages/usecase
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
+      env-cmd:
+        specifier: ^10.1.0
+        version: 10.1.0
+      negotiator:
+        specifier: ^1.0.0
+        version: 1.0.0
       next:
         specifier: ^15.1.2
         version: 15.1.5(@babel/core@7.26.0)(@playwright/test@1.49.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -72,6 +87,9 @@ importers:
       '@storybook/test':
         specifier: 8.6.0-alpha.1
         version: 8.6.0-alpha.1(storybook@8.6.0-alpha.1(prettier@3.3.3))
+      '@types/negotiator':
+        specifier: ^0.6.3
+        version: 0.6.3
       '@types/node':
         specifier: ^20
         version: 20.17.6
@@ -84,9 +102,6 @@ importers:
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.5.1)
-      env-cmd:
-        specifier: ^10.1.0
-        version: 10.1.0
       msw:
         specifier: ^2.7.0
         version: 2.7.0(@types/node@20.17.6)(typescript@5.5.4)
@@ -166,6 +181,18 @@ importers:
       typescript-eslint:
         specifier: ^8.15.0
         version: 8.15.0(eslint@9.15.0(jiti@1.21.7))(typescript@5.5.4)
+
+  packages/infrastructures:
+    dependencies:
+      '@repo/entity':
+        specifier: workspace:*
+        version: link:../entity
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+
+  packages/locale: {}
 
   packages/typescript-config: {}
 
@@ -1019,6 +1046,9 @@ packages:
     resolution: {integrity: sha512-2b/g5hRmpbb1o4GnTZax9N9m0FXzz9OV42ZzI4rDDMDuHUqigAiQCEWChBWCY4ztAGVRjoWT19v0yMmc5/L5kA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
+  '@formatjs/intl-localematcher@0.5.10':
+    resolution: {integrity: sha512-af3qATX+m4Rnd9+wHcjJ4w2ijq+rAVP3CCinJQvFv1kgSu1W6jypUmvleJxcewdxmutM8dmIRZFxO/IQBZmP2Q==}
+
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
     engines: {node: '>=18.18.0'}
@@ -1707,6 +1737,9 @@ packages:
 
   '@types/minimatch@5.1.2':
     resolution: {integrity: sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==}
+
+  '@types/negotiator@0.6.3':
+    resolution: {integrity: sha512-JkXTOdKs5MF086b/pt8C3+yVp3iDUwG635L7oCH6HvJvvr6lSUU5oe/gLXnPEfYRROHjJIPgCV6cuAg8gGkntQ==}
 
   '@types/node@20.17.6':
     resolution: {integrity: sha512-VEI7OdvK2wP7XHnsuXbAJnEpEkF6NjSN45QJlL4VGqZSXsnicpesdTWsg9RISeSdYd3yeRj/y3k5KGjUXYnFwQ==}
@@ -3695,6 +3728,10 @@ packages:
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
+
+  negotiator@1.0.0:
+    resolution: {integrity: sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==}
+    engines: {node: '>= 0.6'}
 
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
@@ -6114,6 +6151,10 @@ snapshots:
     dependencies:
       levn: 0.4.1
 
+  '@formatjs/intl-localematcher@0.5.10':
+    dependencies:
+      tslib: 2.8.1
+
   '@humanfs/core@0.19.1': {}
 
   '@humanfs/node@0.16.6':
@@ -6913,6 +6954,8 @@ snapshots:
   '@types/mdx@2.0.13': {}
 
   '@types/minimatch@5.1.2': {}
+
+  '@types/negotiator@0.6.3': {}
 
   '@types/node@20.17.6':
     dependencies:
@@ -9211,6 +9254,8 @@ snapshots:
   nanoid@3.3.8: {}
 
   natural-compare@1.4.0: {}
+
+  negotiator@1.0.0: {}
 
   neo-async@2.6.2: {}
 
