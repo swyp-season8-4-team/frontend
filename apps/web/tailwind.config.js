@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+import animate from "tailwindcss-animate";
 
 export default {
   content: [
@@ -11,14 +12,8 @@ export default {
     extend: {
       colors: {
         primary: {
-          light: "#ffffff",
-          dark: "#1a1a1a",
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
-        },
-        content: {
-          light: "#000000",
-          dark: "#ffffff",
         },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -64,5 +59,5 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [animate],
 };

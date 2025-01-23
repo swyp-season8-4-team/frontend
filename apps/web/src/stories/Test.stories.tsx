@@ -40,7 +40,7 @@ const Test = ({ className = "" }: TestProps) => {
         <p>성: {user.lastName}</p>
         <p>ID: {user.id}</p>
       </div>
-      <Button>Shadcn 버튼</Button>
+      <Button className={className}>Shadcn 버튼</Button>
     </div>
   );
 };
@@ -63,7 +63,7 @@ export const Default: Story = {};
 
 export const DarkMode: Story = {
   args: {
-    className: "dark",
+    className: "dark:text-red-500",
   },
 };
 
