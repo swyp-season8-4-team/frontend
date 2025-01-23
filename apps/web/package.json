@@ -13,7 +13,7 @@
     "start:test": "cross-env NODE_ENV=test && env-cmd -f .env.test next start",
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit",
-    "build:css": "tailwindcss -i ./app/styles/globals.css -o ./app/styles/output.css --watch",
+    "build:css": "tailwindcss -i ./src/app/styles/globals.css -o ./src/app/styles/output.css --watch",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
