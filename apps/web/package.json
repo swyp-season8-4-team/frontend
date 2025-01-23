@@ -19,15 +19,21 @@
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.10",
+    "@radix-ui/react-slot": "^1.1.1",
     "@repo/entity": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/usecase": "workspace:*",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "cross-env": "^7.0.3",
     "env-cmd": "^10.1.0",
+    "lucide-react": "^0.473.0",
     "negotiator": "^1.0.0",
     "next": "^15.1.2",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "3.2.4",
@@ -58,5 +64,8 @@
     "workerDirectory": [
       "public"
     ]
+  },
+  "overrides": {
+    "react-is": "^19.0.0-rc-69d4b800-20241021"
   }
 }

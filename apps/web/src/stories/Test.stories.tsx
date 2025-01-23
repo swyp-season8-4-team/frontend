@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { handlers } from "@/mocks/handlers";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useEffect, useState } from "react";
@@ -39,6 +40,7 @@ const Test = ({ className = "" }: TestProps) => {
         <p>성: {user.lastName}</p>
         <p>ID: {user.id}</p>
       </div>
+      <Button>Shadcn 버튼</Button>
     </div>
   );
 };
