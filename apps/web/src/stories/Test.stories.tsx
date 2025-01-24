@@ -39,7 +39,7 @@ const Test = ({ className = "" }: TestProps) => {
         <p>성: {user.lastName}</p>
         <p>ID: {user.id}</p>
       </div>
-      <Button className="text-red-300">shadcn 버튼</Button>
+      <Button className="text-blue-300">shadcn 버튼</Button>
     </div>
   );
 };
