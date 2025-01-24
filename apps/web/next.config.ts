@@ -13,19 +13,19 @@ const NextFunctionConfig = async (phase: any) => {
 
   /** @type {import('next').NextConfig} */
   const nextConfig: NextConfig = {
+    transpilePackages: ['@repo/ui'],
     webpack: (config, { isServer }: { isServer: boolean }) => {
       if (isServer) {
-        config.resolve.alias['msw/browser'] = false
+        config.resolve.alias['msw/browser'] = false;
       } else {
-        config.resolve.alias['msw/node'] = false
+        config.resolve.alias['msw/node'] = false;
       }
 
-        return config;
-      },
-    };
+      return config;
+    },
+  };
 
   return nextConfig;
 };
 
 export default NextFunctionConfig;
-

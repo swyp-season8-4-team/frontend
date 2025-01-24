@@ -61,7 +61,7 @@ export const Default: Story = {};
 
 export const DarkMode: Story = {
   args: {
-    className: "dark",
+    className: "dark:text-red-200",
   },
 };
 
