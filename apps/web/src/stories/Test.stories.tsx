@@ -1,7 +1,7 @@
 import { handlers } from "@/mocks/handlers";
 import type { Meta, StoryObj } from "@storybook/react";
 import { useEffect, useState } from "react";
-
+import { Button } from "@repo/ui/components/button";
 interface TestProps {
   className?: string;
 }
@@ -39,6 +39,7 @@ const Test = ({ className = "" }: TestProps) => {
         <p>성: {user.lastName}</p>
         <p>ID: {user.id}</p>
       </div>
+      <Button className="text-red-300">shadcn 버튼</Button>
     </div>
   );
 };

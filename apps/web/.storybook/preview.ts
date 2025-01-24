@@ -1,7 +1,7 @@
 import type { Preview } from "@storybook/react";
 import { withThemeByClassName } from "@storybook/addon-themes";
 import { initialize, mswLoader } from "msw-storybook-addon";
-import "@repo/ui/styles/output";
+import "@repo/ui/styles/output.css";
 
 initialize(); // Initializes MSW
 
@@ -24,7 +24,7 @@ export default preview;
 export const decorators = [
   withThemeByClassName({
     themes: {
-      light: "light",
+      light: "",
       dark: "dark",
     },
     defaultTheme: "light",

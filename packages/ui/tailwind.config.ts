@@ -4,10 +4,12 @@ import tailwindcssAnimate from "tailwindcss-animate";
 export default {
   darkMode: ["class"],
   content: [
-    "app/**/*.{ts,tsx}",
-    "components/**/*.{ts,tsx}, ../../packages/ui/src/components/**/*.{ts,tsx}",
+    "@repo/ui/**/*.{ts,tsx}",
+    "@repo/ui/**/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
     "../../apps/web/src/**/*.{ts,tsx}",
     "../../apps/web/app/**/*.{ts,tsx}",
+    "../../apps/web/.storybook/**/*.{ts,tsx}",
   ],
   theme: {
     extend: {

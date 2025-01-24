@@ -1,4 +1,4 @@
-import "@repo/ui/styles";
+import "@repo/ui/styles/globals.css";
 
 import type { Metadata } from "next";
 import type { WithParams } from "@/app";
