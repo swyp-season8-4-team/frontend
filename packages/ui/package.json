@@ -7,6 +7,7 @@
   "types": "./src/index.ts",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
+    "build:css": "tailwindcss -i ./src/styles/globals.css -o ./src/styles/output.css --watch",
     "generate:component": "turbo gen react-component",
     "check-types": "tsc --noEmit"
   },
@@ -17,10 +18,25 @@
     "@types/node": "^20.11.24",
     "@types/react": "19.0.0",
     "@types/react-dom": "19.0.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
     "typescript": "5.5.4"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.1.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.474.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^2.6.0",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./components": "./src/components/index.ts",
+    "./lib": "./src/lib/index.ts",
+    "./tailwind.config": "./tailwind.config.ts"
   }
 }

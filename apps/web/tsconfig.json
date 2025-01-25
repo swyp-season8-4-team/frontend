@@ -4,10 +4,12 @@
     "paths": {
       "@/*": ["./src/*"],
       "#/*": ["./test/*"],
-      "e2e/*": ["./e2e/*"]
+      "e2e/*": ["./e2e/*"],
+      "@repo/ui/*": ["../../packages/ui/src/*"]
     },
     "moduleResolution": "bundler",
-    "baseUrl": "."
+    "baseUrl": ".",
+    "types": ["node"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

@@ -1,4 +1,4 @@
-import "../styles/output.css";
+import "@repo/ui/styles/output.css";
 
 import type { Metadata } from "next";
 import type { WithParams } from "@/app";
@@ -30,16 +30,14 @@ interface Props extends WithChildren, WithParams {}
 
 export default async function RootLayout({
   children,
-  params
+  params,
 }: Readonly<Props>) {
   const i18nService = new I18nService({ store: await params });
   const lang = i18nService.getLang();
 
   return (
     <html lang={lang}>
-      <body>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
