@@ -29,12 +29,18 @@ importers:
       '@repo/entity':
         specifier: workspace:*
         version: link:../../packages/entity
+      '@repo/infrastructures':
+        specifier: workspace:*
+        version: link:../../packages/infrastructures
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
       '@repo/usecase':
         specifier: workspace:*
         version: link:../../packages/usecase
+      '@repo/utility':
+        specifier: workspace:*
+        version: link:../../packages/utility
       cross-env:
         specifier: ^7.0.3
         version: 7.0.3
@@ -187,9 +193,15 @@ importers:
 
   packages/infrastructures:
     dependencies:
+      '@repo/api':
+        specifier: workspace:*
+        version: link:../api
       '@repo/entity':
         specifier: workspace:*
         version: link:../entity
+      next:
+        specifier: ^15.1.5
+        version: 15.1.5(@babel/core@7.26.0)(@playwright/test@1.49.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
     devDependencies:
       '@repo/typescript-config':
         specifier: workspace:*
@@ -296,6 +308,9 @@ importers:
       '@babel/preset-typescript':
         specifier: ^7.23.3
         version: 7.26.0(@babel/core@7.26.0)
+      '@repo/entity':
+        specifier: workspace:*
+        version: link:../entity
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config

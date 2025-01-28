@@ -22,6 +22,8 @@
     "@repo/entity": "workspace:*",
     "@repo/ui": "workspace:*",
     "@repo/usecase": "workspace:*",
+    "@repo/infrastructures": "workspace:*",
+    "@repo/utility": "workspace:*",
     "cross-env": "^7.0.3",
     "env-cmd": "^10.1.0",
     "negotiator": "^1.0.0",

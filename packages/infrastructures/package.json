@@ -1,14 +1,18 @@
 {
-  "name": "infrastructure",
+  "name": "@repo/infrastructures",
   "version": "0.0.0",
   "author": "SeungHoon Jeong",
   "scripts": {
     "lint": "eslint \"**/*.ts\""
   },
   "dependencies": {
-    "@repo/entity": "workspace:*"
+    "@repo/entity": "workspace:*",
+    "@repo/api": "workspace:*"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*"
+  },
+  "peerDependencies": {
+    "next": "^15.1.5"
   }
 }
