@@ -1,6 +1,7 @@
 import type {
   AuthRepository,
   JWTTokens,
+  SignInData,
 } from '@repo/entity/src/auth';
 
 export default class AuthService {
@@ -34,7 +35,7 @@ export default class AuthService {
     return response;
   }
 
-  async signIn(): Promise<JWTTokens> {
+  async signIn({ email, password }: SignInData): Promise<JWTTokens> {
     if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }

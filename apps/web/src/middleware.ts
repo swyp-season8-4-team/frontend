@@ -35,18 +35,6 @@ export async function middleware(request: NextRequest) {
   //   return next;
   // }
 
-  if (!authorization) {
-    // Redirect to sign-in page if there is no authorization
-    const redirectURL = request.nextUrl.clone();
-
-    const originalSearchParam = redirectURL.search;
-    redirectURL.pathname = NavigationPathname.signIn;
-    redirectURL.search = '';
-    redirectURL.searchParams.set('next', `${pathname}${originalSearchParam}`);
-
-    return NextResponse.redirect(redirectURL);
-  }
-
   const pathnameHasLocale = Object.values(SupportISO639Language).some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
@@ -57,6 +45,18 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname = `/${locale}${pathname}`;
     return NextResponse.redirect(request.nextUrl);
   }
+
+  // if (!authorization) {
+  //   // Redirect to sign-in page if there is no authorization
+  //   const redirectURL = request.nextUrl.clone();
+
+  //   const originalSearchParam = redirectURL.search;
+  //   redirectURL.pathname = `${getLocale(request)}/${NavigationPathname.signIn}`;
+  //   redirectURL.search = '';
+  //   redirectURL.searchParams.set('next', `${pathname}${originalSearchParam}`);
+
+  //   return NextResponse.redirect(redirectURL);
+  // }
 
   return next;
 }
@@ -101,6 +101,7 @@ async function getToken(
 ): Promise<string | void> {
   const { cookies } = request;
 
+  // FIXME: cookie key값 미확정
   const accessToken = cookies.get('access_token')?.value;
   const refreshToken = cookies.get('refresh_token')?.value;
 
