@@ -39,16 +39,15 @@ export default async function RootLayout({
 
   return (
     <html lang={lang}>
-      <head>
-        <link rel="icon" href="data:," />
+      <body>
         <Script
           type="text/javascript"
           strategy="beforeInteractive"
           src={KAKAO_MAP_API_URL}
           async={false}
         />
-      </head>
-      <body>{children}</body>
+        {children}
+      </body>
     </html>
   );
 }
