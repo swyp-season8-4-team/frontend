@@ -9,6 +9,8 @@ const DEFAULT_POSITION = {
 // 지도 확대 레벨 (동네/거리 수준)
 const MAP_LEVEL = 3;
 
+const CLUSTERER_LEVEL = 7;
+
 // 마커 이미지의 크기
 const MARKER_SIZE = {
   x: 30,
@@ -115,13 +117,32 @@ const createMarkers = (
   positions: { latitude: number; longitude: number }[],
   map: kakao.maps.Map
 ) => {
+  const markers: kakao.maps.Marker[] = [];
   positions.forEach((position) => {
     const marker = createCustomMarker(window.kakao.maps, {
       latitude: position.latitude,
       longitude: position.longitude,
     });
+    markers.push(marker);
     marker.setMap(map);
   });
+  return markers;
+};
+
+const createClusterer = (
+  maps: typeof kakao.maps,
+  mapInstance: kakao.maps.Map,
+  markers: kakao.maps.Marker[]
+) => {
+  // 마커 클러스터러를 생성성
+  const clusterer = new maps.MarkerClusterer({
+    map: mapInstance, // 마커들을 클러스터로 관리하고 표시할 지도 객체
+    averageCenter: true, // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+    minLevel: CLUSTERER_LEVEL, // 클러스터 할 최소 지도 레벨
+  });
+
+  // 클러스터러에 마커들을 추가
+  clusterer.addMarkers(markers);
 };
 
 export function useKakaoMap() {
@@ -138,7 +159,9 @@ export function useKakaoMap() {
       const positions = await generateRandomPositions(100, userPosition);
 
       createControls(map);
-      createMarkers(positions, map);
+
+      const markers = createMarkers(positions, map);
+      createClusterer(window.kakao.maps, map, markers);
 
       mapInstance.current = map;
     });
