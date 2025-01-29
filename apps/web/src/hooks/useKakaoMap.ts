@@ -1,94 +1,146 @@
 import { useEffect, useRef } from "react";
-import beeImage from "@/assets/img/map-marker-bee.png"; // 이미지 import
+import image from "@/assets/svg/honey.svg"; // 이미지 import
 
-// 유저의 현재 위치 받아오는 걸로 변경 필요
-const INIT_POSITION = {
+const DEFAULT_POSITION = {
   latitude: 37.555,
   longitude: 126.9025,
+};
+
+// 지도 확대 레벨 (동네/거리 수준)
+const MAP_LEVEL = 3;
+
+// 마커 이미지의 크기
+const MARKER_SIZE = {
+  x: 30,
+  y: 30,
+};
+
+// 마커 정확한 위치에 표시되도록 조정
+const MARKER_OFFSET = {
+  x: MARKER_SIZE.x / 2,
+  y: MARKER_SIZE.y,
+};
+
+// geolocation 사용
+const getUserPosition = async () => {
+  try {
+    const position = await new Promise<GeolocationPosition>(
+      (resolve, reject) => {
+        const options = {
+          timeout: 3000, // 3초 타임아웃
+          maximumAge: 5000, // 5초 이내의 캐시된 위치 사용
+          enableHighAccuracy: false, // 높은 정확도 비활성화로 응답 속도 향상
+        };
+
+        navigator.geolocation.getCurrentPosition(resolve, reject, options);
+      }
+    );
+
+    return {
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude,
+    };
+  } catch (error) {
+    console.error("위치 정보 가져오기 싫패:", error);
+    return DEFAULT_POSITION;
+  }
+};
+
+// 지도 옵션을 생성
+const createMapOptions = (position: {
+  latitude: number;
+  longitude: number;
+}) => ({
+  center: new kakao.maps.LatLng(position.latitude, position.longitude),
+  level: MAP_LEVEL,
+});
+
+// 지도를 생성
+const createMap = async (container: HTMLDivElement) => {
+  const position = await getUserPosition();
+  const options = createMapOptions(position);
+  return new kakao.maps.Map(container, options);
+};
+
+// 컨트롤 추가
+const createControls = (map: kakao.maps.Map) => {
+  const mapTypeControl = new kakao.maps.MapTypeControl(); // 지도/스카이뷰 전환 컨트롤
+  map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT); // 오른쪽에 추가
+
+  const zoomControl = new kakao.maps.ZoomControl(); // 줌인 줌아웃 컨트롤
+  map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT); // 오른쪽에 추가
+};
+
+// 테스트 - 랜덤 위치 생성
+const generateRandomPositions = async (
+  count: number,
+  userPosition: { latitude: number; longitude: number }
+) => {
+  const center = userPosition;
+  const RADIUS = 0.01; // 약 1km 반경
+  const positions = [];
+
+  for (let i = 0; i < count; i++) {
+    const randomAngle = Math.random() * 2 * Math.PI;
+    const randomRadius = Math.random() * RADIUS;
+    positions.push({
+      latitude: center.latitude + randomRadius * Math.cos(randomAngle),
+      longitude: center.longitude + randomRadius * Math.sin(randomAngle),
+    });
+  }
+  return positions;
+};
+
+// 커스텀 마커 생성
+const createCustomMarker = (
+  maps: typeof kakao.maps,
+  position: { latitude: number; longitude: number }
+) => {
+  const imageSize = new maps.Size(MARKER_SIZE.x, MARKER_SIZE.y);
+  const imageOption = {
+    offset: new kakao.maps.Point(MARKER_OFFSET.x, MARKER_OFFSET.y),
+  };
+
+  const markerImage = new maps.MarkerImage(image.src, imageSize, imageOption);
+
+  const markerPosition = new maps.LatLng(position.latitude, position.longitude);
+
+  return new maps.Marker({
+    position: markerPosition,
+    image: markerImage,
+  });
+};
+
+const createMarkers = (
+  positions: { latitude: number; longitude: number }[],
+  map: kakao.maps.Map
+) => {
+  positions.forEach((position) => {
+    const marker = createCustomMarker(window.kakao.maps, {
+      latitude: position.latitude,
+      longitude: position.longitude,
+    });
+    marker.setMap(map);
+  });
 };
 
 export function useKakaoMap() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<kakao.maps.Map | null>(null);
 
-  const createControls = (map: kakao.maps.Map) => {
-    const mapTypeControl = new kakao.maps.MapTypeControl(); // 지도/스카이뷰 전환 컨트롤
-    map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT); // 오른쪽에 추가
-
-    const zoomControl = new kakao.maps.ZoomControl(); // 줌인 줌아웃 컨트롤
-    map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT); // 오른쪽에 추가
-  };
-
-  const createCustomMarker = (
-    maps: typeof kakao.maps,
-    position: { latitude: number; longitude: number }
-  ) => {
-    const imageSize = new maps.Size(30, 30); // 마커 이미지의 크기
-    const markerImage = new maps.MarkerImage(beeImage.src, imageSize);
-    const markerPosition = new maps.LatLng(
-      position.latitude,
-      position.longitude
-    );
-
-    return new maps.Marker({
-      position: markerPosition,
-      image: markerImage,
-    });
-  };
-
-  // 테스트 - 랜덤 위치 생성
-  const generateRandomPositions = (count: number) => {
-    const MARKER_CONFIG = {
-      LOCATION_BOUNDS: {
-        // 망원동 일대
-        MIN_LAT: 37.55,
-        MAX_LAT: 37.56,
-        MIN_LNG: 126.895,
-        MAX_LNG: 126.91,
-      },
-    } as const;
-
-    const { MIN_LAT, MAX_LAT, MIN_LNG, MAX_LNG } =
-      MARKER_CONFIG.LOCATION_BOUNDS;
-    const positions = [];
-
-    for (let i = 0; i < count; i++) {
-      positions.push({
-        latitude: MIN_LAT + Math.random() * (MAX_LAT - MIN_LAT),
-        longitude: MIN_LNG + Math.random() * (MAX_LNG - MIN_LNG),
-      });
-    }
-    return positions;
-  };
-
   useEffect(() => {
-    window.kakao.maps.load(() => {
-      const container = mapRef.current;
+    window.kakao.maps.load(async () => {
+      const container = mapRef.current; // load 내부에 작성
       if (!container) return;
 
-      const options = {
-        center: new kakao.maps.LatLng(
-          INIT_POSITION.latitude,
-          INIT_POSITION.longitude
-        ), // 지도 중심 좌표
-        level: 3, // 지도 확대 축소 레벨
-      };
-
-      const map = new kakao.maps.Map(container, options); // 지도 생성
-      mapInstance.current = map;
+      const map = await createMap(container);
+      const userPosition = await getUserPosition();
+      const positions = await generateRandomPositions(100, userPosition);
 
       createControls(map);
+      createMarkers(positions, map);
 
-      // 마커 생성 및 지도에 표시
-      const positions = generateRandomPositions(10); // 추후 저장된 가게들의 좌표 받아오는 것으로 변경
-
-      positions.forEach((position) => {
-        const marker = createCustomMarker(window.kakao.maps, {
-          latitude: position.latitude,
-          longitude: position.longitude,
-        });
-        marker.setMap(map);
-      });
+      mapInstance.current = map;
     });
 
     return () => {
