@@ -9,7 +9,7 @@
     },
     "moduleResolution": "bundler",
     "baseUrl": ".",
-    "types": ["node"]
+    "types": ["node", "@types/navermaps"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]

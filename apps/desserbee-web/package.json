@@ -45,6 +45,7 @@
     "@storybook/nextjs": "8.6.0-alpha.1",
     "@storybook/react": "8.6.0-alpha.1",
     "@storybook/test": "8.6.0-alpha.1",
+    "@types/navermaps": "^3.7.8",
     "@types/negotiator": "^0.6.3",
     "@types/node": "^20",
     "@types/react": "^19",
