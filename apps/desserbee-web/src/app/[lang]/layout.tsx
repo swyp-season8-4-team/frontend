@@ -40,7 +40,7 @@ export default async function RootLayout({
   return (
     <html lang={lang}>
       <body>
-        <Script type="text/javascript" src={API} />
+        <Script type="text/javascript" strategy="beforeInteractive" src={API} />
         {children}
       </body>
     </html>
