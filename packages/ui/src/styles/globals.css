@@ -3,6 +3,21 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    @apply antialiased; /* 폰트 렌더링 최적화 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  html, 
+  body {
+    @apply h-full m-0 p-0;
+    @apply bg-white text-gray-900;
+    @apply font-sans; /* 기본 폰트 설정 */
+    @apply max-width-[100vw] overflow-x-hidden; /* 가로 스크롤 방지 */
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 47.4% 11.2%;
