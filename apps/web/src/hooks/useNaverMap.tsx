@@ -7,9 +7,16 @@ const DEFAULT_POSITION = {
 
 const MAP_ZOOM_LEVEL = 16;
 
+const MARKER_IMG_URL = "/images/svg/honey.svg";
+
 const MARKER_SIZE = {
   width: 30,
   height: 30,
+};
+
+const MARKER_ORIGIN = {
+  x: 0,
+  y: 0,
 };
 
 const MARKER_ANCHOR = {
@@ -40,10 +47,10 @@ const createCustomMarker = (
     position,
     map: map,
     icon: {
-      url: "/images/svg/honey.svg",
+      url: MARKER_IMG_URL,
       size: new naver.maps.Size(MARKER_SIZE.width, MARKER_SIZE.height),
       scaledSize: new naver.maps.Size(MARKER_SIZE.width, MARKER_SIZE.height),
-      origin: new naver.maps.Point(0, 0),
+      origin: new naver.maps.Point(MARKER_ORIGIN.x, MARKER_ORIGIN.y),
       anchor: new naver.maps.Point(MARKER_ANCHOR.x, MARKER_ANCHOR.y),
     },
   };
