@@ -39,6 +39,40 @@ const MARKER_ANCHOR = {
   y: MARKER_SIZE.height,
 };
 
+const MARKER_CLUSTERING_OPTIONS = {
+  minClusterSize: 3,
+  maxZoom: 15,
+  disableClickZoom: false,
+  gridSize: 60,
+  indexGenerator: [2, 5, 10, 30, 50],
+};
+
+const CLUSTER_ICON_CONTENT = `<div style="
+      cursor:pointer;
+      width:40px;
+      height:40px;
+      line-height:40px;
+      font-size:12px;
+      color:white;
+      text-align:center;
+      font-weight:bold;
+      background-color:rgba(255, 196, 12);
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    "><span>1</span></div>`;
+
+const CLUSTER_ICON_SIZE = {
+  width: 40,
+  height: 40,
+};
+
+const CLUSTER_ICON_ANCHOR = {
+  x: 20,
+  y: 20,
+};
+
 const getUserPosition = async () => {
   try {
     const position = await new Promise<GeolocationPosition>(
@@ -130,35 +164,33 @@ const createMarkers = (
   );
 };
 
-const createClusterer = (map: naver.maps.Map, markers: naver.maps.Marker[]) => {
+const createClusterer = async (
+  map: naver.maps.Map,
+  markers: naver.maps.Marker[]
+) => {
+  const { MarkerClustering } = await import("@/utils/js/MarkerClustering");
+
+  const icon = {
+    content: CLUSTER_ICON_CONTENT,
+    size: new naver.maps.Size(
+      CLUSTER_ICON_SIZE.width,
+      CLUSTER_ICON_SIZE.height
+    ),
+    anchor: new naver.maps.Point(CLUSTER_ICON_ANCHOR.x, CLUSTER_ICON_ANCHOR.y),
+  };
+
   return new MarkerClustering({
-    minClusterSize: 2,
-    maxZoom: 8,
     map,
     markers,
-    disableClickZoom: false,
-    gridSize: 120,
-    indexGenerator: [10, 100, 200, 500, 1000],
+    icons: [icon],
+    ...MARKER_CLUSTERING_OPTIONS,
     stylingFunction: (clusterMarker: naver.maps.Marker, count: number) => {
       const element = clusterMarker.getElement() as HTMLElement;
       if (element) {
-        let countElement = element.querySelector(
-          ".cluster-count"
-        ) as HTMLDivElement;
-        if (!countElement) {
-          countElement = document.createElement("div");
-          countElement.className = "cluster-count";
-          countElement.style.position = "absolute";
-          countElement.style.width = "100%";
-          countElement.style.textAlign = "center";
-          countElement.style.color = "white";
-          countElement.style.fontSize = "12px";
-          countElement.style.fontWeight = "bold";
-          countElement.style.textShadow = "1px 1px 1px rgba(0,0,0,0.5)";
-          countElement.style.lineHeight = "40px";
-          element.appendChild(countElement);
+        const firstDiv = element.querySelector("div:first-child");
+        if (firstDiv) {
+          firstDiv.textContent = count.toString();
         }
-        countElement.textContent = count.toString();
       }
     },
   });
@@ -177,7 +209,7 @@ const useNaverMap = () => {
       const positions = await generateRandomPositions(100, userPosition);
 
       const markers = createMarkers(positions, map);
-      createClusterer(map, markers);
+      await createClusterer(map, markers);
     };
 
     initializeMap();
