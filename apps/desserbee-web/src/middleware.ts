@@ -1,11 +1,11 @@
-import { NextResponse, type NextRequest } from 'next/server';
-import { match } from '@formatjs/intl-localematcher';
-import Negotiator from 'negotiator';
-import { SupportISO639Language } from '@repo/entity/src/i18n';
-import { decodeJWT, isExpiredJWT } from '@repo/utility/src/jwt';
-import AuthService from '@repo/usecase/src/authService';
-import AuthAPIRespository from '@repo/infrastructures/src/repositories/authAPIRespository';
-import { NavigationPathname } from '@/types/navigation';
+import { NextResponse, type NextRequest } from "next/server";
+import { match } from "@formatjs/intl-localematcher";
+import Negotiator from "negotiator";
+import { SupportISO639Language } from "@repo/entity/src/i18n";
+import { decodeJWT, isExpiredJWT } from "@repo/utility/src/jwt";
+import AuthService from "@repo/usecase/src/authService";
+import AuthAPIRespository from "@repo/infrastructures/src/repositories/authAPIRespository";
+import { NavigationPathname } from "@/types/navigation";
 
 const savedTokens: { [key: string]: string } = {};
 
@@ -16,7 +16,12 @@ export async function middleware(request: NextRequest) {
   const requestHeaders = new Headers(headers);
   const token = await getToken(request);
   if (token) {
-    requestHeaders.set('authorization', `Bearer ${token}`);
+    requestHeaders.set("authorization", `Bearer ${token}`);
+  }
+
+  // 정적 파일 경로는 리다이렉션하지 않음
+  if (pathname.startsWith("/images/")) {
+    return NextResponse.next();
   }
 
   const next = NextResponse.next({
@@ -25,7 +30,7 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  const authorization = requestHeaders.get('authorization');
+  const authorization = requestHeaders.get("authorization");
 
   // TODO: 로그인 여부에 따른 페이지 접근 권한 체크
   // const authService = new AuthService({});
@@ -71,7 +76,7 @@ export const config = {
      * - favicon.ico (favicon file)
      * - robots.txt (control crawler traffic)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico|robots.txt).*)",
   ],
 };
 
@@ -96,14 +101,12 @@ function getLocale(request: NextRequest): SupportISO639Language {
  * @param request 요청 객체
  * @returns 토큰
  */
-async function getToken(
-  request: NextRequest
-): Promise<string | void> {
+async function getToken(request: NextRequest): Promise<string | void> {
   const { cookies } = request;
 
   // FIXME: cookie key값 미확정
-  const accessToken = cookies.get('access_token')?.value;
-  const refreshToken = cookies.get('refresh_token')?.value;
+  const accessToken = cookies.get("access_token")?.value;
+  const refreshToken = cookies.get("refresh_token")?.value;
 
   // 둘다 없으면 로그인을 다시 해야하는것
   if (!accessToken || !refreshToken) {
@@ -148,16 +151,16 @@ async function getToken(
   const matches = response.match(/authorization: Bearer [^\s]*/i);
 
   if (!matches) {
-    throw new Error('Bearer field is not found');
+    throw new Error("Bearer field is not found");
   }
 
   const token = matches
     .at(0)
-    ?.replace(/authorization: Bearer /i, '')
+    ?.replace(/authorization: Bearer /i, "")
     .trim();
 
   if (!token) {
-    throw new Error('Bearer token is not found');
+    throw new Error("Bearer token is not found");
   }
 
   savedTokens[decodedAccessToken.sub] = token;

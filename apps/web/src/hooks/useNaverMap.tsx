@@ -7,6 +7,16 @@ const DEFAULT_POSITION = {
 
 const MAP_ZOOM_LEVEL = 16;
 
+const MARKER_SIZE = {
+  width: 30,
+  height: 30,
+};
+
+const MARKER_ANCHOR = {
+  x: MARKER_SIZE.width / 2, // 가로 중앙
+  y: MARKER_SIZE.height,
+};
+
 const createMap = (map: typeof naver.maps, container: HTMLDivElement) => {
   const center = new map.LatLng(
     DEFAULT_POSITION.latitude,
@@ -22,26 +32,43 @@ const createMap = (map: typeof naver.maps, container: HTMLDivElement) => {
   });
 };
 
+const createCustomMarker = (
+  map: naver.maps.Map,
+  position: naver.maps.LatLng
+) => {
+  const markerOptions = {
+    position,
+    map: map,
+    icon: {
+      url: "/images/svg/honey.svg",
+      size: new naver.maps.Size(MARKER_SIZE.width, MARKER_SIZE.height),
+      scaledSize: new naver.maps.Size(MARKER_SIZE.width, MARKER_SIZE.height),
+      origin: new naver.maps.Point(0, 0),
+      anchor: new naver.maps.Point(MARKER_ANCHOR.x, MARKER_ANCHOR.y),
+    },
+  };
+
+  return new naver.maps.Marker(markerOptions);
+};
+
 const useNaverMap = () => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstance = useRef<naver.maps.Map>(null);
 
   useEffect(() => {
     const container = mapRef.current;
     if (!container) return;
 
     const map = createMap(naver.maps, container);
+    const position = new naver.maps.LatLng(
+      DEFAULT_POSITION.latitude,
+      DEFAULT_POSITION.longitude
+    );
 
-    mapInstance.current = map;
-
-    return () => {
-      mapInstance.current = null;
-    };
+    createCustomMarker(map, position);
   }, []);
 
   return {
     mapRef,
-    map: mapInstance.current,
   };
 };
 
