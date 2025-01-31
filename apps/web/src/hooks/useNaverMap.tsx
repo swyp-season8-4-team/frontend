@@ -108,6 +108,9 @@ const createMap = (
     center,
     zoom: MAP_ZOOM_LEVEL,
     zoomControl: true, // 줌 컨트롤
+    zoomControlOptions: {
+      position: naver.maps.Position.RIGHT_CENTER,
+    },
     disableDoubleTapZoom: true, // 더블탭 줌 허용
     mapTypeControl: true, // 지도 유형 컨트롤
   });
