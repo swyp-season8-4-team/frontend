@@ -6,10 +6,9 @@ export default {
   content: [
     "@repo/ui/**/*.{ts,tsx}",
     "@repo/ui/**/**/*.{ts,tsx}",
-    "./src/**/*.{ts,tsx}",
-    "../../apps/web/src/**/*.{ts,tsx}",
-    "../../apps/web/app/**/*.{ts,tsx}",
-    "../../apps/web/.storybook/**/*.{ts,tsx}",
+    "../../apps/desserbee-web/src/**/*.{ts,tsx}",
+    "../../apps/desserbee-web/app/**/*.{ts,tsx}",
+    "../../apps/desserbee-web/.storybook/**/*.{ts,tsx}",
   ],
   theme: {
     extend: {
