@@ -1,0 +1,22 @@
+{
+  "name": "@repo/design-system",
+  "version": "1.0.0",
+  "author": "Seunghoon Jeong",
+  "private": true,
+  "exports": {
+    "./fonts/": "./src/fonts/",
+    "./*.css": "./src/styles/*.css",
+    "./*": "./*"
+  },
+  "scripts": {
+    "lint": "eslint \"**/*.ts*\""
+  },
+  "dependencies": {
+    "react": "^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@repo/typescript-config": "workspace:*"
+  }
+}
