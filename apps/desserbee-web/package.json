@@ -15,7 +15,7 @@
     "check-types": "tsc --noEmit",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "build:css": "tailwindcss -i ../../packages/ui/src/styles/globals.css -o src/styles/output.css"
+    "build:css": "tailwindcss -i ../../packages/ui/src/styles/globals.css -o ../../packages/ui/src/styles/output.css"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.10",

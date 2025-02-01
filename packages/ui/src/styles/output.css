@@ -2290,8 +2290,19 @@ body {
   color: rgb(51 102 153 / .35);
 }
 
-.text-accent {
-  color: hsl(var(--accent));
+.text-bee-accent {
+  --tw-text-opacity: 1;
+  color: rgb(108 211 35 / var(--tw-text-opacity, 1));
+}
+
+.text-bee-primary {
+  --tw-text-opacity: 1;
+  color: rgb(255 194 39 / var(--tw-text-opacity, 1));
+}
+
+.text-bee-secondary {
+  --tw-text-opacity: 1;
+  color: rgb(213 133 44 / var(--tw-text-opacity, 1));
 }
 
 .text-blue-300 {
@@ -2302,11 +2313,6 @@ body {
 .text-blue-500 {
   --tw-text-opacity: 1;
   color: rgb(59 130 246 / var(--tw-text-opacity, 1));
-}
-
-.text-desserbee-primary {
-  --tw-text-opacity: 1;
-  color: rgb(255 194 39 / var(--tw-text-opacity, 1));
 }
 
 .text-destructive-foreground {
@@ -2329,10 +2335,6 @@ body {
 
 .text-primary-foreground {
   color: hsl(var(--primary-foreground));
-}
-
-.text-secondary {
-  color: hsl(var(--secondary));
 }
 
 .text-secondary-foreground {
