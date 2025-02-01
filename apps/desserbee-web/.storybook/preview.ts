@@ -1,7 +1,7 @@
 import type { Preview } from "@storybook/react";
 import { withThemeByClassName } from "@storybook/addon-themes";
 import { initialize, mswLoader } from "msw-storybook-addon";
-import "@repo/ui/styles/output.css";
+import "@repo/ui/styles/globals.css";
 
 initialize(); // Initializes MSW
 

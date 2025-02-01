@@ -4,7 +4,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "cross-env NODE_ENV=development && env-cmd -f .env.dev next dev --turbopack",
+    "dev": "pnpm build:css && cross-env NODE_ENV=development && env-cmd -f .env.dev next dev --turbopack",
     "dev:test": "cross-env NODE_ENV=test && env-cmd -f .env.test next dev",
     "build": "cross-env NODE_ENV=production && env-cmd -f .env.prod next build",
     "build:dev": "cross-env NODE_ENV=development && env-cmd -f .env.dev next build",
@@ -14,7 +14,8 @@
     "lint": "next lint --max-warnings 0",
     "check-types": "tsc --noEmit",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "build:css": "tailwindcss -i ../../packages/ui/src/styles/globals.css -o src/styles/output.css"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.10",
