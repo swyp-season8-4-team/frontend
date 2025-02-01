@@ -12,11 +12,19 @@ interface PreferenceTagsProps {
 
 export function PreferenceTags({ categories }: PreferenceTagsProps) {
   return (
-    <Carousel className="absolute z-10 top-4 left-1/2 -translate-x-1/2 w-screen max-w-[calc(100vw-2rem)]  overflow-x-hidden px-4">
-      <CarouselContent className="-ml-2">
+    <Carousel
+      className="absolute z-10 top-4 left-[18px] w-[80%] overflow-x-hidden"
+      opts={{
+        align: "start",
+        dragFree: true,
+        containScroll: "trimSnaps",
+      }}>
+      <CarouselContent className="-ml-2 ">
         {categories.map((category) => (
-          <CarouselItem key={category} className="pl-2 basis-auto">
-            <button className="select-none bg-white px-4 py-2 rounded-full shadow-xl hover:bg-gray-100 transition-colors duration-200 text-sm font-medium">
+          <CarouselItem
+            key={category}
+            className={`pl-2 basis-1/${categories.length}`}>
+            <button className="text-lg select-none bg-white px-4 py-2 rounded-[48.78px] shadow-xl font-medium">
               {category}
             </button>
           </CarouselItem>
