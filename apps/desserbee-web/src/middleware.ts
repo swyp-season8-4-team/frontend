@@ -5,7 +5,6 @@ import { SupportISO639Language } from '@repo/entity/src/i18n';
 import { decodeJWT, isExpiredJWT } from '@repo/utility/src/jwt';
 import AuthService from '@repo/usecase/src/authService';
 import AuthAPIRespository from '@repo/infrastructures/src/repositories/authAPIRespository';
-import { NavigationPathname } from '@/types/navigation';
 
 const savedTokens: { [key: string]: string } = {};
 

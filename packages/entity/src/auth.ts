@@ -1,5 +1,15 @@
 import type { BaseRequestData } from "./appMetadata";
 
+export enum OAuthSocialProvider {
+  KAKAO = "kakao",
+}
+
+export function isOAuthSocialProvider(provider: string): provider is OAuthSocialProvider {
+  return !!Object.values(OAuthSocialProvider).find((socialProvider) =>
+    provider === socialProvider
+  );
+}
+
 export interface JWTPayload {
   exp: number;
   sub: string;
@@ -14,6 +24,11 @@ export interface JWTTokens {
 export interface SignInData {
   email: string;
   password: string;
+}
+
+export interface OAuthSignInData {
+  provider: string;
+  code: string;
 }
 
 export interface AuthRepository {

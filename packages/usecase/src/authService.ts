@@ -1,9 +1,10 @@
-import type {
-  AuthRepository,
-  JWTTokens,
-  SignInData,
+import {
+  OAuthSocialProvider,
+  type AuthRepository,
+  type JWTTokens,
+  type SignInData,
 } from '@repo/entity/src/auth';
-
+import { NavigationPathGroup } from '@repo/entity/src/navigation';
 export default class AuthService {
   private readonly authRepository: AuthRepository | null = null;
 
@@ -13,6 +14,19 @@ export default class AuthService {
     authRepository?: AuthRepository;
   }) {
     this.authRepository = authRepository ?? null;
+  }
+
+  private getRedirectUri(provider: OAuthSocialProvider) {
+    return `${process.env.NEXT_PUBLIC_APP_HOST}${NavigationPathGroup.OAuthCallback}${provider.toLowerCase()}`;
+  }
+
+  getServerSideUrl(provider: OAuthSocialProvider, state?: string) {
+    switch (provider) {
+      case OAuthSocialProvider.KAKAO:
+        return `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}&redirect_uri=${this.getRedirectUri(provider)}&state=${state}&response_type=code`;
+      default:
+        throw new Error('Invalid provider');
+    }
   }
 
   async getAuthorization(accessToken?: string): Promise<string | null> {

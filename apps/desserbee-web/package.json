@@ -20,6 +20,7 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "^0.5.10",
     "@radix-ui/react-slot": "^1.1.1",
+    "@repo/api": "workspace:*",
     "@repo/entity": "workspace:*",
     "@repo/infrastructures": "workspace:*",
     "@repo/ui": "workspace:*",
