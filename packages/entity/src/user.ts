@@ -5,11 +5,17 @@ export enum UserType {}
 export interface User {
   id: string;
   email: string;
-  nickname?: string;
+  nickname: string;
+  phoneNumber: string;
+  address: string;
+  gender: string;
   createdAt?: string;
   updatedAt?: string;
 }
 
 export interface UserRepository {
-  getUser(data: BaseRequestData<void>): Promise<User>;
+  addInfo(data: BaseRequestData<User>): Promise<User>;
+  delete(data: BaseRequestData<void>): Promise<void>;
+  get(data: BaseRequestData<void>): Promise<User>;
+  update(data: BaseRequestData<User>): Promise<void>;
 }

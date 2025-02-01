@@ -2,8 +2,62 @@ import { isServer } from '@repo/api';
 import fetch from '@repo/api/src/fetch';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import type { AuthRepository, JWTTokens } from '@repo/entity/src/auth';
+import APIRepository from './apiRepository';
 
-export default class AuthAPIRespository implements AuthRepository {
+export default class AuthAPIRespository extends APIRepository implements AuthRepository {
+  async resetPassword(data: BaseRequestData<{ email: string; }>): Promise<unknown> {
+    const response = await fetch<void, void>({
+      method: 'POST',
+      url: `${this.endpoint}/auth/password/reset`,
+    });
+
+    return response;
+  }
+
+  async findPassword(data: BaseRequestData<{ email: string; }>): Promise<unknown> {
+    const response = await fetch<void, void>({
+      method: 'POST',
+      url: `${this.endpoint}/auth/password/reset/request`,
+    });
+
+    return response;
+  }
+
+  async validateResetPasswordToken(data: BaseRequestData<{ email: string; token: string; }>): Promise<unknown> {
+    const response = await fetch<void, JWTTokens>({
+      method: 'POST',
+      url: `${this.endpoint}/auth/password/reset/validate`,
+    });
+
+    return response;
+  }
+
+  async signIn(data: BaseRequestData<unknown>): Promise<JWTTokens> {
+    const response = await fetch<void, JWTTokens>({
+      method: 'POST',
+      url: `${this.endpoint}/auth/login`,
+    });
+
+    return response;
+  }
+
+  async signUp(data: BaseRequestData<unknown>): Promise<void> {
+    const response = await fetch<void, void>({
+      method: 'POST',
+      url: `${this.endpoint}/auth/sign-up`,
+    });
+
+    return response;
+  }
+
+  async signOut(): Promise<void> {
+    const response = await fetch<void, void>({
+      method: 'POST',
+      url: `${this.endpoint}/auth/logout`,
+    });
+
+    return response;
+  }
   async refreshAccessToken(refreshToken: string): Promise<JWTTokens> {
     if (!isServer) {
       // 서버 사이드에서만 refreshToken 접근 가능
@@ -11,7 +65,9 @@ export default class AuthAPIRespository implements AuthRepository {
     }
 
     const response = await fetch<{ refreshToken: string }, JWTTokens>({
-      data: { refreshToken },
+      headers: {
+        authorization: `Bearer ${refreshToken}`,
+      },
       method: 'POST',
       url: ``, // TODO:
     });
@@ -38,12 +94,5 @@ export default class AuthAPIRespository implements AuthRepository {
     });
 
     return response;
-  }
-
-  signIn(data: BaseRequestData<unknown>): Promise<JWTTokens> {
-    throw new Error('Method not implemented.');
-  }
-  signUp(data: BaseRequestData<unknown>): Promise<void> {
-    throw new Error('Method not implemented.');
   }
 }

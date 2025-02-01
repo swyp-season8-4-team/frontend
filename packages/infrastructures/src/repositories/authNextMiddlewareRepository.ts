@@ -18,4 +18,16 @@ export default class AuthNextMiddlewareRepository implements AuthRepository {
   signUp(data: BaseRequestData<unknown>): Promise<void> {
     throw new Error('Method not implemented.');
   }
+  signOut(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  resetPassword(data: BaseRequestData<{ email: string; }>): Promise<unknown> {
+    throw new Error('Method not implemented.');
+  }
+  findPassword(data: BaseRequestData<{ email: string; }>): Promise<unknown> {
+    throw new Error('Method not implemented.');
+  }
+  validateResetPasswordToken(data: BaseRequestData<{ email: string; token: string; }>): Promise<unknown> {
+    throw new Error('Method not implemented.');
+  }
 }

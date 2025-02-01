@@ -5,7 +5,7 @@ import type { OAuthSocialProvider } from "@repo/entity/src/auth";
 import { NavigationPathname } from "@repo/entity/src/navigation";
 import AuthAPIRespository from "@repo/infrastructures/src/repositories/authAPIRespository";
 import AuthService from "@repo/usecase/src/authService";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 const authService = new AuthService({
   authRepository: new AuthAPIRespository(),
