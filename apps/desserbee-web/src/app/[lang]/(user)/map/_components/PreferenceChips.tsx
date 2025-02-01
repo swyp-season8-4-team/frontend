@@ -10,7 +10,7 @@ interface PreferenceTagsProps {
   categories: string[];
 }
 
-export function PreferenceTags({ categories }: PreferenceTagsProps) {
+export function PreferenceChips({ categories }: PreferenceTagsProps) {
   return (
     <Carousel
       className="absolute z-10 top-4 left-[18px] w-[80%] overflow-x-hidden"
@@ -30,8 +30,6 @@ export function PreferenceTags({ categories }: PreferenceTagsProps) {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
     </Carousel>
   );
 }
