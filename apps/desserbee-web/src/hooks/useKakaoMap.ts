@@ -1,27 +1,12 @@
 import { useEffect, useRef } from "react";
 import image from "@/assets/svg/honey.svg"; // 이미지 import
-
-const DEFAULT_POSITION = {
-  latitude: 37.555,
-  longitude: 126.9025,
-};
-
-// 지도 확대 레벨 (동네/거리 수준)
-const MAP_LEVEL = 3;
-
-const CLUSTERER_LEVEL = 7;
-
-// 마커 이미지의 크기
-const MARKER_SIZE = {
-  x: 30,
-  y: 30,
-};
-
-// 마커 정확한 위치에 표시되도록 조정
-const MARKER_OFFSET = {
-  x: MARKER_SIZE.x / 2,
-  y: MARKER_SIZE.y,
-};
+import {
+  CLUSTERER_LEVEL,
+  DEFAULT_POSITION,
+  MAP_LEVEL,
+  MARKER_OFFSET,
+  MARKER_SIZE,
+} from "@/app/[lang]/(user)/map/_consts/map";
 
 // geolocation 사용
 const getUserPosition = async () => {
@@ -66,11 +51,8 @@ const createMap = async (container: HTMLDivElement) => {
 
 // 컨트롤 추가
 const createControls = (map: kakao.maps.Map) => {
-  const mapTypeControl = new kakao.maps.MapTypeControl(); // 지도/스카이뷰 전환 컨트롤
-  map.addControl(mapTypeControl, kakao.maps.ControlPosition.TOPRIGHT); // 오른쪽에 추가
-
   const zoomControl = new kakao.maps.ZoomControl(); // 줌인 줌아웃 컨트롤
-  map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT); // 오른쪽에 추가
+  map.addControl(zoomControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
 };
 
 // 테스트 - 랜덤 위치 생성
