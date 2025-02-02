@@ -10,7 +10,8 @@
     "@repo/api": "workspace:*"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*"
+    "@repo/typescript-config": "workspace:*",
+    "kakao.maps.d.ts": "^0.1.40"
   },
   "peerDependencies": {
     "next": "^15.1.5"

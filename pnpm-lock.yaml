@@ -273,6 +273,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      kakao.maps.d.ts:
+        specifier: ^0.1.40
+        version: 0.1.40
 
   packages/locale: {}
 
