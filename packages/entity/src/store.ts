@@ -60,7 +60,7 @@ export interface StoreDetailData {
   tags: StoreTag[];
 }
 
-export interface UserSavedStoreData {
+export interface StoreSavedByUserData {
   id: number;
   name: string;
   address: string;
