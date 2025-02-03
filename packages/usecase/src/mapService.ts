@@ -21,16 +21,17 @@ export default class MapService {
         name: "geolocation",
       });
 
-      const position = await this.mapController.getCurrentPosition();
-
+      let position;
       switch (permissionStatus.state) {
         case "denied":
           return {
             errorMessage: "위치 권한 허용 후 서비스 이용이 가능합니다.",
           };
         case "prompt":
+          position = await this.mapController.getCurrentPosition();
           return position;
         case "granted":
+          position = await this.mapController.getCurrentPosition();
           return position;
       }
     } catch (error) {
