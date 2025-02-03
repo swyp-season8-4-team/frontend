@@ -7,7 +7,6 @@ const config: StorybookConfig = {
   addons: [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@storybook/addon-onboarding",
     "@storybook/addon-interactions",
     "@storybook/addon-themes",
   ],
@@ -22,6 +21,14 @@ const config: StorybookConfig = {
           "@repo/ui": path.resolve(__dirname, "../../ui/src"),
           "@repo/ui/styles": path.resolve(__dirname, "../../ui/src/styles"),
         },
+      },
+      css: {
+        postcss: {
+          plugins: [require("tailwindcss"), require("autoprefixer")],
+        },
+      },
+      optimizeDeps: {
+        exclude: ["@storybook/addon-themes"],
       },
     });
   },
