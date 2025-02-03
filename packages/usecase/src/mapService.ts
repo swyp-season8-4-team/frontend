@@ -17,6 +17,23 @@ export default class MapService {
     }
 
     try {
+      const permissionStatus = await navigator.permissions.query({
+        name: "geolocation",
+      });
+
+      switch (permissionStatus.state) {
+        case "denied":
+          return {
+            errorMessage: "위치 권한 허용 후 서비스 이용이 가능합니다.",
+          }; // TODO: 위치 권한 설명 모달 트리거
+        case "prompt":
+          return {
+            errorMessage: "위치 권한 허용 후 서비스 이용이 가능합니다.",
+          }; // TODO: 위치 권한 설명 모달 트리거
+        case "granted":
+          break;
+      }
+
       const position = await this.mapController.getCurrentPosition();
       return position;
     } catch (error) {

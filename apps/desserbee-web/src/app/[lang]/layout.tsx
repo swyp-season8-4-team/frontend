@@ -37,7 +37,7 @@ export default async function RootLayout({
   const i18nService = new I18nService({ store: await params });
   const lang = i18nService.getLang();
 
-  return ( 
+  return (
     <html lang={lang}>
       <body>
         <Script
