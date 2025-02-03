@@ -1,9 +1,9 @@
-import type { Map, Position } from "@repo/entity/src/map";
+import type { ExternalMap, MapPosition } from "@repo/entity/src/map";
 
-export class KakaoMapAdapter implements Map {
+export class KakaoMapAdapter implements ExternalMap {
   constructor(private readonly map: kakao.maps.Map) {}
 
-  setCenter(position: Position): void {
+  setCenter(position: MapPosition): void {
     this.map.setCenter(
       new kakao.maps.LatLng(position.latitude, position.longitude)
     );
@@ -13,7 +13,7 @@ export class KakaoMapAdapter implements Map {
     this.map.setLevel(level);
   }
 
-  getCenter(): Position {
+  getCenter(): MapPosition {
     const center = this.map.getCenter();
     return {
       latitude: center.getLat(),

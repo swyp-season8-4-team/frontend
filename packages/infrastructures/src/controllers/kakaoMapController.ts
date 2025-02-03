@@ -1,11 +1,11 @@
-import type { MapRepository, Position, Map } from "@repo/entity/src/map";
+import type { MapController, MapPosition } from "@repo/entity/src/map";
 
 import { KakaoMapAdapter } from "../adapters/kakaoMapAdapter";
 
-export default class KakaoMapRepository implements MapRepository {
+export default class KakaoMapController implements MapController {
   private map: KakaoMapAdapter | null = null;
 
-  async getCurrentPosition(): Promise<Position> {
+  async getCurrentPosition(): Promise<MapPosition> {
     const position = await new Promise<GeolocationPosition>(
       (resolve, reject) => {
         navigator.geolocation.getCurrentPosition(resolve, reject, {
@@ -22,7 +22,7 @@ export default class KakaoMapRepository implements MapRepository {
     };
   }
 
-  async createMap(container: HTMLDivElement, position: Position) {
+  async createMap(container: HTMLDivElement, position: MapPosition) {
     const level = 3;
     const kakaoMap = new kakao.maps.Map(container, {
       center: new kakao.maps.LatLng(position.latitude, position.longitude),
@@ -36,7 +36,7 @@ export default class KakaoMapRepository implements MapRepository {
     return this.map;
   }
 
-  private createCustomMarker(position: Position, src: string) {
+  private createCustomMarker(position: MapPosition, src: string) {
     const markerOptions = {
       size: {
         width: 30,
@@ -74,7 +74,7 @@ export default class KakaoMapRepository implements MapRepository {
     return marker;
   }
 
-  createMarkersWithClusterer(positions: Position[], markerImageSrc: string) {
+  createMarkersWithClusterer(positions: MapPosition[], markerImageSrc: string) {
     if (!this.map) {
       throw new Error("Map is not initialized");
     }

@@ -1,20 +1,23 @@
-export interface Position {
+export interface MapPosition {
   latitude: number;
   longitude: number;
 }
 
-export interface Map {
-  setCenter(position: Position): void;
+export interface ExternalMap {
+  setCenter(position: MapPosition): void;
   setLevel(level: number): void;
-  getCenter(): Position;
+  getCenter(): MapPosition;
   getLevel(): number;
 }
 
-export interface MapRepository {
-  getCurrentPosition(): Promise<Position>;
-  createMap(container: HTMLDivElement, position: Position): Promise<Map>;
+export interface MapController {
+  getCurrentPosition(): Promise<MapPosition>;
+  createMap(
+    container: HTMLDivElement,
+    position: MapPosition
+  ): Promise<ExternalMap>;
   createMarkersWithClusterer(
-    positions: Position[],
+    positions: MapPosition[],
     markerImageSrc: string
   ): void;
 }

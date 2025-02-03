@@ -1,38 +1,38 @@
-import type { MapRepository, Position } from "@repo/entity/src/map";
+import type { MapController, MapPosition } from "@repo/entity/src/map";
 
 export default class MapService {
-  private readonly mapRepository: MapRepository | null;
+  private readonly mapController: MapController | null;
 
-  constructor({ mapRepository }: { mapRepository?: MapRepository }) {
-    this.mapRepository = mapRepository ?? null;
+  constructor({ mapController }: { mapController?: MapController }) {
+    this.mapController = mapController ?? null;
   }
 
-  async getCurrentPosition(): Promise<Position> {
-    if (!this.mapRepository) {
-      throw new Error("mapRepository is not set");
+  async getCurrentPosition(): Promise<MapPosition> {
+    if (!this.mapController) {
+      throw new Error("mapController is not set");
     }
 
-    return this.mapRepository.getCurrentPosition();
+    return this.mapController.getCurrentPosition();
   }
 
   async initializeMap(container: HTMLDivElement) {
-    if (!this.mapRepository) {
-      throw new Error("mapRepository is not set");
+    if (!this.mapController) {
+      throw new Error("mapController is not set");
     }
 
     const position = await this.getCurrentPosition();
-    const map = await this.mapRepository.createMap(container, position);
+    const map = await this.mapController.createMap(container, position);
     return map;
   }
 
   async addMarkersWithClustering(
-    positions: Position[],
+    positions: MapPosition[],
     markerImageSrc: string
   ) {
-    if (!this.mapRepository) {
-      throw new Error("mapRepository is not set");
+    if (!this.mapController) {
+      throw new Error("mapController is not set");
     }
 
-    this.mapRepository.createMarkersWithClusterer(positions, markerImageSrc);
+    this.mapController.createMarkersWithClusterer(positions, markerImageSrc);
   }
 }
