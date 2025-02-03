@@ -1,6 +1,6 @@
 "use client";
 
-import { useKakaoMap } from "@/hooks/useKakaoMap";
+import { useKakaoMap } from "@/app/[lang]/(user)/map/_hooks/useKakaoMap";
 import type { ReactNode } from "react";
 
 interface KakoMapProps {

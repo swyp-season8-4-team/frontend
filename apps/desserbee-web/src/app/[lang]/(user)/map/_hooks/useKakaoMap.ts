@@ -1,13 +1,13 @@
 import { useEffect, useRef } from "react";
 import markerImage from "@/assets/svg/honey.svg"; // 이미지 import
-import type { Position } from "@repo/entity/src/map";
+import type { MapPosition } from "@repo/entity/src/map";
 import MapService from "@repo/usecase/src/mapService";
-import KakaoMapRepository from "@repo/infrastructures/src/repositories/kakaoMapRepository";
+import KakaoMapController from "@repo/infrastructures/src/controllers/kakaoMapController";
 
 const generateRandomPositions = (
-  center: Position,
+  center: MapPosition,
   count: number
-): Position[] => {
+): MapPosition[] => {
   const RADIUS = 0.01;
   return Array.from({ length: count }, () => {
     const randomAngle = Math.random() * 2 * Math.PI;
@@ -22,7 +22,7 @@ const generateRandomPositions = (
 export function useKakaoMap() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapService = new MapService({
-    mapRepository: new KakaoMapRepository(),
+    mapController: new KakaoMapController(),
   });
 
   useEffect(() => {
@@ -35,7 +35,7 @@ export function useKakaoMap() {
       if (!map) throw new Error("map 로드 안됨");
 
       const currentPosition = await mapService.getCurrentPosition();
-      const positions = generateRandomPositions(currentPosition, 10);
+      const positions = generateRandomPositions(currentPosition, 100);
       mapService.addMarkersWithClustering(positions, markerImage.src);
     });
   }, []);
