@@ -7,9 +7,16 @@ interface KakoMapProps {
   children: ReactNode;
 }
 export function KakaoMap({ children }: KakoMapProps) {
-  const { mapRef } = useKakaoMap();
+  const { mapRef, errorMessage } = useKakaoMap();
 
   //TODO: rounded-20px tailwind.config.ts에 등록
+  if (errorMessage) {
+    return (
+      <div className="w-full h-[574px] my-[26px] rounded-[20px] relative flex justify-center items-center">
+        {errorMessage}
+      </div>
+    );
+  }
   return (
     <div
       ref={mapRef}

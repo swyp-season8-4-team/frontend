@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import markerImage from "@/assets/svg/honey.svg"; // 이미지 import
 import type { MapPosition } from "@repo/entity/src/map";
 import MapService from "@repo/usecase/src/mapService";
@@ -25,22 +25,35 @@ export function useKakaoMap() {
     mapController: new KakaoMapController(),
   });
 
+  const [errorMessage, setErrorMessage] = useState<string>();
+
   useEffect(() => {
     window.kakao.maps.load(async () => {
       const container = mapRef.current;
       if (!container) return;
 
-      const map = await mapService.initializeMap(container);
+      try {
+        const result = await mapService.getCurrentPosition();
 
-      if (!map) throw new Error("map 로드 안됨");
+        if ("errorMessage" in result) {
+          setErrorMessage(result.errorMessage as string); // geoLocation error
+          return;
+        }
 
-      const currentPosition = await mapService.getCurrentPosition();
-      const positions = generateRandomPositions(currentPosition, 100);
-      mapService.addMarkersWithClustering(positions, markerImage.src);
+        await mapService.initializeMap(container, result);
+        const positions = generateRandomPositions(result, 100);
+
+        mapService.addMarkersWithClustering(positions, markerImage.src);
+      } catch (error) {
+        if (error instanceof Error) {
+          setErrorMessage(error.message);
+        }
+      }
     });
   }, []);
 
   return {
     mapRef,
+    errorMessage,
   };
 }

@@ -5,21 +5,34 @@ import { KakaoMapAdapter } from "../adapters/kakaoMapAdapter";
 export default class KakaoMapController implements MapController {
   private map: KakaoMapAdapter | null = null;
 
-  async getCurrentPosition(): Promise<MapPosition> {
-    const position = await new Promise<GeolocationPosition>(
-      (resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          timeout: 3000,
-          maximumAge: 5000,
-          enableHighAccuracy: false,
-        });
+  getCurrentPosition(): Promise<MapPosition> {
+    return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const latitude = pos.coords.latitude;
+            const longitude = pos.coords.longitude;
+            resolve({ latitude, longitude });
+          },
+          (err) => {
+            if (err.code === 3) {
+              reject(new Error("delayed"));
+            }
+            if (err.code === 1) {
+              reject(new Error("blocked"));
+            }
+            reject(err);
+          },
+          {
+            enableHighAccuracy: false,
+            maximumAge: 180000,
+            timeout: 7000,
+          }
+        );
+      } else {
+        reject(new Error("notSupport"));
       }
-    );
-
-    return {
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude,
-    };
+    });
   }
 
   async createMap(container: HTMLDivElement, position: MapPosition) {
