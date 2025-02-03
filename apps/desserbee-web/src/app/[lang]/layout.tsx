@@ -14,6 +14,9 @@ const metadataService = new MetadataService();
 export const metadata: Metadata = {
   title: metadataService.title,
   description: metadataService.description,
+  other: {
+    "permissions-policy": "geolocation=(self 'http://localhost:3000')",
+  },
 };
 
 if (process.env.NEXT_PUBLIC_USE_API_MOCKING === "true") {

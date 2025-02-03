@@ -21,21 +21,18 @@ export default class MapService {
         name: "geolocation",
       });
 
+      const position = await this.mapController.getCurrentPosition();
+
       switch (permissionStatus.state) {
         case "denied":
           return {
             errorMessage: "위치 권한 허용 후 서비스 이용이 가능합니다.",
-          }; // TODO: 위치 권한 설명 모달 트리거
+          };
         case "prompt":
-          return {
-            errorMessage: "위치 권한 허용 후 서비스 이용이 가능합니다.",
-          }; // TODO: 위치 권한 설명 모달 트리거
+          return position;
         case "granted":
-          break;
+          return position;
       }
-
-      const position = await this.mapController.getCurrentPosition();
-      return position;
     } catch (error) {
       if (error instanceof Error) {
         switch (error.message) {
