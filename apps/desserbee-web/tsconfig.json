@@ -5,7 +5,8 @@
       "@/*": ["./src/*"],
       "#/*": ["./test/*"],
       "e2e/*": ["./e2e/*"],
-      "@repo/ui/*": ["../../packages/ui/src/*"]
+      "@repo/ui/*": ["../../packages/ui/src/*"],
+      "@repo/design-system/*": ["../../packages/design-system/src/*"]
     },
     "moduleResolution": "bundler",
     "baseUrl": ".",
