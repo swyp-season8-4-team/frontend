@@ -2,8 +2,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@repo/ui/components/carousel";
 
 interface PreferenceTagsProps {
@@ -23,7 +21,7 @@ export function PreferenceChips({ categories }: PreferenceTagsProps) {
         {categories.map((category) => (
           <CarouselItem
             key={category}
-            className={`pl-2 basis-1/${categories.length}`}>
+            className={`pl-2 basis-1/${categories.length} text-nowrap`}>
             <button className="text-lg select-none bg-white px-4 py-2 rounded-[48.78px] shadow-xl font-medium">
               {category}
             </button>
