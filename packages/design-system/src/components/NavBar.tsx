@@ -2,14 +2,27 @@
 
 import { useState } from 'react';
 import { NavBarBtn } from './NavBarBtn';
-import { NavBarMapIcon } from './NavBarMapIcon';
-import { NavBarCommunityIcon } from './NavBarCommunityIcon';
-import { NavBarMyPageIcon } from './NavBarMyPageIcon';
+import { NavBarMapIcon } from './svg/NavBarMapIcon';
+import { NavBarCommunityIcon } from './svg/NavBarCommunityIcon';
+import { NavBarMyPageIcon } from './svg/NavBarMyPageIcon';
 
 const NAVBAR_BUTTON_CONTENT = [
-  { icon: (isSelected?: boolean) => <NavBarCommunityIcon isSelected={isSelected} />, text: '커뮤니티' },
-  { icon: (isSelected?: boolean) => <NavBarMapIcon isSelected={isSelected} />, text: '지도' },
-  { icon: (isSelected?: boolean) => <NavBarMyPageIcon isSelected={isSelected} />, text: '마이' },
+  {
+    icon: (isSelected?: boolean) => (
+      <NavBarCommunityIcon isSelected={isSelected} />
+    ),
+    text: '커뮤니티',
+  },
+  {
+    icon: (isSelected?: boolean) => <NavBarMapIcon isSelected={isSelected} />,
+    text: '지도',
+  },
+  {
+    icon: (isSelected?: boolean) => (
+      <NavBarMyPageIcon isSelected={isSelected} />
+    ),
+    text: '마이',
+  },
 ];
 
 export function NavBar() {

@@ -1,7 +1,7 @@
 import { BannerCarousel } from './_components/BannerCarousel';
-import { Header } from './_components/Header';
+import { Header } from '@repo/design-system/components/Header';
 import { KakaoMap } from './_components/KakaoMap';
-import { NavBar } from './_components/NavBar';
+import { NavBar } from '@repo/design-system/components/NavBar';
 import { PreferenceTags } from './_components/PreferenceTags';
 
 import { CATEGORIES } from './_consts/tag';

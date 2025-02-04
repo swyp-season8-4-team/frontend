@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
-import { cn } from "@repo/ui/lib/utils";
+import type { ReactNode } from 'react';
+import { cn } from '@repo/ui/lib/utils';
 
 interface TagProps {
   children: ReactNode;
@@ -15,11 +15,12 @@ export function Tag({
   return (
     <button
       className={cn(
-        "rounded-[100px] w-[104px] h-[37px] font-medium text-center text-lg text-nowrap",
-        isSelected && "bg-primary text-white",
-        !isSelected && "bg-white text-[#545454]"
+        'bg-white shadow-base px-4 py-2 rounded-[48.78px] min-w-[104px] font-medium text-lg select-none',
+        isSelected && 'bg-primary text-white',
+        !isSelected && 'bg-white text-[#393939]',
       )}
-      disabled={disabled}>
+      disabled={disabled}
+    >
       {children}
     </button>
   );
