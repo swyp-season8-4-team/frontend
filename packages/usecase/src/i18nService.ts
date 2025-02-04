@@ -18,7 +18,7 @@ export default class I18nService extends WithStore {
 
   getLang(): SupportISO639Language {
     const lang = this.store?.['lang'];
-    
+
     if (typeof lang !== 'string') {
       throw new Error('lang is not string');
     }
