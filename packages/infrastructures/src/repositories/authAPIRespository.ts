@@ -1,10 +1,19 @@
 import { isServer } from '@repo/api';
 import fetch from '@repo/api/src/fetch';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { AuthRepository, JWTTokens } from '@repo/entity/src/auth';
+import type { AuthRepository, JWTTokens, OAuthSignInData } from '@repo/entity/src/auth';
 import APIRepository from './apiRepository';
 
 export default class AuthAPIRespository extends APIRepository implements AuthRepository {
+  async socialSignIn(): Promise<JWTTokens> {
+    const response = await fetch<void, JWTTokens>({
+      method: 'GET',
+      url: `${this.endpoint}/oauth2/authorization/kakao`,
+    });
+
+    return response;
+  }
+
   async resetPassword(data: BaseRequestData<{ email: string; }>): Promise<unknown> {
     const response = await fetch<void, void>({
       method: 'POST',

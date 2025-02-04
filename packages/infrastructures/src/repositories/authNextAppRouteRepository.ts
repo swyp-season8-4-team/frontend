@@ -4,11 +4,15 @@ import { headers } from 'next/headers';
 
 export default class AuthNextAppRouteRepository implements AuthRepository {
   
+  
   async getAuthorization(): Promise<string | null> {
     return (await headers()).get('authorization');
   }
   
   refreshAccessToken(): Promise<JWTTokens> {
+    throw new Error('Method not implemented.');
+  }
+  socialSignIn(): Promise<JWTTokens> {
     throw new Error('Method not implemented.');
   }
   signIn(data: BaseRequestData<SignInData>): Promise<JWTTokens> {
