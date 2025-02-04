@@ -32,6 +32,7 @@ export interface OAuthSignInData {
 }
 
 export interface AuthRepository {
+  socialSignIn(): Promise<JWTTokens>; // 소셜 로그인
   signIn(data: BaseRequestData<SignInData>): Promise<JWTTokens>; // 일반 로그인
   signUp(data: BaseRequestData<unknown>): Promise<void>; // 회원가입
   signOut(): Promise<void>;

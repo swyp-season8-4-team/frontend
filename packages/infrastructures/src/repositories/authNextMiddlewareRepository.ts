@@ -4,8 +4,13 @@ import type { AuthRepository, JWTTokens, SignInData } from '@repo/entity/src/aut
 export default class AuthNextMiddlewareRepository implements AuthRepository {
   constructor(private readonly headers: Headers) {}
   
+  
   async getAuthorization(): Promise<string | null> {
     return this.headers.get('authorization') ?? null;
+  }
+  
+  socialSignIn(): Promise<JWTTokens> {
+    throw new Error('Method not implemented.');
   }
 
   refreshAccessToken(): Promise<JWTTokens> {

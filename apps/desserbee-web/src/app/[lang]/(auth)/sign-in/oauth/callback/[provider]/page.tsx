@@ -1,9 +1,12 @@
 import type { WithParams, WithSearchParams } from "@/app";
 import { decrypt } from "@/utils/crypto";
 import { isOAuthSocialProvider } from "@repo/entity/src/auth";
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import OAuthCallbackLoader from "../_components/OAuthCallbackLoader";
+import OAuthLoading from "../_components/OAuthLoading";
+
+const OAuthCallbackLoader = dynamic(() => import('../_components/OAuthCallbackLoader'));
 
 interface Props extends WithParams, WithSearchParams {}
 
@@ -14,24 +17,25 @@ export default async function OAuthCallbackProviderPage({ params, searchParams }
     notFound();
   }
 
-  // TODO: CSRF 방지 state값 해싱 필요, 로그인 취소 처리 필요
   const { code, state, error } = await searchParams;
 
   if (typeof code !== 'string') {
     throw new Error('Invalid authorization code');
   }
 
-
-
   if (typeof state !== 'string') {
     throw new Error('Invalid state');
   }
 
-  const [next] = decrypt(state).split(':');
+  const [next, ...rest] = decrypt(state).split(':');
+
+  if (!rest) {
+    throw new Error('state value decrypt error');
+  }
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <OAuthLoading>
       {!error && <OAuthCallbackLoader next={next} code={code} provider={provider} />}
-    </Suspense>
+    </OAuthLoading>
   );
 }

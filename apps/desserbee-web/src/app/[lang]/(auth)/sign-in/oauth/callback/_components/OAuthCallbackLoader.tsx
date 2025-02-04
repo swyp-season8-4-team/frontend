@@ -29,7 +29,7 @@ export default function OAuthCallbackLoader({ code, next, provider }: Props) {
         // 401인 경우 따로 처리하나?
         console.error(error);
       }
-      
+
     })();
   }, []);
 

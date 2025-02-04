@@ -4,7 +4,8 @@ import {
   type JWTTokens,
   type SignInData,
 } from '@repo/entity/src/auth';
-import { NavigationPathGroup } from '@repo/entity/src/navigation';
+import { NavigationLanguageGroup, NavigationPathGroup } from '@repo/entity/src/navigation';
+
 export default class AuthService {
   private readonly authRepository: AuthRepository | null = null;
 
@@ -17,7 +18,7 @@ export default class AuthService {
   }
 
   private getRedirectUri(provider: OAuthSocialProvider) {
-    return `${process.env.NEXT_PUBLIC_APP_HOST}${NavigationPathGroup.OAuthCallback}${provider.toLowerCase()}`;
+    return `${process.env.NEXT_PUBLIC_APP_HOST}${NavigationLanguageGroup.ko}${NavigationPathGroup.OAuthCallback}${provider.toLowerCase()}`;
   }
 
   getServerSideUrl(provider: OAuthSocialProvider, state?: string) {
@@ -45,6 +46,16 @@ export default class AuthService {
     }
 
     const response = await this.authRepository.refreshAccessToken(refreshToken);
+
+    return response;
+  }
+
+  async socialSignIn(): Promise<JWTTokens> {
+    if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const response = await this.authRepository.socialSignIn();
 
     return response;
   }
