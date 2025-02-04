@@ -38,7 +38,7 @@ export function BannerCarousel() {
                 height={68}
                 alt="logo"
               />
-              <div className="font-semibold text-3xl text-nowrap -tracking-[3%] whitespace-pre-line">
+              <div className="font-semibold text-[#393939] text-3xl text-nowrap -tracking-[3%] whitespace-pre-line">
                 {banner.content}
               </div>
             </div>

@@ -5,7 +5,7 @@ import { PreferenceTags } from './_components/PreferenceTags';
 import { CATEGORIES } from './_consts/tag';
 export default function MapPage() {
   return (
-    <div className="flex flex-col bg-page">
+    <div className="flex flex-col">
       <div className="px-base">
         <KakaoMap>
           <PreferenceTags categories={CATEGORIES} />

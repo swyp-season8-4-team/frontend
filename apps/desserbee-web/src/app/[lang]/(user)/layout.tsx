@@ -19,7 +19,7 @@ export default function UserLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div>
+    <div className="bg-page">
       <Header fontClass={recipeKorea.className} />
       {children}
       <NavBar />
