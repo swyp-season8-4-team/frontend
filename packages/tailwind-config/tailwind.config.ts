@@ -20,6 +20,9 @@ export default {
       spacing: {
         base: "1rem",
       },
+      boxShadow: {
+        navbar: "2px 2px 5px 1px #0000000D",
+      },
       colors: {
         primary: {
           DEFAULT: "#FFB700",
@@ -30,6 +33,7 @@ export default {
           foreground: "hsl(var(--secondary-foreground))",
         },
         disabled: "#714115",
+        page: "#F6F6F6",
         // shadcn 변수들
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
