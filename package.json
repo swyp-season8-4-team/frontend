@@ -3,9 +3,9 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "build:web": "turbo build --filter=web",
+    "build:web": "turbo build --filter=desserbee-web",
     "dev": "turbo dev",
-    "dev:web": "turbo dev --filter=web",
+    "dev:web": "turbo dev --filter=desserbee-web",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
