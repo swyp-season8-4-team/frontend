@@ -20,7 +20,7 @@ export function NavBar() {
 
   return (
     <div className="flex justify-center w-full">
-      <div className="flex justify-around bg-white shadow-navbar mx-[144px] mb-[15px] rounded-[100px] w-full min-w-[480px] h-[72px]">
+      <div className="flex justify-around bg-white shadow-base mx-[144px] mb-[15px] rounded-[100px] w-full min-w-[480px] h-[72px]">
         {NAVBAR_BUTTON_CONTENT.map((content, index) => (
           <NavBarBtn
             icon={content.icon}
