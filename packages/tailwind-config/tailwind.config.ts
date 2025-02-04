@@ -9,6 +9,13 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        pretendard: [
+          'Pretendard Std Variable',
+          'Pretendard JP Variable',
+          'Pretendard Variable'
+        ],
+      },
       spacing: {
         base: "1rem",
       },

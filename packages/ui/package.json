@@ -7,7 +7,7 @@
   "types": "./src/index.ts",
   "scripts": {
     "lint": "eslint . --max-warnings 0",
-    "build:css": "tailwindcss -i ./src/styles/globals.css -o ./src/styles/output.css --watch",
+    "build:css": "tailwindcss -i ./src/styles/globals.css -o ./src/styles/output.css",
     "generate:component": "turbo gen react-component",
     "check-types": "tsc --noEmit"
   },
