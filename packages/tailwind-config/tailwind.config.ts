@@ -15,6 +15,7 @@ export default {
           'Pretendard JP Variable',
           'Pretendard Variable'
         ],
+        recipeKorea: ['var(--font-recipe-korea)'],
       },
       spacing: {
         base: "1rem",
