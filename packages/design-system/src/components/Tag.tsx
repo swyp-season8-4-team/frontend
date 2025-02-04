@@ -16,7 +16,7 @@ export function Tag({
     <button
       className={cn(
         "rounded-[100px] w-[104px] h-[37px] font-medium text-center text-lg text-nowrap",
-        isSelected && "bg-bee-primary text-white",
+        isSelected && "bg-primary text-white",
         !isSelected && "bg-white text-[#545454]"
       )}
       disabled={disabled}>

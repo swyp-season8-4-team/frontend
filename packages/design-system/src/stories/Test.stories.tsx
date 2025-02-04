@@ -13,6 +13,9 @@ const TailwindConfigTest = ({ className, text }: TailwindConfigestProps) => {
         {text}
         <br />
         <Button className={className}>shadcn 버튼</Button>
+        <div className={className + " w-40 h-36 bg-primary text-center"}>
+          border
+        </div>
       </div>
     </div>
   );
@@ -31,22 +34,29 @@ type Story = StoryObj<typeof meta>;
 // color
 export const Primary: Story = {
   args: {
-    className: "text-bee-primary ",
-    text: "className='text-bee-primary'",
+    className: "text-primary ",
+    text: "className='text-primary'",
   },
 };
 
 export const Secondary: Story = {
   args: {
-    className: "text-bee-secondary ",
-    text: "className='text-bee-secondary'",
+    className: "text-secondary ",
+    text: "className='text-secondary'",
   },
 };
 
 export const Disabled: Story = {
   args: {
-    className: "text-bee-disabled ",
-    text: "className='text-bee-disabled'",
+    className: "text--disabled ",
+    text: "className='text-disabled'",
+  },
+};
+
+export const BorderRadius: Story = {
+  args: {
+    className: "rounded-base",
+    text: "className='rounded-base'",
   },
 };
 
