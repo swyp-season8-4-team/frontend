@@ -10,6 +10,7 @@ import { initMSW } from '@/mocks';
 import MetadataService from '@/usecases/metadataService';
 import Script from 'next/script';
 
+
 const metadataService = new MetadataService();
 
 export const metadata: Metadata = {
@@ -31,7 +32,10 @@ export async function generateStaticParams() {
   }));
 }
 
+
+
 interface Props extends WithChildren, WithParams {}
+
 const KAKAO_MAP_API_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services,clusterer&autoload=false`;
 
 export default async function RootLayout({ children, params }: Readonly<Props>) {
