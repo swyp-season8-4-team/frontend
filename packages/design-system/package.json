@@ -4,7 +4,7 @@
   "author": "Seunghoon Jeong",
   "private": true,
   "exports": {
-    "./fonts/": "./src/fonts/",
+    "./fonts/": "./src/fonts/*",
     "./*.css": "./src/styles/*.css",
     "./*": "./*"
   },

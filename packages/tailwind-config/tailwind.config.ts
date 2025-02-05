@@ -3,6 +3,7 @@
 export default {
   darkMode: ["class"],
   content: [
+<<<<<<< HEAD
     "../../apps/**/src/**/*.{js,ts,jsx,tsx}",
     "../../packages/ui/src/**/*.{js,ts,jsx,tsx}",
     "../../packages/design-system/src/**/*.{js,ts,jsx,tsx}",
@@ -10,6 +11,22 @@ export default {
   ],
   theme: {
     extend: {
+=======
+    '../../apps/*/src/**/*.{js,ts,jsx,tsx}',
+    '../../packages/ui/src/**/*.{js,ts,jsx,tsx}',
+    '../../packages/design-system/src/**/*.{js,ts,jsx,tsx}',
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+        pretendard: [
+          'Pretendard Std Variable',
+          'Pretendard JP Variable',
+          'Pretendard Variable',
+        ],
+        recipeKorea: ['var(--font-recipe-korea)'],
+      },
+>>>>>>> 9d54393 (feat(desserbee-web): apply pretendard font)
       spacing: {
         base: "1rem",
       },
