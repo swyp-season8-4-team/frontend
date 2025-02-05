@@ -1,4 +1,5 @@
-import { SearchBarIcon } from './svg/SearchBarIcon';
+import { IconSize } from './icons';
+import IconSearch from './icons/IconSearch';
 
 interface SearchBarProps {
   searchTerm: string;
@@ -40,7 +41,7 @@ export function SearchBar({
         onKeyDown={handleKeyDown}
       />
       <div className="top-[53%] left-6 absolute -translate-y-1/2">
-        <SearchBarIcon />
+        <IconSearch size={IconSize.m} className="text-[#B4B4B4]" />
       </div>
     </form>
   );
