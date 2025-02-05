@@ -1,11 +1,11 @@
 import { cn } from '@repo/ui/lib/utils';
-import { SearchBar } from './SearchBar';
-
+import type { ReactElement } from 'react';
 interface HeaderProp {
   fontClass: string;
+  SearchBar: ReactElement;
 }
 
-export function Header({ fontClass }: HeaderProp) {
+export function Header({ fontClass, SearchBar }: HeaderProp) {
   return (
     <header className="bg-primary px-base pt-8 w-full text-[22px]">
       <div
@@ -16,8 +16,7 @@ export function Header({ fontClass }: HeaderProp) {
       >
         디저비
       </div>
-      {/* //TODO: placeHolder 페이지마다 다르게 */}
-      <SearchBar placeHolder="지금 핫한 디저트를 검색해 보세요!" />
+      {SearchBar}
     </header>
   );
 }

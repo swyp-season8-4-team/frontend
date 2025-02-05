@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState } from "react";
-import markerImage from "../_assets/svg/icon-marker.svg"; // 이미지 import
-import type { MapPosition } from "@repo/entity/src/map";
-import MapService from "@repo/usecase/src/mapService";
-import KakaoMapController from "@repo/infrastructures/src/controllers/kakaoMapController";
+import { useEffect, useRef, useState } from 'react';
+import markerImage from '../map/_assets/svg/icon-marker.svg'; // 이미지 import
+import type { MapPosition } from '@repo/entity/src/map';
+import MapService from '@repo/usecase/src/mapService';
+import KakaoMapController from '@repo/infrastructures/src/controllers/kakaoMapController';
 
 const generateRandomPositions = (
   center: MapPosition,
-  count: number
+  count: number,
 ): MapPosition[] => {
   const RADIUS = 0.01;
   return Array.from({ length: count }, () => {
@@ -35,7 +35,7 @@ export function useKakaoMap() {
       try {
         const result = await mapService.getCurrentPosition();
 
-        if ("errorMessage" in result) {
+        if ('errorMessage' in result) {
           setErrorMessage(result.errorMessage as string); // geoLocation error
           return;
         }
