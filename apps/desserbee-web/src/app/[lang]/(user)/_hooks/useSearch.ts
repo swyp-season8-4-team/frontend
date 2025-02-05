@@ -13,9 +13,12 @@ export function useSearch() {
   const pathname = usePathname();
   const [searchTerm, setSearchTerm] = useState('');
 
+  const normalizedPath = pathname.split('/', 3)[2];
+  const path = `/${normalizedPath}`;
+
   const getSearchConfig = (): SearchConfig => {
-    switch (pathname) {
-      case '/ko/community': //TODO: lang에 따라 pathname 바뀜 - i18n usecase로 옮겨야함.?
+    switch (path) {
+      case '/community':
         return {
           placeHolder: SEARCH_CONFIG.COMMUNITY.placeholder,
           onSearch: (value: string) => {
@@ -23,7 +26,7 @@ export function useSearch() {
             console.log('커뮤니티 검색:', value);
           },
         };
-      case '/ko/map':
+      case '/map':
         return {
           placeHolder: SEARCH_CONFIG.MAP.placeholder,
           onSearch: (value: string) => {
