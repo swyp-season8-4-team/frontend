@@ -25,29 +25,22 @@ type Story = StoryObj<typeof meta>;
 // color
 export const Primary: Story = {
   args: {
-    className: "text-bee-primary ",
-    text: "적용: className='text-bee-primary'",
+    className: "text-primary ",
+    text: "적용: className='text-primary'",
   },
 };
 
 export const Secondary: Story = {
   args: {
-    className: "text-bee-secondary ",
-    text: "적용: className='text-bee-secondary'",
-  },
-};
-
-export const Accent: Story = {
-  args: {
-    className: "text-bee-accent ",
-    text: "적용: className='text-bee-accent'",
+    className: "text-secondary ",
+    text: "적용: className='text-secondary'",
   },
 };
 
 // 패딩 (spacing)
 export const Base_PX_PY: Story = {
   args: {
-    className: "text-bee-primary px-base py-base ",
+    className: "px-base py-base ",
     text: "적용: className='px-base py-base'",
   },
 };

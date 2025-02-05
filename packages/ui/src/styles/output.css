@@ -575,6 +575,8 @@ video {
   --popover-foreground: 222.2 47.4% 11.2%;
   --ring: 215 20.2% 65.1%;
   --radius: 0.5rem;
+  /* Font */
+  --font-pretendard: 'Pretendard Std Variable', 'Pretendard JP Variable', 'Pretendard Variable', 'system-ui';
 }
 
 * {

@@ -3,15 +3,6 @@
 export default {
   darkMode: ["class"],
   content: [
-<<<<<<< HEAD
-    "../../apps/**/src/**/*.{js,ts,jsx,tsx}",
-    "../../packages/ui/src/**/*.{js,ts,jsx,tsx}",
-    "../../packages/design-system/src/**/*.{js,ts,jsx,tsx}",
-
-  ],
-  theme: {
-    extend: {
-=======
     '../../apps/*/src/**/*.{js,ts,jsx,tsx}',
     '../../packages/ui/src/**/*.{js,ts,jsx,tsx}',
     '../../packages/design-system/src/**/*.{js,ts,jsx,tsx}',
@@ -26,30 +17,25 @@ export default {
         ],
         recipeKorea: ['var(--font-recipe-korea)'],
       },
->>>>>>> 9d54393 (feat(desserbee-web): apply pretendard font)
       spacing: {
         base: "1rem",
       },
       colors: {
-        bee: {
-          primary: "#FFB700",
-          secondary: "#FFD25F",
-          disabled: "#714115",
+        primary: {
+          DEFAULT: "#FFB700",
+          foreground: "hsl(var(--primary-foreground))",
         },
+        secondary: {
+          DEFAULT: "#FFD25F",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        disabled: "#714115",
         // shadcn 변수들
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -72,6 +58,7 @@ export default {
         },
       },
       borderRadius: {
+        base: "20px",
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",

@@ -4,8 +4,13 @@ import type { AuthRepository, JWTTokens, SignInData } from '@repo/entity/src/aut
 export default class AuthNextMiddlewareRepository implements AuthRepository {
   constructor(private readonly headers: Headers) {}
   
+  
   async getAuthorization(): Promise<string | null> {
     return this.headers.get('authorization') ?? null;
+  }
+  
+  socialSignIn(): Promise<JWTTokens> {
+    throw new Error('Method not implemented.');
   }
 
   refreshAccessToken(): Promise<JWTTokens> {
@@ -16,6 +21,18 @@ export default class AuthNextMiddlewareRepository implements AuthRepository {
     throw new Error('Method not implemented.');
   }
   signUp(data: BaseRequestData<unknown>): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  signOut(): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  resetPassword(data: BaseRequestData<{ email: string; }>): Promise<unknown> {
+    throw new Error('Method not implemented.');
+  }
+  findPassword(data: BaseRequestData<{ email: string; }>): Promise<unknown> {
+    throw new Error('Method not implemented.');
+  }
+  validateResetPasswordToken(data: BaseRequestData<{ email: string; token: string; }>): Promise<unknown> {
     throw new Error('Method not implemented.');
   }
 }
