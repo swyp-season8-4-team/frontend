@@ -164,7 +164,7 @@ export interface StoreRepository {
       longitude: number;
       radius: number;
     }>,
-  ): Promise<StoreMapData>;
+  ): Promise<StoreMapData[]>;
 
   getStoreSummary(
     data: BaseRequestData<{

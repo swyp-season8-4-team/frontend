@@ -4,7 +4,7 @@ import type {
   StoreRepository,
   StoreSummaryData,
 } from '@repo/entity/src/store';
-export default class storeService {
+export default class StoreService {
   private readonly authRepository: AuthRepository | null;
   private readonly storeRepository: StoreRepository | null;
 
@@ -27,7 +27,7 @@ export default class storeService {
     latitude: number;
     longitude: number;
     radius: number;
-  }): Promise<StoreMapData> {
+  }): Promise<StoreMapData[]> {
     if (!this.storeRepository) {
       throw new Error('storeRepository is not set');
     }

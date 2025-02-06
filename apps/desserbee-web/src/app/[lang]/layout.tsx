@@ -50,6 +50,7 @@ export default async function RootLayout({
           src={KAKAO_MAP_API_URL}
           async={false}
         />
+
         {children}
       </body>
     </html>

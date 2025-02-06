@@ -1,4 +1,4 @@
-import type { MapController, MapPosition } from "@repo/entity/src/map";
+import type { MapController, MapPosition } from '@repo/entity/src/map';
 
 interface MapErrorMessage {
   errorMessage: string;
@@ -10,44 +10,54 @@ export default class MapService {
   constructor({ mapController }: { mapController?: MapController }) {
     this.mapController = mapController ?? null;
   }
+  async getTestPosition(): Promise<MapPosition | MapErrorMessage> {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+
+    return {
+      latitude: 37.498095,
+      longitude: 127.02761,
+    };
+  }
 
   async getCurrentPosition(): Promise<MapPosition | MapErrorMessage> {
     if (!this.mapController) {
-      throw new Error("mapController is not set");
+      throw new Error('mapController is not set');
     }
 
     try {
       const permissionStatus = await navigator.permissions.query({
-        name: "geolocation",
+        name: 'geolocation',
       });
 
       let position;
       switch (permissionStatus.state) {
-        case "denied":
+        case 'denied':
           return {
-            errorMessage: "위치 권한 허용 후 서비스 이용이 가능합니다.",
+            errorMessage: '위치 권한 허용 후 서비스 이용이 가능합니다.',
           };
-        case "prompt":
+        case 'prompt':
           position = await this.mapController.getCurrentPosition();
           return position;
-        case "granted":
+        case 'granted':
           position = await this.mapController.getCurrentPosition();
           return position;
       }
     } catch (error) {
       if (error instanceof Error) {
         switch (error.message) {
-          case "delayed":
+          case 'delayed':
             return {
-              errorMessage: "위치 정보를 가져오는데 시간이 너무 오래 걸립니다.",
+              errorMessage: '위치 정보를 가져오는데 시간이 너무 오래 걸립니다.',
             };
-          case "blocked":
+          case 'blocked':
             return {
-              errorMessage: "위치 정보 접근 권한이 없습니다.",
+              errorMessage: '위치 정보 접근 권한이 없습니다.',
             };
-          case "notSupport":
+          case 'notSupport':
             return {
-              errorMessage: "이 브라우저는 위치 정보 기능을 지원하지 않습니다.",
+              errorMessage: '이 브라우저는 위치 정보 기능을 지원하지 않습니다.',
             };
           default:
             return { errorMessage: error.message };
@@ -59,7 +69,7 @@ export default class MapService {
 
   async initializeMap(container: HTMLDivElement, currentPosition: MapPosition) {
     if (!this.mapController) {
-      throw new Error("mapController is not set");
+      throw new Error('mapController is not set');
     }
 
     const map = await this.mapController.createMap(container, currentPosition);
@@ -68,10 +78,10 @@ export default class MapService {
 
   async addMarkersWithClustering(
     positions: MapPosition[],
-    markerImageSrc: string
+    markerImageSrc: string,
   ) {
     if (!this.mapController) {
-      throw new Error("mapController is not set");
+      throw new Error('mapController is not set');
     }
 
     this.mapController.createMarkersWithClusterer(positions, markerImageSrc);

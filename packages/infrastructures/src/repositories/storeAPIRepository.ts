@@ -19,10 +19,10 @@ export default class StoreAPIRepository
     latitude: number;
     longitude: number;
     radius: number;
-  }>): Promise<StoreMapData> {
+  }>): Promise<StoreMapData[]> {
     const { latitude, longitude, radius } = data || {};
 
-    const response = await fetch<void, StoreMapData>({
+    const response = await fetch<void, StoreMapData[]>({
       method: 'GET',
       url: `${this.endpoint}/stores?latitude=${latitude}&longitude=${longitude}&radius=${radius}`,
     });
