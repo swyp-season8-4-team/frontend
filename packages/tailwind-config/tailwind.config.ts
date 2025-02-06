@@ -3,7 +3,7 @@
 export default {
   darkMode: ['class'],
   content: [
-    '../../apps/**/src/**/*.{js,ts,jsx,tsx}',
+    '../../apps/*/src/**/*.{js,ts,jsx,tsx}',
     '../../packages/ui/src/**/*.{js,ts,jsx,tsx}',
     '../../packages/design-system/src/**/*.{js,ts,jsx,tsx}',
   ],
