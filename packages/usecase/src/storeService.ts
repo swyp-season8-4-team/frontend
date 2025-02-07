@@ -12,7 +12,7 @@ export default class StoreService {
     authRepository,
     storeRepository,
   }: {
-    authRepository?: AuthRepository;
+    authRepository: AuthRepository;
     storeRepository: StoreRepository;
   }) {
     this.authRepository = authRepository ?? null;
@@ -78,6 +78,10 @@ export default class StoreService {
   }
 
   async getUserSavedStore(userId: number) {
+    if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
     if (!this.storeRepository) {
       throw new Error('storeRepository is not set');
     }
