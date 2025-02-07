@@ -5,7 +5,8 @@ import type { WithParams } from '@/app';
 import type { WithChildren } from '@repo/ui';
 import { SupportISO639Language } from '@repo/entity/src/i18n';
 import I18nService from '@repo/usecase/src/i18nService';
-import { initMSW } from '@/mocks';
+import { initServerMSW } from '@/mocks';
+import { MockProvider } from '@/mocks/MockProvider';
 import MetadataService from '@/usecases/metadataService';
 import Script from 'next/script';
 
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 if (process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true') {
-  initMSW();
+  initServerMSW();
 }
 
 export async function generateStaticParams() {
@@ -41,6 +42,12 @@ export default async function RootLayout({
   const i18nService = new I18nService({ store: await params });
   const lang = i18nService.getLang();
 
+  let content = children;
+
+  if (process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true') {
+    content = <MockProvider>{children}</MockProvider>;
+  }
+
   return (
     <html lang={lang}>
       <body>
@@ -50,8 +57,7 @@ export default async function RootLayout({
           src={KAKAO_MAP_API_URL}
           async={false}
         />
-
-        {children}
+        {content}
       </body>
     </html>
   );

@@ -7,7 +7,7 @@ import type {
 } from '@repo/entity/src/store';
 
 export const storeHandlers = [
-  http.get('http://localhost:3000/api/stores', ({ request }) => {
+  http.get('http://localhost:3000/api/stores', async ({ request }) => {
     const url = new URL(request.url);
     const latitude = url.searchParams.get('latitude');
     const longitude = url.searchParams.get('longitude');
@@ -60,17 +60,27 @@ export const storeHandlers = [
     ];
 
     if (
-      latitude === '37.498095' &&
-      longitude === '127.02761' &&
-      radius === '2'
+      Number(latitude) === 37.498095 &&
+      Number(longitude) === 127.028979 &&
+      Number(radius) === 2
     ) {
-      return HttpResponse.json(storeMapDataList);
+      return new HttpResponse(JSON.stringify(storeMapDataList), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
     }
 
-    return HttpResponse.json([]);
+    return new HttpResponse(JSON.stringify([]), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }),
 
-  http.get(`http://localhost:3000/api/stores/1/details`, () => {
+  http.get(`http://localhost:3000/api/stores/1/details`, async () => {
     // StoreDetailData
     const storeDetailData: StoreDetailData = {
       id: 1,
@@ -130,7 +140,7 @@ export const storeHandlers = [
     return HttpResponse.json(storeDetailData);
   }),
 
-  http.get(`http://localhost:3000/api/store/1/summary`, () => {
+  http.get(`http://localhost:3000/api/store/1/summary`, async () => {
     const storeSummaryData: StoreSummaryData = {
       id: 1,
       name: '스타벅스 강남점',
@@ -153,7 +163,7 @@ export const storeHandlers = [
     return HttpResponse.json(storeSummaryData);
   }),
 
-  http.get(`http://localhost:3000/api/users/1/saved-stores`, () => {
+  http.get(`/api/users/1/saved-stores`, () => {
     // StoreDetailData
     const storeSavedByUserDataList: StoreSavedByUserData[] = [
       {
@@ -197,10 +207,15 @@ export const storeHandlers = [
         savedAt: '2024-02-03T13:15:00Z',
       },
     ];
-    return HttpResponse.json(storeSavedByUserDataList);
+    return new HttpResponse(JSON.stringify(storeSavedByUserDataList), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }),
 
-  http.get(`http://localhost:3000/api/store`, () => {
+  http.get(`/api/store`, async () => {
     return HttpResponse.json({});
   }),
 ];
