@@ -2,24 +2,31 @@
 
 import { useState } from 'react';
 import { NavBarBtn } from './NavBarBtn';
-import { NavBarMapIcon } from './svg/NavBarMapIcon';
-import { NavBarCommunityIcon } from './svg/NavBarCommunityIcon';
-import { NavBarMyPageIcon } from './svg/NavBarMyPageIcon';
+import { cn } from '@repo/ui/lib/utils';
+
+import IconTalk from './icons/IconTalk';
+import IconLocation from './icons/IconLocation';
+import IconProfile from './icons/IconProfile';
+
+const ICON_CLASS_NAME = (isSelected?: boolean) =>
+  cn(isSelected ? 'text-primary' : 'text-[#cecece]');
 
 const NAVBAR_BUTTON_CONTENT = [
   {
     icon: (isSelected?: boolean) => (
-      <NavBarCommunityIcon isSelected={isSelected} />
+      <IconTalk className={ICON_CLASS_NAME(isSelected)} />
     ),
     text: '커뮤니티',
   },
   {
-    icon: (isSelected?: boolean) => <NavBarMapIcon isSelected={isSelected} />,
+    icon: (isSelected?: boolean) => (
+      <IconLocation className={ICON_CLASS_NAME(isSelected)} />
+    ),
     text: '지도',
   },
   {
     icon: (isSelected?: boolean) => (
-      <NavBarMyPageIcon isSelected={isSelected} />
+      <IconProfile className={ICON_CLASS_NAME(isSelected)} />
     ),
     text: '마이',
   },
