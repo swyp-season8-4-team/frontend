@@ -9,7 +9,7 @@ import IconLocation from './icons/IconLocation';
 import IconProfile from './icons/IconProfile';
 
 const ICON_CLASS_NAME = (isSelected?: boolean) =>
-  cn(isSelected ? 'text-primary' : 'text-[#F6F6F6]');
+  cn(isSelected ? 'text-primary' : 'text-[#cecece]');
 
 const NAVBAR_BUTTON_CONTENT = [
   {
