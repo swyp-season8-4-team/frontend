@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "framer-motion";
-import BeeIcon from "@/assets/svg/bee.svg";
+import BeeIcon from "@/assets/svg/logo-bee.svg";
 import type { WithChildren } from "@repo/ui/index";
 
 export default function OAuthLoading({ children }: WithChildren) {
