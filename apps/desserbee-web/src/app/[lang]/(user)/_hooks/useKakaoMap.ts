@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import markerImage from '../_assets/svg/icon-marker.svg'; // 이미지 import
+import markerImage from '../map/_assets/svg/icon-marker.svg'; // 이미지 import
 import type { MapPosition } from '@repo/entity/src/map';
 import MapService from '@repo/usecase/src/mapService';
 import StoreService from '@repo/usecase/src/storeService';
