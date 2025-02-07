@@ -86,7 +86,7 @@ export default class StoreService {
       throw new Error('storeRepository is not set');
     }
 
-    const authorization = await this.authRepository?.getAuthorization();
+    const authorization = await this.authRepository.getAuthorization();
 
     const reqestData = {
       data: {

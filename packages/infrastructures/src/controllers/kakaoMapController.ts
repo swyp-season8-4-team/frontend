@@ -12,7 +12,7 @@ export default class KakaoMapController implements MapController {
           (pos) => {
             if (process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true') {
               const latitude = 37.498095;
-              const longitude = 127.02761;
+              const longitude = 127.028979;
               resolve({ latitude, longitude });
             } else {
               const latitude = pos.coords.latitude;
