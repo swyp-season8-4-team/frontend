@@ -9,6 +9,7 @@ import { initServerMSW } from '@/mocks';
 import { MockProvider } from '@/mocks/MockProvider';
 import MetadataService from '@/usecases/metadataService';
 import Script from 'next/script';
+import { Fragment } from 'react';
 
 const metadataService = new MetadataService();
 
@@ -42,11 +43,9 @@ export default async function RootLayout({
   const i18nService = new I18nService({ store: await params });
   const lang = i18nService.getLang();
 
-  let content = children;
+  const isMocking = process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true';
 
-  if (process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true') {
-    content = <MockProvider>{children}</MockProvider>;
-  }
+  const Wrapper = isMocking ? MockProvider : Fragment;
 
   return (
     <html lang={lang}>
@@ -57,7 +56,7 @@ export default async function RootLayout({
           src={KAKAO_MAP_API_URL}
           async={false}
         />
-        {content}
+        <Wrapper>{children}</Wrapper>
       </body>
     </html>
   );
