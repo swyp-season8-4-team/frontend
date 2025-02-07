@@ -1,11 +1,11 @@
 import { cn } from '@repo/ui/lib/utils';
-import type { ReactElement } from 'react';
+import type { ReactNode } from 'react';
 interface HeaderProp {
   fontClass: string;
-  SearchBar: ReactElement;
+  children: ReactNode;
 }
 
-export function Header({ fontClass, SearchBar }: HeaderProp) {
+export function Header({ fontClass, children }: HeaderProp) {
   return (
     <header className="bg-primary px-base pt-8 w-full text-[22px]">
       <div
@@ -16,7 +16,7 @@ export function Header({ fontClass, SearchBar }: HeaderProp) {
       >
         디저비
       </div>
-      {SearchBar}
+      {children}
     </header>
   );
 }

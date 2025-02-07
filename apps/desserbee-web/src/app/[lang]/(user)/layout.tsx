@@ -20,10 +20,9 @@ export default function UserLayout({
 }) {
   return (
     <div className="bg-page h-dvh">
-      <Header
-        SearchBar={<SearchBarWithHook />}
-        fontClass={recipeKorea.className}
-      />
+      <Header fontClass={recipeKorea.className}>
+        <SearchBarWithHook />
+      </Header>
       {children}
       <NavBar />
     </div>
