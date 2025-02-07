@@ -1,6 +1,6 @@
-import type { MapController, MapPosition } from "@repo/entity/src/map";
+import type { MapController, MapPosition } from '@repo/entity/src/map';
 
-import { KakaoMapAdapter } from "../adapters/kakaoMapAdapter";
+import { KakaoMapAdapter } from '../adapters/kakaoMapAdapter';
 
 export default class KakaoMapController implements MapController {
   private map: KakaoMapAdapter | null = null;
@@ -10,16 +10,22 @@ export default class KakaoMapController implements MapController {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
-            const latitude = pos.coords.latitude;
-            const longitude = pos.coords.longitude;
-            resolve({ latitude, longitude });
+            if (process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true') {
+              const latitude = 37.498095;
+              const longitude = 127.02761;
+              resolve({ latitude, longitude });
+            } else {
+              const latitude = pos.coords.latitude;
+              const longitude = pos.coords.longitude;
+              resolve({ latitude, longitude });
+            }
           },
           (err) => {
             if (err.code === 3) {
-              reject(new Error("delayed"));
+              reject(new Error('delayed'));
             }
             if (err.code === 1) {
-              reject(new Error("blocked"));
+              reject(new Error('blocked'));
             }
             reject(err);
           },
@@ -27,10 +33,10 @@ export default class KakaoMapController implements MapController {
             enableHighAccuracy: false,
             maximumAge: 180000,
             timeout: 7000,
-          }
+          },
         );
       } else {
-        reject(new Error("notSupport"));
+        reject(new Error('notSupport'));
       }
     });
   }
@@ -63,12 +69,12 @@ export default class KakaoMapController implements MapController {
 
     const imageSize = new kakao.maps.Size(
       markerOptions.size.width,
-      markerOptions.size.height
+      markerOptions.size.height,
     );
     const imageOffset = {
       offset: new kakao.maps.Point(
         markerOptions.offset.x,
-        markerOptions.offset.y
+        markerOptions.offset.y,
       ),
     };
 
@@ -76,7 +82,7 @@ export default class KakaoMapController implements MapController {
 
     const markerPosition = new kakao.maps.LatLng(
       position.latitude,
-      position.longitude
+      position.longitude,
     );
 
     const marker = new kakao.maps.Marker({
@@ -89,7 +95,7 @@ export default class KakaoMapController implements MapController {
 
   createMarkersWithClusterer(positions: MapPosition[], markerImageSrc: string) {
     if (!this.map) {
-      throw new Error("Map is not initialized");
+      throw new Error('Map is not initialized');
     }
     const kakaoMap = this.map.getNativeMap();
     const markers: kakao.maps.Marker[] = [];

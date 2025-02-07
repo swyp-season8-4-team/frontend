@@ -6,21 +6,6 @@ import StoreService from '@repo/usecase/src/storeService';
 import KakaoMapController from '@repo/infrastructures/src/controllers/kakaoMapController';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 
-const generateRandomPositions = (
-  center: MapPosition,
-  count: number,
-): MapPosition[] => {
-  const RADIUS = 0.01;
-  return Array.from({ length: count }, () => {
-    const randomAngle = Math.random() * 2 * Math.PI;
-    const randomRadius = Math.random() * RADIUS;
-    return {
-      latitude: center.latitude + randomRadius * Math.cos(randomAngle),
-      longitude: center.longitude + randomRadius * Math.sin(randomAngle),
-    };
-  });
-};
-
 export function useKakaoMap() {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapService = new MapService({
@@ -37,8 +22,7 @@ export function useKakaoMap() {
       if (!container) return;
 
       try {
-        const result = await mapService.getTestPosition();
-        // const result = await mapService.getCurrentPosition();
+        const result = await mapService.getCurrentPosition();
 
         if ('errorMessage' in result) {
           setErrorMessage(result.errorMessage as string); // geoLocation error
@@ -46,7 +30,6 @@ export function useKakaoMap() {
         }
 
         await mapService.initializeMap(container, result);
-        // const positions = generateRandomPositions(result, 100);
 
         const stores = await storeService.getNearbyStores({
           latitude: 37.498095,

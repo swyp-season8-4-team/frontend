@@ -10,17 +10,6 @@ export default class MapService {
   constructor({ mapController }: { mapController?: MapController }) {
     this.mapController = mapController ?? null;
   }
-  async getTestPosition(): Promise<MapPosition | MapErrorMessage> {
-    if (!this.mapController) {
-      throw new Error('mapController is not set');
-    }
-
-    return {
-      latitude: 37.498095,
-      longitude: 127.02761,
-    };
-  }
-
   async getCurrentPosition(): Promise<MapPosition | MapErrorMessage> {
     if (!this.mapController) {
       throw new Error('mapController is not set');
