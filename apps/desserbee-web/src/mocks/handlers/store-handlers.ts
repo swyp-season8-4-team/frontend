@@ -140,7 +140,7 @@ export const storeHandlers = [
     return HttpResponse.json(storeDetailData);
   }),
 
-  http.get(`http://localhost:3000/api/store/1/summary`, async () => {
+  http.get(`http://localhost:3000/api/stores/1/summary`, async () => {
     const storeSummaryData: StoreSummaryData = {
       id: 1,
       name: '스타벅스 강남점',
@@ -160,7 +160,12 @@ export const storeHandlers = [
       ],
     };
 
-    return HttpResponse.json(storeSummaryData);
+    return new HttpResponse(JSON.stringify(storeSummaryData), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   }),
 
   http.get(`/api/users/1/saved-stores`, () => {
