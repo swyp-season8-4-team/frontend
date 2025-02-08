@@ -63,6 +63,6 @@
 
 @layer components {
   .text-default {
-    @apply text-t16 text-[#393939] tracking-[-0.03em] leading-[130%];
+    @apply text-[#393939] tracking-[-0.03em] leading-[130%];
   }
 }
