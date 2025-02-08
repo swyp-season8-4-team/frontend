@@ -8,7 +8,6 @@ import I18nService from '@repo/usecase/src/i18nService';
 import { initServerMSW } from '@/mocks';
 import { MockProvider } from '@/mocks/MockProvider';
 import MetadataService from '@/usecases/metadataService';
-import Script from 'next/script';
 import { Fragment } from 'react';
 
 const metadataService = new MetadataService();
@@ -34,8 +33,6 @@ export async function generateStaticParams() {
 
 interface Props extends WithChildren, WithParams {}
 
-const KAKAO_MAP_API_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services,clusterer&autoload=false`;
-
 export default async function RootLayout({
   children,
   params,
@@ -50,12 +47,6 @@ export default async function RootLayout({
   return (
     <html lang={lang}>
       <body>
-        <Script
-          type="text/javascript"
-          strategy="beforeInteractive"
-          src={KAKAO_MAP_API_URL}
-          async={false}
-        />
         <Wrapper>{children}</Wrapper>
       </body>
     </html>
