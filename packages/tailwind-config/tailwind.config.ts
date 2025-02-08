@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
     extend: {
+      cursor: {
+        'not-allowed': 'not-allowed',
+      },
       fontFamily: {
         pretendard: [
           'Pretendard Std Variable',
@@ -30,6 +33,10 @@ export default {
         sidebar: '30',
         navbar: '20',
         tag: '10',
+      },
+      scale: {
+        '200': '2',
+        '250': '2.5'
       },
       colors: {
         primary: {
@@ -84,10 +91,20 @@ export default {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
+        'fadeIn': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'fadeOut': {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        'fadeIn': 'fadeIn 200ms ease-in-out forwards',
+        'fadeOut': 'fadeOut 200ms ease-in-out forwards',
       },
     },
   },
