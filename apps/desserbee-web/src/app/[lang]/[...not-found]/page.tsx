@@ -24,7 +24,7 @@ export default function NotFound() {
           </p>
         </div>
 
-        {/* 버튼들 */}
+        {/* FIXME: 버튼들 디자인 컴포넌트 정해지면 바꾸기 */}
         <div className="flex flex-col gap-3 w-full max-w-xs">
           <button className="w-full py-3 px-6 bg-gray-600 text-white rounded-full" onClick={() => router.back()}>
             이전 페이지로 돌아가기

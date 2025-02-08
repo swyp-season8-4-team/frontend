@@ -37,16 +37,20 @@ export function modifyDefaultHeaders(
   newHeaders['Accept-Encoding'] = 'gzip, deflate';
   newHeaders['Content-Type'] = 'application/json';
 
+  console.log('newHeaders', newHeaders);
+
   if (headers) {
     Object.keys(headers).forEach((key) => {
       if (
         headers[key] &&
-        (key.toLocaleLowerCase() !== 'authorization' || isServer)
+        (key !== 'authorization' || isServer)
       ) {
         newHeaders[key] = headers[key];
       }
     });
   }
+
+  console.log('newHeaders', newHeaders);
 
   return newHeaders;
 }

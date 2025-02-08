@@ -2,9 +2,20 @@ import {
   OAuthSocialProvider,
   type AuthRepository,
   type JWTTokens,
+  type OAuthSignInData,
   type SignInData,
+  type SignUpData,
+  type VerifyEmailData,
+  type VerifyEmailRequestData,
+  type VerifyEmailRequestResponse,
+  type VerifyEmailResponse,
 } from '@repo/entity/src/auth';
 import { NavigationLanguageGroup, NavigationPathGroup } from '@repo/entity/src/navigation';
+
+export enum VerifyEmailPurpose {
+  SIGNUP = 'SIGNUP',
+  RESET_PASSWORD = 'RESET_PASSWORD',
+}
 
 export default class AuthService {
   private readonly authRepository: AuthRepository | null = null;
@@ -50,32 +61,54 @@ export default class AuthService {
     return response;
   }
 
-  async socialSignIn(): Promise<JWTTokens> {
+  async socialSignIn(data: OAuthSignInData): Promise<unknown> {
     if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }
 
-    const response = await this.authRepository.socialSignIn();
+    const response = await this.authRepository.socialSignIn({ data });
 
     return response;
   }
 
-  async signIn({ email, password }: SignInData): Promise<JWTTokens> {
+  async signIn(data: SignInData): Promise<JWTTokens> {
     if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }
 
-    const response = await this.authRepository.signIn({});
+    const response = await this.authRepository.signIn({ data });
 
     return response;
   }
 
-  async signUp(): Promise<void> {
+  async signUp(data: SignUpData, verificationToken?: string): Promise<unknown> {
     if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }
 
-    const response = await this.authRepository.signUp({});
+    console.log('verificationToken', verificationToken);
+
+    const response = await this.authRepository.signUp({ data, authorization: verificationToken });
+
+    return response;
+  }
+
+  async verifyEmail(data: VerifyEmailData): Promise<VerifyEmailResponse> {
+    if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const response = await this.authRepository.verifyEmail({ data });
+
+    return response;
+  }
+
+  async verifyEmailRequest(data: VerifyEmailRequestData): Promise<VerifyEmailRequestResponse> {
+    if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const response = await this.authRepository.verifyEmailRequest({ data });
 
     return response;
   }

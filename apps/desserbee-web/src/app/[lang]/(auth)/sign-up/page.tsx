@@ -2,7 +2,19 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import AuthService, { VerifyEmailPurpose } from '@repo/usecase/src/authService';
+import AuthAPIRespository from '@repo/infrastructures/src/repositories/authAPIRespository';
+import { verifyTokenAction } from '@/actions/verfiyTokenAction';
+import signUpAction from '@/actions/signUpAction';
 
+const authService = new AuthService({
+  authRepository: new AuthAPIRespository(),
+}); 
+
+/**
+ * FIXME: 사인업 디자인 페이지 나오면 수정
+ * 폼 제출로 수정
+ * */ 
 export default function SignUpPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
@@ -55,11 +67,41 @@ export default function SignUpPage() {
       hasErrors = true;
     }
 
-    setErrors(newErrors);
-
-    if (!hasErrors) {
-      setStep(2);
+    if (hasErrors) {
+      setErrors(newErrors);
+      return;
     }
+
+    // await authService.verifyEmailRequest({
+    //   email: formData.email,
+    //   purpose: VerifyEmailPurpose.SIGNUP,
+    // });
+
+    // const response = await authService.verifyEmail({
+    //   email: formData.email,
+    //   code: '971288',
+    //   purpose: VerifyEmailPurpose.SIGNUP,
+    // });
+
+    // if (response.verified) {
+    //   await verifyTokenAction({
+    //     token: response.verificationToken,
+    //   });
+    // }
+
+    // await authService.signUp({
+    //   email: formData.email,
+    //   password: formData.password,
+    //   confirmPassword: formData.password,
+    //   nickname: formData.nickname,
+    // });
+
+    await signUpAction({
+      email: formData.email,
+      password: formData.password,
+      confirmPassword: formData.password,
+      nickname: formData.nickname,
+    });
   };
 
   const handleCancel = () => {

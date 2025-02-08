@@ -5,6 +5,7 @@ import AuthService from "@repo/usecase/src/authService";
 import { NavigationPathname } from "@repo/entity/src/navigation";
 import { OAuthSocialProvider } from "@repo/entity/src/auth";
 import { encrypt } from "@/utils/crypto";
+import { loginAction } from "@/actions/loginAction";
 
 const authService = new AuthService({});
 
@@ -31,22 +32,20 @@ export default async function SignInPage({ searchParams }: Props) {
       <main className="flex flex-col justify-center mt-16 h-full">
         <h2 className="text-2xl font-medium text-center mb-8">로그인</h2>
         
-        <form className="space-y-4">
-          <div>
-            <input
-              type="email"
-              placeholder="이메일을 입력하세요"
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-gray-400"
-            />
-          </div>
-          
-          <div>
-            <input
-              type="password"
-              placeholder="비밀번호를 입력하세요"
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-gray-400"
-            />
-          </div>
+        <form className="space-y-4" action={loginAction}>
+          <input
+            type="email"
+            name="email"
+            placeholder="이메일을 입력하세요"
+            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-gray-400"
+          />
+        
+          <input
+            type="password"
+            name="password"
+            placeholder="비밀번호를 입력하세요"
+            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-gray-400"
+          />
 
           <div className="flex items-center justify-between">
             <label className="flex items-center">
@@ -55,9 +54,15 @@ export default async function SignInPage({ searchParams }: Props) {
             </label>
             <Link href={NavigationPathname.ForgotPassword} className="text-sm text-gray-600">비밀번호 찾기</Link>
           </div>
-
           <button
             type="submit"
+            className="w-full py-3 bg-[#FDB813] text-white rounded-100 font-medium mt-8"
+          >
+            로그인
+          </button>
+
+          <button
+            // href={NavigationPathname.SignUp}
             className="w-full py-3 bg-[#FDB813] text-white rounded-100 font-medium mt-8"
           >
             회원가입
@@ -76,7 +81,7 @@ export default async function SignInPage({ searchParams }: Props) {
           </div>
 
           <div className="mt-6 flex justify-center">
-            <KakaoLogo href={authService.getServerSideUrl(OAuthSocialProvider.KAKAO, state)} />
+            <KakaoLogo />
           </div>
         </div>
       </main>
