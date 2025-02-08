@@ -5,7 +5,6 @@ import MapService from '@repo/usecase/src/mapService';
 import StoreService from '@repo/usecase/src/storeService';
 import KakaoMapController from '@repo/infrastructures/src/controllers/kakaoMapController';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
-import AuthAPIRespository from '@repo/infrastructures/src/repositories/authAPIRespository';
 
 export function useKakaoMap() {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -13,7 +12,6 @@ export function useKakaoMap() {
     mapController: new KakaoMapController(),
   });
   const storeService = new StoreService({
-    authRepository: new AuthAPIRespository(),
     storeRepository: new StoreAPIReopository(),
   });
 

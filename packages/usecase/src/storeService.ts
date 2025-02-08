@@ -5,17 +5,9 @@ import type {
   StoreSummaryData,
 } from '@repo/entity/src/store';
 export default class StoreService {
-  private readonly authRepository: AuthRepository | null;
   private readonly storeRepository: StoreRepository | null;
 
-  constructor({
-    authRepository,
-    storeRepository,
-  }: {
-    authRepository: AuthRepository;
-    storeRepository: StoreRepository;
-  }) {
-    this.authRepository = authRepository ?? null;
+  constructor({ storeRepository }: { storeRepository: StoreRepository }) {
     this.storeRepository = storeRepository ?? null;
   }
 
@@ -77,16 +69,10 @@ export default class StoreService {
     return response;
   }
 
-  async getUserSavedStore(userId: number) {
-    if (!this.authRepository) {
-      throw new Error('authRepository is not set');
-    }
-
+  async getUserSavedStore(authorization: string, userId: number) {
     if (!this.storeRepository) {
       throw new Error('storeRepository is not set');
     }
-
-    const authorization = await this.authRepository.getAuthorization();
 
     const reqestData = {
       data: {
