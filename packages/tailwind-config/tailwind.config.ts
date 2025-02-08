@@ -13,7 +13,7 @@ export default {
         pretendard: [
           'Pretendard Std Variable',
           'Pretendard JP Variable',
-          'Pretendard Variable'
+          'Pretendard Variable',
         ],
         recipeKorea: ['var(--font-recipe-korea)'],
       },
@@ -22,6 +22,14 @@ export default {
       },
       boxShadow: {
         base: '2px 2px 5px 1px #0000000D',
+      },
+      zIndex: {
+        header: '50',
+        modal: '40',
+        bottomSheet: '30',
+        sidebar: '30',
+        navbar: '20',
+        tag: '10',
       },
       colors: {
         primary: {
