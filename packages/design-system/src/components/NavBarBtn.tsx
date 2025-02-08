@@ -1,18 +1,17 @@
 import { cn } from '@repo/ui/lib/utils';
-import type { ReactElement } from 'react';
 
 interface NavBarBtnProps {
-  icon: (isSelected?: boolean) => ReactElement;
+  icon: React.ReactNode;
   text: string;
-  isSelected?: boolean;
-  onClick: () => void;
+  isSelected: boolean;
+  onClick?: () => void;
 }
 
 export function NavBarBtn({ icon, text, isSelected, onClick }: NavBarBtnProps) {
   return (
     <button onClick={onClick}>
       <div className="flex flex-col justify-center items-center">
-        <div>{icon(isSelected)}</div>
+        <div>{icon}</div>
         <div
           className={cn(
             '-tracking-[3%] text-nowrap',

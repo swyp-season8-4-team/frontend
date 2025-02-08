@@ -1,56 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import type { NavBarMenu } from '../types';
 import { NavBarBtn } from './NavBarBtn';
-import { cn } from '@repo/ui/lib/utils';
 
-import IconTalk from './icons/IconTalk';
-import IconLocation from './icons/IconLocation';
-import IconProfile from './icons/IconProfile';
+interface Props {
+  menuList: NavBarMenu[];
+  pathname?: string;
+  onClick: (path: string) => void;
+}
 
-const ICON_CLASS_NAME = (isSelected?: boolean) =>
-  cn(isSelected ? 'text-primary' : 'text-[#cecece]');
-
-const NAVBAR_BUTTON_CONTENT = [
-  {
-    icon: (isSelected?: boolean) => (
-      <IconTalk className={ICON_CLASS_NAME(isSelected)} />
-    ),
-    text: '커뮤니티',
-  },
-  {
-    icon: (isSelected?: boolean) => (
-      <IconLocation className={ICON_CLASS_NAME(isSelected)} />
-    ),
-    text: '지도',
-  },
-  {
-    icon: (isSelected?: boolean) => (
-      <IconProfile className={ICON_CLASS_NAME(isSelected)} />
-    ),
-    text: '마이',
-  },
-];
-
-export function NavBar() {
-  const [selectedIndex, setSelectedIndex] = useState(1);
-  const handleNavBarBtnClick = (index: number) => {
-    setSelectedIndex(index);
-  };
+export function NavBar({ menuList, pathname, onClick }: Props) {
 
   return (
-    <div className="flex justify-center bg-transparent w-full">
-      <div className="flex justify-around bg-white shadow-base mx-[144px] mb-[15px] rounded-[100px] w-full min-w-[480px] h-[72px]">
-        {NAVBAR_BUTTON_CONTENT.map((content, index) => (
-          <NavBarBtn
-            icon={content.icon}
-            text={content.text}
-            key={content.text}
-            isSelected={selectedIndex === index}
-            onClick={() => handleNavBarBtnClick(index)}
-          />
-        ))}
-      </div>
-    </div>
+    <nav className="absolute bottom-[25.66px] left-1/2 -translate-x-1/2 inline-flex items-center justify-center bg-white shadow-[1.313px_1.313px_3.281px_0px_rgba(0,0,0,0.05)] rounded-[65.625px] px-[45.281px] py-[10.5px] gap-[76.125px] md:shadow-[2px_2px_5px_0px_rgba(0,0,0,0.05)] md:rounded-[100px] md:px-[74px] md:py-4 md:gap-28">
+      {menuList.map(({ icon, text, path }) => (
+        <NavBarBtn
+          icon={icon}
+          text={text}
+          key={text}
+          isSelected={path === pathname}
+          onClick={path ? () => onClick(path) : undefined}
+        />
+      ))}
+    </nav>
   );
 }

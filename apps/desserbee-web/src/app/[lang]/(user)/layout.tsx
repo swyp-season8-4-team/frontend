@@ -1,7 +1,9 @@
-import localFont from 'next/font/local';
 import { Header } from '@repo/design-system/components/Header';
-import { NavBar } from '@repo/design-system/components/NavBar';
+import type { WithChildren } from '@repo/ui/index';
+import localFont from 'next/font/local';
+import NavigationContainer from './_components/NavigationContainer';
 import { SearchBarWithHook } from './_components/SearchBarWithHook';
+
 const recipeKorea = localFont({
   src: [
     {
@@ -13,18 +15,16 @@ const recipeKorea = localFont({
   variable: '--font-recipe-korea',
 });
 
-export default function UserLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function UserLayout({
+  children
+}: WithChildren) {
   return (
     <div className="bg-page h-dvh">
       <Header fontClass={recipeKorea.className}>
         <SearchBarWithHook />
       </Header>
       {children}
-      <NavBar />
+      <NavigationContainer />
     </div>
   );
 }
