@@ -1,5 +1,20 @@
-import { isSupportLang, SupportISO639Language, type I18NRepository } from "@repo/entity/src/i18n";
-import { WithStore, type BaseStore } from "./base";
+import {
+  isSupportLang,
+  SupportISO639Language,
+  type I18NRepository,
+} from '@repo/entity/src/i18n';
+import { WithStore, type BaseStore } from './base';
+
+interface FontConfig {
+  variable: string;
+  className: string;
+}
+
+interface FontVariables {
+  ko: FontConfig;
+  ja?: FontConfig;
+  default: FontConfig;
+}
 
 export default class I18nService extends WithStore {
   private readonly repository: I18NRepository | null;
@@ -28,5 +43,17 @@ export default class I18nService extends WithStore {
     }
 
     return lang;
+  }
+
+  getFontConfig(fontVariables: FontVariables): FontConfig {
+    const lang = this.getLang();
+    switch (lang) {
+      case 'ko':
+        return fontVariables.ko;
+      // case 'ja':
+      //   return fontVariables.ja ?? fontVariables.default;
+      default:
+        return fontVariables.default;
+    }
   }
 }
