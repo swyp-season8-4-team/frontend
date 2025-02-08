@@ -35,7 +35,7 @@ export async function middleware(request: NextRequest) {
   // }
 
   const pathnameHasLocale = Object.values(SupportISO639Language).some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
   );
 
   if (!pathnameHasLocale) {
@@ -70,7 +70,7 @@ export const config = {
      * - favicon.ico (favicon file)
      * - robots.txt (control crawler traffic)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|mockServiceWorker.js).*)',
   ],
 };
 
@@ -95,9 +95,7 @@ function getLocale(request: NextRequest): SupportISO639Language {
  * @param request 요청 객체
  * @returns 토큰
  */
-async function getToken(
-  request: NextRequest
-): Promise<string | void> {
+async function getToken(request: NextRequest): Promise<string | void> {
   const { cookies } = request;
 
   // FIXME: cookie key값 미확정
@@ -137,7 +135,7 @@ async function getToken(
   }
 
   const response = await authService.getAuthorization(
-    newAccessToken ?? accessToken
+    newAccessToken ?? accessToken,
   );
 
   if (!response) {

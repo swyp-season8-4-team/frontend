@@ -5,9 +5,10 @@ import type { WithParams } from '@/app';
 import type { WithChildren } from '@repo/ui';
 import { SupportISO639Language } from '@repo/entity/src/i18n';
 import I18nService from '@repo/usecase/src/i18nService';
-import { initMSW } from '@/mocks';
+import { initServerMSW } from '@/mocks';
+import { MockProvider } from '@/mocks/MockProvider';
 import MetadataService from '@/usecases/metadataService';
-import Script from 'next/script';
+import { Fragment } from 'react';
 
 const metadataService = new MetadataService();
 
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 if (process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true') {
-  initMSW();
+  initServerMSW();
 }
 
 export async function generateStaticParams() {
@@ -32,8 +33,6 @@ export async function generateStaticParams() {
 
 interface Props extends WithChildren, WithParams {}
 
-const KAKAO_MAP_API_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services,clusterer&autoload=false`;
-
 export default async function RootLayout({
   children,
   params,
@@ -41,16 +40,14 @@ export default async function RootLayout({
   const i18nService = new I18nService({ store: await params });
   const lang = i18nService.getLang();
 
+  const isMocking = process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true';
+
+  const Wrapper = isMocking ? MockProvider : Fragment;
+
   return (
     <html lang={lang}>
       <body>
-        <Script
-          type="text/javascript"
-          strategy="beforeInteractive"
-          src={KAKAO_MAP_API_URL}
-          async={false}
-        />
-        {children}
+        <Wrapper>{children}</Wrapper>
       </body>
     </html>
   );
