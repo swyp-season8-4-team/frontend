@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 
 export async function httpHandler(request: Request): Promise<Response> {
-  if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
-    return new Response(null, { status: 404, statusText: 'Not Found' });
-  }
+  // if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
+  //   return new Response(null, { status: 404, statusText: 'Not Found' });
+  // }
 
   const endpoint = request.url.replace(
     'http://localhost:3000',

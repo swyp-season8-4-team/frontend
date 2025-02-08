@@ -51,7 +51,10 @@ export default async function RootLayout({
   return (
     <html lang={lang} className={fontCofig.variable}>
       <body className={fontCofig.className}>
-        <Wrapper>{children}</Wrapper>
+        <Wrapper>
+          {children}
+          <div id="modal-portal-container" />
+        </Wrapper>
       </body>
     </html>
   );
