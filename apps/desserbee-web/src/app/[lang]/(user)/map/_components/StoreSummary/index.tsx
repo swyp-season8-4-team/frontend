@@ -6,6 +6,7 @@ import IconPhone from '@repo/design-system/components/icons/IconPhone';
 import IconHome from '@repo/design-system/components/icons/IconHome';
 import IconBaseball from '@repo/design-system/components/icons/IconBaseball';
 import { StoreFeatureIconList } from '../StoreFeatureIconList';
+import { IconSize } from '@repo/design-system/components/icons';
 
 type StoreSummaryProps = Omit<
   StoreSummaryData,
@@ -16,7 +17,7 @@ export function StoreSummary({
   name,
   animalYn,
   tumblerYn,
-  parkingYn, // TODO: ICON에만 쓰이는지, 아래 정보에도 따로 적는지 물어보기
+  parkingYn,
   tags,
   address,
   operatingHours,
@@ -44,27 +45,30 @@ export function StoreSummary({
           ))}
         </span>
       </div>
-      <div className="flex items-center">
-        <IconPin className="text-[#D2D2D2]" />
+      <div className="flex items-center gap-[6px]">
+        <IconPin size={IconSize.xs} className="text-[#D2D2D2]" />
         <div>{address}</div>
       </div>
-      <div className="flex items-start">
-        <IconClock className="text-[#D2D2D2]" />
-        <div>
+      <div>
+        <div className="flex items-center gap-[6px]">
+          <IconClock size={IconSize.xs} className="text-[#D2D2D2]" />
           <div>{operatingHours}</div> {/* TODO: 영업중 [ ]에 영업종료로 변경 */}
+        </div>
+        <div className="flex items-center gap-[22px]">
+          <div></div>
           <div>{closingDays}</div>
         </div>
       </div>
-      <div className="flex items-center">
-        <IconPhone className="text-[#D2D2D2]" />
+      <div className="flex items-center  gap-[6px]">
+        <IconPhone size={IconSize.xs} className="text-[#D2D2D2]" />
         <span>{phone}</span>
       </div>
-      <div className="flex items-center">
-        <IconHome className="text-[#D2D2D2]" />
+      <div className="flex items-center  gap-[6px]">
+        <IconHome size={IconSize.xs} className="text-[#D2D2D2]" />
         <span>{parkingYn && '주차 가능'}예약</span>
       </div>
-      <div className="flex items-center">
-        <IconBaseball className="text-[#D2D2D2]" />
+      <div className="flex items-center  gap-[6px]">
+        <IconBaseball size={IconSize.xs} className="text-[#D2D2D2]" />
         <a className="underline" href={storeLink}>
           {storeLink}
         </a>
