@@ -14,10 +14,11 @@ export interface MapController {
   getCurrentPosition(): Promise<MapPosition>;
   createMap(
     container: HTMLDivElement,
-    position: MapPosition
+    position: MapPosition,
   ): Promise<ExternalMap>;
   createMarkersWithClusterer(
     positions: MapPosition[],
-    markerImageSrc: string
+    markerImageSrc: string,
+    handleMarkerClick: (storeId: number) => void,
   ): void;
 }

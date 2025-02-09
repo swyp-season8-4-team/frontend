@@ -14,8 +14,9 @@ import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPI
 
 interface KakoMapProps {
   children: ReactNode;
+  handleMakerClick: (storeId: number) => void;
 }
-export function KakaoMap({ children }: KakoMapProps) {
+export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapService = new MapService({
     mapController: new KakaoMapController(),
@@ -60,7 +61,11 @@ export function KakaoMap({ children }: KakoMapProps) {
                 longitude: store.longitude,
               }));
 
-              mapService.addMarkersWithClustering(positions, markerImage.src);
+              mapService.addMarkersWithClustering(
+                positions,
+                markerImage.src,
+                handleMakerClick,
+              );
             } catch (error) {
               if (error instanceof Error) {
                 setErrorMessage(error.message);

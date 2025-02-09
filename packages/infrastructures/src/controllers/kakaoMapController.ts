@@ -93,7 +93,11 @@ export default class KakaoMapController implements MapController {
     return marker;
   }
 
-  createMarkersWithClusterer(positions: MapPosition[], markerImageSrc: string) {
+  createMarkersWithClusterer(
+    positions: MapPosition[],
+    markerImageSrc: string,
+    handleMarkerClick: (storeId: number) => void,
+  ) {
     if (!this.map) {
       throw new Error('Map is not initialized');
     }
@@ -107,6 +111,10 @@ export default class KakaoMapController implements MapController {
       };
 
       const marker = this.createCustomMarker(markerPosition, markerImageSrc);
+
+      kakao.maps.event.addListener(marker, 'click', function () {
+        handleMarkerClick(1); // TODO: 클릭한 마커의 storeId 받아올 수 있도록 처리
+      });
 
       markers.push(marker);
       marker.setMap(kakaoMap);
