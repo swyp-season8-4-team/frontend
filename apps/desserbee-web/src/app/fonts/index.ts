@@ -34,6 +34,17 @@ const pretendardSTD = localFont({
   variable: '--font-pretendard-std',
 });
 
+export const recipeKorea = localFont({
+  src: [
+    {
+      path: './RecipeKorea.ttf', // FIXME: 절대경로 안쓸수 있는 설정 방법
+      weight: '400',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-recipe-korea',
+});
+
 export const fontVariables = {
   ko: {
     variable: pretendardKR.variable,

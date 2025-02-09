@@ -1,4 +1,5 @@
 'use client';
+
 import { type ReactNode } from 'react';
 
 import HTMLTag from '@repo/ui/components/HTMLTag';
