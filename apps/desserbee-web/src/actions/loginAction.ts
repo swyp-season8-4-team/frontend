@@ -36,7 +36,7 @@ export async function loginAction(formData: FormData) {
     cookieList.set('refreshToken', response.refreshToken, {
       httpOnly: true,
       secure: isProd,
-      sameSite: 'lax',
+      sameSite: 'strict',
     });
 
     // TODO: redirect after login page

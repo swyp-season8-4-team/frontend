@@ -12,7 +12,7 @@ export enum IconSize {
 
 export interface SVGProps extends WithChildren, WithClassName, WithStyle {
   id?: string;
-  size?: IconSize;
+  size?: IconSize | number;
   viewBox?: string;
   onClick?(event: MouseEvent<SVGElement>): void;
 }

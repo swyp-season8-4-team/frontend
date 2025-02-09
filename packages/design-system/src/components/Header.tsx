@@ -7,7 +7,7 @@ interface HeaderProp {
 
 export function Header({ fontClass, children }: HeaderProp) {
   return (
-    <header className="bg-primary px-base pt-8 w-full text-[22px]">
+    <header className="sticky top-0 bg-primary px-base pt-8 w-full text-[22px]">
       <div
         className={cn(
           fontClass,
