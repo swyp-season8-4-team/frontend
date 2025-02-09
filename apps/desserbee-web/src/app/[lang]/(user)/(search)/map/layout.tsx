@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { headers } from 'next/headers';
 
 export default async function MapLayout({
   children,
@@ -6,7 +6,7 @@ export default async function MapLayout({
   children: React.ReactNode;
 }) {
   const headerList = await headers();
-  const authorization = headerList.get("authorization");
+  const authorization = headerList.get('authorization');
   if (!authorization) {
     return <div>{children}</div>;
   }
