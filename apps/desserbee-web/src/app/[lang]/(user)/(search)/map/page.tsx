@@ -37,11 +37,6 @@ export default function MapPage() {
         <BannerCarousel />
         {/* <Modal buttons={<Button>test</Button>} title="test" visible={true} /> */}
       </div>
-      <div className="flex items-center justify-start">
-        <button onClick={toggleBottomSheet} className="rounded-xl bg-white p-4">
-          open bottom sheet
-        </button>
-      </div>
       <BottomSheetContainer {...bottomSheetProps} />
     </div>
   );
