@@ -14,7 +14,7 @@ export function BottomSheet({
   handleBottomSheetClose,
 }: BottomSheetProps) {
   return (
-    <AnimatePresence initial={false}>
+    <AnimatePresence mode="wait">
       {isBottomSheetOpen && (
         <motion.div
         // TODO: 바텀시트 어떻게 닫히는지 (빈 공간 클릭 OR 드래그)
@@ -33,18 +33,39 @@ export function BottomSheet({
             exit="collapsed"
             onClick={(e) => e.stopPropagation()}
             drag="y"
-            dragConstraints={{ top: 0, bottom: 0 }} // 드래그 제한 범위
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragDirectionLock
+            dragMomentum={false}
             dragElastic={0.2}
             onDragEnd={(_, info) => {
-              if (info.offset.y > 200 || info.velocity.y > 500) {
+              if (info.offset.y > 100 || info.velocity.y > 300) {
                 handleBottomSheetClose();
               }
             }}
             variants={{
-              open: { y: 0, height: 'auto' },
-              collapsed: { y: '100%', height: 0 },
+              open: {
+                y: 0,
+                height: '500px',
+                transition: {
+                  type: 'spring',
+                  damping: 25,
+                  stiffness: 200,
+                  mass: 0.8,
+                  restDelta: 0.001,
+                },
+              },
+              collapsed: {
+                y: '100%',
+                height: 0,
+                transition: {
+                  type: 'spring',
+                  damping: 25,
+                  stiffness: 200,
+                  mass: 0.8,
+                  restDelta: 0.001,
+                },
+              },
             }}
-            transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
           >
             <div>
               <div className="w-full flex justify-center items-center">
