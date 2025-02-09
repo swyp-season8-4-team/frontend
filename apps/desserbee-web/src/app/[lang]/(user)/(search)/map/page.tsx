@@ -13,19 +13,20 @@ import { useBottomSheet } from '../_hooks/useBottomSheet';
 export default function MapPage() {
   const [selectedStoreId, setSelectedStoreId] = useState<number>(1);
 
-  const { isBottomSheetOpen, toggleBottomSheet } = useBottomSheet();
+  const { isBottomSheetOpen, handleBottomSheetOpen, handleBottomSheetClose } =
+    useBottomSheet();
 
   const kakaoMapProps = {
     handleMakerClick: (storeId: number) => {
       setSelectedStoreId(storeId);
-      toggleBottomSheet();
+      handleBottomSheetOpen();
     },
   };
 
   const bottomSheetProps = {
     storeId: selectedStoreId,
     isBottomSheetOpen,
-    toggleBottomSheet,
+    handleBottomSheetClose,
   };
 
   return (

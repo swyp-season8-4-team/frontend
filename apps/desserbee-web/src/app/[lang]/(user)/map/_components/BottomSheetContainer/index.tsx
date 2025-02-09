@@ -10,19 +10,19 @@ import { useStoreSummary } from '../../../_hooks/useStoreSummary';
 interface BottomSheetProps {
   storeId: number;
   isBottomSheetOpen: boolean;
-  toggleBottomSheet: () => void;
+  handleBottomSheetClose: () => void;
 }
 
 export function BottomSheetContainer({
   storeId,
   isBottomSheetOpen,
-  toggleBottomSheet,
+  handleBottomSheetClose,
 }: BottomSheetProps) {
   const { storeSummary } = useStoreSummary(storeId);
 
   const bottomSheetProps = {
     isBottomSheetOpen,
-    toggleBottomSheet,
+    handleBottomSheetClose,
   };
 
   if (!storeSummary) return null;

@@ -5,13 +5,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 interface BottomSheetProps {
   children: ReactNode;
   isBottomSheetOpen: boolean;
-  toggleBottomSheet: () => void;
+  handleBottomSheetClose: () => void;
 }
 
 export function BottomSheet({
   children,
   isBottomSheetOpen,
-  toggleBottomSheet,
+  handleBottomSheetClose,
 }: BottomSheetProps) {
   return (
     <AnimatePresence initial={false}>
@@ -37,7 +37,7 @@ export function BottomSheet({
             dragElastic={0.2}
             onDragEnd={(_, info) => {
               if (info.offset.y > 200 || info.velocity.y > 500) {
-                toggleBottomSheet();
+                handleBottomSheetClose();
               }
             }}
             variants={{
@@ -48,7 +48,7 @@ export function BottomSheet({
           >
             <div>
               <div className="w-full flex justify-center items-center">
-                <div className="border-[3px] rounded-[5px] w-[115.5px] border-[#545454]"></div>
+                <div className="border-[3px] rounded-[5px] w-[115.5px] border-[#545454] mb-[21px]"></div>
               </div>
               {children}
             </div>

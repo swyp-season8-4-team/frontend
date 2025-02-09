@@ -3,12 +3,17 @@ import { useState } from 'react';
 export function useBottomSheet() {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
-  const toggleBottomSheet = () => {
-    setIsBottomSheetOpen((prev) => !prev);
+  const handleBottomSheetOpen = () => {
+    setIsBottomSheetOpen(true);
+  };
+
+  const handleBottomSheetClose = () => {
+    setIsBottomSheetOpen(false);
   };
 
   return {
     isBottomSheetOpen,
-    toggleBottomSheet,
+    handleBottomSheetOpen,
+    handleBottomSheetClose,
   };
 }
