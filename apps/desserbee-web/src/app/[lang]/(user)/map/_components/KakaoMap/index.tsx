@@ -77,7 +77,7 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
 
       <div
         ref={mapRef}
-        className="relative bg-gray-100 my-[26px] rounded-base w-full h-100vh min-h-[574px] overflow-x-hidden"
+        className="relative bg-gray-100 my-[26px] rounded-base w-full h-[calc(100dvh-480px)]  overflow-hidden"
       >
         {errorMessage ? errorMessage : children}
       </div>

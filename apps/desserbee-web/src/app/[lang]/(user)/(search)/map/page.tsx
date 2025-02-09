@@ -30,8 +30,8 @@ export default function MapPage() {
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="px-base">
+    <div className="overflow-hidden">
+      <div className="px-base h-full">
         <KakaoMap {...kakaoMapProps}>
           <PreferenceTags categories={CATEGORIES} />
         </KakaoMap>
