@@ -14,24 +14,19 @@ interface HexagonProps {
   bgColor?: string;
 }
 
-function Hexagon({
-  className,
-  content,
-  bgColor = 'bg-primary',
-  imgSrc,
-}: HexagonProps) {
+function Hexagon({ className, content, imgSrc }: HexagonProps) {
   return (
     <div
       className={cn(
         'w-[35%] absolute ',
         'before:content-[""] before:block before:pt-[86.6%]',
         'before:[clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)]',
-        `before:${bgColor}`,
+        'before:bg-primary',
         className,
       )}
     >
       {content && (
-        <div className="absolute inset-0 flex justify-center items-center text-white">
+        <div className="absolute inset-0 flex justify-center items-center text-white text-[16.8px] font-bold">
           {content}
         </div>
       )}
