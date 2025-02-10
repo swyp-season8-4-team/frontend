@@ -3,7 +3,7 @@
 import { SearchBar } from '@repo/design-system/components/SearchBar';
 import { useSearch } from '../_hooks/useSearch';
 
-export function SearchBarWithHook() {
+export function SearchBarContainer() {
   const { searchTerm, placeHolder, onChange, onSearch } = useSearch();
 
   return (

@@ -68,11 +68,16 @@ export default class MapService {
   async addMarkersWithClustering(
     positions: MapPosition[],
     markerImageSrc: string,
+    handleMakerClick: (storeId: number) => void,
   ) {
     if (!this.mapController) {
       throw new Error('mapController is not set');
     }
 
-    this.mapController.createMarkersWithClusterer(positions, markerImageSrc);
+    this.mapController.createMarkersWithClusterer(
+      positions,
+      markerImageSrc,
+      handleMakerClick,
+    );
   }
 }

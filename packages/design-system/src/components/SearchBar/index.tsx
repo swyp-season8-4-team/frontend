@@ -1,5 +1,5 @@
-import { IconSize } from './icons';
-import IconSearch from './icons/IconSearch';
+import { IconSize } from '../icons';
+import IconSearch from '../icons/IconSearch';
 
 interface SearchBarProps {
   searchTerm: string;

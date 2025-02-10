@@ -36,8 +36,20 @@ export default {
       },
       scale: {
         '200': '2',
-        '250': '2.5'
+        '250': '2.5',
       },
+      fontSize: {
+        t14: '14px',
+        t16: '16px',
+        t18: '18px',
+        t20: '20px',
+        t22: '22px',
+        t24: '24px',
+        t26: '26px',
+        t28: '28px',
+        t30: '30px',
+      },
+      lineHeight: {},
       colors: {
         primary: {
           DEFAULT: '#FFB700',
@@ -49,6 +61,7 @@ export default {
         },
         disabled: '#714115',
         page: '#F6F6F6',
+
         // shadcn 변수들
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -91,11 +104,11 @@ export default {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
-        'fadeIn': {
+        fadeIn: {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
-        'fadeOut': {
+        fadeOut: {
           '0%': { opacity: '1' },
           '100%': { opacity: '0' },
         },
@@ -103,8 +116,8 @@ export default {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'fadeIn': 'fadeIn 200ms ease-in-out forwards',
-        'fadeOut': 'fadeOut 200ms ease-in-out forwards',
+        fadeIn: 'fadeIn 200ms ease-in-out forwards',
+        fadeOut: 'fadeOut 200ms ease-in-out forwards',
       },
     },
   },

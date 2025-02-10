@@ -5,8 +5,8 @@ import {
   CarouselItem,
   Autoplay,
 } from '@repo/ui/components/carousel';
-import { BANNERS } from '../_consts/banner';
-import bee from '../_assets/svg/logo-bee.svg';
+import { BANNERS } from '../../_consts/banner';
+import bee from '../../_assets/svg/logo-bee.svg';
 import Image from 'next/image';
 
 export function BannerCarousel() {

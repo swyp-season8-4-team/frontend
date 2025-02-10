@@ -60,3 +60,9 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+@layer components {
+  .text-default {
+    @apply text-[#393939] tracking-[-0.03em] leading-[130%];
+  }
+}

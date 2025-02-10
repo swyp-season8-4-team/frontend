@@ -11,7 +11,7 @@ export function NavBarBtn({ icon, text, isSelected, onClick }: NavBarBtnProps) {
   return (
     <button onClick={onClick}>
       <div className="flex flex-col justify-center items-center">
-        <div>{icon}</div>
+        <div className="mb-2">{icon}</div>
         <div
           className={cn(
             '-tracking-[3%] text-nowrap',

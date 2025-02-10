@@ -23,6 +23,16 @@ const NextFunctionConfig = async (phase: any) => {
 
       return config;
     },
+    images: {
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: 'picsum.photos',
+          port: '',
+          pathname: '/**',
+        },
+      ], // 외부 이미지 도메인 추가 //TODO: 나중에 실제 데이터 받으면 변경
+    },
   };
 
   return nextConfig;

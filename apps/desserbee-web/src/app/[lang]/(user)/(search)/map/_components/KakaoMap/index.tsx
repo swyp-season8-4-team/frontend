@@ -4,7 +4,7 @@ import { useRef, useState, type ReactNode } from 'react';
 import Script from 'next/script';
 import type { MapPosition } from '@repo/entity/src/map';
 
-import markerImage from '../_assets/svg/icon-marker.svg'; // 이미지 import
+import markerImage from '../../_assets/svg/icon-marker.svg'; // 이미지 import
 
 import MapService from '@repo/usecase/src/mapService';
 import StoreService from '@repo/usecase/src/storeService';
@@ -14,8 +14,9 @@ import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPI
 
 interface KakoMapProps {
   children: ReactNode;
+  handleMakerClick: (storeId: number) => void;
 }
-export function KakaoMap({ children }: KakoMapProps) {
+export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapService = new MapService({
     mapController: new KakaoMapController(),
@@ -60,7 +61,11 @@ export function KakaoMap({ children }: KakoMapProps) {
                 longitude: store.longitude,
               }));
 
-              mapService.addMarkersWithClustering(positions, markerImage.src);
+              mapService.addMarkersWithClustering(
+                positions,
+                markerImage.src,
+                handleMakerClick,
+              );
             } catch (error) {
               if (error instanceof Error) {
                 setErrorMessage(error.message);
@@ -72,7 +77,7 @@ export function KakaoMap({ children }: KakoMapProps) {
 
       <div
         ref={mapRef}
-        className="relative bg-gray-100 my-[26px] rounded-base w-full h-100vh min-h-[574px] overflow-x-hidden"
+        className="relative bg-gray-100 my-[26px] rounded-base w-full h-[calc(100dvh-480px)]  overflow-hidden"
       >
         {errorMessage ? errorMessage : children}
       </div>
