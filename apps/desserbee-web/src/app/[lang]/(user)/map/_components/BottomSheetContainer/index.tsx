@@ -1,7 +1,7 @@
 'use client';
 
 import { BottomSheet } from '@repo/design-system/components/BottomSheet';
-import HexagonGrid from '@repo/design-system/components/HexagonGrid';
+import { HexagonGrid } from '@repo/design-system/components/HexagonGrid';
 
 import { StoreSummary } from '../StoreSummary';
 import { StorePreviewPicList } from '../StorePreviewPicList';
@@ -40,6 +40,10 @@ export function BottomSheetContainer({
     storeLink: storeSummary.storeLink,
   };
 
+  const hexaGridProps = {
+    contents: ['비건', '로우슈거', '글루텐프리'],
+    previewImages: storeSummary.storeImages,
+  };
   const storePreviewPicListProps = {
     storeImages: storeSummary.storeImages,
   };
@@ -47,7 +51,7 @@ export function BottomSheetContainer({
   return (
     <BottomSheet {...bottomSheetProps}>
       <div className="flex mb-[37px]">
-        <HexagonGrid />
+        <HexagonGrid {...hexaGridProps} />
         <StoreSummary {...storeSummaryProps} />
       </div>
       <StorePreviewPicList {...storePreviewPicListProps} />
