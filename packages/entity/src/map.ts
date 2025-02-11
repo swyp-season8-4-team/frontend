@@ -21,4 +21,5 @@ export interface MapController {
     markerImageSrc: string,
     handleMarkerClick: (storeId: number) => void,
   ): void;
+  destroyMap(): void;
 }
