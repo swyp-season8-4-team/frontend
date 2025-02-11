@@ -1,5 +1,9 @@
 import Image from 'next/image';
-import dogIcon from '../../_assets/svg/icon-dog.svg';
+// import dogIcon from '../../_assets/svg/icon-dog.svg';
+import IconCar from '@repo/design-system/components/icons/IconCar';
+import IconDog from '@repo/design-system/components/icons/IconDog';
+import IconTumbler from '@repo/design-system/components/icons/IconTumbler';
+import { IconSize } from '@repo/design-system/components/icons';
 
 interface StoreFeatureIconListProps {
   animalYn: boolean;
@@ -12,27 +16,21 @@ export function StoreFeatureIconList({
   parkingYn,
   tumblerYn,
 }: StoreFeatureIconListProps) {
-  const storeFeaturesClass =
-    'flex justify-center items-center w-7 h-7 bg-[#E8E8E8] rounded-full mr-[6px]';
-
   const featureList = [
-    {
-      key: 'animalYn',
-      status: animalYn,
-      src: dogIcon,
-      alt: '동물 입장 가능',
-    },
     {
       key: 'parkingYn',
       status: parkingYn,
-      src: dogIcon, //TODO:아이콘인지 불분명
-      alt: '주차 가능',
+      icon: <IconCar size={IconSize.l} className="text-[#FF6535]" />,
+    },
+    {
+      key: 'animalYn',
+      status: animalYn,
+      icon: <IconDog size={IconSize.l} />,
     },
     {
       key: 'tumblerYn',
       status: tumblerYn,
-      src: dogIcon,
-      alt: '텀블러 사용 가능', //TODO: 아이콘인지 불분명
+      icon: <IconTumbler size={IconSize.l} />,
     },
   ];
 
@@ -41,9 +39,9 @@ export function StoreFeatureIconList({
       {featureList.map(
         (feature) =>
           feature.status && (
-            <span key={feature.key} className={storeFeaturesClass}>
-              <Image src={feature.src} alt={feature.alt} />
-            </span>
+            <div key={feature.key} className="ml-1">
+              {feature.icon}
+            </div>
           ),
       )}
     </span>
