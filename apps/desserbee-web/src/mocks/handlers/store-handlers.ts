@@ -124,6 +124,8 @@ export const storeHandlers = [
       storeImages: [
         'https://picsum.photos/id/46/800/600',
         'https://picsum.photos/id/47/800/600',
+        'https://picsum.photos/id/48/800/600',
+        'https://picsum.photos/id/49/800/600',
       ],
       storeReviews: [
         {
@@ -157,6 +159,8 @@ export const storeHandlers = [
       storeImages: [
         'https://picsum.photos/id/42/800/600',
         'https://picsum.photos/id/43/800/600',
+        'https://picsum.photos/id/48/800/600',
+        'https://picsum.photos/id/49/800/600',
       ],
     };
 
