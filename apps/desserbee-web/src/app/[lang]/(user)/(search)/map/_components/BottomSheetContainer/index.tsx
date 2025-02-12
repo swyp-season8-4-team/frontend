@@ -32,6 +32,7 @@ export function BottomSheetContainer({
     animalYn: storeSummary.animalYn,
     tumblerYn: storeSummary.tumblerYn,
     parkingYn: storeSummary.parkingYn,
+    averageRating: storeSummary.averageRating,
     tags: storeSummary.tags,
     address: storeSummary.address,
     operatingHours: storeSummary.operatingHours,

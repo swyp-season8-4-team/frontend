@@ -18,7 +18,7 @@ function Hexagon({ className, content, imgSrc }: HexagonProps) {
   return (
     <div
       className={cn(
-        'w-[35%] absolute ',
+        'w-[36%] absolute ',
         'before:content-[""] before:block before:pt-[86.6%]',
         'before:[clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)]',
         'before:bg-primary',
@@ -51,16 +51,16 @@ export function HexagonGrid({
   previewImages: string[];
 }) {
   const hexagonConfig: HexagonConfig[] = [
-    { type: 'text', position: 'top-0 left-0' },
-    { type: 'text', position: 'top-[17%] left-[28%]' },
-    { type: 'text', position: 'top-0 left-[56%]' },
-    { type: 'image', position: 'top-[33%] left-0' },
-    { type: 'image', position: 'top-[49%] left-[28%]' },
-    { type: 'image', position: 'top-[33%] left-[56%]' },
+    { type: 'text', position: 'top-[10%] left-0' },
+    { type: 'text', position: 'top-[26%] left-[29%]' },
+    { type: 'text', position: 'top-[10%] left-[58%]' },
+    { type: 'image', position: 'top-[43%] left-0' },
+    { type: 'image', position: 'top-[59%] left-[29%]' },
+    { type: 'image', position: 'top-[43%] left-[58%]' },
   ];
 
   return (
-    <div className="relative aspect-square w-[90vw] h-[90vw] max-w-[300px] max-h-[300px] ">
+    <div className="relative aspect-square  h-full w-full max-w-[250px]">
       {hexagonConfig.map((config, index) => (
         <Hexagon
           key={index}
