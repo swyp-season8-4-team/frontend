@@ -33,7 +33,7 @@ export function StoreSummary({
 
   return (
     <div className="flex flex-col gap-y-2">
-      <div className="flex items-center mb-[10px]">
+      <div className="flex items-center mb-[31px]">
         <StoreFeatureIconList {...storeFeatureIconListProps} />
         <IconStar className="text-[#FFB700] mx-2" />
         <span className="text-xl">{averageRating}</span>
@@ -51,16 +51,17 @@ export function StoreSummary({
       </div>
       <div className="flex items-center gap-[6px]">
         <IconPin size={IconSize.xs} className="text-[#BABABA]" />
-        <div>{address}</div>
+        <span>{address}</span>
       </div>
       <div>
         <div className="flex items-center gap-[6px]">
           <IconClock size={IconSize.xs} className="text-[#BABABA]" />
-          <div>{operatingHours}</div> {/* TODO: 영업중 [ ]에 영업종료로 변경 */}
+          <span>{operatingHours}</span>{' '}
+          {/* TODO: 영업중 [ ]에 영업종료로 변경 */}
         </div>
         <div className="flex items-center gap-[22px]">
-          <div></div>
-          <div>{closingDays}</div>
+          <span></span>
+          <span>{closingDays}</span>
         </div>
       </div>
       <div className="flex items-center  gap-[6px]">
