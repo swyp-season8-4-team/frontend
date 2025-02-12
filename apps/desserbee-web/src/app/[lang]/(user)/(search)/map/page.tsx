@@ -7,7 +7,7 @@ import { BottomSheetContainer } from './_components/BottomSheetContainer';
 import { KakaoMap } from './_components/KakaoMap';
 import { PreferenceTags } from './_components/PreferenceTags';
 
-import { CATEGORIES } from './_consts/tag';
+import { CATEGORIES, USER_PREFERENCES } from './_consts/tag';
 import { useBottomSheet } from '../_hooks/useBottomSheet';
 
 export default function MapPage() {
@@ -33,7 +33,10 @@ export default function MapPage() {
     <div className="overflow-hidden">
       <div className="px-base h-full">
         <KakaoMap {...kakaoMapProps}>
-          <PreferenceTags categories={CATEGORIES} />
+          <PreferenceTags
+            userPreferences={USER_PREFERENCES}
+            categories={CATEGORIES}
+          />
         </KakaoMap>
         <BannerCarousel />
         {/* <Modal buttons={<Button>test</Button>} title="test" visible={true} /> */}

@@ -11,3 +11,11 @@ export const CATEGORIES = [
   '꿀조합',
   '키토제닉',
 ];
+
+export const USER_PREFERENCES = [
+  '비건',
+  '락토프리',
+  '로컬라이징',
+  '꿀조합',
+  '키토제닉',
+];
