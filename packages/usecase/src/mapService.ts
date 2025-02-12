@@ -80,4 +80,12 @@ export default class MapService {
       handleMakerClick,
     );
   }
+
+  destroyMap() {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+
+    this.mapController.destroyMap();
+  }
 }

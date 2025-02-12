@@ -69,7 +69,7 @@ export function BottomSheet({
           >
             <div>
               <div className="w-full flex justify-center items-center">
-                <div className="border-[3px] rounded-[5px] w-[115.5px] border-[#545454] mb-[21px]"></div>
+                <div className="border-[3px] rounded-[5px] w-[115.5px] h- border-[#545454] mb-[21px]"></div>
               </div>
               {children}
             </div>

@@ -131,4 +131,10 @@ export default class KakaoMapController implements MapController {
     // 클러스터러에 마커들을 추가
     clusterer.addMarkers(markers);
   }
+
+  destroyMap() {
+    if (this.map) {
+      this.map = null;
+    }
+  }
 }

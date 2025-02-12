@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Script from 'next/script';
 import type { MapPosition } from '@repo/entity/src/map';
 
@@ -29,6 +29,53 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
 
   const KAKAO_MAP_API_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services,clusterer&autoload=false`;
 
+  const loadMap = async () => {
+    const container = mapRef.current;
+    if (!container) return;
+
+    try {
+      const result = await mapService.getCurrentPosition();
+
+      if ('errorMessage' in result) {
+        setErrorMessage(result.errorMessage as string); // geoLocation error
+        return;
+      }
+
+      await mapService.initializeMap(container, result);
+
+      const stores = await storeService.getNearbyStores({
+        latitude: result.latitude,
+        longitude: result.longitude,
+        radius: 2,
+      });
+
+      const positions: MapPosition[] = stores.map((store) => ({
+        latitude: store.latitude,
+        longitude: store.longitude,
+      }));
+
+      mapService.addMarkersWithClustering(
+        positions,
+        markerImage.src,
+        handleMakerClick,
+      );
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (window.kakao?.maps) {
+      loadMap();
+    }
+
+    return () => {
+      mapService.destroyMap();
+    };
+  }, []);
+
   return (
     <div>
       <Script
@@ -37,40 +84,7 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
         src={KAKAO_MAP_API_URL}
         onLoad={() => {
           window.kakao.maps.load(async () => {
-            const container = mapRef.current;
-            if (!container) return;
-
-            try {
-              const result = await mapService.getCurrentPosition();
-
-              if ('errorMessage' in result) {
-                setErrorMessage(result.errorMessage as string); // geoLocation error
-                return;
-              }
-
-              await mapService.initializeMap(container, result);
-
-              const stores = await storeService.getNearbyStores({
-                latitude: result.latitude,
-                longitude: result.longitude,
-                radius: 2,
-              });
-
-              const positions: MapPosition[] = stores.map((store) => ({
-                latitude: store.latitude,
-                longitude: store.longitude,
-              }));
-
-              mapService.addMarkersWithClustering(
-                positions,
-                markerImage.src,
-                handleMakerClick,
-              );
-            } catch (error) {
-              if (error instanceof Error) {
-                setErrorMessage(error.message);
-              }
-            }
+            loadMap();
           });
         }}
       />
