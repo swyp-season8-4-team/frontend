@@ -10,7 +10,7 @@ export function Tag({ children, className }: TagProps) {
   return (
     <button
       className={cn(
-        'shadow-base px-4 py-2 rounded-[48.78px]  bg-white',
+        'shadow-base px-3 py-2 rounded-[24px]  bg-white',
         className,
       )}
     >
