@@ -1,25 +1,25 @@
 'use client';
 
 import { usePathname, useRouter } from 'next/navigation';
-import IconLocation from '@repo/design-system/components/icons/IconLocation';
-import IconTalk from '@repo/design-system/components/icons/IconTalk';
-import IconProfile from '@repo/design-system/components/icons/IconProfile';
+import IconLocationOutline from '@repo/design-system/components/icons/IconLocationOutline';
+import IconTalkOutline from '@repo/design-system/components/icons/IconTalkOutline';
+import IconProfileOutline from '@repo/design-system/components/icons/IconProfileOutline';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import { NavBar } from '@repo/design-system/components/NavBar';
 
 const NAVBAR_BUTTON_CONTENT = [
   {
-    icon: <IconTalk />,
+    icon: <IconLocationOutline />,
     text: '커뮤니티',
     path: NavigationPathname.Community,
   },
   {
-    icon: <IconLocation />,
+    icon: <IconTalkOutline />,
     text: '지도',
     path: NavigationPathname.Map,
   },
   {
-    icon: <IconProfile />,
+    icon: <IconProfileOutline />,
     text: '마이',
     path: NavigationPathname.MyPage,
   },
@@ -27,6 +27,9 @@ const NAVBAR_BUTTON_CONTENT = [
 
 export default function NavigationContainer() {
   const pathname = usePathname();
+  const normalizedPath = pathname.split('/', 3)[2];
+  const currentPathName = `/${normalizedPath}`;
+
   const router = useRouter();
 
   const handleMenuClick = (path: string) => {
@@ -36,7 +39,7 @@ export default function NavigationContainer() {
   return (
     <NavBar
       menuList={NAVBAR_BUTTON_CONTENT}
-      pathname={pathname}
+      pathname={currentPathName}
       onClick={handleMenuClick}
     />
   );
