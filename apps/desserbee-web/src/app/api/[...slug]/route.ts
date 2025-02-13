@@ -1,6 +1,5 @@
-import { NextResponse } from 'next/server';
+// import { NextResponse } from 'next/server';
 import { httpHandler } from '.';
-
 
 export async function GET(request: Request) {
   // if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
