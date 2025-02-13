@@ -106,11 +106,10 @@ async function getToken(request: NextRequest): Promise<string | void> {
   const { cookies } = request;
 
   // FIXME: cookie key값 미확정
-  const accessToken = cookies.get('access_token')?.value;
-  const refreshToken = cookies.get('refresh_token')?.value;
+  const accessToken = cookies.get('accessToken')?.value;
 
   // 둘다 없으면 로그인을 다시 해야하는것
-  if (!accessToken || !refreshToken) {
+  if (!accessToken) {
     return;
   }
 
@@ -122,7 +121,6 @@ async function getToken(request: NextRequest): Promise<string | void> {
   }
 
   const isAccessTokenExpired = isExpiredJWT(accessToken);
-  const isRefreshTokenExpired = isExpiredJWT(refreshToken);
 
   let newAccessToken: string | null = null;
 
@@ -131,14 +129,11 @@ async function getToken(request: NextRequest): Promise<string | void> {
   });
 
   if (isAccessTokenExpired) {
-    if (isRefreshTokenExpired) {
-      return;
-    }
 
     // 리프레시 토큰을 가지고 다시 accessToken 발급
-    const { accessToken }: { accessToken: string } =
-      await authService.refreshAccessToken(refreshToken);
-    newAccessToken = accessToken;
+    const { accessToken: updatedAccessToken }: { accessToken: string } =
+      await authService.refreshAccessToken(accessToken);
+    newAccessToken = updatedAccessToken;
   }
 
   const response = await authService.getAuthorization(

@@ -12,7 +12,6 @@ export default function KakaoLogo() {
 
   const handleClick = async () => {
     const response = await authService.socialSignIn({ provider: OAuthSocialProvider.KAKAO });
-    console.log(response);
   }
 
   return (
