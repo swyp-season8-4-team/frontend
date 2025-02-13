@@ -9,7 +9,7 @@ export default class MetadataService {
     return '';
   }
   get permissionsPolicy() {
-    const domain = process.env.NEXT_PUBLIC_APP_ENV;
+    const domain = process.env.NEXT_PUBLIC_APP_HOST;
 
     return `geolocation=(self '${domain}')`;
   }
