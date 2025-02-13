@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  const authorization = requestHeaders.get('authorization');
+  // const authorization = requestHeaders.get('authorization');
 
   // TODO: 로그인 여부에 따른 페이지 접근 권한 체크
   // const authService = new AuthService({});

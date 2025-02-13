@@ -1,11 +1,11 @@
 'use client';
 
-import { NavBar } from '@repo/design-system/components/NavBar';
 import { usePathname, useRouter } from 'next/navigation';
 import IconLocation from '@repo/design-system/components/icons/IconLocation';
 import IconTalk from '@repo/design-system/components/icons/IconTalk';
 import IconProfile from '@repo/design-system/components/icons/IconProfile';
 import { NavigationPathname } from '@repo/entity/src/navigation';
+import { NavBar } from '@repo/design-system/components/NavBar';
 
 const NAVBAR_BUTTON_CONTENT = [
   {

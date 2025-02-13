@@ -2,7 +2,7 @@ import IconCar from '@repo/design-system/components/icons/IconCar';
 import IconDog from '@repo/design-system/components/icons/IconDog';
 import IconTumbler from '@repo/design-system/components/icons/IconTumbler';
 import { IconSize } from '@repo/design-system/components/icons';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface StoreFeatureIconListProps {
   animalYn: boolean;
@@ -53,11 +53,11 @@ export function StoreFeatureIconList({
 
   useEffect(() => {
     if (selectedIconIndex !== null) {
-      setTimeoutId(
-        setTimeout(() => {
-          setSelectedIconIndex(null);
-        }, 1500),
-      );
+      const newTimeoutId = setTimeout(() => {
+        setSelectedIconIndex(null);
+      }, 1500);
+
+      setTimeoutId(newTimeoutId);
     }
 
     return () => {
