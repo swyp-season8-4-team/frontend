@@ -14,7 +14,7 @@ export function BottomSheet({
   handleBottomSheetClose,
 }: BottomSheetProps) {
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence mode="sync">
       {isBottomSheetOpen && (
         <motion.div
         // TODO: 바텀시트 어떻게 닫히는지 (빈 공간 클릭 OR 드래그)
@@ -26,7 +26,7 @@ export function BottomSheet({
           <motion.div
             layoutId="bottomSheet"
             style={{ willChange: 'transform' }}
-            className="fixed bottom-0 left-0 right-0  w-full rounded-t-base bg-white px-base pt-[19px]  z-bottomSheet"
+            className="fixed bottom-0 left-0 right-0  w-full rounded-t-base bg-white px-base pt-[19px] pb-4  z-bottomSheet"
             key="content"
             initial="collapsed"
             animate="open"
@@ -36,7 +36,7 @@ export function BottomSheet({
             dragConstraints={{ top: 0, bottom: 0 }}
             dragDirectionLock
             dragMomentum={false}
-            dragElastic={0.2}
+            dragElastic={0}
             onDragEnd={(_, info) => {
               if (info.offset.y > 100 || info.velocity.y > 300) {
                 handleBottomSheetClose();
@@ -45,13 +45,13 @@ export function BottomSheet({
             variants={{
               open: {
                 y: 0,
-                height: '500px',
+                height: '50%',
                 transition: {
                   type: 'spring',
-                  damping: 25,
-                  stiffness: 200,
-                  mass: 0.8,
-                  restDelta: 0.001,
+                  damping: 20,
+                  stiffness: 150,
+                  restDelta: 0.0001,
+                  restSpeed: 0.0001,
                 },
               },
               collapsed: {
@@ -60,9 +60,9 @@ export function BottomSheet({
                 transition: {
                   type: 'spring',
                   damping: 25,
-                  stiffness: 200,
-                  mass: 0.8,
-                  restDelta: 0.001,
+                  stiffness: 120,
+                  restDelta: 0.0001,
+                  restSpeed: 0.0001,
                 },
               },
             }}
