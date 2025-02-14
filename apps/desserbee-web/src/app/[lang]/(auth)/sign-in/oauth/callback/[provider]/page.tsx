@@ -3,7 +3,6 @@ import { decrypt } from "@/utils/crypto";
 import { isOAuthSocialProvider } from "@repo/entity/src/auth";
 import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import OAuthLoading from "../_components/OAuthLoading";
 
 const OAuthCallbackLoader = dynamic(() => import('../_components/OAuthCallbackLoader'));

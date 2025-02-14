@@ -9,10 +9,17 @@ import AuthAPIRespository from '@repo/infrastructures/src/repositories/authAPIRe
 const savedTokens: { [key: string]: string } = {};
 
 export async function middleware(request: NextRequest) {
-  const { headers } = request;
+  const { headers, cookies } = request;
   const { pathname } = request.nextUrl;
 
   const requestHeaders = new Headers(headers);
+
+  // const verificationToken = cookies.get('verificationToken')?.value;
+  // console.log('verificationToken', verificationToken);
+  // if (verificationToken) {
+  //   requestHeaders.set('X-Email-Verification-Token', `${verificationToken}`);
+  // }
+
   const token = await getToken(request);
   if (token) {
     requestHeaders.set('authorization', `Bearer ${token}`);

@@ -12,7 +12,7 @@ const authService = new AuthService({
 export async function loginAction(formData: FormData) {
   const email = formData.get('email');
   const password = formData.get('password');
-
+  
   // TODO: 유효성 검사 리턴 타입
   if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
     return;
@@ -22,6 +22,7 @@ export async function loginAction(formData: FormData) {
     const response = await authService.signIn({
       email,
       password,
+      keepLoggedIn: false,
     });
 
     const cookieList = await cookies();
@@ -31,12 +32,6 @@ export async function loginAction(formData: FormData) {
       httpOnly: true,
       secure: isProd,
       sameSite: 'lax',
-    });
-
-    cookieList.set('refreshToken', response.refreshToken, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: 'strict',
     });
 
     // TODO: redirect after login page

@@ -1,10 +1,8 @@
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { AuthRepository, JWTTokens, SignInData } from '@repo/entity/src/auth';
+import type { AuthRepository, JWTTokens, SignInData, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
 import { headers } from 'next/headers';
 
 export default class AuthNextAppRouteRepository implements AuthRepository {
-  
-  
   async getAuthorization(): Promise<string | null> {
     return (await headers()).get('authorization');
   }
@@ -31,6 +29,12 @@ export default class AuthNextAppRouteRepository implements AuthRepository {
     throw new Error('Method not implemented.');
   }
   validateResetPasswordToken(data: BaseRequestData<{ email: string; token: string; }>): Promise<unknown> {
+    throw new Error('Method not implemented.');
+  }
+  verifyEmailRequest(data: BaseRequestData<VerifyEmailRequestData>): Promise<VerifyEmailRequestResponse> {
+    throw new Error('Method not implemented.');
+  }
+  verifyEmail(data: BaseRequestData<VerifyEmailData>): Promise<VerifyEmailResponse> {
     throw new Error('Method not implemented.');
   }
 }

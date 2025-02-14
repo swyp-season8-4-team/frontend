@@ -14,6 +14,10 @@ export async function httpHandler(request: Request): Promise<Response> {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',
+      ...(request.headers.get('x-email-verification-token') && {
+        'X-Email-Verification-Token':
+          request.headers.get('x-email-verification-token') as string,
+      }),
       ...(request.headers.has('cookie')
         ? { cookie: request.headers.get('cookie') as string }
         : {}),
@@ -55,7 +59,9 @@ export async function httpHandler(request: Request): Promise<Response> {
   headers.delete('content-encoding');
   headers.delete('content-length');
 
-  return NextResponse.json(JSON.parse(responseText), {
+  // Check if the response is JSON
+  const jsonData = JSON.parse(responseText);
+  return NextResponse.json(jsonData, {
     status: response.status,
     headers,
   });
