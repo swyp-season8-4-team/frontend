@@ -11,21 +11,46 @@ import {
   type VerifyEmailResponse,
 } from '@repo/entity/src/auth';
 import { NavigationLanguageGroup, NavigationPathGroup } from '@repo/entity/src/navigation';
+import { type StorageRepository } from '@repo/entity/src/storage';
 
 export enum VerifyEmailPurpose {
   SIGNUP = 'SIGNUP',
   RESET_PASSWORD = 'RESET_PASSWORD',
 }
 
+export enum SignUpStep {
+  EMAIL = 'email',
+  EMAIL_CODE = 'email-code',
+  PASSWORD = 'password',
+  GENDER = 'gender',
+}
+
+export interface EmailAuthSession {
+  email: string;
+  expirationTimes: number;
+}
+
 export default class AuthService {
   private readonly authRepository: AuthRepository | null = null;
+  private readonly storageRepository: StorageRepository | null = null;  
 
   constructor({
     authRepository,
+    storageRepository,
   }: {
     authRepository?: AuthRepository;
+    storageRepository?: StorageRepository;
   }) {
     this.authRepository = authRepository ?? null;
+    this.storageRepository = storageRepository ?? null;
+  }
+
+  private get emailAuthSessionKey() {
+    return 'authService-emailAuth';
+  }
+
+  private get signUpStepKey() {
+    return 'authService-signUpStep';
   }
 
   private getRedirectUri(provider: OAuthSocialProvider) {
@@ -111,5 +136,45 @@ export default class AuthService {
     const response = await this.authRepository.verifyEmailRequest({ data });
 
     return response;
+  }
+
+  getEmailAuthSession(): EmailAuthSession | null {
+    if (!this.storageRepository) {
+      throw new Error('storageRepository is not set');
+    }
+
+    return this.storageRepository.get<EmailAuthSession>(this.emailAuthSessionKey);
+  }
+
+  saveEmailAuthSession(value: EmailAuthSession) {
+    if (!this.storageRepository) {
+      throw new Error('storageRepository is not set');
+    }
+
+    this.storageRepository.set<EmailAuthSession>(this.emailAuthSessionKey, value);
+  }
+
+  clearEmailAuthSession() {
+    if (!this.storageRepository) {
+      throw new Error('storageRepository is not set');
+    }
+
+    this.storageRepository.delete(this.emailAuthSessionKey);
+  }
+
+  getSignUpStep() {
+    if (!this.storageRepository) {
+      throw new Error('storageRepository is not set');
+    }
+
+    return this.storageRepository.get<SignUpStep>(this.signUpStepKey);
+  }
+
+  setSignUpStep(value: SignUpStep) {
+    if (!this.storageRepository) {
+      throw new Error('storageRepository is not set');
+    }
+
+    this.storageRepository.set<SignUpStep>(this.signUpStepKey, value);
   }
 }

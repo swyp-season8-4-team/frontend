@@ -1,10 +1,12 @@
 'use client';
 
 import { cn } from '@repo/ui/lib/utils';
+import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import {
   type ComponentType,
   type MouseEvent,
   useCallback,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -30,6 +32,7 @@ export default function withModal<P extends object>(
     onClose,
     ...props
   }: P & Props) {
+    const { pop } = useContext(PortalContext);
     const dimRef = useRef<HTMLDivElement>(null);
     const modalRef = useRef<HTMLDivElement>(null);
     const [portalElement, setPortalElement] = useState<Element | null>(null);
@@ -40,11 +43,13 @@ export default function withModal<P extends object>(
         modalRef.current.onanimationend = () => {
           setShow(false);
           onClose?.();
+          pop('modal');
         };
         dimRef.current.classList.add('animate-fadeOut');
         modalRef.current.classList.add('animate-fadeOut');
       } else {
         setShow(false);
+        pop('modal');
       }
     }, [onClose]);
 
