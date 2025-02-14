@@ -49,7 +49,7 @@ export function MapPanel() {
             max={range.max}
             className="absolute appearance-none top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 origin-center -rotate-90
             [&::-webkit-slider-runnable-track]:w-full [&::-webkit-slider-runnable-track]:h-[6.08px] [&::-webkit-slider-runnable-track]:bg-[#BABABA] 
-            [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-[20.86px] [&::-webkit-slider-thumb]:w-[8px] [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-[#9FA3A2] [&::-webkit-slider-thumb]:border-[0.43px] [&::-webkit-slider-thumb]:border-solid [&::-webkit-slider-thumb]:-mt-[9px] [&::-webkit-slider-thumb]:relative "
+            [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-[20.86px] [&::-webkit-slider-thumb]:w-[8px] [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-[#9FA3A2] [&::-webkit-slider-thumb]:border-[0.43px] [&::-webkit-slider-thumb]:border-solid [&::-webkit-slider-thumb]:-mt-2 [&::-webkit-slider-thumb]:relative"
             onChange={handleChange}
           />
         </div>
