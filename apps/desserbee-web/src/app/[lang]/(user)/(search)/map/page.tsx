@@ -9,6 +9,7 @@ import { PreferenceTags } from './_components/PreferenceTags';
 
 import { CATEGORIES, USER_PREFERENCES } from './_consts/tag';
 import { useBottomSheet } from '../_hooks/useBottomSheet';
+import { MapPanel } from './_components/MapPanel';
 
 export default function MapPage() {
   const [selectedStoreId, setSelectedStoreId] = useState<number>();
@@ -37,6 +38,7 @@ export default function MapPage() {
             userPreferences={USER_PREFERENCES}
             categories={CATEGORIES}
           />
+          <MapPanel />
         </KakaoMap>
         <BannerCarousel />
         {/* <Modal buttons={<Button>test</Button>} title="test" visible={true} /> */}
