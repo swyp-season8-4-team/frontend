@@ -7,28 +7,32 @@ import IconMinus from '@repo/design-system/components/icons/IconMinus';
 
 import { useState, type ChangeEvent } from 'react';
 
-export function MapPanel() {
+interface MapPanelProps {
+  handleSideBarOpen: () => void;
+}
+
+export function MapPanel({ handleSideBarOpen }: MapPanelProps) {
   const [value, setValue] = useState(2.5);
   const [range] = useState({ min: 0, max: 5 });
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(Number(e.target.value));
-    console.log(value);
   };
 
   const increment = () => {
     setValue((prev) => Math.min(prev + 1, range.max));
-    console.log(value);
   };
 
   const decrement = () => {
     setValue((prev) => Math.max(prev - 1, range.min));
-    console.log(value);
   };
 
   return (
     <div className="absolute w-[47px] aspect-square right-4 bottom-2 z-10 flex flex-col gap-2">
-      <button className="flex justify-center items-center aspect-square rounded-sm bg-white">
+      <button
+        onClick={handleSideBarOpen}
+        className="flex justify-center items-center aspect-square rounded-sm bg-white"
+      >
         <IconFlowerOutline size={IconSize.l} className="#6F6F6F" />
       </button>
       <button className="flex justify-center items-center aspect-square rounded-sm bg-white">
