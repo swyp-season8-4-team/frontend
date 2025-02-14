@@ -1,4 +1,3 @@
-// import { NextResponse } from 'next/server';
 import { httpHandler } from '.';
 
 export async function GET(request: Request) {

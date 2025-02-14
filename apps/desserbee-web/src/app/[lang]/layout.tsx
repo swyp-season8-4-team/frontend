@@ -11,6 +11,7 @@ import MetadataService from '@/usecases/metadataService';
 
 import { initServerMSW } from '@/mocks';
 import { MockProvider } from '@/mocks/MockProvider';
+import { PortalProvider } from '@repo/ui/contexts/PortalContext';
 import { fontVariables } from '../fonts';
 
 const metadataService = new MetadataService();
@@ -52,8 +53,9 @@ export default async function RootLayout({
     <html lang={lang} className={fontCofig.variable}>
       <body className={fontCofig.className}>
         <Wrapper>
-          {children}
-          <div id="modal-portal-container" />
+          <PortalProvider>
+            {children}
+          </PortalProvider>
         </Wrapper>
       </body>
     </html>
