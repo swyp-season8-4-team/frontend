@@ -22,8 +22,8 @@ export default function OAuthCallbackLoader({ code, next, provider }: Props) {
   useEffect(() => {
     (async () => {
       try {
-        const response = await authService.socialSignIn({ code, provider });
-        console.log(response);
+        // const response = await authService.socialSignIn({ code, provider });
+        // console.log(response);
         // TODO: accessToken, refreshToken 저장
         // await redirectAction(next ?? NavigationPathname.Map);
       } catch (error) {

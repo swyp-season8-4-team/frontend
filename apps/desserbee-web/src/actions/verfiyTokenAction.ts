@@ -16,11 +16,11 @@ export async function verifyTokenAction(data: ActionData) {
 
   cookieList.set('verificationToken', token, {
     httpOnly: true,
-    // secure: isProd,
+    secure: isProd,
     sameSite: 'lax',
     maxAge: 60 * 30
   });
 
-  // headerList.set('X-Email-Verification-Token', token);
+  headerList.set('X-Email-Verification-Token', token);
 
 }

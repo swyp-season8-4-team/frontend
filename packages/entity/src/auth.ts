@@ -27,7 +27,7 @@ export interface SignInData {
   keepLoggedIn: boolean;
 }
 
-export interface SignUpData extends SignInData {
+export interface SignUpData extends Omit<SignInData, 'keepLoggedIn'> {
   confirmPassword: string;
   nickname: string;
   name?: string;

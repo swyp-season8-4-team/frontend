@@ -37,8 +37,6 @@ export function modifyDefaultHeaders(
   newHeaders['Accept-Encoding'] = 'gzip, deflate';
   newHeaders['Content-Type'] = 'application/json';
 
-  console.log('newHeaders', newHeaders);
-
   if (headers) {
     Object.keys(headers).forEach((key) => {
       if (
@@ -49,8 +47,6 @@ export function modifyDefaultHeaders(
       }
     });
   }
-
-  console.log('newHeaders', newHeaders);
 
   return newHeaders;
 }
