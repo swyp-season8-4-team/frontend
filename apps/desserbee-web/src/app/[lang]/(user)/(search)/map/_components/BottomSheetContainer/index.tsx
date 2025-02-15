@@ -28,6 +28,7 @@ export function BottomSheetContainer({
   if (!storeSummary) return null;
 
   const storeSummaryProps = {
+    id: storeSummary.id,
     name: storeSummary.name,
     animalYn: storeSummary.animalYn,
     tumblerYn: storeSummary.tumblerYn,
