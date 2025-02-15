@@ -66,23 +66,13 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
     }
   };
 
-  useEffect(() => {
-    if (window.kakao?.maps) {
-      loadMap();
-    }
-
-    return () => {
-      mapService.destroyMap();
-    };
-  }, []);
-
   return (
     <div>
       <Script
         type="text/javascript"
         async
         src={KAKAO_MAP_API_URL}
-        onLoad={() => {
+        onReady={() => {
           window.kakao.maps.load(async () => {
             loadMap();
           });

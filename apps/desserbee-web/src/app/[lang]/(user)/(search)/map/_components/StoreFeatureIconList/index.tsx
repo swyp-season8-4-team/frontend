@@ -18,19 +18,19 @@ const createFeatureList = (
   {
     key: 'parkingYn',
     status: parkingYn,
-    icon: <IconCar size={IconSize.l} className="text-[#FF6535]" />,
+    icon: <IconCar size={IconSize.xl} className="text-[#FF6535]" />,
     tooltip: '주차 가능 합니다!',
   },
   {
     key: 'tumblerYn',
     status: tumblerYn,
-    icon: <IconTumbler size={IconSize.l} />,
+    icon: <IconTumbler size={IconSize.xl} />,
     tooltip: '텀블러 할인 가능합니다!',
   },
   {
     key: 'animalYn',
     status: animalYn,
-    icon: <IconDog size={IconSize.l} />,
+    icon: <IconDog size={IconSize.xl} />,
     tooltip: '반려동물 출입 가능합니다!',
   },
 ];
@@ -53,6 +53,10 @@ export function StoreFeatureIconList({
 
   useEffect(() => {
     if (selectedIconIndex !== null) {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+
       const newTimeoutId = setTimeout(() => {
         setSelectedIconIndex(null);
       }, 1500);

@@ -11,7 +11,7 @@ import { CATEGORIES, USER_PREFERENCES } from './_consts/tag';
 import { useBottomSheet } from '../_hooks/useBottomSheet';
 
 export default function MapPage() {
-  const [selectedStoreId, setSelectedStoreId] = useState<number>(1);
+  const [selectedStoreId, setSelectedStoreId] = useState<number>();
 
   const { isBottomSheetOpen, handleBottomSheetOpen, handleBottomSheetClose } =
     useBottomSheet();
@@ -24,7 +24,7 @@ export default function MapPage() {
   };
 
   const bottomSheetProps = {
-    storeId: selectedStoreId,
+    storeId: selectedStoreId as number,
     isBottomSheetOpen,
     handleBottomSheetClose,
   };

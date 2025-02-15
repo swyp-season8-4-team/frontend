@@ -1,6 +1,6 @@
 import type { StoreSummaryData } from '@repo/entity/src/store';
 
-import IconPin from '@repo/design-system/components/icons/IconPin';
+import IconLocation from '@repo/design-system/components/icons/IconLocation';
 import IconClock from '@repo/design-system/components/icons/IconClock';
 import IconPhone from '@repo/design-system/components/icons/IconPhone';
 import IconHome from '@repo/design-system/components/icons/IconHome';
@@ -32,15 +32,20 @@ export function StoreSummary({
   };
 
   return (
-    <div className="flex flex-col gap-y-2">
-      <div className="flex items-center mb-[31px]">
-        <StoreFeatureIconList {...storeFeatureIconListProps} />
-        <IconStar className="text-[#FFB700] mx-2" />
-        <span className="text-xl">{averageRating}</span>
+    <div className="flex flex-col gap-y-2 w-full text-nowrap">
+      <div className="flex justify-between">
+        <div className="flex items-center mb-[9px]">
+          <StoreFeatureIconList {...storeFeatureIconListProps} />
+          <IconStar className="text-[#FFB700] mx-2" />
+          <span className="text-xl">{averageRating}</span>
+        </div>
+        <button className="rounded-[100px] bg-primary text-white text-lg font-semibold px-5 py-[10px]">
+          가게 상세정보
+        </button>
       </div>
-      <div className="flex items-center mb-[18px]">
+      <div className="flex items-center mb-[15px]">
         <span className="text-t28 font-semibold mr-[10.37px]">{name}</span>
-        <span className="flex">
+        <span className="flex ">
           {tags.map((tag, index) => (
             <span className="text-[#6F6F6F] text-t20 font-medium" key={tag}>
               {tag}
@@ -50,13 +55,13 @@ export function StoreSummary({
         </span>
       </div>
       <div className="flex items-center gap-[6px]">
-        <IconPin size={IconSize.xs} className="text-[#BABABA]" />
+        <IconLocation size={IconSize.xs} className="text-[#BABABA]" />
         <span>{address}</span>
       </div>
       <div>
         <div className="flex items-center gap-[6px]">
           <IconClock size={IconSize.xs} className="text-[#BABABA]" />
-          <span>{operatingHours}</span>{' '}
+          <span>{operatingHours}</span>
           {/* TODO: 영업중 [ ]에 영업종료로 변경 */}
         </div>
         <div className="flex items-center gap-[22px]">

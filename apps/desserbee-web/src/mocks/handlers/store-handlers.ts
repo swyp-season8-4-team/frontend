@@ -142,35 +142,144 @@ export const storeHandlers = [
     return HttpResponse.json(storeDetailData);
   }),
 
-  http.get(`http://localhost:3000/api/stores/1/summary`, async () => {
-    const storeSummaryData: StoreSummaryData = {
-      id: 1,
-      name: '스타벅스 강남점',
-      phone: '02-555-1234',
-      address: '서울 강남구 테헤란로 101',
-      storeLink: 'https://instagram.com/store1',
-      averageRating: 4.5,
-      operatingHours: '09:00-22:00',
-      closingDays: '연중무휴',
-      animalYn: true,
-      tumblerYn: true,
-      parkingYn: false,
-      tags: ['베이커리', '루프탑 있음', '애완동물 동반 가능'],
-      storeImages: [
-        'https://picsum.photos/id/42/800/600',
-        'https://picsum.photos/id/43/800/600',
-        'https://picsum.photos/id/48/800/600',
-        'https://picsum.photos/id/49/800/600',
-      ],
-    };
+  http.get(
+    `http://localhost:3000/api/stores/:storeId/summary`,
+    async ({ params }) => {
+      const storeId = Number(params.storeId);
 
-    return new HttpResponse(JSON.stringify(storeSummaryData), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-  }),
+      const storeSummaryDataList: StoreSummaryData[] = [
+        {
+          id: 1,
+          name: '디저트39 강남점',
+          phone: '02-555-1234',
+          address: '서울 강남구 강남대로 396',
+          storeLink: 'https://instagram.com/dessert39',
+          averageRating: 4.5,
+          operatingHours: '10:00-22:00',
+          closingDays: '연중무휴',
+          animalYn: true,
+          tumblerYn: true,
+          parkingYn: true,
+          tags: ['디저트', '케이크', '커피'],
+          storeImages: [
+            'https://picsum.photos/id/42/800/600',
+            'https://picsum.photos/id/43/800/600',
+            'https://picsum.photos/id/44/800/600',
+            'https://picsum.photos/id/45/800/600',
+          ],
+        },
+        {
+          id: 2,
+          name: '아티제 강남역점',
+          phone: '02-555-2345',
+          address: '서울 강남구 테헤란로 151',
+          storeLink: 'https://instagram.com/artisee',
+          averageRating: 4.3,
+          operatingHours: '07:00-23:00',
+          closingDays: '설날, 추석',
+          animalYn: false,
+          tumblerYn: true,
+          parkingYn: true,
+          tags: ['베이커리', '브런치', '커피'],
+          storeImages: [
+            'https://picsum.photos/id/46/800/600',
+            'https://picsum.photos/id/47/800/600',
+            'https://picsum.photos/id/48/800/600',
+            'https://picsum.photos/id/49/800/600',
+          ],
+        },
+        {
+          id: 3,
+          name: '투썸플레이스 강남파이낸스센터점',
+          phone: '02-555-3456',
+          address: '서울 강남구 테헤란로 152',
+          storeLink: 'https://instagram.com/twosome',
+          averageRating: 4.7,
+          operatingHours: '08:00-22:00',
+          closingDays: '연중무휴',
+          animalYn: false,
+          tumblerYn: true,
+          parkingYn: true,
+          tags: ['디저트', '케이크', '커피'],
+          storeImages: [
+            'https://picsum.photos/id/50/800/600',
+            'https://picsum.photos/id/51/800/600',
+            'https://picsum.photos/id/52/800/600',
+            'https://picsum.photos/id/53/800/600',
+          ],
+        },
+        {
+          id: 4,
+          name: '설빙 강남역점',
+          phone: '02-555-4567',
+          address: '서울 강남구 강남대로 358',
+          storeLink: 'https://instagram.com/sulbing',
+          averageRating: 4.4,
+          operatingHours: '11:00-22:00',
+          closingDays: '연중무휴',
+          animalYn: false,
+          tumblerYn: false,
+          parkingYn: false,
+          tags: ['빙수', '디저트', '차'],
+          storeImages: [
+            'https://picsum.photos/id/54/800/600',
+            'https://picsum.photos/id/55/800/600',
+            'https://picsum.photos/id/56/800/600',
+            'https://picsum.photos/id/57/800/600',
+          ],
+        },
+        {
+          id: 5,
+          name: '폴바셋 강남역사거리점',
+          phone: '02-555-5678',
+          address: '서울 강남구 테헤란로 129',
+          storeLink: 'https://instagram.com/paulbassett',
+          averageRating: 4.6,
+          operatingHours: '07:30-22:00',
+          closingDays: '설날, 추석',
+          animalYn: false,
+          tumblerYn: true,
+          parkingYn: true,
+          tags: ['커피', '베이커리', '브런치'],
+          storeImages: [
+            'https://picsum.photos/id/58/800/600',
+            'https://picsum.photos/id/59/800/600',
+            'https://picsum.photos/id/60/800/600',
+            'https://picsum.photos/id/61/800/600',
+          ],
+        },
+        {
+          id: 6,
+          name: '배스킨라빈스 강남우성점',
+          phone: '02-555-6789',
+          address: '서울 강남구 테헤란로 156',
+          storeLink: 'https://instagram.com/baskinrobbins',
+          averageRating: 4.2,
+          operatingHours: '10:30-22:00',
+          closingDays: '연중무휴',
+          animalYn: false,
+          tumblerYn: false,
+          parkingYn: false,
+          tags: ['아이스크림', '디저트', '케이크'],
+          storeImages: [
+            'https://picsum.photos/id/62/800/600',
+            'https://picsum.photos/id/63/800/600',
+            'https://picsum.photos/id/64/800/600',
+            'https://picsum.photos/id/65/800/600',
+          ],
+        },
+      ];
+
+      const storeSummary = storeSummaryDataList[storeId - 1];
+
+      return new HttpResponse(JSON.stringify(storeSummary), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+  ),
 
   http.get(`/api/users/1/saved-stores`, () => {
     // StoreDetailData

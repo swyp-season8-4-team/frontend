@@ -51,7 +51,7 @@ export function BottomSheetContainer({
 
   return (
     <BottomSheet {...bottomSheetProps}>
-      <div className="flex mb-[37px]">
+      <div className="mb-[37px] grid grid-cols-[1fr_2fr] md:grid-cols-[0.3fr_2fr]">
         <HexagonGrid {...hexaGridProps} />
         <StoreSummary {...storeSummaryProps} />
       </div>
