@@ -40,12 +40,10 @@ export default function SignUpController() {
   
   return (
     <SignUpProvider>
-      {/* {step === SignUpStep.EMAIL && <SignUpEmailForm updateStep={updateStep} />}
+      {step === SignUpStep.EMAIL && <SignUpEmailForm updateStep={updateStep} />}
       {step === SignUpStep.EMAIL_CODE && <SignUpEmailCodeForm updateStep={updateStep} />}
-      {step === SignUpStep.PASSWORD && <SignUpPasswordForm  updateStep={updateStep}/>} */}
-      {/* {step === SignUpStep.GENDER && <SignUpGenderForm  updateStep={updateStep}/>} */}
-      {/* <SignUpEmailCodeForm updateStep={updateStep} /> */}
-      <SignUpGenderForm  updateStep={updateStep}/>
+      {step === SignUpStep.PASSWORD && <SignUpPasswordForm  updateStep={updateStep}/>}
+      {step === SignUpStep.GENDER && <SignUpGenderForm />}
     </SignUpProvider>
   )
 }

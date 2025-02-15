@@ -1,25 +1,37 @@
 'use client';
 
+import signUpAction from '@/actions/signUpAction';
+import { NavigationPathname } from '@repo/entity/src/navigation';
 import { Button } from '@repo/ui/components/button';
-import { useState } from 'react';
-import { SignUpStep } from '@repo/usecase/src/authService';
+import { useRouter } from 'next/navigation';
+import { useContext, useState } from 'react';
+import { SignUpContext } from '../../_contexts/SignUpContext';
 
-interface Props {
-  updateStep: (step: SignUpStep) => void;
-}
 
 type Gender = 'FEMALE' | 'MALE' | null;
 
-export default function SignUpGenderForm({ updateStep }: Props) {
+export default function SignUpGenderForm() {
+  const router = useRouter();
+  const { email, password, confirmPassword } = useContext(SignUpContext);
   const [selectedGender, setSelectedGender] = useState<Gender>(null);
 
   const handleGenderSelect = (gender: Gender) => {
     setSelectedGender(gender);
   };
 
-  const handleSubmit = () => {
-    if (!selectedGender) return;
-    // 회원가입 완료 로직
+  const handleSubmit = async () => {
+    if (!selectedGender) {
+      return;
+    }
+
+    await signUpAction({
+      email,
+      password,
+      confirmPassword,
+      gender: selectedGender,
+    });
+
+    router.push(NavigationPathname.SignIn);
   };
 
   return (

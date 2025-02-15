@@ -1,25 +1,25 @@
 'use client';
 
 import { Button } from '@repo/ui/components/button';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { SignUpStep } from '@repo/usecase/src/authService';
+import { SignUpContext } from '../../_contexts/SignUpContext';
 
 interface Props {
   updateStep: (step: SignUpStep) => void;
 }
 
 export default function SignUpPasswordForm({ updateStep }: Props) {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const { password, updatePassword, confirmPassword, updateConfirmPassword } = useContext(SignUpContext); 
   const [error, setError] = useState('');
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
+    updatePassword(e.target.value);
     if (error) setError('');
   };
 
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setConfirmPassword(e.target.value);
+    updateConfirmPassword(e.target.value);
     if (error) setError('');
   };
 
@@ -50,7 +50,7 @@ export default function SignUpPasswordForm({ updateStep }: Props) {
             <button
               type="button"
               tabIndex={-1}
-              onClick={() => setPassword('')}
+              onClick={() => updatePassword('')}
               className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -77,7 +77,7 @@ export default function SignUpPasswordForm({ updateStep }: Props) {
           {confirmPassword && (
             <button
               type="button"
-              onClick={() => setConfirmPassword('')}
+              onClick={() => updateConfirmPassword('')}
               className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
