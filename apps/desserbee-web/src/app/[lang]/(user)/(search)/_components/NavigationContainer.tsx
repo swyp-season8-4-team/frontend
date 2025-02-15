@@ -5,7 +5,7 @@ import IconLocation from '@repo/design-system/components/icons/IconLocation';
 import IconTalk from '@repo/design-system/components/icons/IconTalk';
 import IconProfile from '@repo/design-system/components/icons/IconProfile';
 import { NavigationPathname } from '@repo/entity/src/navigation';
-import { NavBar } from '@repo/design-system/components/NavBar';
+import NavBar from '@repo/design-system/components/Navbar';
 
 const NAVBAR_BUTTON_CONTENT = [
   {
