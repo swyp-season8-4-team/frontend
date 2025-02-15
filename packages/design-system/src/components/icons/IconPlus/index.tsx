@@ -2,17 +2,17 @@ import Icon, { IconSize, type SVGProps } from '..';
 
 export default function IconPlus({ size = IconSize.m, ...props }: SVGProps) {
   return (
-    <Icon viewBox="0 0 13 13" size={size} {...props}>
+    <Icon size={size} {...props}>
       <path
-        d="M1.38892 7.03265H13.5589"
-        stroke="currentColor"
-        strokeWidth="1.30392"
+        d="M1 11.6916H22.6916"
+        stroke="#6F6F6F"
+        strokeWidth="2"
         strokeLinecap="round"
       />
       <path
-        d="M7.47388 13.1176L7.47388 0.947681"
-        stroke="currentColor"
-        strokeWidth="1.30392"
+        d="M12 22.6916L12 1.00001"
+        stroke="#6F6F6F"
+        strokeWidth="2"
         strokeLinecap="round"
       />
     </Icon>

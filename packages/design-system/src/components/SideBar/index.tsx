@@ -20,17 +20,17 @@ export function SideBar({
       {isSideBarOpen && (
         <motion.div
           className={cn(
-            'h-full px-6 py-5 bg-white rounded-base z-sidebar',
+            'relative h-full px-6 py-5 bg-white rounded-base z-sidebar',
             className,
           )}
         >
           <button
-            className="absolute right-[26.19px] top-9"
+            className="absolute right-[26.19px] top-7"
             onClick={handleSideBarClose}
           >
-            <IconX size={IconSize.xs} />
-            {children}
+            <IconX />
           </button>
+          {children}
         </motion.div>
       )}
     </AnimatePresence>
