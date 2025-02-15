@@ -1,4 +1,5 @@
 import type { MapController, MapPosition } from '@repo/entity/src/map';
+import type { StoreMapData } from '@repo/entity/src/store';
 
 interface MapErrorMessage {
   errorMessage: string;
@@ -66,7 +67,7 @@ export default class MapService {
   }
 
   async addMarkersWithClustering(
-    positions: MapPosition[],
+    storeMapData: StoreMapData[],
     markerImageSrc: string,
     handleMakerClick: (storeId: number) => void,
   ) {
@@ -75,7 +76,7 @@ export default class MapService {
     }
 
     this.mapController.createMarkersWithClusterer(
-      positions,
+      storeMapData,
       markerImageSrc,
       handleMakerClick,
     );

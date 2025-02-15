@@ -1,3 +1,5 @@
+import type { StoreMapData } from './store';
+
 export interface MapPosition {
   latitude: number;
   longitude: number;
@@ -17,7 +19,7 @@ export interface MapController {
     position: MapPosition,
   ): Promise<ExternalMap>;
   createMarkersWithClusterer(
-    positions: MapPosition[],
+    storeMapData: StoreMapData[],
     markerImageSrc: string,
     handleMarkerClick: (storeId: number) => void,
   ): void;

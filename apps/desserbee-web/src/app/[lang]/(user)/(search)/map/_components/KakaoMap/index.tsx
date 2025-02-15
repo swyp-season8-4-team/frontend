@@ -43,19 +43,19 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
 
       await mapService.initializeMap(container, result);
 
-      const stores = await storeService.getNearbyStores({
+      const storeMapData = await storeService.getNearbyStores({
         latitude: result.latitude,
         longitude: result.longitude,
         radius: 2,
       });
 
-      const positions: MapPosition[] = stores.map((store) => ({
+      const positions: MapPosition[] = storeMapData.map((store) => ({
         latitude: store.latitude,
         longitude: store.longitude,
       }));
 
       mapService.addMarkersWithClustering(
-        positions,
+        storeMapData,
         markerImage.src,
         handleMakerClick,
       );
