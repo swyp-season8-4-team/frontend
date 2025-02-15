@@ -69,7 +69,7 @@ export default class StoreService {
     return response;
   }
 
-  async getUserSavedStore(authorization: string, userId: number) {
+  async getUserSavedStores(authorization: string, userId: number) {
     if (!this.storeRepository) {
       throw new Error('storeRepository is not set');
     }
@@ -81,6 +81,25 @@ export default class StoreService {
     };
 
     const result = await this.storeRepository.getUserSavedStore({
+      authorization,
+      ...reqestData,
+    });
+
+    return result;
+  }
+
+  async getSavedList(authorization: string, userId: number) {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set');
+    }
+
+    const reqestData = {
+      data: {
+        userId,
+      },
+    };
+
+    const result = await this.storeRepository.getSavedList({
       authorization,
       ...reqestData,
     });
