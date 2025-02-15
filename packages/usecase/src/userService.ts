@@ -1,5 +1,5 @@
 import type { AuthRepository } from '@repo/entity/src/auth';
-import type { User, UserRepository } from '@repo/entity/src/user';
+import type { TargetUser, User, UserRepository } from '@repo/entity/src/user';
 import { decodeJWT } from '@repo/utility/src/jwt';
 
 export default class UserService {
@@ -17,15 +17,25 @@ export default class UserService {
     this.userRepository = userRepository ?? null;
   }
 
-  async getUser(): Promise<User> {
+  async getMe(): Promise<User> {
     if (!this.userRepository) {
       throw new Error('userRepository is not set');
     }
 
     const authorization = await this.authRepository?.getAuthorization();
-    const user = await this.userRepository.getUser({ authorization });
+    const user = await this.userRepository.getMe({ authorization });
 
     return user;
+  }
+
+  async getTargetUser(id: string): Promise<TargetUser> {
+    if (!this.userRepository) {
+      throw new Error('userRepository is not set');
+    }
+
+    const response = await this.userRepository.getTarget({ data: { id } });
+
+    return response;
   }
 
   async getUserID(): Promise<string> {

@@ -5,11 +5,13 @@ import { NavigationPathname } from "@repo/entity/src/navigation";
 import Link from "next/link";
 import KakaoLogo from "./_components/KakaoLogo";
 import { Button } from "@repo/ui/components/button";
+import LoginForm from "./_components/LoginForm";
 
 interface Props extends WithParams, WithSearchParams {}
 
 export default async function SignInPage({ searchParams }: Props) {
   const { next } = await searchParams;
+
   const state = encrypt(`${next}:${Date.now()}`);
 
   return (
@@ -18,7 +20,7 @@ export default async function SignInPage({ searchParams }: Props) {
       <main className="flex flex-col justify-center mt-16 h-full">
         <h2 className="text-2xl font-medium text-center mb-8">로그인</h2>
         
-        <form className="space-y-4" action={loginAction}>
+        <LoginForm className="space-y-4">
           <input
             type="email"
             name="email"
@@ -49,7 +51,7 @@ export default async function SignInPage({ searchParams }: Props) {
           >
             로그인
           </Button>
-        </form>
+        </LoginForm>
 
         {/* 간편 로그인 섹션 */}
         <section className="mt-12">

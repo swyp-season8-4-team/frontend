@@ -1,6 +1,7 @@
 'use server';
 
 import { isProd } from '@/utils/env';
+import type { SignInResponse } from '@repo/entity/src/auth';
 import AuthAPIRespository from '@repo/infrastructures/src/repositories/authAPIRespository';
 import AuthService from '@repo/usecase/src/authService';
 import { cookies } from 'next/headers';
@@ -9,13 +10,13 @@ const authService = new AuthService({
   authRepository: new AuthAPIRespository(),
 });
 
-export async function loginAction(formData: FormData) {
+export async function loginAction(formData: FormData): Promise<SignInResponse | null | void> {
   const email = formData.get('email');
   const password = formData.get('password');
   
   // TODO: 유효성 검사 리턴 타입
   if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
-    return;
+    return null;
   }
 
   try {
@@ -34,8 +35,7 @@ export async function loginAction(formData: FormData) {
       sameSite: 'lax',
     });
 
-    // TODO: redirect after login page
-    // redirect('/');
+    return response;
   } catch (error) {
     console.error(error);
     // TODO: error handling

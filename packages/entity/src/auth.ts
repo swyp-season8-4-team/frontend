@@ -21,6 +21,12 @@ export interface JWTTokens {
   refreshToken: string;
 }
 
+export interface SignInResponse extends JWTTokens {
+  userUuid: string;
+  email: string;
+  nickname: string;
+}
+
 export interface SignInData {
   email: string;
   password: string;
@@ -29,11 +35,11 @@ export interface SignInData {
 
 export interface SignUpData extends Omit<SignInData, 'keepLoggedIn'> {
   confirmPassword: string;
-  nickname: string;
+  nickname?: string;
   name?: string;
   phoneNumber?: string;
   address?: string;
-  gender?: string;
+  gender: string;
   preferenceIds?: number[];
 }
 
@@ -64,7 +70,7 @@ export interface VerifyEmailResponse {
 
 export interface AuthRepository {
   socialSignIn(data: BaseRequestData<OAuthSignInData>): Promise<unknown>; // 소셜 로그인
-  signIn(data: BaseRequestData<SignInData>): Promise<JWTTokens>; // 일반 로그인
+  signIn(data: BaseRequestData<SignInData>): Promise<SignInResponse>; // 일반 로그인
   signUp(data: BaseRequestData<unknown>): Promise<unknown>; // 회원가입
   signOut(): Promise<void>;
   resetPassword(data: BaseRequestData<{ email: string }>): Promise<unknown>;
