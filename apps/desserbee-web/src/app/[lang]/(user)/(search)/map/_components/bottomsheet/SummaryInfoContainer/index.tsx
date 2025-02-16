@@ -1,11 +1,11 @@
 import type { StoreSummaryData } from '@repo/entity/src/store';
 
-import { StoreFeatureIconList } from '../StoreFeatureIconList';
-import { StoreInfo } from '../StoreInfo.tsx';
+import { StoreFeatureIconList } from '../../common/StoreFeatureIconList';
 
 import IconStar from '@repo/design-system/components/icons/IconStar';
 
 import Link from 'next/link';
+import { StoreInfo } from '../../common/StoreInfo';
 
 type StoreSummaryProps = Omit<StoreSummaryData, 'storeImages'>;
 

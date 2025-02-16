@@ -17,7 +17,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/components/KakaoMap.tss"
+    "src/components/KakaoMap.ts"
   ],
   "exclude": ["node_modules"]
 }

@@ -6,11 +6,14 @@ import {
   Autoplay,
   type CarouselApi,
 } from '@repo/ui/components/carousel';
-import { BANNERS } from '../../_consts/banner';
-import bee from '../../_assets/svg/logo-bee.svg';
-import Image from 'next/image';
+
 import { useEffect, useState } from 'react';
 import { cn } from '@repo/ui/lib/utils';
+
+import { BANNERS } from '../../../_consts/banner';
+
+import Image from 'next/image';
+import bee from '@/app/[lang]/(user)/(search)/map/_assets/svg/logo-bee.svg';
 
 export function BannerCarousel() {
   const [api, setApi] = useState<CarouselApi>();

@@ -6,7 +6,7 @@ import {
 
 import { Tag } from '@repo/design-system/components/Tag';
 import { cn } from '@repo/ui/lib/utils';
-import { useTag } from '../../../_hooks/useTag';
+import { useTag } from '../../../../_hooks/useTag';
 
 interface PreferenceTagsProps {
   categories: string[];

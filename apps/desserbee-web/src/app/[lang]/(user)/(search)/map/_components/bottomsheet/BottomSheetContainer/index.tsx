@@ -5,7 +5,7 @@ import { HexagonGrid } from '@repo/design-system/components/HexagonGrid';
 
 import { SummaryInfoContainer } from '../SummaryInfoContainer';
 import { StorePreviewPicList } from '../StorePreviewPicList';
-import { useStoreSummary } from '../../../_hooks/useStoreSummary';
+import { useStoreSummary } from '../../../../_hooks/useStoreSummary';
 
 interface BottomSheetProps {
   storeId: number;

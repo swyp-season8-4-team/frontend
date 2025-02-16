@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import Script from 'next/script';
 import type { MapPosition } from '@repo/entity/src/map';
 
-import markerImage from '../../_assets/svg/icon-marker.svg'; // 이미지 import
+import markerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-marker.svg';
 
 import MapService from '@repo/usecase/src/mapService';
 import StoreService from '@repo/usecase/src/storeService';
