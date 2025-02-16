@@ -4,6 +4,7 @@ import type {
   StoreMapData,
   StoreSavedByUserData,
   StoreSummaryData,
+  SavedListItem,
 } from '@repo/entity/src/store';
 
 export const storeHandlers = [
@@ -333,7 +334,48 @@ export const storeHandlers = [
     });
   }),
 
-  http.get(`/api/store`, async () => {
-    return HttpResponse.json({});
-  }),
+  http.get(
+    `http://localhost:3000/api/users/:userUuid/saved-store-list`,
+
+    async () => {
+      const savedStoreList: SavedListItem[] = [
+        {
+          id: 1,
+          colorId: 1,
+          title: '비건 맛집',
+          count: 22,
+        },
+        {
+          id: 2,
+          colorId: 2,
+          title: '다이어터를 위한 곳',
+          count: 15,
+        },
+        {
+          id: 3,
+          colorId: 3,
+          title: '배고프다',
+          count: 31,
+        },
+        {
+          id: 4,
+          colorId: 4,
+          title: '이게 디저트지',
+          count: 18,
+        },
+        {
+          id: 5,
+          colorId: 1,
+          title: '할미 입맛',
+          count: 25,
+        },
+      ];
+      return new HttpResponse(JSON.stringify(savedStoreList), {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    },
+  ),
 ];

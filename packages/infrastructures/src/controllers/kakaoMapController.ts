@@ -49,7 +49,7 @@ export default class KakaoMapController implements MapController {
     });
 
     const zoomControl = new kakao.maps.ZoomControl();
-    kakaoMap.addControl(zoomControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
+    // kakaoMap.addControl(zoomControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
 
     this.map = new KakaoMapAdapter(kakaoMap);
     return this.map;

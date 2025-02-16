@@ -9,12 +9,17 @@ import { PreferenceTags } from './_components/PreferenceTags';
 
 import { CATEGORIES, USER_PREFERENCES } from './_consts/tag';
 import { useBottomSheet } from '../_hooks/useBottomSheet';
+import { MapPanel } from './_components/MapPanel';
+import { SideBarContainer } from './_components/SidebarContainer';
+import { useSideBar } from '../_hooks/useSidebar';
 
 export default function MapPage() {
   const [selectedStoreId, setSelectedStoreId] = useState<number>();
 
   const { isBottomSheetOpen, handleBottomSheetOpen, handleBottomSheetClose } =
     useBottomSheet();
+
+  const { isSideBarOpen, handleSideBarOpen, handleSideBarClose } = useSideBar();
 
   const kakaoMapProps = {
     handleMakerClick: (storeId: number) => {
@@ -23,10 +28,19 @@ export default function MapPage() {
     },
   };
 
+  const mapPanelProps = {
+    handleSideBarOpen,
+  };
+
   const bottomSheetProps = {
     storeId: selectedStoreId as number,
     isBottomSheetOpen,
     handleBottomSheetClose,
+  };
+
+  const sideBarProps = {
+    isSideBarOpen,
+    handleSideBarClose,
   };
 
   return (
@@ -37,11 +51,13 @@ export default function MapPage() {
             userPreferences={USER_PREFERENCES}
             categories={CATEGORIES}
           />
+          <MapPanel {...mapPanelProps} />
+          <SideBarContainer {...sideBarProps} />
         </KakaoMap>
         <BannerCarousel />
         {/* <Modal buttons={<Button>test</Button>} title="test" visible={true} /> */}
+        <BottomSheetContainer {...bottomSheetProps} />
       </div>
-      <BottomSheetContainer {...bottomSheetProps} />
     </div>
   );
 }

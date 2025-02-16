@@ -1,5 +1,6 @@
 import APIRepository from './apiRepository';
 import type {
+  SavedListItem,
   StoreDetailData,
   StoreMapData,
   StoreRepository,
@@ -76,6 +77,29 @@ export default class StoreAPIRepository
       }),
       method: 'GET',
       url: `${this.endpoint}/users/${userId}/saved-stores`,
+    });
+
+    return response;
+  }
+
+  // TODO: 아직 API 나오지 않음 - 테스트용이라 엔드포인트도 임의로 설정
+  async getSavedList({
+    authorization,
+    data,
+  }: BaseRequestData<{
+    userId: number;
+  }>) {
+    const { userId } = data || {};
+
+    const response = await fetch<void, SavedListItem[]>({
+      // TODO: 인증 구현되면 추가하기
+      // ...(authorization && {
+      //   headers: {
+      //     Authorization: authorization,
+      //   },
+      // }),
+      method: 'GET',
+      url: `${this.endpoint}/users/${userId}/saved-store-list`,
     });
 
     return response;

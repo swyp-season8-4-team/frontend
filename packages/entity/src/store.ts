@@ -135,6 +135,13 @@ export interface StoreSavedByUserData
   savedAt: string; // 유저 저장 일시
 }
 
+export interface SavedListItem {
+  id: number;
+  colorId: number;
+  title: string;
+  count: number;
+}
+
 // TODO: api 명세서에 아직 덜 나옴
 export interface StoreRegisterData
   extends Pick<
@@ -177,6 +184,13 @@ export interface StoreRepository {
       storeId: number;
     }>,
   ): Promise<StoreDetailData>;
+
+  getSavedList({
+    authorization,
+    data,
+  }: BaseRequestData<{
+    userId: number;
+  }>): Promise<SavedListItem[]>;
 
   getUserSavedStore({
     authorization,

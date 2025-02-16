@@ -9,10 +9,12 @@ import IconStar from '@repo/design-system/components/icons/IconStar';
 
 import { StoreFeatureIconList } from '../StoreFeatureIconList';
 import { IconSize } from '@repo/design-system/components/icons';
+import Link from 'next/link';
 
-type StoreSummaryProps = Omit<StoreSummaryData, 'id' | 'storeImages'>;
+type StoreSummaryProps = Omit<StoreSummaryData, 'storeImages'>;
 
 export function StoreSummary({
+  id,
   name,
   animalYn,
   tumblerYn,
@@ -39,9 +41,11 @@ export function StoreSummary({
           <IconStar className="text-[#FFB700] mx-2" />
           <span className="text-xl">{averageRating}</span>
         </div>
-        <button className="rounded-[100px] bg-primary text-white text-lg font-semibold px-5 py-[10px]">
-          가게 상세정보
-        </button>
+        <Link href={`/ko/map/${id}`}>
+          <button className="rounded-[100px] bg-primary text-white text-lg font-semibold px-5 py-[10px]">
+            가게 상세정보
+          </button>
+        </Link>
       </div>
       <div className="flex items-center mb-[15px]">
         <span className="text-t28 font-semibold mr-[10.37px]">{name}</span>
