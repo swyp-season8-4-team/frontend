@@ -1,6 +1,15 @@
 import type { MapController, MapPosition } from '@repo/entity/src/map';
 
 import { KakaoMapAdapter } from '../adapters/kakaoMapAdapter';
+import type { StoreMapData } from '@repo/entity/src/store';
+
+interface CustomMarker extends kakao.maps.Marker {
+  storeData?: {
+    id: number;
+    name: string;
+    address: string;
+  };
+}
 
 export default class KakaoMapController implements MapController {
   private map: KakaoMapAdapter | null = null;
@@ -88,13 +97,13 @@ export default class KakaoMapController implements MapController {
     const marker = new kakao.maps.Marker({
       position: markerPosition,
       image: markerImage,
-    });
+    }) as CustomMarker;
 
     return marker;
   }
 
   createMarkersWithClusterer(
-    positions: MapPosition[],
+    storeMapData: StoreMapData[],
     markerImageSrc: string,
     handleMarkerClick: (storeId: number) => void,
   ) {
@@ -102,18 +111,24 @@ export default class KakaoMapController implements MapController {
       throw new Error('Map is not initialized');
     }
     const kakaoMap = this.map.getNativeMap();
-    const markers: kakao.maps.Marker[] = [];
+    const markers: CustomMarker[] = [];
 
-    positions.forEach((position) => {
+    storeMapData.forEach(({ id, name, address, latitude, longitude }) => {
       const markerPosition = {
-        latitude: position.latitude,
-        longitude: position.longitude,
+        latitude: latitude,
+        longitude: longitude,
       };
 
       const marker = this.createCustomMarker(markerPosition, markerImageSrc);
 
+      marker.storeData = {
+        id,
+        name,
+        address,
+      };
+
       kakao.maps.event.addListener(marker, 'click', function () {
-        handleMarkerClick(1); // TODO: 클릭한 마커의 storeId 받아올 수 있도록 처리
+        handleMarkerClick(id);
       });
 
       markers.push(marker);
