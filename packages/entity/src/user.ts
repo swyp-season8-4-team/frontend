@@ -13,9 +13,33 @@ export interface User {
   updatedAt?: string;
 }
 
+export interface TargetUser {
+  userUuid: string;
+  mbti: string | null;
+  gender: string | null;
+  nickname: string | null;
+  imageId: string | null;
+  preferences: number[];
+}
+
+export function isTargetUser(data: unknown): data is TargetUser {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'userUuid' in data
+  );
+}
+
+export interface NicknameValidationRequestData {
+  nickname: string;
+  purpose: 'SIGNUP' | 'PROFILE_UPDATE';
+}
+
 export interface UserRepository {
   addInfo(data: BaseRequestData<User>): Promise<User>;
   delete(data: BaseRequestData<void>): Promise<void>;
-  get(data: BaseRequestData<void>): Promise<User>;
+  getMe(data: BaseRequestData<void>): Promise<User>;
+  getTarget(data: BaseRequestData<{ id: string }>): Promise<TargetUser>;
   update(data: BaseRequestData<User>): Promise<void>;
+  validateNickname(data: BaseRequestData<NicknameValidationRequestData>): Promise<void>;
 }

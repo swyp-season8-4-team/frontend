@@ -1,5 +1,5 @@
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { AuthRepository, JWTTokens, SignInData, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
+import type { AuthRepository, JWTTokens, SignInData, SignInResponse, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
 import { headers } from 'next/headers';
 
 export default class AuthNextAppRouteRepository implements AuthRepository {
@@ -13,7 +13,7 @@ export default class AuthNextAppRouteRepository implements AuthRepository {
   socialSignIn(): Promise<JWTTokens> {
     throw new Error('Method not implemented.');
   }
-  signIn(data: BaseRequestData<SignInData>): Promise<JWTTokens> {
+  signIn(data: BaseRequestData<SignInData>): Promise<SignInResponse> {
     throw new Error('Method not implemented.');
   }
   signUp(data: BaseRequestData<unknown>): Promise<void> {

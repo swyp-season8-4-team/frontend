@@ -1,7 +1,7 @@
 import { isServer } from '@repo/api';
 import fetch from '@repo/api/src/fetch';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { AuthRepository, JWTTokens, OAuthSignInData, SignInData, SignUpData, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
+import type { AuthRepository, JWTTokens, OAuthSignInData, SignInData, SignInResponse, SignUpData, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
 import APIRepository from './apiRepository';
 
 export default class AuthAPIRespository extends APIRepository implements AuthRepository {
@@ -47,14 +47,14 @@ export default class AuthAPIRespository extends APIRepository implements AuthRep
     return response;
   }
 
-  async signIn({ data }: BaseRequestData<SignInData>): Promise<JWTTokens> {
+  async signIn({ data }: BaseRequestData<SignInData>): Promise<SignInResponse> {
     if (!data) {
       throw new Error('data is not exist');
     }
 
     const { email, password, keepLoggedIn } = data;
 
-    const response = await fetch<SignInData, JWTTokens>({
+    const response = await fetch<SignInData, SignInResponse>({
       data: {
         email,
         password,
@@ -76,9 +76,7 @@ export default class AuthAPIRespository extends APIRepository implements AuthRep
       throw new Error('authorization is not exist');
     }
 
-    console.log('authorization', authorization);
-
-    const { email, password, confirmPassword, nickname } = data;
+    const { email, password, confirmPassword, nickname, gender } = data;
 
     const response = await fetch<SignUpData, unknown>({
       headers: {
@@ -89,6 +87,7 @@ export default class AuthAPIRespository extends APIRepository implements AuthRep
         password,
         confirmPassword,
         nickname,
+        gender,
       },
       method: 'POST',
       url: `${this.endpoint}/auth/signup`,
@@ -157,7 +156,7 @@ export default class AuthAPIRespository extends APIRepository implements AuthRep
         authorization: `Bearer ${refreshToken}`,
       },
       method: 'POST',
-      url: ``, // TODO:
+      url: `${this.endpoint}/auth/token/refresh`,
     });
 
     return response;

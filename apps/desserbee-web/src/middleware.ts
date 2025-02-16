@@ -102,7 +102,7 @@ function getLocale(request: NextRequest): SupportISO639Language {
  * @param request 요청 객체
  * @returns 토큰
  */
-async function getToken(request: NextRequest): Promise<string | void> {
+async function getToken(request: NextRequest): Promise<string | null> {
   const { cookies } = request;
 
   // FIXME: cookie key값 미확정
@@ -110,7 +110,7 @@ async function getToken(request: NextRequest): Promise<string | void> {
 
   // 둘다 없으면 로그인을 다시 해야하는것
   if (!accessToken) {
-    return;
+    return null;
   }
 
   // 저장된 토큰이 있고 만료되지 않았다면 반환
@@ -129,37 +129,39 @@ async function getToken(request: NextRequest): Promise<string | void> {
   });
 
   if (isAccessTokenExpired) {
-
+    console.log('리프레시 토큰 발급', isAccessTokenExpired);
     // 리프레시 토큰을 가지고 다시 accessToken 발급
     const { accessToken: updatedAccessToken }: { accessToken: string } =
       await authService.refreshAccessToken(accessToken);
     newAccessToken = updatedAccessToken;
   }
 
-  const response = await authService.getAuthorization(
-    newAccessToken ?? accessToken,
-  );
+  return newAccessToken;
 
-  if (!response) {
-    return;
-  }
+  // const response = await authService.getAuthorization(
+  //   newAccessToken ?? accessToken,
+  // );
 
-  const matches = response.match(/authorization: Bearer [^\s]*/i);
+  // if (!response) {
+  //   return;
+  // }
 
-  if (!matches) {
-    throw new Error('Bearer field is not found');
-  }
+  // const matches = response.match(/authorization: Bearer [^\s]*/i);
 
-  const token = matches
-    .at(0)
-    ?.replace(/authorization: Bearer /i, '')
-    .trim();
+  // if (!matches) {
+  //   throw new Error('Bearer field is not found');
+  // }
 
-  if (!token) {
-    throw new Error('Bearer token is not found');
-  }
+  // const token = matches
+  //   .at(0)
+  //   ?.replace(/authorization: Bearer /i, '')
+  //   .trim();
 
-  savedTokens[decodedAccessToken.sub] = token;
+  // if (!token) {
+  //   throw new Error('Bearer token is not found');
+  // }
 
-  return token;
+  // savedTokens[decodedAccessToken.sub] = token;
+
+  // return token;
 }

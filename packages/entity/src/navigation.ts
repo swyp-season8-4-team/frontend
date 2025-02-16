@@ -4,6 +4,7 @@ export enum NavigationLanguageGroup {
 
 export enum NavigationPathGroup {
   OAuthCallback = '/sign-in/oauth/callback/',
+  SignIn = '/sign-in/',
 }
 
 export enum NavigationPathname {

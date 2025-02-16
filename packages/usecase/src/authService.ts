@@ -4,6 +4,7 @@ import {
   type JWTTokens,
   type OAuthSignInData,
   type SignInData,
+  type SignInResponse,
   type SignUpData,
   type VerifyEmailData,
   type VerifyEmailRequestData,
@@ -60,7 +61,8 @@ export default class AuthService {
   getServerSideUrl(provider: OAuthSocialProvider, state?: string) {
     switch (provider) {
       case OAuthSocialProvider.KAKAO:
-        return `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}&redirect_uri=${this.getRedirectUri(provider)}&state=${state}&response_type=code`;
+        // return `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}&redirect_uri=${this.getRedirectUri(provider)}&state=${state}&response_type=code`;
+        return `${process.env.NEXT_PUBLIC_SERVICE_API_URL}/api/oauth2/authorization?provider=${provider}`;
       default:
         throw new Error('Invalid provider');
     }
@@ -96,7 +98,7 @@ export default class AuthService {
     return response;
   }
 
-  async signIn(data: SignInData): Promise<JWTTokens> {
+  async signIn(data: SignInData): Promise<SignInResponse> {
     if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }
