@@ -17,7 +17,7 @@ export function StoreInfo({
   description,
 }: StoreInfoProps) {
   return (
-    <>
+    <div className="flex flex-col gap-y-2 w-full text-nowrap">
       <div className="flex items-center gap-[6px]">
         <IconLocation size={IconSize.xs} className="text-[#BABABA]" />
         <span>{address}</span>
@@ -45,6 +45,6 @@ export function StoreInfo({
           {storeLink}
         </a>
       </div>
-    </>
+    </div>
   );
 }
