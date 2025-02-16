@@ -1,63 +1,29 @@
-import type { StoreSummaryData } from '@repo/entity/src/store';
-
 import IconLocation from '@repo/design-system/components/icons/IconLocation';
 import IconClock from '@repo/design-system/components/icons/IconClock';
 import IconPhone from '@repo/design-system/components/icons/IconPhone';
 import IconHome from '@repo/design-system/components/icons/IconHome';
 import IconBaseball from '@repo/design-system/components/icons/IconBaseball';
-import IconStar from '@repo/design-system/components/icons/IconStar';
-
-import { StoreFeatureIconList } from '../StoreFeatureIconList';
+import type { StoreSummaryData } from '@repo/entity/src/store';
 import { IconSize } from '@repo/design-system/components/icons';
-import Link from 'next/link';
-
-type StoreSummaryProps = Omit<StoreSummaryData, 'storeImages'>;
-
-export function StoreSummary({
-  id,
-  name,
-  animalYn,
-  tumblerYn,
-  parkingYn,
-  averageRating,
-  tags,
+type StoreInfoProps = Pick<
+  StoreSummaryData,
+  | 'address'
+  | 'operatingHours'
+  | 'closingDays'
+  | 'phone'
+  | 'storeLink'
+  | 'description'
+>;
+export function StoreInfo({
   address,
   operatingHours,
   closingDays,
   phone,
   storeLink,
-}: StoreSummaryProps) {
-  const storeFeatureIconListProps = {
-    animalYn,
-    tumblerYn,
-    parkingYn,
-  };
-
+  description,
+}: StoreInfoProps) {
   return (
-    <div className="flex flex-col gap-y-2 w-full text-nowrap">
-      <div className="flex justify-between">
-        <div className="flex items-center mb-[9px]">
-          <StoreFeatureIconList {...storeFeatureIconListProps} />
-          <IconStar className="text-[#FFB700] mx-2" />
-          <span className="text-xl">{averageRating}</span>
-        </div>
-        <Link href={`/ko/map/${id}`}>
-          <button className="rounded-[100px] bg-primary text-white text-lg font-semibold px-5 py-[10px]">
-            가게 상세정보
-          </button>
-        </Link>
-      </div>
-      <div className="flex items-center mb-[15px]">
-        <span className="text-t28 font-semibold mr-[10.37px]">{name}</span>
-        <span className="flex ">
-          {tags.map((tag, index) => (
-            <span className="text-[#6F6F6F] text-t20 font-medium" key={tag}>
-              {tag}
-              {index < tags.length - 1 && ', '}&nbsp;
-            </span>
-          ))}
-        </span>
-      </div>
+    <>
       <div className="flex items-center gap-[6px]">
         <IconLocation size={IconSize.xs} className="text-[#BABABA]" />
         <span>{address}</span>
@@ -79,7 +45,7 @@ export function StoreSummary({
       </div>
       <div className="flex items-center  gap-[6px]">
         <IconHome size={IconSize.xs} className="text-[#BABABA]" />
-        <span>{parkingYn && '주차 가능'}예약</span>
+        <span>{description}</span>
       </div>
       <div className="flex items-center  gap-[6px]">
         <IconBaseball size={IconSize.xs} className="text-[#BABABA]" />
@@ -87,6 +53,6 @@ export function StoreSummary({
           {storeLink}
         </a>
       </div>
-    </div>
+    </>
   );
 }

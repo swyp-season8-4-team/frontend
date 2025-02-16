@@ -3,9 +3,9 @@
 import { BottomSheet } from '@repo/design-system/components/BottomSheet';
 import { HexagonGrid } from '@repo/design-system/components/HexagonGrid';
 
-import { StoreSummary } from '../StoreSummary';
+import { SummaryInfoContainer } from '../SummaryInfoContainer';
 import { StorePreviewPicList } from '../StorePreviewPicList';
-import { useStoreSummary } from '../../../_hooks/useStoreSummary';
+import { useStoreSummary } from '../../../../_hooks/useStoreSummary';
 
 interface BottomSheetProps {
   storeId: number;
@@ -40,6 +40,7 @@ export function BottomSheetContainer({
     closingDays: storeSummary.closingDays,
     phone: storeSummary.phone,
     storeLink: storeSummary.storeLink,
+    description: storeSummary.description,
   };
 
   const hexaGridProps = {
@@ -54,7 +55,7 @@ export function BottomSheetContainer({
     <BottomSheet {...bottomSheetProps}>
       <div className="mb-[37px] grid grid-cols-[1fr_2fr] md:grid-cols-[0.3fr_2fr]">
         <HexagonGrid {...hexaGridProps} />
-        <StoreSummary {...storeSummaryProps} />
+        <SummaryInfoContainer {...storeSummaryProps} />
       </div>
       <StorePreviewPicList {...storePreviewPicListProps} />
     </BottomSheet>

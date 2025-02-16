@@ -90,6 +90,7 @@ export interface StoreSummaryData
     | 'animalYn'
     | 'tumblerYn'
     | 'parkingYn'
+    | 'description'
   > {
   tags: string[];
   storeImages: string[];
@@ -109,6 +110,7 @@ export interface StoreDetailData
     | 'tumblerYn'
     | 'parkingYn'
     | 'averageRating'
+    | 'description'
   > {
   events: Pick<
     StoreEvent,

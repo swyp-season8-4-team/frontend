@@ -1,5 +1,5 @@
 import { SideBar } from '@repo/design-system/components/SideBar';
-import { useSavedList } from '../../../_hooks/useSavedList';
+import { useSavedList } from '../../../../_hooks/useSavedList';
 import IconFlower from '@repo/design-system/components/icons/IconFlower';
 import IconPin from '@repo/design-system/components/icons/IconPin';
 import { IconSize } from '@repo/design-system/components/icons';
