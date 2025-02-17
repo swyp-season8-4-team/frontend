@@ -91,8 +91,8 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
         src={KAKAO_MAP_API_URL}
         onReady={() => {
           window.kakao.maps.load(async () => {
-            loadMap();
-            updateUserPosition();
+            await loadMap();
+            await updateUserPosition();
           });
         }}
       />
