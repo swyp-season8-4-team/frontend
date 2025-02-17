@@ -2,15 +2,19 @@
 
 import { useRef, useState, type ReactNode } from 'react';
 import Script from 'next/script';
-import type { MapPosition } from '@repo/entity/src/map';
 
 import markerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-marker.svg';
+import currentMarkerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-current-marker.svg';
 
 import MapService from '@repo/usecase/src/mapService';
 import StoreService from '@repo/usecase/src/storeService';
 
 import KakaoMapController from '@repo/infrastructures/src/controllers/kakaoMapController';
+import GeolocationController from '@repo/infrastructures/src/controllers/geolocationController';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
+
+import { KalmanLocationFilter } from '@repo/infrastructures/src/filters/LocationFilter';
+import { MovingAverageFilter } from '@repo/infrastructures/src/filters/MovingAverageFilter';
 
 interface KakoMapProps {
   children: ReactNode;
@@ -20,13 +24,16 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapService = new MapService({
     mapController: new KakaoMapController(),
+    geolocationController: new GeolocationController(
+      new KalmanLocationFilter(),
+      new MovingAverageFilter(3),
+    ),
   });
   const storeService = new StoreService({
     storeRepository: new StoreAPIReopository(),
   });
 
   const [errorMessage, setErrorMessage] = useState<string>();
-
   const KAKAO_MAP_API_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services,clusterer&autoload=false`;
 
   const loadMap = async () => {
@@ -34,7 +41,7 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
     if (!container) return;
 
     try {
-      const result = await mapService.getCurrentPosition();
+      const result = await mapService.getInitialPosition();
 
       if ('errorMessage' in result) {
         setErrorMessage(result.errorMessage as string); // geoLocation error
@@ -49,16 +56,26 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
         radius: 2,
       });
 
-      const positions: MapPosition[] = storeMapData.map((store) => ({
-        latitude: store.latitude,
-        longitude: store.longitude,
-      }));
-
       mapService.addMarkersWithClustering(
         storeMapData,
         markerImage.src,
         handleMakerClick,
       );
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      }
+    }
+  };
+
+  const updateUserPosition = async () => {
+    try {
+      const result = await mapService.getcurrentPosition();
+      if ('errorMessage' in result) {
+        setErrorMessage(result.errorMessage as string);
+        return;
+      }
+      await mapService.addCurrentPositionMaker(result, currentMarkerImage.src);
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
@@ -75,6 +92,7 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
         onReady={() => {
           window.kakao.maps.load(async () => {
             loadMap();
+            updateUserPosition();
           });
         }}
       />
