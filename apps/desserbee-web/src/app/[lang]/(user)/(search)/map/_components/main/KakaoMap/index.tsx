@@ -13,8 +13,8 @@ import KakaoMapController from '@repo/infrastructures/src/controllers/kakaoMapCo
 import GeolocationController from '@repo/infrastructures/src/controllers/geolocationController';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 
-import { KalmanLocationFilter } from '@repo/infrastructures/src/filters/LocationFilter';
-import { MovingAverageFilter } from '@repo/infrastructures/src/filters/MovingAverageFilter';
+import { KalmanLocationFilter } from '@repo/infrastructures/src/filters/locationFilter';
+import { MovingAverageFilter } from '@repo/infrastructures/src/filters/movingAverageFilter';
 
 interface KakoMapProps {
   children: ReactNode;
