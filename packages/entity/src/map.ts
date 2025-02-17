@@ -12,8 +12,18 @@ export interface ExternalMap {
   getLevel(): number;
 }
 
-export interface MapController {
+export interface GeolocationController {
+  getInitialPosition(): Promise<MapPosition>;
   getCurrentPosition(): Promise<MapPosition>;
+  startWatching(
+    onSuccess: (position: MapPosition) => void,
+    onError: (error: GeolocationPositionError) => void,
+    options?: PositionOptions,
+  ): void;
+  stopWatching(): void;
+}
+
+export interface MapController {
   createMap(
     container: HTMLDivElement,
     position: MapPosition,
@@ -23,5 +33,11 @@ export interface MapController {
     markerImageSrc: string,
     handleMarkerClick: (storeId: number) => void,
   ): void;
-  destroyMap(): void;
+  createCurrentPosMarker(position: MapPosition, markerImageSrc: string): void;
+  updateCurrentPositionMarker(
+    position: MapPosition,
+    markerImageSrc: string,
+  ): void;
+  removeCurrentPosMarker(): void;
+  clearAllMarkers(): void;
 }
