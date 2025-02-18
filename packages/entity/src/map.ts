@@ -22,11 +22,11 @@ export interface MapController {
     markerImageSrc: string,
     handleMarkerClick: (storeId: number) => void,
   ): void;
-  createCurrentPosMarker(position: MapPosition, markerImageSrc: string): void;
-  updateCurrentPositionMarker(
+  createCurrentPositionMarker(
     position: MapPosition,
     markerImageSrc: string,
   ): void;
-  removeCurrentPosMarker(): void;
+  removeCurrentPositionMarker(): void;
   clearAllMarkers(): void;
+  setMapCenter(position: MapPosition): void;
 }

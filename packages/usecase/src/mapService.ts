@@ -12,7 +12,7 @@ export default class MapService {
     if (!this.mapController) {
       throw new Error('mapController is not set');
     }
-    this.mapController.createCurrentPosMarker(position, markerImageSrc);
+    this.mapController.createCurrentPositionMarker(position, markerImageSrc);
   }
 
   async initializeMap(container: HTMLDivElement, currentPosition: MapPosition) {
@@ -47,6 +47,20 @@ export default class MapService {
     if (!this.mapController) {
       throw new Error('mapController is not set');
     }
-    this.mapController.updateCurrentPositionMarker(position, markerImageSrc);
+    this.mapController.createCurrentPositionMarker(position, markerImageSrc);
+  }
+
+  async removeCurrentPositionMarker() {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+    this.mapController.removeCurrentPositionMarker();
+  }
+
+  async setMapCenter(position: MapPosition) {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+    this.mapController.setMapCenter(position);
   }
 }

@@ -60,15 +60,7 @@ export default class KakaoMapController implements MapController {
     return this.map.getMarkerById(storeId);
   }
 
-  createCurrentPosMarker(position: MapPosition, markerImageSrc: string): void {
-    if (!this.map) {
-      throw new Error('Map is not initialized');
-    }
-
-    this.map.createCurrentPosMarker(position, markerImageSrc);
-  }
-
-  updateCurrentPositionMarker(
+  createCurrentPositionMarker(
     position: MapPosition,
     markerImageSrc: string,
   ): void {
@@ -76,14 +68,23 @@ export default class KakaoMapController implements MapController {
       throw new Error('Map is not initialized');
     }
 
-    this.map.updateCurrentPositionMarker(position, markerImageSrc);
+    this.map.createCurrentPositionMarker(position, markerImageSrc);
+    this.map.setCenter(position);
   }
 
-  removeCurrentPosMarker(): void {
+  removeCurrentPositionMarker(): void {
     if (!this.map) {
       throw new Error('Map is not initialized');
     }
 
     this.map.removeCurrentPositionMarker();
+  }
+
+  setMapCenter(position: MapPosition) {
+    if (!this.map) {
+      throw new Error('Map is not initialized');
+    }
+
+    this.map.setCenter(position);
   }
 }

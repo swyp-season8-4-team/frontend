@@ -5,6 +5,6 @@ export interface GeolocationController {
   startWatching(
     onSuccess: (position: MapPosition) => void,
     options?: PositionOptions,
-  ): void;
-  stopWatching(): void;
+  ): Promise<MapPosition>;
+  stopWatching(): Promise<void>;
 }

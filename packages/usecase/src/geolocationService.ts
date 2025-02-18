@@ -61,7 +61,7 @@ export default class GeolocationService {
     }
   }
 
-  startWatchingPosition(
+  async startWatchingPosition(
     onSuccess: (position: MapPosition) => void,
     options?: PositionOptions,
   ) {
@@ -69,14 +69,14 @@ export default class GeolocationService {
       throw new Error('geolocationController is not set');
     }
 
-    this.geolocationController.startWatching(onSuccess, options);
+    return await this.geolocationController.startWatching(onSuccess, options);
   }
 
-  stopWatchingPosition() {
+  async stopWatchingPosition() {
     if (!this.geolocationController) {
       throw new Error('geolocationController is not set');
     }
 
-    this.geolocationController.stopWatching();
+    return await this.geolocationController.stopWatching();
   }
 }

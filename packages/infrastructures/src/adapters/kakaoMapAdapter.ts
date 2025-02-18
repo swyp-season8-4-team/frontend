@@ -108,11 +108,7 @@ export class KakaoMapAdapter implements ExternalMap {
     }
   }
 
-  createCurrentPosMarker(position: MapPosition, markerImageSrc: string): void {
-    this.updateCurrentPositionMarker(position, markerImageSrc);
-  }
-
-  updateCurrentPositionMarker(
+  createCurrentPositionMarker(
     position: MapPosition,
     markerImageSrc: string,
   ): void {
