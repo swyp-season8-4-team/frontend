@@ -54,13 +54,15 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
 
       await mapService.initializeMap(container, result);
 
+      await mapService.addCurrentPositionMaker(result, currentMarkerImage.src);
+
       const storeMapData = await storeService.getNearbyStores({
         latitude: result.latitude,
         longitude: result.longitude,
         radius: 2,
       });
 
-      mapService.addMarkersWithClustering(
+      await mapService.addMarkersWithClustering(
         storeMapData,
         markerImage.src,
         handleMakerClick,
@@ -96,7 +98,6 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
         onReady={() => {
           window.kakao.maps.load(async () => {
             await loadMap();
-            await updateUserPosition();
           });
         }}
       />

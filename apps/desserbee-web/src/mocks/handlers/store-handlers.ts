@@ -60,20 +60,7 @@ export const storeHandlers = [
       },
     ];
 
-    if (
-      Number(latitude) === 37.498095 &&
-      Number(longitude) === 127.028979 &&
-      Number(radius) === 2
-    ) {
-      return new HttpResponse(JSON.stringify(storeMapDataList), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-    }
-
-    return new HttpResponse(JSON.stringify([]), {
+    return new HttpResponse(JSON.stringify(storeMapDataList), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',

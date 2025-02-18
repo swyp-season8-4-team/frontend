@@ -72,11 +72,13 @@ export default class GeolocationController {
       if (navigator.geolocation) {
         this.watchId = navigator.geolocation.watchPosition(
           (pos) => {
-            const position = {
-              latitude: pos.coords.latitude,
-              longitude: pos.coords.longitude,
-            };
-            resolve(this.applyFilters(position, pos.coords.accuracy));
+            const latitude = pos.coords.latitude;
+            const longitude = pos.coords.longitude;
+            const position = this.applyFilters(
+              { latitude, longitude },
+              pos.coords.accuracy,
+            );
+            resolve(position);
           },
           (err) => {
             if (err.code === 3) {
