@@ -12,17 +12,6 @@ export interface ExternalMap {
   getLevel(): number;
 }
 
-export interface GeolocationController {
-  getInitialPosition(): Promise<MapPosition>;
-  getCurrentPosition(): Promise<MapPosition>;
-  startWatching(
-    onSuccess: (position: MapPosition) => void,
-    onError: (error: GeolocationPositionError) => void,
-    options?: PositionOptions,
-  ): void;
-  stopWatching(): void;
-}
-
 export interface MapController {
   createMap(
     container: HTMLDivElement,
