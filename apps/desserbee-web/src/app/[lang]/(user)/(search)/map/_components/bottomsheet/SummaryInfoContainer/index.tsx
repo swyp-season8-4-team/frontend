@@ -47,7 +47,7 @@ export function SummaryInfoContainer({
           <IconStar className="text-[#FFB700] mx-2" />
           <span className="text-xl">{averageRating}</span>
         </div>
-        <Link href={`/ko/map/${id}`}>
+        <Link href={`/map/${id}`}>
           <button className="rounded-[100px] bg-primary text-white text-lg font-semibold px-5 py-[10px]">
             가게 상세정보
           </button>
