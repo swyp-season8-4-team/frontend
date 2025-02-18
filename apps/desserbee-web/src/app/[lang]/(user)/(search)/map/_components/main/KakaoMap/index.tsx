@@ -9,7 +9,7 @@ interface KakoMapProps extends WithChildren {
   errorMessage: string | undefined;
   apiUrl: string;
   loadMap: () => Promise<void>;
-  updateUserPosition: () => Promise<void>;
+  startTracking: () => Promise<void>;
   stopTracking: () => Promise<void>;
 }
 export function KakaoMap({
@@ -18,7 +18,7 @@ export function KakaoMap({
   apiUrl,
   errorMessage,
   loadMap,
-  updateUserPosition,
+  startTracking,
   stopTracking,
 }: KakoMapProps) {
   useEffect(() => {
@@ -36,7 +36,7 @@ export function KakaoMap({
         onReady={() => {
           window.kakao.maps.load(async () => {
             await loadMap();
-            await updateUserPosition();
+            await startTracking();
           });
         }}
       />

@@ -32,19 +32,19 @@ export default function MapPage() {
     errorMessage,
     apiUrl,
     loadMap,
-    updateUserPosition,
     isTracking,
-    handleTrackingToggle,
     stopTracking,
+    startTracking,
+    handleTrackingToggle,
   } = useMap(handleMakerClick);
 
   const kakaoMapProps = {
     mapRef,
+    errorMessage,
     apiUrl,
     loadMap,
-    updateUserPosition,
-    errorMessage,
     stopTracking,
+    startTracking,
   };
 
   const mapPanelProps = {

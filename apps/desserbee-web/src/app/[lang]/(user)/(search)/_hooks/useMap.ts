@@ -13,11 +13,14 @@ import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPI
 
 import { KalmanLocationFilter } from '@repo/infrastructures/src/filters/locationFilter';
 import { MovingAverageFilter } from '@repo/infrastructures/src/filters/movingAverageFilter';
-import type { MapPosition } from '@repo/entity/src/map';
+import { type ExternalMap, type MapPosition } from '@repo/entity/src/map';
 
 export const useMap = (handleMakerClick: (storeId: number) => void) => {
   const mapRef = useRef<HTMLDivElement>(null);
+
+  const [mapInitialized, setMapInitialized] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
+  const [currentPosition, setCurrentPosition] = useState<MapPosition>();
   const [isTracking, setIsTracking] = useState(false);
 
   const mapService = new MapService({
@@ -42,23 +45,23 @@ export const useMap = (handleMakerClick: (storeId: number) => void) => {
 
     try {
       const result = await geoService.getCurrentPosition();
-
       if ('errorMessage' in result) {
         setErrorMessage(result.errorMessage as string); // geoLocation error
         return;
       }
+      setCurrentPosition(result);
+      updateMapCenter(result);
 
       await mapService.initializeMap(container, result);
 
-      await mapService.addCurrentPositionMaker(result, currentMarkerImage.src);
-
+      mapService.addCurrentPositionMaker(result, currentMarkerImage.src);
       const storeMapData = await storeService.getNearbyStores({
         latitude: result.latitude,
         longitude: result.longitude,
         radius: 2,
       });
 
-      await mapService.addMarkersWithClustering(
+      mapService.addMarkersWithClustering(
         storeMapData,
         markerImage.src,
         handleMakerClick,
@@ -70,31 +73,38 @@ export const useMap = (handleMakerClick: (storeId: number) => void) => {
     }
   };
 
-  const onSuccess = async (position: MapPosition) => {
-    try {
-      await mapService.addCurrentPositionMaker(
-        position,
-        currentMarkerImage.src,
-      );
-      mapService.setMapCenter(position);
-    } catch (error) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
+  const startTracking = async () => {
+    const onSuccess = async (position: MapPosition) => {
+      try {
+        mapService.addCurrentPositionMaker(position, currentMarkerImage.src);
+        setCurrentPosition(position);
+        // console.log(currentPosition);
+      } catch (error) {
+        if (error instanceof Error) {
+          setErrorMessage(error.message);
+        }
       }
-    }
-  };
+    };
 
-  const updateUserPosition = async () => {
     await geoService.startWatchingPosition(onSuccess);
-  };
-
-  const handleTrackingToggle = () => {
-    setIsTracking((prev) => !prev);
   };
 
   const stopTracking = async () => {
     await geoService.stopWatchingPosition();
-    await mapService.removeCurrentPositionMarker();
+    mapService.removeCurrentPositionMarker();
+  };
+
+  const updateMapCenter = async (position: MapPosition) => {
+    if (mapInitialized) {
+      mapService.setMapCenter(position);
+    }
+  };
+
+  const handleTrackingToggle = () => {
+    setIsTracking((prev) => !prev);
+
+    if (!currentPosition) return;
+    updateMapCenter(currentPosition);
   };
 
   return {
@@ -103,7 +113,7 @@ export const useMap = (handleMakerClick: (storeId: number) => void) => {
     isTracking,
     apiUrl: KAKAO_MAP_API_URL,
     loadMap,
-    updateUserPosition,
+    startTracking,
     handleTrackingToggle,
     stopTracking,
   };
