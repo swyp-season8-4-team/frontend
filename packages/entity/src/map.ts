@@ -29,4 +29,5 @@ export interface MapController {
   removeCurrentPositionMarker(): void;
   clearAllMarkers(): void;
   setMapCenter(position: MapPosition): void;
+  relayout(): void;
 }

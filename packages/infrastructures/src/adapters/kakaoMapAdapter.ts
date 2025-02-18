@@ -140,4 +140,8 @@ export class KakaoMapAdapter implements ExternalMap {
       this.currentPosMarker = null;
     }
   }
+
+  relayout(): void {
+    this.relayout();
+  }
 }

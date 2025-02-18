@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import markerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-marker.svg';
 import currentMarkerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-current-marker.svg';
@@ -17,6 +17,9 @@ import type { MapPosition } from '@repo/entity/src/map';
 
 export const useMap = (handleMakerClick: (storeId: number) => void) => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const [errorMessage, setErrorMessage] = useState<string>();
+  const [isTracking, setIsTracking] = useState(false);
+
   const mapService = new MapService({
     mapController: new KakaoMapController(),
   });
@@ -30,8 +33,6 @@ export const useMap = (handleMakerClick: (storeId: number) => void) => {
   const storeService = new StoreService({
     storeRepository: new StoreAPIReopository(),
   });
-
-  const [errorMessage, setErrorMessage] = useState<string>();
 
   const KAKAO_MAP_API_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services,clusterer&autoload=false`;
 
@@ -75,6 +76,7 @@ export const useMap = (handleMakerClick: (storeId: number) => void) => {
         position,
         currentMarkerImage.src,
       );
+      mapService.setMapCenter(position);
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
@@ -83,14 +85,26 @@ export const useMap = (handleMakerClick: (storeId: number) => void) => {
   };
 
   const updateUserPosition = async () => {
-    geoService.startWatchingPosition(onSuccess);
+    await geoService.startWatchingPosition(onSuccess);
+  };
+
+  const handleTrackingToggle = () => {
+    setIsTracking((prev) => !prev);
+  };
+
+  const stopTracking = async () => {
+    await geoService.stopWatchingPosition();
+    await mapService.removeCurrentPositionMarker();
   };
 
   return {
     mapRef,
     errorMessage,
+    isTracking,
     apiUrl: KAKAO_MAP_API_URL,
     loadMap,
     updateUserPosition,
+    handleTrackingToggle,
+    stopTracking,
   };
 };

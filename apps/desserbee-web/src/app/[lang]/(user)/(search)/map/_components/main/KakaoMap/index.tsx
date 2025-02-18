@@ -2,7 +2,7 @@
 
 import type { WithChildren } from '@repo/ui/index';
 import Script from 'next/script';
-import type { RefObject } from 'react';
+import { useEffect, type RefObject } from 'react';
 
 interface KakoMapProps extends WithChildren {
   mapRef: RefObject<HTMLDivElement | null>;
@@ -10,15 +10,23 @@ interface KakoMapProps extends WithChildren {
   apiUrl: string;
   loadMap: () => Promise<void>;
   updateUserPosition: () => Promise<void>;
+  stopTracking: () => Promise<void>;
 }
 export function KakaoMap({
-  mapRef,
   children,
+  mapRef,
   apiUrl,
+  errorMessage,
   loadMap,
   updateUserPosition,
-  errorMessage,
+  stopTracking,
 }: KakoMapProps) {
+  useEffect(() => {
+    return () => {
+      stopTracking();
+    };
+  }, []);
+
   return (
     <div>
       <Script

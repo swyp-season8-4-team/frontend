@@ -27,8 +27,16 @@ export default function MapPage() {
     handleBottomSheetOpen();
   };
 
-  const { mapRef, errorMessage, apiUrl, loadMap, updateUserPosition } =
-    useMap(handleMakerClick);
+  const {
+    mapRef,
+    errorMessage,
+    apiUrl,
+    loadMap,
+    updateUserPosition,
+    isTracking,
+    handleTrackingToggle,
+    stopTracking,
+  } = useMap(handleMakerClick);
 
   const kakaoMapProps = {
     mapRef,
@@ -36,10 +44,13 @@ export default function MapPage() {
     loadMap,
     updateUserPosition,
     errorMessage,
+    stopTracking,
   };
 
   const mapPanelProps = {
     handleSideBarOpen,
+    handleTrackingToggle,
+    isTracking,
   };
 
   const bottomSheetProps = {
