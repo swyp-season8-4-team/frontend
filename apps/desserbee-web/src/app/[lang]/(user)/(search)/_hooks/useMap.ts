@@ -13,59 +13,73 @@ import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPI
 
 import { KalmanLocationFilter } from '@repo/infrastructures/src/filters/locationFilter';
 import { MovingAverageFilter } from '@repo/infrastructures/src/filters/movingAverageFilter';
-import { type ExternalMap, type MapPosition } from '@repo/entity/src/map';
+import { type MapPosition } from '@repo/entity/src/map';
 
 export const useMap = (handleMakerClick: (storeId: number) => void) => {
   const mapRef = useRef<HTMLDivElement>(null);
+  const mapServiceRef = useRef<MapService | null>(null);
 
   const [mapInitialized, setMapInitialized] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>();
-  const [currentPosition, setCurrentPosition] = useState<MapPosition>();
-  const [isTracking, setIsTracking] = useState(false);
-
-  const mapService = new MapService({
-    mapController: new KakaoMapController(),
-  });
-
-  const geoService = new GeolocationService({
-    geolocationController: new GeolocationController(
-      new KalmanLocationFilter(),
-      new MovingAverageFilter(3),
-    ),
-  });
-  const storeService = new StoreService({
-    storeRepository: new StoreAPIReopository(),
+  const [currentPosition, setCurrentPosition] = useState<MapPosition>({
+    latitude: 0,
+    longitude: 0,
   });
 
   const KAKAO_MAP_API_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services,clusterer&autoload=false`;
+
+  const initializeServices = () => {
+    if (!mapServiceRef.current) {
+      mapServiceRef.current = new MapService({
+        mapController: new KakaoMapController(),
+      });
+    }
+    return {
+      mapService: mapServiceRef.current,
+      geoService: new GeolocationService({
+        geolocationController: new GeolocationController(
+          new KalmanLocationFilter(),
+          new MovingAverageFilter(3),
+        ),
+      }),
+      storeService: new StoreService({
+        storeRepository: new StoreAPIReopository(),
+      }),
+    };
+  };
 
   const loadMap = async () => {
     const container = mapRef.current;
     if (!container) return;
 
     try {
+      const { mapService, geoService, storeService } = initializeServices();
+
       const result = await geoService.getCurrentPosition();
       if ('errorMessage' in result) {
-        setErrorMessage(result.errorMessage as string); // geoLocation error
+        setErrorMessage(result.errorMessage as string);
         return;
       }
       setCurrentPosition(result);
-      updateMapCenter(result);
 
       await mapService.initializeMap(container, result);
+      await mapService.setMapCenter(result);
 
-      mapService.addCurrentPositionMaker(result, currentMarkerImage.src);
+      await mapService.addCurrentPositionMaker(result, currentMarkerImage.src);
+
       const storeMapData = await storeService.getNearbyStores({
         latitude: result.latitude,
         longitude: result.longitude,
         radius: 2,
       });
 
-      mapService.addMarkersWithClustering(
+      await mapService.addMarkersWithClustering(
         storeMapData,
         markerImage.src,
         handleMakerClick,
       );
+
+      setMapInitialized(true);
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
@@ -74,11 +88,17 @@ export const useMap = (handleMakerClick: (storeId: number) => void) => {
   };
 
   const startTracking = async () => {
+    if (!mapServiceRef.current) return;
+
+    const { geoService } = initializeServices();
+
     const onSuccess = async (position: MapPosition) => {
       try {
-        mapService.addCurrentPositionMaker(position, currentMarkerImage.src);
+        await mapServiceRef.current?.addCurrentPositionMaker(
+          position,
+          currentMarkerImage.src,
+        );
         setCurrentPosition(position);
-        // console.log(currentPosition);
       } catch (error) {
         if (error instanceof Error) {
           setErrorMessage(error.message);
@@ -90,31 +110,24 @@ export const useMap = (handleMakerClick: (storeId: number) => void) => {
   };
 
   const stopTracking = async () => {
+    if (!mapServiceRef.current) return;
+
+    const { geoService } = initializeServices();
     await geoService.stopWatchingPosition();
-    mapService.removeCurrentPositionMarker();
+    await mapServiceRef.current.removeCurrentPositionMarker();
   };
 
-  const updateMapCenter = async (position: MapPosition) => {
-    if (mapInitialized) {
-      mapService.setMapCenter(position);
-    }
-  };
-
-  const handleTrackingToggle = () => {
-    setIsTracking((prev) => !prev);
-
-    if (!currentPosition) return;
-    updateMapCenter(currentPosition);
+  const moveToCurrentPosition = () => {
+    mapServiceRef.current?.setMapCenter(currentPosition);
   };
 
   return {
     mapRef,
     errorMessage,
-    isTracking,
     apiUrl: KAKAO_MAP_API_URL,
     loadMap,
     startTracking,
-    handleTrackingToggle,
     stopTracking,
+    moveToCurrentPosition,
   };
 };

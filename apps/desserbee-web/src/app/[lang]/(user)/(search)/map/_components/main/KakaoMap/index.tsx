@@ -36,6 +36,10 @@ export function KakaoMap({
         onReady={() => {
           window.kakao.maps.load(async () => {
             await loadMap();
+          });
+        }}
+        onLoad={() => {
+          window.kakao.maps.load(async () => {
             await startTracking();
           });
         }}

@@ -6,14 +6,12 @@ import { cn } from '@repo/ui/lib/utils';
 
 interface MapPanelProps {
   handleSideBarOpen: () => void;
-  handleTrackingToggle: () => void;
-  isTracking: boolean;
+  moveToCurrentPosition: () => void;
 }
 
 export function MapPanel({
   handleSideBarOpen,
-  handleTrackingToggle,
-  isTracking,
+  moveToCurrentPosition,
 }: MapPanelProps) {
   return (
     <div className="absolute w-[47px] aspect-square right-4 bottom-2 z-10 flex flex-col gap-2">
@@ -24,9 +22,8 @@ export function MapPanel({
         <IconFlowerOutline size={IconSize.l} className="#6F6F6F" />
       </button>
       <button
-        onClick={handleTrackingToggle}
+        onClick={moveToCurrentPosition}
         className={cn(
-          isTracking ? 'text-red-600' : '',
           'flex justify-center items-center aspect-square rounded-sm bg-white',
         )}
       >
