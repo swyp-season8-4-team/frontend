@@ -12,6 +12,7 @@ import { MapPanel } from './_components/main/MapPanel';
 import { SideBarContainer } from './_components/sidebar/SidebarContainer';
 import { useSideBar } from '../_hooks/useSidebar';
 import { PreferenceTags } from './_components/main/PreferenceTags';
+import { useMap } from '../_hooks/useMap';
 
 export default function MapPage() {
   const [selectedStoreId, setSelectedStoreId] = useState<number>();
@@ -21,11 +22,20 @@ export default function MapPage() {
 
   const { isSideBarOpen, handleSideBarOpen, handleSideBarClose } = useSideBar();
 
+  const handleMakerClick = (storeId: number) => {
+    setSelectedStoreId(storeId);
+    handleBottomSheetOpen();
+  };
+
+  const { mapRef, errorMessage, apiUrl, loadMap, updateUserPosition } =
+    useMap(handleMakerClick);
+
   const kakaoMapProps = {
-    handleMakerClick: (storeId: number) => {
-      setSelectedStoreId(storeId);
-      handleBottomSheetOpen();
-    },
+    mapRef,
+    apiUrl,
+    loadMap,
+    updateUserPosition,
+    errorMessage,
   };
 
   const mapPanelProps = {
