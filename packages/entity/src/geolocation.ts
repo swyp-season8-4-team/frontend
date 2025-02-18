@@ -2,6 +2,9 @@ import type { MapPosition } from './map';
 
 export interface GeolocationController {
   getCurrentPosition(): Promise<MapPosition>;
-  startWatching(options?: PositionOptions): Promise<MapPosition>;
+  startWatching(
+    onSuccess: (position: MapPosition) => void,
+    options?: PositionOptions,
+  ): void;
   stopWatching(): void;
 }

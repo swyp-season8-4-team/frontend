@@ -9,12 +9,9 @@ export default class GeolocationController {
     this.filters = filters;
   }
 
-  private applyFilters(
-    position: MapPosition,
-    accuracy: number,
-  ): Promise<MapPosition> | MapPosition {
-    return this.filters.reduce<Promise<MapPosition> | MapPosition>(
-      async (pos, filter) => filter.filter(await pos, accuracy),
+  private applyFilters(position: MapPosition, accuracy: number): MapPosition {
+    return this.filters.reduce<MapPosition>(
+      (pos, filter) => filter.filter(pos, accuracy),
       position,
     );
   }
@@ -67,37 +64,38 @@ export default class GeolocationController {
     });
   }
 
-  startWatching(options?: PositionOptions): Promise<MapPosition> {
-    return new Promise((resolve, reject) => {
-      if (navigator.geolocation) {
-        this.watchId = navigator.geolocation.watchPosition(
-          (pos) => {
-            const latitude = pos.coords.latitude;
-            const longitude = pos.coords.longitude;
-            const position = this.applyFilters(
-              { latitude, longitude },
-              pos.coords.accuracy,
-            );
-            resolve(position);
-          },
-          (err) => {
-            if (err.code === 3) {
-              reject(new Error('delayed'));
-            }
-            if (err.code === 1) {
-              reject(new Error('blocked'));
-            }
-            reject(err);
-          },
-          {
-            ...options,
-            enableHighAccuracy: true, // 높은 정확도
-            timeout: 15000, // 위치를 가져오는 제한 시간
-            maximumAge: 0, // 캐시된 위치 정보를 사용하지 않음
-          },
-        );
-      }
-    });
+  startWatching(
+    onSuccess: (position: MapPosition) => void,
+    options?: PositionOptions,
+  ): void {
+    if (navigator.geolocation) {
+      this.watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          const latitude = pos.coords.latitude;
+          const longitude = pos.coords.longitude;
+          const position = this.applyFilters(
+            { latitude, longitude },
+            pos.coords.accuracy,
+          );
+
+          onSuccess(position);
+        },
+        (err) => {
+          if (err.code === 3) {
+            new Error('watching 지연');
+          }
+          if (err.code === 1) {
+            new Error('watching 중단');
+          }
+        },
+        {
+          ...options,
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0,
+        },
+      );
+    }
   }
 
   stopWatching(): void {

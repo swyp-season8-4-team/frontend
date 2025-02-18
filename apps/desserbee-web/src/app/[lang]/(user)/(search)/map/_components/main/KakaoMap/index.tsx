@@ -16,6 +16,7 @@ import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPI
 
 import { KalmanLocationFilter } from '@repo/infrastructures/src/filters/locationFilter';
 import { MovingAverageFilter } from '@repo/infrastructures/src/filters/movingAverageFilter';
+import type { MapPosition } from '@repo/entity/src/map';
 
 interface KakoMapProps {
   children: ReactNode;
@@ -74,19 +75,21 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
     }
   };
 
-  const updateUserPosition = async () => {
+  const onSuccess = async (position: MapPosition) => {
     try {
-      const result = await geoService.getCurrentPosition();
-      if ('errorMessage' in result) {
-        setErrorMessage(result.errorMessage as string);
-        return;
-      }
-      await mapService.addCurrentPositionMaker(result, currentMarkerImage.src);
+      await mapService.addCurrentPositionMaker(
+        position,
+        currentMarkerImage.src,
+      );
     } catch (error) {
       if (error instanceof Error) {
         setErrorMessage(error.message);
       }
     }
+  };
+
+  const updateUserPosition = async () => {
+    geoService.startWatchingPosition(onSuccess);
   };
 
   return (
@@ -98,6 +101,7 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
         onReady={() => {
           window.kakao.maps.load(async () => {
             await loadMap();
+            await updateUserPosition();
           });
         }}
       />

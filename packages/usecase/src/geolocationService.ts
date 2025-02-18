@@ -61,12 +61,15 @@ export default class GeolocationService {
     }
   }
 
-  getWatchingPostion(options?: PositionOptions): Promise<MapPosition> {
+  startWatchingPosition(
+    onSuccess: (position: MapPosition) => void,
+    options?: PositionOptions,
+  ) {
     if (!this.geolocationController) {
       throw new Error('geolocationController is not set');
     }
 
-    return this.geolocationController.startWatching(options);
+    this.geolocationController.startWatching(onSuccess, options);
   }
 
   stopWatchingPosition() {
