@@ -15,7 +15,7 @@ export default class GeolocationService {
   }) {
     this.geolocationController = geolocationController ?? null;
   }
-  async getInitialPosition(): Promise<MapPosition | GeolocationErrorMessage> {
+  async getCurrentPosition(): Promise<MapPosition | GeolocationErrorMessage> {
     if (!this.geolocationController) {
       throw new Error('geolocationController is not set');
     }

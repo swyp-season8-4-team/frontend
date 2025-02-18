@@ -6,6 +6,7 @@ import Script from 'next/script';
 import markerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-marker.svg';
 import currentMarkerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-current-marker.svg';
 
+import GeolocationService from '@repo/usecase/src/geolocationService';
 import MapService from '@repo/usecase/src/mapService';
 import StoreService from '@repo/usecase/src/storeService';
 
@@ -24,6 +25,9 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapService = new MapService({
     mapController: new KakaoMapController(),
+  });
+
+  const geoService = new GeolocationService({
     geolocationController: new GeolocationController(
       new KalmanLocationFilter(),
       new MovingAverageFilter(3),
@@ -41,7 +45,7 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
     if (!container) return;
 
     try {
-      const result = await mapService.getInitialPosition();
+      const result = await geoService.getCurrentPosition();
 
       if ('errorMessage' in result) {
         setErrorMessage(result.errorMessage as string); // geoLocation error
@@ -70,7 +74,7 @@ export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
 
   const updateUserPosition = async () => {
     try {
-      const result = await mapService.getcurrentPosition();
+      const result = await geoService.getCurrentPosition();
       if ('errorMessage' in result) {
         setErrorMessage(result.errorMessage as string);
         return;
