@@ -1,9 +1,9 @@
 export interface Review {
-  id: number;
-  userId: number;
+  reviewUuid: number;
   storeId: number;
-  title: string;
   content: string;
+  rating: number;
+  images: string[];
   createdAt?: string;
   updatedAt?: string;
 }

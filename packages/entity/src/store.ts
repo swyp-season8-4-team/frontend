@@ -1,8 +1,9 @@
 import type { BaseRequestData } from './appMetadata';
-import type { StoreReview } from './review';
+import type { Review } from './review';
 
 export interface Store {
-  id: number;
+  storeId: number;
+  storeUuid: string;
   name: string;
   phone: string;
   address: string;
@@ -13,24 +14,51 @@ export interface Store {
   animalYn: boolean;
   parkingYn: boolean;
   tumblerYn: boolean;
-  operatingHours: string;
-  closingDays: string;
+  operatingHours: OperatingHoursItem[];
+  holidays: HolidaysItem[];
   averageRating: number;
+  notice: string[];
   status: boolean;
   createdAt?: string;
   updatedAt?: string;
+  tags: string[];
 }
 
 export interface Menu {
-  id: number;
-  storeId: number;
+  menuUuid: string;
   name: string;
-  isPopular: boolean; // 인기 메뉴여부
   price: number;
+  isPopular: boolean;
   description: string;
-  images: string[];
-  createdAt?: string;
-  updatedAt?: string;
+  images?: string[];
+}
+
+export interface OperatingHoursItem {
+  dayOfWeek: string;
+  openingTime: {
+    hour: number;
+    minute: number;
+    second: number;
+    nano: number;
+  };
+  closingTime: {
+    hour: number;
+    minute: number;
+    second: number;
+    nano: number;
+  };
+  lastOrderTime: {
+    hour: number;
+    minute: number;
+    second: number;
+    nano: number;
+  };
+  isClosed: boolean;
+}
+
+export interface HolidaysItem {
+  date: string;
+  reason: string;
 }
 
 export interface StoreEvent {
@@ -45,24 +73,6 @@ export interface StoreEvent {
   updatedAt?: string;
 }
 
-// 유저가 저장한 가게들
-export interface UserSavedStore {
-  id: number;
-  userId: number;
-  storeId: number;
-  createdAt?: string;
-}
-
-export interface StoreDetail {
-  id: number;
-  storeId: number;
-  views: number;
-  saved: number;
-  reviews: number;
-  createDate: Date;
-  createdAt?: string;
-}
-
 export interface StoreCoupon {
   title: string;
   description: string;
@@ -71,99 +81,97 @@ export interface StoreCoupon {
 
 // export type StoreTag = '베이커리' | '루프탑 있음' | '애완동물 동반 가능'; // TODO: 전체 카테고리 정리하기
 
-export type StoreMapData = Pick<
+// GET
+export type NearByStoreData = Pick<
   Store,
-  'id' | 'name' | 'address' | 'latitude' | 'longitude'
+  'storeId' | 'storeUuid' | 'name' | 'address' | 'latitude' | 'longitude'
 >;
 
-export interface StoreSummaryData
+export interface StoreSummaryInfoData
   extends Pick<
     Store,
-    | 'id'
-    | 'name'
-    | 'phone'
-    | 'address'
-    | 'storeLink'
-    | 'averageRating'
-    | 'operatingHours'
-    | 'closingDays'
-    | 'animalYn'
-    | 'tumblerYn'
-    | 'parkingYn'
-    | 'description'
-  > {
-  tags: string[];
-  storeImages: string[];
-}
-
-export interface StoreDetailData
-  extends Pick<
-    Store,
-    | 'id'
+    | 'storeId'
+    | 'storeUuid'
     | 'name'
     | 'address'
-    | 'operatingHours'
-    | 'closingDays'
     | 'phone'
     | 'storeLink'
     | 'animalYn'
     | 'tumblerYn'
     | 'parkingYn'
     | 'averageRating'
-    | 'description'
-  > {
-  events: Pick<
-    StoreEvent,
-    'id' | 'title' | 'description' | 'startDate' | 'endDate' | 'images'
-  >[];
-  menus: Pick<
-    Menu,
-    'id' | 'name' | 'price' | 'isPopular' | 'description' | 'images'
-  >[];
-  coupons: StoreCoupon[];
-  storeImages: string[];
-  storeReviews: Pick<
-    StoreReview,
-    'id' | 'storeId' | 'content' | 'rating' | 'createdAt' | 'images'
-  >[];
-  tags: string[];
-}
-
-export interface StoreSavedByUserData
-  extends Pick<Store, 'address' | 'storeLink'> {
-  id: number;
-  storeId: Store['id'];
-  storeName: Store['name'];
-  savedAt: string; // 유저 저장 일시
-}
-
-export interface SavedListItem {
-  id: number;
-  colorId: number;
-  title: string;
-  count: number;
-}
-
-// TODO: api 명세서에 아직 덜 나옴
-export interface StoreRegisterData
-  extends Pick<
-    Store,
-    | 'id'
-    | 'name'
-    | 'phone'
-    | 'address'
-    | 'storeLink'
     | 'latitude'
     | 'longitude'
     | 'description'
+    | 'operatingHours'
+    | 'tags'
+  > {
+  userId: number;
+  userUuid: string;
+  storeImages: string[];
+  ownerPickImages: string[];
+}
+
+export interface StoreDetailInfoData
+  extends Pick<
+    Store,
+    | 'storeId'
+    | 'storeUuid'
+    | 'name'
+    | 'address'
+    | 'phone'
+    | 'storeLink'
     | 'animalYn'
     | 'tumblerYn'
     | 'parkingYn'
+    | 'averageRating'
+    | 'latitude'
+    | 'longitude'
+    | 'description'
     | 'operatingHours'
-    | 'closingDays'
+    | 'tags'
   > {
-  ownerId: number;
-  tagIds: number[];
+  userId: number;
+  userUuid: string;
+  storeImages: string[];
+  ownerPickImages: string[];
+}
+
+export interface SavedListItemData {
+  userUuid: string;
+  listName: string;
+  iconColorId: number;
+  storeCount: number;
+}
+
+export interface SavedStoreData {
+  userUuid: string;
+  storeUuid: string;
+  listName: string;
+  storeName: string;
+  storeAddress: string;
+  imageUrls: string[];
+}
+
+// POST, PUT
+export interface StoreSaveRequest {
+  // 유저 저장
+  userUuid: string;
+  storeUuid: string;
+  listName: string;
+  storeName: string;
+  storeAddress: string;
+  imageUrls: string[];
+}
+
+export interface ListSaveRequest {
+  listName: string;
+  iconColorId: number;
+}
+
+export interface ListEditRequest {
+  newName: string;
+  newIconColor: number;
 }
 
 export interface StoreRepository {
@@ -173,31 +181,31 @@ export interface StoreRepository {
       longitude: number;
       radius: number;
     }>,
-  ): Promise<StoreMapData[]>;
+  ): Promise<NearByStoreData[]>;
 
   getStoreSummary(
     data: BaseRequestData<{
-      storeId: number;
+      storeUuid: string;
     }>,
-  ): Promise<StoreSummaryData>;
+  ): Promise<StoreSummaryInfoData>;
 
   getStoreDetail(
     data: BaseRequestData<{
-      storeId: number;
+      storeUuid: string;
     }>,
-  ): Promise<StoreDetailData>;
+  ): Promise<StoreDetailInfoData>;
 
   getSavedList({
     authorization,
     data,
   }: BaseRequestData<{
-    userId: number;
-  }>): Promise<SavedListItem[]>;
+    userUuid: string;
+  }>): Promise<SavedListItemData[]>;
 
-  getUserSavedStore({
+  getSavedStores({
     authorization,
     data,
   }: BaseRequestData<{
-    userId: number;
-  }>): Promise<StoreSavedByUserData[]>;
+    listId: number;
+  }>): Promise<SavedStoreData[]>;
 }
