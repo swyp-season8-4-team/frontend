@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import markerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-marker.svg';
 import currentMarkerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-current-marker.svg';
@@ -15,7 +15,7 @@ import { KalmanLocationFilter } from '@repo/infrastructures/src/filters/location
 import { MovingAverageFilter } from '@repo/infrastructures/src/filters/movingAverageFilter';
 import { type MapPosition } from '@repo/entity/src/map';
 
-export const useMap = (handleMakerClick: (storeId: number) => void) => {
+export const useMap = (handleMakerClick: (storeUuid: string) => void) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapServiceRef = useRef<MapService | null>(null);
 

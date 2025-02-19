@@ -15,15 +15,15 @@ import { PreferenceTags } from './_components/main/PreferenceTags';
 import { useMap } from '../_hooks/useMap';
 
 export default function MapPage() {
-  const [selectedStoreId, setSelectedStoreId] = useState<number>();
+  const [selectedStoreUuid, setSelectedStoreUuid] = useState<string>();
 
   const { isBottomSheetOpen, handleBottomSheetOpen, handleBottomSheetClose } =
     useBottomSheet();
 
   const { isSideBarOpen, handleSideBarOpen, handleSideBarClose } = useSideBar();
 
-  const handleMakerClick = (storeId: number) => {
-    setSelectedStoreId(storeId);
+  const handleMakerClick = (storeUuid: string) => {
+    setSelectedStoreUuid(storeUuid);
     handleBottomSheetOpen();
   };
 
@@ -52,7 +52,7 @@ export default function MapPage() {
   };
 
   const bottomSheetProps = {
-    storeId: selectedStoreId as number,
+    storeUuid: selectedStoreUuid as string,
     isBottomSheetOpen,
     handleBottomSheetClose,
   };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import type { StoreSummaryData } from '@repo/entity/src/store';
+import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 
@@ -8,21 +8,21 @@ const storeService = new StoreService({
   storeRepository: new StoreAPIReopository(),
 });
 
-export function useStoreSummary(storeId: number) {
+export function useStoreSummary(storeUuid: string) {
   const [storeSummary, setStoreSummary] = useState<
-    StoreSummaryData | undefined
+    StoreSummaryInfoData | undefined
   >();
   const [error, setError] = useState<string>();
 
   useEffect(() => {
-    const fetchStoreSummary = async (storeId: number) => {
-      if (!storeId) return;
-      const result = await storeService.getStoreSummary(storeId);
+    const fetchStoreSummary = async (storeUuid: string) => {
+      if (!storeUuid) return;
+      const result = await storeService.getStoreSummary(storeUuid);
       setStoreSummary(result);
     };
 
-    fetchStoreSummary(storeId);
-  }, [storeId]);
+    fetchStoreSummary(storeUuid);
+  }, [storeUuid]);
 
   return {
     storeSummary,

@@ -7,10 +7,9 @@ import IconStar from '@repo/design-system/components/icons/IconStar';
 import Link from 'next/link';
 import { StoreInfo } from '../../common/StoreInfo';
 
-type StoreSummaryProps = Omit<StoreSummaryInfoData, 'storeImages'>;
+type StoreSummaryProps = Omit<StoreSummaryInfoData, 'storeImages' | 'storeId'>;
 
 export function SummaryInfoContainer({
-  storeId,
   storeUuid,
   name,
   animalYn,

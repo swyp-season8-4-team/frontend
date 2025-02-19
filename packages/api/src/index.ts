@@ -31,7 +31,7 @@ export async function fetch<Q, R>(requestData: RequestData<Q>): Promise<R> {
 
 export function modifyDefaultHeaders(
   headers?: Headers,
-  isServer?: boolean
+  isServer?: boolean,
 ): Headers {
   const newHeaders: Headers = {};
   newHeaders['Accept-Encoding'] = 'gzip, deflate';
@@ -39,10 +39,7 @@ export function modifyDefaultHeaders(
 
   if (headers) {
     Object.keys(headers).forEach((key) => {
-      if (
-        headers[key] &&
-        (key !== 'authorization' || isServer)
-      ) {
+      if (headers[key] && (key !== 'authorization' || isServer)) {
         newHeaders[key] = headers[key];
       }
     });
@@ -59,7 +56,7 @@ export function serializeQueries(queries?: Queries): string {
   const encodedQueryString = Object.keys(queries).reduce((prev, curr) => {
     if (Array.isArray(queries[curr])) {
       return `${prev}${!!prev ? '&' : ''}${curr}=${encodeURIComponent(
-        (queries[curr] as Array<string>).join(',')
+        (queries[curr] as Array<string>).join(','),
       )}`;
     }
 
@@ -68,7 +65,7 @@ export function serializeQueries(queries?: Queries): string {
     }
 
     return `${prev}${!!prev ? '&' : ''}${curr}=${encodeURIComponent(
-      queries[curr] as string
+      queries[curr] as string,
     )}`;
   }, '');
 
