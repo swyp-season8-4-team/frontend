@@ -3,7 +3,7 @@ import localFont from 'next/font/local';
 const pretendardKR = localFont({
   src: [
     {
-      path: '../../../../../packages/design-system/src/fonts/kr/PretendardVariable.subset.0.woff2',
+      path: './kr/PretendardVariable.ttf',
       weight: '100 900', // weight 범위 100 - 900
       style: 'normal',
     },
@@ -15,7 +15,7 @@ const pretendardKR = localFont({
 const pretendardJP = localFont({
   src: [
     {
-      path: '../../../../../packages/design-system/src/fonts/jp/PretendardJPVariable.subset.0.woff2',
+      path: './jp/PretendardJPVariable.ttf',
       weight: '100 900',
       style: 'normal',
     },
@@ -26,7 +26,7 @@ const pretendardJP = localFont({
 const pretendardSTD = localFont({
   src: [
     {
-      path: '../../../../../packages/design-system/src/fonts/std/PretendardStdVariable.subset.0.woff2',
+      path: './std/PretendardStdVariable.ttf',
       weight: '100 900',
       style: 'normal',
     },
