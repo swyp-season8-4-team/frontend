@@ -12,7 +12,7 @@ export const useSavedList = (userId: number) => {
   });
 
   const fetchSavedList = async (userId: number) => {
-    const result = await storeService.getSavedList('인증', userId);
+    const result = await storeService.getSavedListAll('인증', userId);
     setSavedList(result);
   };
   useEffect(() => {

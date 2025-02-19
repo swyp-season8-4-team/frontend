@@ -81,7 +81,7 @@ export default class StoreService {
       },
     };
 
-    const result = await this.storeRepository.getSavedStores({
+    const result = await this.storeRepository.getStoresInSavedList({
       authorization,
       ...reqestData,
     });
@@ -89,7 +89,7 @@ export default class StoreService {
     return result;
   }
 
-  async getSavedList(authorization: string, userUuid: string) {
+  async getSavedListAll(authorization: string, userUuid: string) {
     if (!this.storeRepository) {
       throw new Error('storeRepository is not set');
     }
@@ -100,7 +100,7 @@ export default class StoreService {
       },
     };
 
-    const result = await this.storeRepository.getSavedList({
+    const result = await this.storeRepository.getSavedListAll({
       authorization,
       ...reqestData,
     });

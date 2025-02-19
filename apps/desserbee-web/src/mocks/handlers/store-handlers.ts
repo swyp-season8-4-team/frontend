@@ -1,10 +1,10 @@
 import { http, HttpResponse } from 'msw';
 import type {
   NearByStoreData,
-  SavedListItemData,
+  SavedListData,
   StoreSummaryInfoData,
   StoreDetailInfoData,
-  SavedStoreData,
+  StoresInSavedListData,
 } from '@repo/entity/src/store';
 
 export const storeHandlers = [
@@ -80,7 +80,7 @@ export const storeHandlers = [
     async ({ params }) => {
       const storeUuid = params.storeUuid;
 
-      const storeDetailInfoData: StoreDetailInfoData = {
+      const StoreDetailInfoData: StoreDetailInfoData = {
         storeId: 1,
         storeUuid: 'store-uuid-123',
         name: '스타벅스 강남점',
@@ -264,7 +264,7 @@ export const storeHandlers = [
           'https://picsum.photos/id/52/800/600',
         ],
       };
-      return HttpResponse.json(storeDetailInfoData);
+      return HttpResponse.json(StoreDetailInfoData);
     },
   ),
 
@@ -472,7 +472,7 @@ export const storeHandlers = [
     `http://localhost:3000/api/user-store/:userUuid/lists`,
 
     async () => {
-      const savedStoreList: SavedListItemData[] = [
+      const savedStoreList: SavedListData[] = [
         {
           userUuid: 'user-uuid-123',
           iconColorId: 1,
@@ -515,7 +515,7 @@ export const storeHandlers = [
 
   // 리스트별 저장된 가게 리스트
   http.get(`/api/user-store/lists/:listId/stores`, () => {
-    const savedStoreDataList: SavedStoreData[] = [
+    const StoresInSavedListDataList: StoresInSavedListData[] = [
       {
         userUuid: 'user-uuid-123',
         storeUuid: 'store-uuid-123',
@@ -582,7 +582,7 @@ export const storeHandlers = [
         ],
       },
     ];
-    return new HttpResponse(JSON.stringify(savedStoreDataList), {
+    return new HttpResponse(JSON.stringify(StoresInSavedListDataList), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',

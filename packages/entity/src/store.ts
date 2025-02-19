@@ -1,5 +1,5 @@
 import type { BaseRequestData } from './appMetadata';
-import type { Review } from './review';
+import type { OneLineReview } from './review';
 
 export interface Store {
   storeId: number;
@@ -81,11 +81,21 @@ export interface StoreCoupon {
 
 // export type StoreTag = '베이커리' | '루프탑 있음' | '애완동물 동반 가능'; // TODO: 전체 카테고리 정리하기
 
-// GET
+// store
+export interface NearByStoreRequest {
+  latitude: number;
+  longitude: number;
+  radius: number;
+}
+
 export type NearByStoreData = Pick<
   Store,
   'storeId' | 'storeUuid' | 'name' | 'address' | 'latitude' | 'longitude'
 >;
+
+export interface StoreSummaryInfoRequest {
+  storeUuid: string;
+}
 
 export interface StoreSummaryInfoData
   extends Pick<
@@ -110,6 +120,10 @@ export interface StoreSummaryInfoData
   userUuid: string;
   storeImages: string[];
   ownerPickImages: string[];
+}
+
+export interface StoreDetailInfoRequest {
+  storeUuid: string;
 }
 
 export interface StoreDetailInfoData
@@ -137,14 +151,59 @@ export interface StoreDetailInfoData
   ownerPickImages: string[];
 }
 
-export interface SavedListItemData {
+export interface RegisterStoreRequest // TODO: api 아직
+  extends Pick<
+    Store,
+    | 'storeId'
+    | 'storeUuid'
+    | 'name'
+    | 'phone'
+    | 'storeLink'
+    | 'animalYn'
+    | 'tumblerYn'
+    | 'parkingYn'
+    | 'averageRating'
+    | 'tags'
+    | 'operatingHours'
+    | 'holidays'
+  > {
+  userId: number;
+  userUuid: string;
+  menus: Menu[];
+  storeImages?: string[];
+  ownerPickImages?: string[];
+  storeReviews: OneLineReview[];
+}
+
+export interface RegisterStoreResponse {} // TODO: api 아직
+
+export interface EditStoreRequest {
+  storeUuid: string;
+} // TODO: api 아직
+
+export interface EditStoreResponse {} // TODO: api 아직
+
+export interface DeleteStoreRequest {
+  storeUuid: string;
+} // TODO: api 아직
+
+// saved list
+export interface SavedListRequest {
+  userUuid: string;
+}
+
+export interface SavedListData {
   userUuid: string;
   listName: string;
   iconColorId: number;
   storeCount: number;
 }
 
-export interface SavedStoreData {
+export interface StoresInSavedListRequest {
+  listId: number;
+}
+
+export interface StoresInSavedListData {
   userUuid: string;
   storeUuid: string;
   listName: string;
@@ -153,59 +212,170 @@ export interface SavedStoreData {
   imageUrls: string[];
 }
 
-// POST, PUT
-export interface StoreSaveRequest {
-  // 유저 저장
+export interface CreateSavedListRequest {
   userUuid: string;
-  storeUuid: string;
-  listName: string;
-  storeName: string;
-  storeAddress: string;
-  imageUrls: string[];
-}
-
-export interface ListSaveRequest {
   listName: string;
   iconColorId: number;
 }
 
-export interface ListEditRequest {
+export interface CreateSavedListResponse {
+  userUuid: string;
+  listName: string;
+  iconColorId: number;
+  storeCount: number;
+}
+
+export interface EditSavedListRequest {
+  listId: number;
   newName: string;
   newIconColor: number;
 }
 
+export interface EditSavedListResponse {
+  userUuid: string;
+  listName: string;
+  iconColorId: number;
+  storeCount: number;
+}
+
+export interface AddStoreInSavedListRequest {
+  listId: number;
+  storeUuid: string;
+}
+
+export interface AddStoreInSavedListResponse {
+  userUuid: string;
+  storeUuid: string;
+  listName: string;
+  storeName: string;
+  storeAddress: string;
+  imageUrls: string[];
+}
+
+export interface DeleteSavedListRequest {
+  listId: number;
+}
+
+export interface DeleteStoreInSavedListRequest {
+  listId: number;
+  storeUuid: string;
+}
+
+// menu
+export interface Id {
+  storeUuid: string;
+}
+export interface CreateMenuRequest extends Omit<Menu, 'menuUuid'> {
+  storeUuid: string;
+}
+
+export interface EditMenuRequest {
+  storeUuid: string;
+  menuUuid: string;
+  file: string;
+}
+
+export interface DeleteMenuRequest {
+  storeUuid: string;
+  menuUuid: string;
+}
+
+export interface GetMenuRequest {
+  storeUuid: string;
+  menuUuid: string;
+}
+
+export interface GetMenuListRequest {
+  storeUuid: string;
+}
+
 export interface StoreRepository {
+  // store
   getNearbyStores(
-    data: BaseRequestData<{
-      latitude: number;
-      longitude: number;
-      radius: number;
-    }>,
+    data: BaseRequestData<NearByStoreRequest>,
   ): Promise<NearByStoreData[]>;
 
   getStoreSummary(
-    data: BaseRequestData<{
-      storeUuid: string;
-    }>,
+    data: BaseRequestData<StoreSummaryInfoRequest>,
   ): Promise<StoreSummaryInfoData>;
 
   getStoreDetail(
-    data: BaseRequestData<{
-      storeUuid: string;
-    }>,
+    data: BaseRequestData<StoreDetailInfoRequest>,
   ): Promise<StoreDetailInfoData>;
 
-  getSavedList({
+  registerStore({
     authorization,
     data,
-  }: BaseRequestData<{
-    userUuid: string;
-  }>): Promise<SavedListItemData[]>;
+  }: BaseRequestData<RegisterStoreRequest>): Promise<RegisterStoreResponse>;
 
-  getSavedStores({
+  editStore({
     authorization,
     data,
-  }: BaseRequestData<{
-    listId: number;
-  }>): Promise<SavedStoreData[]>;
+  }: BaseRequestData<EditStoreRequest>): Promise<EditStoreResponse>;
+
+  deleteStore({
+    authorization,
+    data,
+  }: BaseRequestData<DeleteStoreRequest>): Promise<void>;
+
+  // savedList
+  createSavedList({
+    authorization,
+    data,
+  }: BaseRequestData<CreateSavedListRequest>): Promise<CreateSavedListResponse>;
+
+  editSavedList({
+    authorization,
+    data,
+  }: BaseRequestData<EditSavedListRequest>): Promise<EditSavedListResponse>;
+
+  deleteSavedList({
+    authorization,
+    data,
+  }: BaseRequestData<DeleteSavedListRequest>): Promise<void>;
+
+  addStoreInSavedList({
+    authorization,
+    data,
+  }: BaseRequestData<AddStoreInSavedListRequest>): Promise<AddStoreInSavedListResponse>;
+
+  deleteStoreInSavedList({
+    authorization,
+    data,
+  }: BaseRequestData<DeleteStoreInSavedListRequest>): Promise<void>;
+
+  getStoresInSavedList({
+    authorization,
+    data,
+  }: BaseRequestData<StoresInSavedListRequest>): Promise<
+    StoresInSavedListData[]
+  >;
+
+  getSavedListAll({
+    authorization,
+    data,
+  }: BaseRequestData<SavedListRequest>): Promise<SavedListData[]>;
+
+  // menu
+  createMenu({
+    authorization,
+    data,
+  }: BaseRequestData<CreateMenuRequest>): Promise<void>;
+
+  editMenu({
+    authorization,
+    data,
+  }: BaseRequestData<EditMenuRequest>): Promise<void>;
+
+  deleteMenu({
+    authorization,
+    data,
+  }: BaseRequestData<DeleteMenuRequest>): Promise<void>;
+
+  getMenu({ data }: BaseRequestData<GetMenuRequest>): Promise<Menu>;
+
+  getMenuList({ data }: BaseRequestData<GetMenuListRequest>): Promise<Menu[]>;
+
+  // coupon count
+  updateCouponCount({ data }: BaseRequestData<void>): Promise<void>; // TODO: api 아직
 }
