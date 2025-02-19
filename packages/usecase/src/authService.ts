@@ -24,6 +24,8 @@ export enum SignUpStep {
   EMAIL_CODE = 'email-code',
   PASSWORD = 'password',
   GENDER = 'gender',
+  NICKNAME = 'nickname',
+  AGREE = 'agree',
 }
 
 export interface EmailAuthSession {

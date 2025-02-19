@@ -1,10 +1,13 @@
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { NicknameValidationRequestData, TargetUser, User, UserRepository } from '@repo/entity/src/user';
+import type { NicknameValidationRequestData, NicknameValidationResponse, TargetUser, User, UserRepository } from '@repo/entity/src/user';
 import type { RawUser } from '@repo/api/src/desserbee-web/user';
 import fetch from '@repo/api/src/fetch';
 import APIRepository from './apiRepository';
 
 export default class UserAPIRepository extends APIRepository implements UserRepository {
+  uploadProfileImage(data: BaseRequestData<{ image: File; }>): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
   async addInfo({ authorization, data }: BaseRequestData<User>): Promise<User> {
     const url = `${this.endpoint}/users/add-info`;
 
@@ -88,7 +91,19 @@ export default class UserAPIRepository extends APIRepository implements UserRepo
     });
   }
 
-  validateNickname(data: BaseRequestData<NicknameValidationRequestData>): Promise<void> {
-    throw new Error('Method not implemented.');
+  async validateNickname({ data }: BaseRequestData<NicknameValidationRequestData>): Promise<NicknameValidationResponse> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+
+    const url = `${this.endpoint}/users/validate/nickname`;
+
+    const response = await fetch<NicknameValidationRequestData, NicknameValidationResponse>({
+      data,
+      method: 'POST',
+      url,
+    });
+
+    return response;
   }
 }

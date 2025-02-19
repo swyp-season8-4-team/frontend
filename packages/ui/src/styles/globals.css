@@ -25,8 +25,17 @@
     --ring: 215 20.2% 65.1%;
     --radius: 0.5rem;
 
-    /* Font */
-    --font-pretendard: 'Pretendard Std Variable', 'Pretendard JP Variable', 'Pretendard Variable', 'system-ui';
+    --font-pretendard-kr: 'Pretendard Variable';
+    --font-pretendard-jp: 'Pretendard JP Variable';
+    --font-pretendard-std: 'Pretendard Std Variable';
+  }
+
+  body {
+    background-color: hsl(var(--background));
+    font-family: var(--font-pretendard-kr);
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   .dark:root {
@@ -57,7 +66,7 @@
     @apply border-border;
   }
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply antialiased bg-background text-foreground;
   }
 }
 

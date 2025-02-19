@@ -1,23 +1,27 @@
 'use client';
 
-import type { TargetUser, User } from '@repo/entity/src/user';
+import type { TargetUser } from '@repo/entity/src/user';
 import type { WithChildren } from '@repo/ui';
-import { createContext, useCallback, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useMemo, useState, type ReactNode } from 'react';
+
+type CurrentSignUpQuestionType = 'none' | 'complete' | number | null;
 
 interface State {
   id: string;
   nickname: string;
   qnaList: MBTIQuestion[];
-  currentQuestionNumber: number | null;
-  updateCurrentQuestionNumber: (stage: number | null) => void;
+  noneMBTI: MBTIQuestion;
+  currentQuestion: CurrentSignUpQuestionType;
+  updateCurrentQuestion: (stage: CurrentSignUpQuestionType) => void;
 }
 
 const defaultState: State = {
   id: '',
   nickname: '',
   qnaList: [],
-  currentQuestionNumber: null,
-  updateCurrentQuestionNumber: () => {},
+  noneMBTI: { question: '', answerA: '' },
+  currentQuestion: null,
+  updateCurrentQuestion: () => {},
 };
 
 export const MBTIContext = createContext<State>(defaultState);
@@ -33,7 +37,13 @@ interface MBTIQuestion {
 }
 
 export function MBTIProvider({ children, user: initialUser }: Props) {
-  const [currentQuestionNumber, setCurrentQuestionNumber] = useState<number | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState<CurrentSignUpQuestionType>(null);
+
+  const noneMBTI: MBTIQuestion = useMemo(() => ({
+    question: <>정말 나중에 설정하시겠어요?<br /><br />선택한 취향은 마이페이지에서<br />언제든 변경할 수 있어요!</>,
+    answerA: '네 다음에 할께요',
+    answerB: '아뇨, 지금 할래요.',
+  }), []);
 
   const qnaList: MBTIQuestion[] = useMemo(() => [
     {
@@ -92,8 +102,8 @@ export function MBTIProvider({ children, user: initialUser }: Props) {
     },
   ], [initialUser?.nickname]);
   
-  const updateCurrentQuestionNumber = (stage: number | null) => {
-    setCurrentQuestionNumber(stage);
+  const updateCurrentQuestion = (stage: CurrentSignUpQuestionType) => {
+    setCurrentQuestion(stage);
   };
   
   return (
@@ -102,8 +112,9 @@ export function MBTIProvider({ children, user: initialUser }: Props) {
         id: initialUser?.userUuid ?? '',
         nickname: initialUser?.nickname ?? '',
         qnaList,
-        currentQuestionNumber,
-        updateCurrentQuestionNumber,
+        noneMBTI,
+        currentQuestion,
+        updateCurrentQuestion,
       }}
     >
       {children}

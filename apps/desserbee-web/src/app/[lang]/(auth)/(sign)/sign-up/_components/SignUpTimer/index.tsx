@@ -44,8 +44,6 @@ export default function SignUpTimer({ onExpire }: Props) {
     return () => clearInterval(interval);
   }, [seconds, onExpire]);
 
-  console.log('seconds', seconds);
-
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
 

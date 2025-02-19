@@ -10,38 +10,45 @@ import { MBTIContext } from "../../../_contexts/MBTIContext";
 export default function MBTIController() {
   const router = useRouter();
   const {
-    id,
-    currentQuestionNumber,
-    updateCurrentQuestionNumber,
+    noneMBTI,
+    currentQuestion,
+    updateCurrentQuestion,
     qnaList,
   } = useContext(MBTIContext);
 
   return (
     <>
-      {currentQuestionNumber === null && (
+      {currentQuestion === null && (
         <MBTIIntro
           onClickA={() => {
-            updateCurrentQuestionNumber(0);
+            updateCurrentQuestion(0);
           }}
           onClickB={() => {
-            router.replace(`${NavigationLanguageGroup.ko}${NavigationPathname.SignIn}/${id}/none`);
+            updateCurrentQuestion('none');
+            // router.replace(`${NavigationLanguageGroup.ko}${NavigationPathname.SignIn}/${id}/none`);
           }}
         />
       )}
-      {typeof currentQuestionNumber === 'number' && 
+      {typeof currentQuestion === 'number' && 
         qnaList.map((qna, index) => {
-          if (index === currentQuestionNumber) {
+          if (index === currentQuestion) {
             return <MBTIQnA {...qna} key={`qna-${index}`} onClickA={() => {
-              updateCurrentQuestionNumber(index + 1);
+              updateCurrentQuestion(index + 1);
             }} onClickB={() => {
                 if (index === qnaList.length - 1) {
-                  router.replace(`${NavigationLanguageGroup.ko}${NavigationPathname.SignIn}/${id}/complete`);
+                  updateCurrentQuestion('complete');
+                  // router.replace(`${NavigationLanguageGroup.ko}${NavigationPathname.SignIn}/${id}/complete`);
                   return;
                 }
                 router.replace(`${NavigationLanguageGroup.ko}${NavigationPathname.Map}`);
               }} />
           }
         })}
+        {currentQuestion === 'none' && <MBTIQnA {...noneMBTI} onClickA={() => {
+          router.replace(`${NavigationLanguageGroup.ko}${NavigationPathname.Map}`);
+        }} onClickB={() => {
+          updateCurrentQuestion(null);
+        }}/>}
     </>
   )
 }
