@@ -1,5 +1,5 @@
 import type { MapController, MapPosition } from '@repo/entity/src/map';
-import type { StoreMapData } from '@repo/entity/src/store';
+import type { NearByStoreData } from '@repo/entity/src/store';
 
 export default class MapService {
   private readonly mapController: MapController | null;
@@ -25,9 +25,9 @@ export default class MapService {
   }
 
   async addMarkersWithClustering(
-    storeMapData: StoreMapData[],
+    storeMapData: NearByStoreData[],
     markerImageSrc: string,
-    handleMakerClick: (storeId: number) => void,
+    handleMakerClick: (storeUuid: string) => void,
   ) {
     if (!this.mapController) {
       throw new Error('mapController is not set');

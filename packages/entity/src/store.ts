@@ -110,14 +110,12 @@ export interface StoreSummaryInfoData
     | 'tumblerYn'
     | 'parkingYn'
     | 'averageRating'
-    | 'latitude'
-    | 'longitude'
     | 'description'
     | 'operatingHours'
     | 'tags'
   > {
-  userId: number;
-  userUuid: string;
+  // userId: number;
+  // userUuid: string;
   storeImages: string[];
   ownerPickImages: string[];
 }
