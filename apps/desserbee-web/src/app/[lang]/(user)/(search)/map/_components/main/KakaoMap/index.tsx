@@ -1,80 +1,42 @@
 'use client';
 
-import { useRef, useState, type ReactNode } from 'react';
+import type { WithChildren } from '@repo/ui/index';
 import Script from 'next/script';
-import type { MapPosition } from '@repo/entity/src/map';
+import { useEffect, type RefObject } from 'react';
 
-import markerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-marker.svg';
-
-import MapService from '@repo/usecase/src/mapService';
-import StoreService from '@repo/usecase/src/storeService';
-
-import KakaoMapController from '@repo/infrastructures/src/controllers/kakaoMapController';
-import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
-
-interface KakoMapProps {
-  children: ReactNode;
-  handleMakerClick: (storeId: number) => void;
+interface KakoMapProps extends WithChildren {
+  mapRef: RefObject<HTMLDivElement | null>;
+  errorMessage: string | undefined;
+  apiUrl: string;
+  loadMap: () => Promise<void>;
+  startTracking: () => Promise<void>;
+  stopTracking: () => Promise<void>;
 }
-export function KakaoMap({ children, handleMakerClick }: KakoMapProps) {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapService = new MapService({
-    mapController: new KakaoMapController(),
-  });
-  const storeService = new StoreService({
-    storeRepository: new StoreAPIReopository(),
-  });
-
-  const [errorMessage, setErrorMessage] = useState<string>();
-
-  const KAKAO_MAP_API_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_API_KEY}&libraries=services,clusterer&autoload=false`;
-
-  const loadMap = async () => {
-    const container = mapRef.current;
-    if (!container) return;
-
-    try {
-      const result = await mapService.getCurrentPosition();
-
-      if ('errorMessage' in result) {
-        setErrorMessage(result.errorMessage as string); // geoLocation error
-        return;
-      }
-
-      await mapService.initializeMap(container, result);
-
-      const storeMapData = await storeService.getNearbyStores({
-        latitude: result.latitude,
-        longitude: result.longitude,
-        radius: 2,
-      });
-
-      const positions: MapPosition[] = storeMapData.map((store) => ({
-        latitude: store.latitude,
-        longitude: store.longitude,
-      }));
-
-      mapService.addMarkersWithClustering(
-        storeMapData,
-        markerImage.src,
-        handleMakerClick,
-      );
-    } catch (error) {
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      }
-    }
-  };
+export function KakaoMap({
+  children,
+  mapRef,
+  apiUrl,
+  errorMessage,
+  loadMap,
+  startTracking,
+  stopTracking,
+}: KakoMapProps) {
+  useEffect(() => {
+    return () => {
+      stopTracking();
+    };
+  }, []);
 
   return (
     <div>
       <Script
         type="text/javascript"
         async
-        src={KAKAO_MAP_API_URL}
+        src={apiUrl}
         onReady={() => {
           window.kakao.maps.load(async () => {
-            loadMap();
+            await loadMap();
+            await startTracking();
           });
         }}
       />

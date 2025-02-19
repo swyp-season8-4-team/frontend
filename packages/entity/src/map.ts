@@ -13,7 +13,6 @@ export interface ExternalMap {
 }
 
 export interface MapController {
-  getCurrentPosition(): Promise<MapPosition>;
   createMap(
     container: HTMLDivElement,
     position: MapPosition,
@@ -23,5 +22,12 @@ export interface MapController {
     markerImageSrc: string,
     handleMarkerClick: (storeId: number) => void,
   ): void;
-  destroyMap(): void;
+  createCurrentPositionMarker(
+    position: MapPosition,
+    markerImageSrc: string,
+  ): void;
+  removeCurrentPositionMarker(): void;
+  clearAllMarkers(): void;
+  setMapCenter(position: MapPosition): void;
+  relayout(): void;
 }
