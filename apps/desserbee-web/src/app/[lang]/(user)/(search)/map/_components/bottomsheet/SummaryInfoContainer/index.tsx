@@ -1,4 +1,4 @@
-import type { StoreSummaryData } from '@repo/entity/src/store';
+import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 
 import { StoreFeatureIconList } from '../../common/StoreFeatureIconList';
 
@@ -7,10 +7,11 @@ import IconStar from '@repo/design-system/components/icons/IconStar';
 import Link from 'next/link';
 import { StoreInfo } from '../../common/StoreInfo';
 
-type StoreSummaryProps = Omit<StoreSummaryData, 'storeImages'>;
+type StoreSummaryProps = Omit<StoreSummaryInfoData, 'storeImages'>;
 
 export function SummaryInfoContainer({
-  id,
+  storeId,
+  storeUuid,
   name,
   animalYn,
   tumblerYn,
@@ -19,7 +20,6 @@ export function SummaryInfoContainer({
   tags,
   address,
   operatingHours,
-  closingDays,
   phone,
   storeLink,
   description,
@@ -33,7 +33,6 @@ export function SummaryInfoContainer({
   const storeInfoProps = {
     address,
     operatingHours,
-    closingDays,
     phone,
     storeLink,
     description,
@@ -47,7 +46,7 @@ export function SummaryInfoContainer({
           <IconStar className="text-[#FFB700] mx-2" />
           <span className="text-xl">{averageRating}</span>
         </div>
-        <Link href={`/map/${id}`}>
+        <Link href={`/map/${storeUuid}`}>
           <button className="rounded-[100px] bg-primary text-white text-lg font-semibold px-5 py-[10px]">
             가게 상세정보
           </button>
