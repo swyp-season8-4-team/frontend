@@ -80,9 +80,7 @@ export const storeHandlers = [
     async ({ params }) => {
       const storeUuid = params.storeUuid;
 
-      const StoreDetailInfoData: StoreDetailInfoData = {
-        storeId: 1,
-        storeUuid: 'store-uuid-123',
+      const storeDetailInfoData: StoreDetailInfoData = {
         name: '스타벅스 강남점',
         address: '서울 강남구 테헤란로 101',
         phone: '02-555-1234',
@@ -94,8 +92,7 @@ export const storeHandlers = [
         averageRating: 4.5,
         latitude: 37.4989,
         longitude: 127.0287,
-        userId: 1,
-        userUuid: 'user-uuid-123',
+        tags: ['케이크', '구움과자', '건강 디저트'],
         operatingHours: [
           {
             dayOfWeek: 'MONDAY',
@@ -264,7 +261,7 @@ export const storeHandlers = [
           'https://picsum.photos/id/52/800/600',
         ],
       };
-      return HttpResponse.json(StoreDetailInfoData);
+      return HttpResponse.json(storeDetailInfoData);
     },
   ),
 
@@ -273,8 +270,7 @@ export const storeHandlers = [
     async ({ params }) => {
       const storeUuid = params.storeUuid;
 
-      const StoreSummaryInfoData: StoreSummaryInfoData = {
-        storeId: 1,
+      const storeSummaryInfoData: StoreSummaryInfoData = {
         storeUuid: 'store-uuid-123',
         name: '스타벅스 강남점',
         address: '서울 강남구 테헤란로 101',
@@ -285,10 +281,7 @@ export const storeHandlers = [
         tumblerYn: true,
         parkingYn: false,
         averageRating: 4.5,
-        latitude: 37.4989,
-        longitude: 127.0287,
-        userId: 1,
-        userUuid: 'user-uuid-123',
+        tags: ['케이크', '구움과자', '건강 디저트'],
         operatingHours: [
           {
             dayOfWeek: 'MONDAY',
@@ -458,7 +451,7 @@ export const storeHandlers = [
         ],
       };
 
-      return new HttpResponse(JSON.stringify(StoreSummaryInfoData), {
+      return new HttpResponse(JSON.stringify(storeSummaryInfoData), {
         status: 200,
         headers: {
           'Content-Type': 'application/json',

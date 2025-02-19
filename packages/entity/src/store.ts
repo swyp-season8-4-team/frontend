@@ -94,13 +94,13 @@ export type NearByStoreData = Pick<
 >;
 
 export interface StoreSummaryInfoRequest {
+  // TODO: api 아직
   storeUuid: string;
 }
 
-export interface StoreSummaryInfoData
+export interface StoreSummaryInfoData // TODO: api 아직
   extends Pick<
     Store,
-    | 'storeId'
     | 'storeUuid'
     | 'name'
     | 'address'
@@ -116,19 +116,18 @@ export interface StoreSummaryInfoData
   > {
   // userId: number;
   // userUuid: string;
-  storeImages: string[];
-  ownerPickImages: string[];
+  storeImages?: string[];
+  ownerPickImages?: string[];
 }
 
 export interface StoreDetailInfoRequest {
+  // TODO: api 아직
   storeUuid: string;
 }
 
-export interface StoreDetailInfoData
+export interface StoreDetailInfoData // TODO: api 아직
   extends Pick<
     Store,
-    | 'storeId'
-    | 'storeUuid'
     | 'name'
     | 'address'
     | 'phone'
@@ -143,8 +142,6 @@ export interface StoreDetailInfoData
     | 'operatingHours'
     | 'tags'
   > {
-  userId: number;
-  userUuid: string;
   storeImages: string[];
   ownerPickImages: string[];
 }

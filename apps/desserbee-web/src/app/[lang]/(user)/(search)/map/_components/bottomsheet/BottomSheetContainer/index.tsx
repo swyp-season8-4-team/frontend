@@ -40,12 +40,11 @@ export function BottomSheetContainer({
     phone: storeSummary.phone,
     storeLink: storeSummary.storeLink,
     description: storeSummary.description,
-    ownerPickImages: storeSummary.ownerPickImages,
   };
 
   const hexaGridProps = {
     contents: ['비건', '로우슈거', '글루텐프리'],
-    previewImages: storeSummary.storeImages,
+    ownerPickImages: storeSummary.ownerPickImages,
   };
   const storePreviewPicListProps = {
     storeImages: storeSummary.storeImages,
