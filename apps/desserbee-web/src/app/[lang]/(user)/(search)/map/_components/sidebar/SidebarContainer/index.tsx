@@ -13,7 +13,7 @@ export function SideBarContainer({
   isSideBarOpen,
   handleSideBarClose,
 }: sideBarProps) {
-  const { savedList } = useSavedList(1);
+  const { savedList } = useSavedList('uuid-123');
 
   const sideBarProps = {
     className: 'absolute top-0 h-full w-[320px] right-0',

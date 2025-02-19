@@ -273,11 +273,11 @@ export default class StoreAPIRepository
       StoresInSavedListRequest,
       StoresInSavedListData[]
     >({
-      ...(authorization && {
-        headers: {
-          Authorization: authorization,
-        },
-      }),
+      // ...(authorization && {
+      //   headers: {
+      //     Authorization: authorization,
+      //   },
+      // }),
       method: 'GET',
       url: `${this.endpoint}/user-store/lists/${listId}/stores`,
     });
@@ -292,11 +292,11 @@ export default class StoreAPIRepository
     const { userUuid } = data || {};
 
     const response = await fetch<SavedListRequest, SavedListData[]>({
-      ...(authorization && {
-        headers: {
-          Authorization: authorization,
-        },
-      }),
+      // ...(authorization && {
+      //   headers: {
+      //     Authorization: authorization,
+      //   },
+      // }),
       method: 'GET',
       url: `${this.endpoint}/user-store/${userUuid}/lists`,
     });
