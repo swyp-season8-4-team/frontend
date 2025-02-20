@@ -1,4 +1,4 @@
-import type { StoreMapData } from './store';
+import type { NearByStoreData } from './store';
 
 export interface MapPosition {
   latitude: number;
@@ -18,9 +18,9 @@ export interface MapController {
     position: MapPosition,
   ): Promise<ExternalMap>;
   createMarkersWithClusterer(
-    storeMapData: StoreMapData[],
+    storeMapData: NearByStoreData[],
     markerImageSrc: string,
-    handleMarkerClick: (storeId: number) => void,
+    handleMarkerClick: (storeUuid: string) => void,
   ): void;
   createCurrentPositionMarker(
     position: MapPosition,

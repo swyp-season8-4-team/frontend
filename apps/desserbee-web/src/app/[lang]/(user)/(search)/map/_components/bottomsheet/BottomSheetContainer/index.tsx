@@ -8,17 +8,17 @@ import { StorePreviewPicList } from '../StorePreviewPicList';
 import { useStoreSummary } from '../../../../_hooks/useStoreSummary';
 
 interface BottomSheetProps {
-  storeId: number;
+  storeUuid: string;
   isBottomSheetOpen: boolean;
   handleBottomSheetClose: () => void;
 }
 
 export function BottomSheetContainer({
-  storeId,
+  storeUuid,
   isBottomSheetOpen,
   handleBottomSheetClose,
 }: BottomSheetProps) {
-  const { storeSummary } = useStoreSummary(storeId);
+  const { storeSummary } = useStoreSummary(storeUuid);
 
   const bottomSheetProps = {
     isBottomSheetOpen,
@@ -28,7 +28,7 @@ export function BottomSheetContainer({
   if (!storeSummary) return null;
 
   const storeSummaryProps = {
-    id: storeSummary.id,
+    storeUuid: storeSummary.storeUuid,
     name: storeSummary.name,
     animalYn: storeSummary.animalYn,
     tumblerYn: storeSummary.tumblerYn,
@@ -37,7 +37,6 @@ export function BottomSheetContainer({
     tags: storeSummary.tags,
     address: storeSummary.address,
     operatingHours: storeSummary.operatingHours,
-    closingDays: storeSummary.closingDays,
     phone: storeSummary.phone,
     storeLink: storeSummary.storeLink,
     description: storeSummary.description,
@@ -45,7 +44,7 @@ export function BottomSheetContainer({
 
   const hexaGridProps = {
     contents: ['비건', '로우슈거', '글루텐프리'],
-    previewImages: storeSummary.storeImages,
+    ownerPickImages: storeSummary.ownerPickImages,
   };
   const storePreviewPicListProps = {
     storeImages: storeSummary.storeImages,

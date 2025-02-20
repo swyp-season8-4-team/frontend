@@ -1,11 +1,10 @@
-import type { StoreSummaryData } from '@repo/entity/src/store';
+import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 import { StoreFeatureIconList } from '../../common/StoreFeatureIconList';
 import { StoreInfo } from '../../common/StoreInfo';
 
-type StoreSummaryProps = Omit<StoreSummaryData, 'storeImages'>;
+type StoreSummaryProps = Omit<StoreSummaryInfoData, 'storeImages'>;
 
 export function DetailInfoContainer({
-  id,
   name,
   animalYn,
   tumblerYn,
@@ -13,7 +12,6 @@ export function DetailInfoContainer({
   tags,
   address,
   operatingHours,
-  closingDays,
   phone,
   storeLink,
   description,
@@ -27,7 +25,6 @@ export function DetailInfoContainer({
   const storeInfoProps = {
     address,
     operatingHours,
-    closingDays,
     phone,
     storeLink,
     description,

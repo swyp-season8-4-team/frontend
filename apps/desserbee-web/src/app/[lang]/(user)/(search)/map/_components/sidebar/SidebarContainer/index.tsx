@@ -13,7 +13,7 @@ export function SideBarContainer({
   isSideBarOpen,
   handleSideBarClose,
 }: sideBarProps) {
-  const { savedList } = useSavedList(1);
+  const { savedList } = useSavedList('uuid-123');
 
   const sideBarProps = {
     className: 'absolute top-0 h-full w-[320px] right-0',
@@ -48,7 +48,7 @@ export function SideBarContainer({
         </div>
         {savedList.map((saveListItem) => (
           <div
-            key={saveListItem.id}
+            key={saveListItem.listName}
             className="border-t-[0.5px] border-t-[#6F6F6F] py-[22px]"
           >
             <div className="flex items-center justify-between">
@@ -56,11 +56,11 @@ export function SideBarContainer({
                 <div className="rounded-sm border-[0.5px] border-[#D5D5D5] mr-2">
                   <IconFlower
                     size={IconSize.xl}
-                    className={getIconColor(saveListItem.colorId)}
+                    className={getIconColor(saveListItem.iconColorId)}
                   />
                 </div>
                 <div>
-                  <div>{saveListItem.title}</div>
+                  <div>{saveListItem.listName}</div>
                   <div className="flex items-center text-[#6F6F6F]">
                     <span>
                       <IconPin
@@ -68,7 +68,7 @@ export function SideBarContainer({
                         className="text-[#6F6F6F] mr-2"
                       />
                     </span>
-                    <span>{saveListItem.count}</span>
+                    <span>{saveListItem.storeCount}</span>
                   </div>
                 </div>
               </div>

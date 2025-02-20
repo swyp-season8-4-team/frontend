@@ -14,7 +14,7 @@ export function MapPanel({
   moveToCurrentPosition,
 }: MapPanelProps) {
   return (
-    <div className="absolute w-[47px] aspect-square right-4 bottom-2 z-10 flex flex-col gap-2">
+    <div className="absolute w-[47px] aspect-square right-4 bottom-60 z-10 flex flex-col gap-2">
       <button
         onClick={handleSideBarOpen}
         className="flex justify-center items-center aspect-square rounded-sm bg-white"

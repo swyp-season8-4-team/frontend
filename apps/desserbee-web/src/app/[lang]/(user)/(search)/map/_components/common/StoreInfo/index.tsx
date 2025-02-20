@@ -3,21 +3,15 @@ import IconClock from '@repo/design-system/components/icons/IconClock';
 import IconPhone from '@repo/design-system/components/icons/IconPhone';
 import IconHome from '@repo/design-system/components/icons/IconHome';
 import IconBaseball from '@repo/design-system/components/icons/IconBaseball';
-import type { StoreSummaryData } from '@repo/entity/src/store';
+import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 import { IconSize } from '@repo/design-system/components/icons';
 type StoreInfoProps = Pick<
-  StoreSummaryData,
-  | 'address'
-  | 'operatingHours'
-  | 'closingDays'
-  | 'phone'
-  | 'storeLink'
-  | 'description'
+  StoreSummaryInfoData,
+  'address' | 'operatingHours' | 'phone' | 'storeLink' | 'description'
 >;
 export function StoreInfo({
   address,
   operatingHours,
-  closingDays,
   phone,
   storeLink,
   description,
@@ -31,12 +25,10 @@ export function StoreInfo({
       <div>
         <div className="flex items-center gap-[6px]">
           <IconClock size={IconSize.xs} className="text-[#BABABA]" />
-          <span>{operatingHours}</span>
           {/* TODO: 영업중 [ ]에 영업종료로 변경 */}
         </div>
         <div className="flex items-center gap-[22px]">
           <span></span>
-          <span>{closingDays}</span>
         </div>
       </div>
       <div className="flex items-center  gap-[6px]">

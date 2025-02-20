@@ -1,11 +1,11 @@
 import type { MapController, MapPosition } from '@repo/entity/src/map';
-import type { StoreMapData } from '@repo/entity/src/store';
+import type { NearByStoreData } from '@repo/entity/src/store';
 
 import { KakaoMapAdapter } from '../adapters/kakaoMapAdapter';
 
 interface CustomMarker extends kakao.maps.Marker {
   storeData?: {
-    id: number;
+    storeUuid: string;
     name: string;
     address: string;
   };
@@ -30,9 +30,9 @@ export default class KakaoMapController implements MapController {
   }
 
   createMarkersWithClusterer(
-    storeMapData: StoreMapData[],
+    storeMapData: NearByStoreData[],
     markerImageSrc: string,
-    handleMarkerClick: (storeId: number) => void,
+    handleMarkerClick: (storeUuid: string) => void,
   ): void {
     if (!this.map) {
       throw new Error('Map is not initialized');
@@ -53,12 +53,12 @@ export default class KakaoMapController implements MapController {
     this.map.clearAllMarkers();
   }
 
-  getMarkerById(storeId: number): CustomMarker | undefined {
+  getMarkerById(storeUuid: string): CustomMarker | undefined {
     if (!this.map) {
       throw new Error('Map is not initialized');
     }
 
-    return this.map.getMarkerById(storeId);
+    return this.map.getMarkerById(storeUuid);
   }
 
   createCurrentPositionMarker(

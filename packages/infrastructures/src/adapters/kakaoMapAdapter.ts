@@ -1,9 +1,9 @@
 import type { ExternalMap, MapPosition } from '@repo/entity/src/map';
-import type { StoreMapData } from '@repo/entity/src/store';
+import type { NearByStoreData } from '@repo/entity/src/store';
 
 interface CustomMarker extends kakao.maps.Marker {
   storeData?: {
-    id: number;
+    storeUuid: string;
     name: string;
     address: string;
   };
@@ -44,9 +44,9 @@ export class KakaoMapAdapter implements ExternalMap {
   }
 
   createMarkersWithClusterer(
-    storeMapData: StoreMapData[],
+    storeMapData: NearByStoreData[],
     markerImageSrc: string,
-    handleMarkerClick: (storeId: number) => void,
+    handleMarkerClick: (storeUuid: string) => void,
   ): void {
     this.clearAllMarkers();
 
@@ -61,13 +61,13 @@ export class KakaoMapAdapter implements ExternalMap {
       }) as CustomMarker;
 
       marker.storeData = {
-        id: store.id,
+        storeUuid: store.storeUuid,
         name: store.name,
         address: store.address,
       };
 
       kakao.maps.event.addListener(marker, 'click', () => {
-        handleMarkerClick(store.id);
+        handleMarkerClick(store.storeUuid);
       });
 
       return marker;
@@ -94,13 +94,15 @@ export class KakaoMapAdapter implements ExternalMap {
     }
   }
 
-  getMarkerById(storeId: number): CustomMarker | undefined {
-    return this.markers.find((marker) => marker.storeData?.id === storeId);
+  getMarkerById(storeUuid: string): CustomMarker | undefined {
+    return this.markers.find(
+      (marker) => marker.storeData?.storeUuid === storeUuid,
+    );
   }
 
-  removeMarkerById(storeId: number): void {
+  removeMarkerById(storeUuid: string): void {
     const markerIndex = this.markers.findIndex(
-      (marker) => marker.storeData?.id === storeId,
+      (marker) => marker.storeData?.storeUuid === storeUuid,
     );
     if (markerIndex !== -1) {
       this.markers[markerIndex].setMap(null);
