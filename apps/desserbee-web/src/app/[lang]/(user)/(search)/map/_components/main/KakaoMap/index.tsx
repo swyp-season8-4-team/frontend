@@ -35,15 +35,15 @@ export function KakaoMap({
         src={apiUrl}
         onReady={() => {
           window.kakao.maps.load(async () => {
-            await loadMap();
-            await startTracking();
+            // await loadMap();
+            // await startTracking();
           });
         }}
       />
 
       <div
         ref={mapRef}
-        className="relative bg-gray-100 my-[26px] rounded-base w-full h-[calc(100dvh-480px)]  overflow-hidden"
+        className="relative bg-gray-400 mb-[9px] md:mb-4 rounded-base w-full h-[calc(100dvh-311.68px)] md:h-[calc(100dvh-450px)] overflow-x-hidden"
       >
         {errorMessage ? errorMessage : children}
       </div>
