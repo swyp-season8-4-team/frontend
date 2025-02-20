@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "@SERVER_API_URL/$1"
+    }
+  ]
+}
