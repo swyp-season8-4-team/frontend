@@ -137,7 +137,7 @@ export default class StoreAPIRepository
         },
       }),
       data,
-      method: 'PUT',
+      method: 'PATCH',
       url,
     });
 
@@ -218,7 +218,7 @@ export default class StoreAPIRepository
         },
       }),
       data,
-      method: 'PUT', // TODO: PUT으로 변경
+      method: 'PATCH', // TODO: PATCH으로 변경
       url,
     });
 
@@ -401,7 +401,7 @@ export default class StoreAPIRepository
         },
       }),
       data,
-      method: 'PUT',
+      method: 'PATCH',
       url,
     });
 

@@ -1,4 +1,4 @@
-type HTTPMethod = 'GET' | 'PATCH' | 'POST' | 'DELETE' | 'PUT';
+type HTTPMethod = 'GET' | 'PATCH' | 'POST' | 'DELETE';
 
 export type Headers = Record<string, string>;
 export type Queries = Record<string, string | string[] | undefined>;
