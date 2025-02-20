@@ -87,7 +87,7 @@ export function StoreFeatureIconList({
                 {feature.icon}
               </div>
               {selectedIconIndex === index && (
-                <div className="absolute text-sm text-nowrap rounded-[5px] top-10 left-1/2 -translate-x-1/2  bg-[#E8E8E8]  px-[10px] py-1 before:content-[''] before:absolute before:top-[-6px] before:left-1/2 before:-translate-x-1/2 before:border-l-[6px] before:border-l-transparent before:border-r-[6px] before:border-r-transparent before:border-b-[6px] before:border-b-[#E8E8E8]">
+                <div className="absolute z-10 text-sm text-nowrap rounded-[5px] top-12 left-1/2 -translate-x-1/2  bg-[#E8E8E8]  px-[10px] py-1 before:content-[''] before:absolute before:top-[-6px] before:left-1/2 before:-translate-x-1/2 before:border-l-[6px] before:border-l-transparent before:border-r-[6px] before:border-r-transparent before:border-b-[6px] before:border-b-[#E8E8E8]">
                   {feature.tooltip}
                 </div>
               )}
