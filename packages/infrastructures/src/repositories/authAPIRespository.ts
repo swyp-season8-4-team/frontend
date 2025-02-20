@@ -54,7 +54,7 @@ export default class AuthAPIRespository extends APIRepository implements AuthRep
 
     const { email, password, keepLoggedIn } = data;
 
-    const response = await fetch<SignInData, SignInResponse>({
+    const response = await fetch<SignInData, any>({
       data: {
         email,
         password,
@@ -63,6 +63,8 @@ export default class AuthAPIRespository extends APIRepository implements AuthRep
       method: 'POST',
       url: `${this.endpoint}/auth/login`,
     });
+
+    console.log(response);
 
     return response;
   }

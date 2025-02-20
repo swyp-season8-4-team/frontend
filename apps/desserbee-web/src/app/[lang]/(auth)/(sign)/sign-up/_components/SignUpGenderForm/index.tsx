@@ -1,18 +1,16 @@
 'use client';
 
-import signUpAction from '@/actions/signUpAction';
-import { NavigationPathname } from '@repo/entity/src/navigation';
 import { Button } from '@repo/ui/components/button';
-import { useRouter } from 'next/navigation';
-import { useContext, useState } from 'react';
-import { SignUpContext } from '../../_contexts/SignUpContext';
-
+import { SignUpStep } from '@repo/usecase/src/authService';
+import { useState } from 'react';
 
 type Gender = 'FEMALE' | 'MALE' | null;
 
-export default function SignUpGenderForm() {
-  const router = useRouter();
-  const { email, password, confirmPassword } = useContext(SignUpContext);
+interface Props {
+  updateStep: (step: SignUpStep) => void;
+}
+
+export default function SignUpGenderForm({ updateStep }: Props) {
   const [selectedGender, setSelectedGender] = useState<Gender>(null);
 
   const handleGenderSelect = (gender: Gender) => {
@@ -23,15 +21,8 @@ export default function SignUpGenderForm() {
     if (!selectedGender) {
       return;
     }
-
-    await signUpAction({
-      email,
-      password,
-      confirmPassword,
-      gender: selectedGender,
-    });
-
-    router.push(NavigationPathname.SignIn);
+    
+    updateStep(SignUpStep.NICKNAME);
   };
 
   return (
@@ -72,7 +63,7 @@ export default function SignUpGenderForm() {
         disabled={!selectedGender}
         onClick={handleSubmit}
       >
-        회원가입 완료
+        계속하기
       </Button>
     </div>
   );

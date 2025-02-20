@@ -575,8 +575,17 @@ video {
   --popover-foreground: 222.2 47.4% 11.2%;
   --ring: 215 20.2% 65.1%;
   --radius: 0.5rem;
-  /* Font */
-  --font-pretendard: 'Pretendard Std Variable', 'Pretendard JP Variable', 'Pretendard Variable', 'system-ui';
+  --font-pretendard-kr: 'Pretendard Variable';
+  --font-pretendard-jp: 'Pretendard JP Variable';
+  --font-pretendard-std: 'Pretendard Std Variable';
+}
+
+body {
+  background-color: hsl(var(--background));
+  font-family: var(--font-pretendard-kr);
+  color: hsl(var(--foreground));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
@@ -585,7 +594,6 @@ video {
 
 body {
   background-color: hsl(var(--background));
-  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   color: hsl(var(--foreground));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

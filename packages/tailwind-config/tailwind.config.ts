@@ -13,11 +13,7 @@ export default {
         'not-allowed': 'not-allowed',
       },
       fontFamily: {
-        pretendard: [
-          'Pretendard Std Variable',
-          'Pretendard JP Variable',
-          'Pretendard Variable',
-        ],
+        pretendard: ['var(--font-pretendard-kr)', 'var(--font-pretendard-jp)', 'var(--font-pretendard-std)'],
         recipeKorea: ['var(--font-recipe-korea)'],
       },
       spacing: {

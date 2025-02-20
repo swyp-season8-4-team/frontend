@@ -21,7 +21,7 @@ const NAVBAR_BUTTON_CONTENT = [
   {
     icon: <IconProfileOutline />,
     text: '마이',
-    path: NavigationPathname.MyPage,
+    path: NavigationPathname.My,
   },
 ];
 

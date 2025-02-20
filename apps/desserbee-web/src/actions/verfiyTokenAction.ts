@@ -12,7 +12,7 @@ export async function verifyTokenAction(data: ActionData) {
   const { token } = data;
 
   const cookieList = await cookies();
-  const headerList = await headers();
+  // const headerList = await headers();
 
   cookieList.set('verificationToken', token, {
     httpOnly: true,
@@ -21,6 +21,6 @@ export async function verifyTokenAction(data: ActionData) {
     maxAge: 60 * 30
   });
 
-  headerList.set('X-Email-Verification-Token', token);
+  // headerList.set('X-Email-Verification-Token', token);
 
 }

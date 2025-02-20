@@ -14,11 +14,10 @@ export async function middleware(request: NextRequest) {
 
   const requestHeaders = new Headers(headers);
 
-  // const verificationToken = cookies.get('verificationToken')?.value;
-  // console.log('verificationToken', verificationToken);
-  // if (verificationToken) {
-  //   requestHeaders.set('X-Email-Verification-Token', `${verificationToken}`);
-  // }
+  const verificationToken = cookies.get('verificationToken')?.value;
+  if (verificationToken) {
+    requestHeaders.set('X-Email-Verification-Token', `${verificationToken}`);
+  }
 
   const token = await getToken(request);
   if (token) {
@@ -105,11 +104,10 @@ function getLocale(request: NextRequest): SupportISO639Language {
 async function getToken(request: NextRequest): Promise<string | null> {
   const { cookies } = request;
 
-  // FIXME: cookie key값 미확정
   const accessToken = cookies.get('accessToken')?.value;
-
+  const refreshToken = cookies.get('refreshToken')?.value;
   // 둘다 없으면 로그인을 다시 해야하는것
-  if (!accessToken) {
+  if (!accessToken || !refreshToken) {
     return null;
   }
 
@@ -121,18 +119,23 @@ async function getToken(request: NextRequest): Promise<string | null> {
   }
 
   const isAccessTokenExpired = isExpiredJWT(accessToken);
+  const isRefreshTokenExpired = isExpiredJWT(refreshToken);
 
-  let newAccessToken: string | null = null;
+  let newAccessToken: string | null = accessToken;
 
   const authService = new AuthService({
     authRepository: new AuthAPIRespository(),
   });
 
   if (isAccessTokenExpired) {
-    console.log('리프레시 토큰 발급', isAccessTokenExpired);
+    if (isRefreshTokenExpired) {
+      return null;
+    }
+    
     // 리프레시 토큰을 가지고 다시 accessToken 발급
     const { accessToken: updatedAccessToken }: { accessToken: string } =
       await authService.refreshAccessToken(accessToken);
+    cookies.set('refreshToken', updatedAccessToken);
     newAccessToken = updatedAccessToken;
   }
 

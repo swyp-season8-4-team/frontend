@@ -1,5 +1,5 @@
 import type { AuthRepository } from '@repo/entity/src/auth';
-import type { TargetUser, User, UserRepository } from '@repo/entity/src/user';
+import type { NicknameValidationRequestData, NicknameValidationResponse, TargetUser, User, UserRepository } from '@repo/entity/src/user';
 import { decodeJWT } from '@repo/utility/src/jwt';
 
 export default class UserService {
@@ -52,5 +52,15 @@ export default class UserService {
     const { sub } = decodeJWT(authToken);
 
     return sub;
+  }
+
+  async validateNickname({ nickname, purpose }: NicknameValidationRequestData): Promise<NicknameValidationResponse> {
+    if (!this.userRepository) {
+      throw new Error('userRepository is not set');
+    }
+
+    const response = await this.userRepository.validateNickname({ data: { nickname, purpose } });
+
+    return response;
   }
 }

@@ -13,5 +13,5 @@ export enum NavigationPathname {
   Map = '/map',
   ForgotPassword = '/forgot-password',
   Community = '/community',
-  MyPage = '/my-page',
+  My = '/my',
 }

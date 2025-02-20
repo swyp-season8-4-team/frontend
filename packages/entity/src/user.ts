@@ -35,11 +35,18 @@ export interface NicknameValidationRequestData {
   purpose: 'SIGNUP' | 'PROFILE_UPDATE';
 }
 
+export interface NicknameValidationResponse {
+  message: string;
+  available: boolean;
+  timestamp: string;
+}
+
 export interface UserRepository {
   addInfo(data: BaseRequestData<User>): Promise<User>;
   delete(data: BaseRequestData<void>): Promise<void>;
   getMe(data: BaseRequestData<void>): Promise<User>;
   getTarget(data: BaseRequestData<{ id: string }>): Promise<TargetUser>;
   update(data: BaseRequestData<User>): Promise<void>;
-  validateNickname(data: BaseRequestData<NicknameValidationRequestData>): Promise<void>;
+  validateNickname(data: BaseRequestData<NicknameValidationRequestData>): Promise<NicknameValidationResponse>;
+  uploadProfileImage(data: BaseRequestData<{ image: File }>): Promise<void>;
 }
