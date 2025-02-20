@@ -467,30 +467,35 @@ export const storeHandlers = [
     async () => {
       const savedStoreList: SavedListData[] = [
         {
+          listId: 1,
           userUuid: 'user-uuid-123',
           iconColorId: 1,
           listName: '비건 맛집',
           storeCount: 22,
         },
         {
+          listId: 2,
           userUuid: 'user-uuid-123',
           iconColorId: 2,
           listName: '다이어터를 위한 곳',
           storeCount: 15,
         },
         {
+          listId: 3,
           userUuid: 'user-uuid-123',
           iconColorId: 3,
           listName: '배고프다',
           storeCount: 31,
         },
         {
+          listId: 4,
           userUuid: 'user-uuid-123',
           iconColorId: 4,
           listName: '이게 디저트지',
           storeCount: 18,
         },
         {
+          listId: 5,
           userUuid: 'user-uuid-123',
           iconColorId: 1,
           listName: '할미 입맛',
