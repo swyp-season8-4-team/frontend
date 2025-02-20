@@ -1,13 +1,12 @@
-import IconPlus from '@repo/design-system/components/icons/IconPlus';
-import type { StoreSummaryData } from '@repo/entity/src/store';
+import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 import Image from 'next/image';
-type StorePictureListProps = Pick<StoreSummaryData, 'storeImages'>;
+type StorePictureListProps = Pick<StoreSummaryInfoData, 'storeImages'>;
 
 export function StorePictureList({ storeImages }: StorePictureListProps) {
   return (
     <div className="flex gap-[22px] py-7">
-      {storeImages.map((image, index) =>
-        index === storeImages.length - 1 ? ( // TODO: 항상 사진이 4개 채워져있는지
+      {storeImages?.map((image, index) =>
+        index === storeImages.length - 1 ? (
           <button
             key={image}
             className="relative w-full aspect-[190/162] overflow-hidden"
