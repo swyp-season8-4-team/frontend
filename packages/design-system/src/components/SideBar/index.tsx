@@ -1,6 +1,9 @@
 import type { WithChildren, WithClassName } from '@repo/ui/index';
+import IconX from '../icons/IconX';
+import { IconSize } from '../icons';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@repo/ui/lib/utils';
+import { memo } from 'react';
 
 interface SideBarProps extends WithChildren, WithClassName {
   isSideBarOpen: boolean;
@@ -64,6 +67,12 @@ export function SideBar({
             },
           }}
         >
+          <button
+            className="hidden md:block top-7 right-[26.19px] md:absolute"
+            onClick={handleSideBarClose}
+          >
+            <IconX />
+          </button>
           {children}
         </motion.div>
       )}
