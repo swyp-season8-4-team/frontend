@@ -113,6 +113,7 @@ export interface StoreSummaryInfoData // TODO: api 아직
     | 'description'
     | 'operatingHours'
     | 'tags'
+    | 'holidays'
   > {
   // userId: number;
   // userUuid: string;
@@ -141,6 +142,8 @@ export interface StoreDetailInfoData // TODO: api 아직
     | 'description'
     | 'operatingHours'
     | 'tags'
+    | 'holidays'
+    | 'notice'
   > {
   storeImages: string[];
   ownerPickImages: string[];

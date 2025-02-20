@@ -40,6 +40,7 @@ export function BottomSheetContainer({
     phone: storeSummary.phone,
     storeLink: storeSummary.storeLink,
     description: storeSummary.description,
+    holidays: storeSummary.holidays,
   };
 
   const hexaGridProps = {
