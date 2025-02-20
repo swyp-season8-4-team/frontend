@@ -188,10 +188,11 @@ export interface SavedListRequest {
 }
 
 export interface SavedListData {
-  userUuid: string;
+  listId: number;
   listName: string;
   iconColorId: number;
   storeCount: number;
+  userUuid: string;
 }
 
 export interface StoresInSavedListRequest {
