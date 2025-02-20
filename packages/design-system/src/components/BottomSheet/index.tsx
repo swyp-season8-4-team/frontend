@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { memo, type ReactNode } from 'react';
 
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -24,7 +24,8 @@ export function BottomSheet({
         // onClick={toggleOpen}
         >
           <motion.div
-            layoutId="bottomSheet"
+            layoutId="map-bottom-sheet"
+            layout={false}
             style={{ willChange: 'transform' }}
             className="fixed bottom-0 left-0 right-0  w-full rounded-t-base bg-white px-base pt-[19px] pb-4  z-bottomSheet"
             key="content"
