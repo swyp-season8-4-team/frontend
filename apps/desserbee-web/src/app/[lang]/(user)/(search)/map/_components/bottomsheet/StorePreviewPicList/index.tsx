@@ -1,10 +1,10 @@
-import type { StoreSummaryData } from '@repo/entity/src/store';
+import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 import Image from 'next/image';
 
-type StorePreviewPicListProps = Pick<StoreSummaryData, 'storeImages'>;
+type StorePreviewPicListProps = Pick<StoreSummaryInfoData, 'storeImages'>;
 
 export function StorePreviewPicList({ storeImages }: StorePreviewPicListProps) {
-  if (storeImages.length === 0) return;
+  if (!storeImages) return;
 
   return (
     <div className="flex gap-[22px]">
