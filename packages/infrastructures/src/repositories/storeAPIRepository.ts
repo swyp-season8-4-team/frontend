@@ -43,6 +43,10 @@ export default class StoreAPIRepository
     longitude: number;
     radius: number;
   }>): Promise<NearByStoreData[]> {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { latitude, longitude, radius } = data || {};
 
     const response = await fetch<void, NearByStoreData[]>({
@@ -58,6 +62,10 @@ export default class StoreAPIRepository
   }: BaseRequestData<{
     storeUuid: string;
   }>) {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { storeUuid } = data || {};
 
     const response = await fetch<void, StoreSummaryInfoData>({
@@ -73,6 +81,10 @@ export default class StoreAPIRepository
   }: BaseRequestData<{
     storeUuid: string;
   }>) {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { storeUuid } = data || {};
 
     const response = await fetch<void, StoreDetailInfoData>({
@@ -87,6 +99,9 @@ export default class StoreAPIRepository
     authorization,
     data,
   }: BaseRequestData<RegisterStoreRequest>): Promise<RegisterStoreResponse> {
+    if (!data) {
+      throw Error('data required');
+    }
     const url = `${this.endpoint}/stores`;
 
     const response = await fetch<RegisterStoreRequest, RegisterStoreResponse>({
@@ -107,6 +122,10 @@ export default class StoreAPIRepository
     authorization,
     data,
   }: BaseRequestData<EditStoreRequest>): Promise<EditStoreResponse> {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { storeUuid } = data || {};
 
     const url = `${this.endpoint}/stores/${storeUuid}`;
@@ -129,6 +148,10 @@ export default class StoreAPIRepository
     authorization,
     data,
   }: BaseRequestData<DeleteStoreRequest>): Promise<void> {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { storeUuid } = data || {};
 
     const url = `${this.endpoint}/stores/${storeUuid}`;
@@ -151,6 +174,10 @@ export default class StoreAPIRepository
     authorization,
     data,
   }: BaseRequestData<CreateSavedListRequest>): Promise<CreateSavedListResponse> {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { userUuid } = data || {};
 
     const url = `${this.endpoint}/user-store/${userUuid}/lists`;
@@ -176,6 +203,10 @@ export default class StoreAPIRepository
     authorization,
     data,
   }: BaseRequestData<EditSavedListRequest>): Promise<EditSavedListResponse> {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { listId } = data || {};
 
     const url = `${this.endpoint}/user-store/lists/${listId}`;
@@ -198,6 +229,10 @@ export default class StoreAPIRepository
     authorization,
     data,
   }: BaseRequestData<DeleteSavedListRequest>): Promise<void> {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { listId } = data || {};
 
     const url = `${this.endpoint}/user-store/lists/${listId}`;
@@ -219,6 +254,10 @@ export default class StoreAPIRepository
     authorization,
     data,
   }: BaseRequestData<AddStoreInSavedListRequest>): Promise<AddStoreInSavedListResponse> {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { listId, storeUuid } = data || {};
 
     const url = `${this.endpoint}/user-store/lists/${listId}/stores/${storeUuid}`;
@@ -244,6 +283,10 @@ export default class StoreAPIRepository
     authorization,
     data,
   }: BaseRequestData<DeleteStoreInSavedListRequest>): Promise<void> {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { listId, storeUuid } = data || {};
 
     const url = `${this.endpoint}/user-store/lists/${listId}/stores/${storeUuid}`;
@@ -267,6 +310,10 @@ export default class StoreAPIRepository
   }: BaseRequestData<StoresInSavedListRequest>): Promise<
     StoresInSavedListData[]
   > {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { listId } = data || {};
 
     const response = await fetch<
@@ -289,6 +336,10 @@ export default class StoreAPIRepository
     authorization,
     data,
   }: BaseRequestData<SavedListRequest>): Promise<SavedListData[]> {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { userUuid } = data || {};
 
     const response = await fetch<SavedListRequest, SavedListData[]>({
@@ -309,6 +360,10 @@ export default class StoreAPIRepository
     authorization,
     data,
   }: BaseRequestData<CreateMenuRequest>): Promise<void> {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { storeUuid } = data || {};
 
     const url = `${this.endpoint}/stores/${storeUuid}/menus`;
@@ -331,6 +386,10 @@ export default class StoreAPIRepository
     authorization,
     data,
   }: BaseRequestData<EditMenuRequest>): Promise<void> {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { storeUuid, menuUuid } = data || {};
 
     const url = `${this.endpoint}/stores/${storeUuid}/menus/${menuUuid}`;
@@ -353,6 +412,10 @@ export default class StoreAPIRepository
     authorization,
     data,
   }: BaseRequestData<DeleteMenuRequest>): Promise<void> {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { storeUuid, menuUuid } = data || {};
 
     const url = `${this.endpoint}/stores/${storeUuid}/menus/${menuUuid}`;
@@ -384,6 +447,10 @@ export default class StoreAPIRepository
   async getMenuList({
     data,
   }: BaseRequestData<GetMenuListRequest>): Promise<Menu[]> {
+    if (!data) {
+      throw Error('data required');
+    }
+
     const { storeUuid } = data || {};
 
     const response = await fetch<GetMenuListRequest, Menu[]>({
