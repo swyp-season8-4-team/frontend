@@ -6,7 +6,7 @@ import IconPlus from '@repo/design-system/components/icons/IconPlus';
 import IconTrashCan from '@repo/design-system/components/icons/IconTrashCan';
 import IconShare from '@repo/design-system/components/icons/IconShare';
 import { cn } from '@repo/ui/lib/utils';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface sideBarProps {
   isSideBarOpen: boolean;
@@ -55,6 +55,12 @@ export function SideBarContainer({
         return 'text-[#00C6D8]';
     }
   };
+
+  useEffect(() => {
+    if (!isSideBarOpen) {
+      setSelectedListId(null);
+    }
+  }, [isSideBarOpen]);
 
   return (
     <SideBar {...sideBarProps}>
