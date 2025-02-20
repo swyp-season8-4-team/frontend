@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import type { StoreDetailData } from '@repo/entity/src/store';
+import type { StoreDetailInfoData } from '@repo/entity/src/store';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 
@@ -8,19 +8,19 @@ const storeService = new StoreService({
   storeRepository: new StoreAPIReopository(),
 });
 
-export function useStoreDetail(storeId: number) {
-  const [storeDetail, setStoreDetail] = useState<StoreDetailData>();
+export function useStoreDetail(storeUuid: string) {
+  const [storeDetail, setStoreDetail] = useState<StoreDetailInfoData>();
   const [error, setError] = useState<unknown>();
 
   useEffect(() => {
-    const fetchStoreDetail = async (storeId: number) => {
-      if (!storeId) return;
-      const result = await storeService.getStoreDetail(storeId);
+    const fetchStoreDetail = async (storeUuid: string) => {
+      if (!storeUuid) return;
+      const result = await storeService.getStoreDetail(storeUuid);
       setStoreDetail(result);
     };
 
-    fetchStoreDetail(storeId);
-  }, [storeId]);
+    fetchStoreDetail(storeUuid);
+  }, [storeUuid]);
   return {
     storeDetail,
   };

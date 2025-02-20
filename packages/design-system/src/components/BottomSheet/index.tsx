@@ -45,7 +45,7 @@ export function BottomSheet({
             variants={{
               open: {
                 y: 0,
-                height: '50%',
+                height: 'auto',
                 transition: {
                   type: 'spring',
                   damping: 20,
@@ -67,9 +67,9 @@ export function BottomSheet({
               },
             }}
           >
-            <div>
-              <div className="w-full flex justify-center items-center">
-                <div className="border-[3px] rounded-[5px] w-[115.5px] h- border-[#545454] mb-[21px]"></div>
+            <div className="h-full">
+              <div className="w-full flex justify-center items-center mb-[21px]">
+                <div className="absolute border-[3px] rounded-[5px] w-[115.5px] h- border-[#545454] "></div>
               </div>
               {children}
             </div>

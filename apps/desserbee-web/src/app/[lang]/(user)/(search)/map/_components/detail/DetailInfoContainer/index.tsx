@@ -23,6 +23,12 @@ export function DetailInfoContainer({
   description,
   contents,
   storeImages,
+  ownerPickImages,
+  latitude,
+  longitude,
+  holidays,
+  notice,
+
   // TODO: 가게 위도, 경도 받아와야함 (길찾기)
 }: DetailInfoContainerProps) {
   const storeFeatureIconListProps = {
@@ -37,21 +43,14 @@ export function DetailInfoContainer({
     phone,
     storeLink,
     description,
+    holidays,
   };
 
   const hexagonGridProps = {
     contents,
     previewImages: storeImages,
+    ownerPickImages,
   };
-
-  const notices = [
-    {
-      id: 0,
-      content:
-        'No sugar, Low carb, Gluten free _ 초콜릿과 팥앙금 등 부재료 또한 하나부터 열까지 설탕 없이 직접 만듭니다.',
-    },
-    { id: 2, content: '인스타그램 @ketobbang 에서 소식을 확인해주세요.' },
-  ]; // TODO: 아직 API에 공지 관련 없어서 임의로 만듬, 나중에 props로 받는 것으로 수정
 
   return (
     <div>
@@ -97,7 +96,7 @@ export function DetailInfoContainer({
             </button>
             <button className="px-10 py-[9px] min-w-[113px] border rounded-[60px] border-[#9F9F9F]">
               <a
-                href={`https://map.kakao.com/link/to/${name},37.499462,127.028274`}
+                href={`https://map.kakao.com/link/to/${name},${latitude},${longitude}`}
               >
                 길찾기
               </a>
@@ -107,12 +106,12 @@ export function DetailInfoContainer({
         <HexagonGrid {...hexagonGridProps} />
       </div>
       <div className="flex flex-col gap-3">
-        {notices.map((notice) => (
+        {notice.map((content) => (
           <div
-            key={notice.id}
+            key={content}
             className="p-[13px] w-full max-h-fit bg-[#F6F6F6] rounded-[10px]"
           >
-            {notice.content}
+            {content}
           </div>
         ))}
       </div>

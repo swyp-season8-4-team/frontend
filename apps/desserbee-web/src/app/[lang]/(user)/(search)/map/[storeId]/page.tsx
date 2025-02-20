@@ -6,7 +6,7 @@ import { StorePictureList } from '../_components/detail/StorePictureList';
 
 export default function StoreDetailPage() {
   const { storeId } = useParams();
-  const { storeDetail } = useStoreDetail(Number(storeId));
+  const { storeDetail } = useStoreDetail('uuid-1');
 
   if (!storeDetail) return null;
 
@@ -15,7 +15,6 @@ export default function StoreDetailPage() {
   };
 
   const detailInfoContainerProps = {
-    id: storeDetail.id,
     name: storeDetail.name,
     animalYn: storeDetail.animalYn,
     tumblerYn: storeDetail.tumblerYn,
@@ -24,13 +23,17 @@ export default function StoreDetailPage() {
     tags: storeDetail.tags,
     address: storeDetail.address,
     operatingHours: storeDetail.operatingHours,
-    closingDays: storeDetail.closingDays,
     phone: storeDetail.phone,
     storeLink: storeDetail.storeLink,
     description: storeDetail.description,
     contents: ['비건', '로우슈거', '글루텐프리'],
     previewImages: storeDetail.storeImages,
     storeImages: storeDetail.storeImages,
+    ownerPickImages: storeDetail.ownerPickImages,
+    latitude: storeDetail.latitude,
+    longitude: storeDetail.longitude,
+    holidays: storeDetail.holidays,
+    notice: storeDetail.notice,
   };
   return (
     <div className="w-full min-h-[100vh] h-fit bg-white absolute z-modal px-base">
