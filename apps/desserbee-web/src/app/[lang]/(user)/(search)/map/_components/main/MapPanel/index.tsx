@@ -14,12 +14,12 @@ export function MapPanel({
   moveToCurrentPosition,
 }: MapPanelProps) {
   return (
-    <div className="absolute w-[47px] aspect-square right-4 bottom-60 z-10 flex flex-col gap-2">
+    <div className="bottom-[28.05px] left-4 z-10 absolute flex flex-col gap-2 w-[47px] aspect-square">
       <button
         onClick={handleSideBarOpen}
-        className="flex justify-center items-center aspect-square rounded-sm bg-white"
+        className="flex justify-center items-center bg-white rounded-sm aspect-square"
       >
-        <IconFlowerOutline size={IconSize.l} className="#6F6F6F" />
+        <IconFlowerOutline className="text-[#6F6F6F]" />
       </button>
       <button
         onClick={moveToCurrentPosition}
@@ -27,7 +27,7 @@ export function MapPanel({
           'flex justify-center items-center aspect-square rounded-sm bg-white',
         )}
       >
-        <IconTarget size={IconSize.m} className="#6F6F6F" />
+        <IconTarget className="text-[#6F6F6F]" />
       </button>
     </div>
   );
