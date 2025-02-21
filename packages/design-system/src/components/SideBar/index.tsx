@@ -21,7 +21,7 @@ export function SideBar({
       {isSideBarOpen && (
         <motion.div
           className={cn(
-            'relative h-full px-[13.05px] py-[10.88px] md:px-6  md:py-5 bg-white rounded-base z-sidebar',
+            'relative h-full px-[13.05px] py-[10.88px] md:px-6  md:py-5 bg-white rounded-[10px] md:rounded-base z-sidebar',
             className,
           )}
           layoutId="map-sidebar"

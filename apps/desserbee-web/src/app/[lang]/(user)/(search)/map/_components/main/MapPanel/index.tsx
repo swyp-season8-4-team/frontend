@@ -16,7 +16,7 @@ export function MapPanel({
 }: MapPanelProps) {
   const { push, pop } = useContext(PortalContext);
 
-  const [isUserSignIn, setIsUserSignIn] = useState(false); // TODO: 후에 인증 구현되면 수정
+  const [isUserSignIn, setIsUserSignIn] = useState(true); // TODO: 후에 인증 구현되면 수정
 
   const closeModal = () => {
     pop('modal');

@@ -98,7 +98,7 @@ export function SideBarContainer({
                       )}
                     />
                   </div>
-                  <div className="flex flex-col">
+                  <div className="flex flex-col leading-3">
                     <div className="text-[10px] md:text-lg">
                       {saveListItem.listName}
                     </div>
