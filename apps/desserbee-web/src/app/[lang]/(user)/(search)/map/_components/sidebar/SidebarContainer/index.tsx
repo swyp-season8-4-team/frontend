@@ -1,5 +1,4 @@
 import { SideBar } from '@repo/design-system/components/SideBar';
-import { useSavedList } from '../../../../_hooks/useSavedList';
 import IconFlower from '@repo/design-system/components/icons/IconFlower';
 import IconPin from '@repo/design-system/components/icons/IconPin';
 import IconPlus from '@repo/design-system/components/icons/IconPlus';
@@ -7,18 +6,19 @@ import IconTrashCan from '@repo/design-system/components/icons/IconTrashCan';
 import IconShare from '@repo/design-system/components/icons/IconShare';
 import { cn } from '@repo/ui/lib/utils';
 import { useEffect, useRef, useState } from 'react';
+import type { SavedListData } from '@repo/entity/src/store';
 
 interface sideBarProps {
   isSideBarOpen: boolean;
   handleSideBarClose: () => void;
+  totalSavedList: SavedListData[];
 }
 
 export function SideBarContainer({
   isSideBarOpen,
   handleSideBarClose,
+  totalSavedList,
 }: sideBarProps) {
-  const { savedList } = useSavedList('uuid-123'); // TODO: 서버 FETCH
-
   const sideBarProps = {
     className: 'absolute top-0 h-full w-[320px] right-0',
     isSideBarOpen,
@@ -68,7 +68,7 @@ export function SideBarContainer({
         <div className="flex-none">
           <div className="flex p-2 w-full font-semibold text-[#393939] md:text-[22px] text-xs text-start">
             <span>저장 리스트 &nbsp;</span>
-            <span>{savedList.length}</span>
+            <span>{totalSavedList.length}</span>
           </div>
           <div className="flex items-center my-[11.97px] md:my-[22px]">
             <span className="flex justify-center items-center mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm w-[20.7px] md:w-[30.45px] aspect-square">
@@ -80,7 +80,7 @@ export function SideBarContainer({
           </div>
         </div>
         <div className="[&::-webkit-scrollbar]:hidden flex-grow pr-1 [-ms-overflow-style:none] overflow-y-auto [scrollbar-width:none]">
-          {savedList.map((saveListItem, index) => (
+          {totalSavedList.map((saveListItem, index) => (
             <div
               key={saveListItem.listName}
               className={cn(
