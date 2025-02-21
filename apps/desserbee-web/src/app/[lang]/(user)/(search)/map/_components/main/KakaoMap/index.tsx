@@ -3,8 +3,6 @@
 import Script from 'next/script';
 import { useEffect, useRef, useState } from 'react';
 
-import { CATEGORIES, USER_PREFERENCES } from '../../../_consts/tag'; // Map page에서
-
 import storeMarkerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-marker.svg';
 import userMarkerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-current-marker.svg';
 
@@ -13,7 +11,6 @@ import { MapPanel } from '../MapPanel';
 import { SideBarContainer } from '../../sidebar/SidebarContainer';
 import { BottomSheetContainer } from '../../bottomsheet/BottomSheetContainer';
 
-import { useMap } from '../../../../_hooks/useMap';
 import { useBottomSheet } from '../../../../_hooks/useBottomSheet';
 import { useSideBar } from '../../../../_hooks/useSidebar';
 
@@ -29,16 +26,33 @@ import KakaoMapController from '@repo/infrastructures/src/controllers/kakaoMapCo
 
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
-import { KAKAO_MAP_API_URL } from '../../../_consts/map';
-export function KakaoMap() {
-  const mapRef = useRef<HTMLDivElement>(null);
 
+import { KAKAO_MAP_API_URL } from '../../../_consts/map';
+import type { SavedListData } from '@repo/entity/src/store';
+
+import withModal from '@repo/design-system/hocs/withModal';
+import { LocationPermissionModal } from '../../modal/LocationPermissionModal';
+
+interface KakaoMapProps {
+  userPreferences: string[];
+  preferenceCategories: string[];
+  totalSavedList: SavedListData[];
+}
+
+export function KakaoMap({
+  userPreferences,
+  preferenceCategories,
+  totalSavedList,
+}: KakaoMapProps) {
+  const mapRef = useRef<HTMLDivElement>(null);
   const [selectedStoreUuid, setSelectedStoreUuid] = useState<string>();
   const [geoErrorMessage, setGeoErrorMessage] = useState<string>();
+  const [isPermissionModalOpen, setIsPermissionModalOpen] = useState(false);
   const [currentPosition, setCurrentPosition] = useState<MapPosition>({
     latitude: 0,
     longitude: 0,
   });
+
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [services, setServices] = useState<{
     mapService: MapService | null;
@@ -55,10 +69,24 @@ export function KakaoMap() {
 
   const { isSideBarOpen, handleSideBarOpen, handleSideBarClose } = useSideBar();
 
+  const bottomSheetProps = {
+    storeUuid: selectedStoreUuid as string,
+    isBottomSheetOpen,
+    handleBottomSheetClose,
+  };
+
+  const sideBarProps = {
+    isSideBarOpen,
+    handleSideBarClose,
+    totalSavedList,
+  };
+
   const handleStoreMarkerClick = (storeUuid: string) => {
     setSelectedStoreUuid(storeUuid);
     handleBottomSheetOpen();
   };
+
+  const LocPermissionModal = withModal(LocationPermissionModal);
 
   const initializeServices = () => {
     const mapService = new MapService({
@@ -74,12 +102,6 @@ export function KakaoMap() {
 
     const storeService = new StoreService({
       storeRepository: new StoreAPIReopository(),
-    });
-
-    console.log('서비스 초기화 완료:', {
-      mapService,
-      geoService,
-      storeService,
     });
 
     return { mapService, geoService, storeService };
@@ -100,6 +122,7 @@ export function KakaoMap() {
       const result = await services.geoService.getCurrentPosition();
       if ('errorMessage' in result) {
         setGeoErrorMessage(result.errorMessage as string);
+        setIsPermissionModalOpen(true);
         return;
       }
       setCurrentPosition(result);
@@ -121,16 +144,14 @@ export function KakaoMap() {
         storeMarkerImage.src,
         handleStoreMarkerClick,
       );
-
-      console.log('맵 로드');
     } catch (err) {
       console.error('맵 초기화 중 오류 발생:', err);
       setGeoErrorMessage('맵을 불러오는 데 실패했습니다.');
+      setIsPermissionModalOpen(true);
     }
   };
 
   const startTracking = async () => {
-    console.log('트래킹');
     if (services.mapService && services.geoService && services.storeService) {
       const onSuccess = async (position: MapPosition) => {
         if (
@@ -214,23 +235,30 @@ export function KakaoMap() {
             } catch (error) {
               console.error('맵 초기화 중 오류 발생:', error);
               setGeoErrorMessage('맵을 불러오는 데 실패했습니다.');
+              setIsPermissionModalOpen(true);
             }
           });
         }}
       />
       <div
         ref={mapRef}
-        className="relative bg-gray-400 mb-[9px] md:mb-4 rounded-base w-full h-[calc(100dvh-311.68px)] md:h-[calc(100dvh-450px)] overflow-x-hidden"
+        className="relative bg-[#E8E8E8] mb-[9px] md:mb-4 rounded-base w-full h-[calc(100dvh-311.68px)] md:h-[calc(100dvh-450px)] overflow-x-hidden"
       >
         {geoErrorMessage ? (
-          geoErrorMessage // 모달
+          <LocPermissionModal value={isPermissionModalOpen} /> // 모달
         ) : (
           <>
             <PreferenceTags
-              userPreferences={USER_PREFERENCES}
-              categories={CATEGORIES}
+              userPreferences={userPreferences}
+              categories={preferenceCategories}
             />
             <MapPanel {...mapPanelProps} />
+            {isBottomSheetOpen && (
+              <BottomSheetContainer {...bottomSheetProps} /> // TODO: portal (+hook 삭제)
+            )}
+            {isSideBarOpen && (
+              <SideBarContainer {...sideBarProps} /> // TODO: portal (+hook 삭제)
+            )}
           </>
         )}
       </div>
