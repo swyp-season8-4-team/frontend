@@ -75,7 +75,7 @@ export function StoreInfo({
                     key={dayOfWeek}
                     className={cn(isClosed ? 'font-semibold' : '')}
                   >
-                    <div className="flex items-center gap-[6px] leading-3">
+                    <div className="flex items-center gap-[6px] leading-3 md:leading-[100%]">
                       <div className="w-4"></div>
                       <div className="flex gap-[10px]">
                         <div>{convertDayToKorean(dayOfWeek)}</div>

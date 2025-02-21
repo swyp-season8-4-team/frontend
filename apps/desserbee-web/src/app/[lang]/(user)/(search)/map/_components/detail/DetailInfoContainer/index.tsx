@@ -1,9 +1,10 @@
+'use client';
+
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
 import { StoreFeatureIconList } from '../../common/StoreFeatureIconList';
 import { StoreInfo } from '../../common/StoreInfo';
 import { HexagonGrid } from '@repo/design-system/components/HexagonGrid';
 import IconDownload from '@repo/design-system/components/icons/IconDownload';
-import { IconSize } from '@repo/design-system/components/icons';
 import IconFlower from '@repo/design-system/components/icons/IconFlower';
 import { useContext } from 'react';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';

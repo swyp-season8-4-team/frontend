@@ -1,3 +1,4 @@
+'use client';
 import IconCar from '@repo/design-system/components/icons/IconCar';
 import IconDog from '@repo/design-system/components/icons/IconDog';
 import IconTumbler from '@repo/design-system/components/icons/IconTumbler';
@@ -17,7 +18,7 @@ const createFeatureList = (
 ) => [
   {
     key: 'parkingYn',
-    status: true,
+    status: parkingYn,
     icon: <IconCar className="w-full h-full text-[#FF6535]" />,
     tooltip: '주차 가능 합니다!',
   },
