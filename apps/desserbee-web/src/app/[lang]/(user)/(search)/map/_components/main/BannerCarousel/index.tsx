@@ -73,7 +73,7 @@ export function BannerCarousel() {
           ))}
         </CarouselContent>
       </Carousel>
-      <div className="absolute flex bottom-6 left-1/2 gap-2">
+      <div className="absolute flex bottom-6 left-1/2 transform -translate-x-1/2 gap-2">
         {BANNERS.map((_, index) => (
           <div
             key={index}

@@ -60,7 +60,7 @@ export function HexagonGrid({
   ];
 
   return (
-    <div className="relative aspect-square  h-full w-full max-w-[250px]">
+    <div className="relative aspect-square w-full max-w-[250px]">
       {hexagonConfig.map((config, index) => (
         <Hexagon
           key={index}

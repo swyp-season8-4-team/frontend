@@ -22,6 +22,7 @@ export function SummaryInfoContainer({
   phone,
   storeLink,
   description,
+  holidays,
 }: StoreSummaryProps) {
   const storeFeatureIconListProps = {
     animalYn,
@@ -35,6 +36,7 @@ export function SummaryInfoContainer({
     phone,
     storeLink,
     description,
+    holidays,
   };
 
   return (

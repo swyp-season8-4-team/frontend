@@ -114,7 +114,7 @@ export const storeHandlers = [
               second: 0,
               nano: 0,
             },
-            isClosed: false,
+            isClosed: true,
           },
           {
             dayOfWeek: 'TUESDAY',
@@ -158,10 +158,10 @@ export const storeHandlers = [
               second: 0,
               nano: 0,
             },
-            isClosed: false,
+            isClosed: true,
           },
           {
-            dayOfWeek: 'THURDAY',
+            dayOfWeek: 'THURSDAY',
             openingTime: {
               hour: 9,
               minute: 0,
@@ -248,6 +248,20 @@ export const storeHandlers = [
             },
             isClosed: false,
           },
+        ],
+        holidays: [
+          {
+            date: 'MONDAY',
+            reason: '정기 휴무',
+          },
+          {
+            date: 'WEDNESDAY',
+            reason: '정기 휴무',
+          },
+        ],
+        notice: [
+          'No sugar, Low carb, Gluten free _ 초콜릿과 팥앙금 등 부재료 또한 하나부터 열까지 설탕 없이 직접 만듭니다.',
+          '인스타그램 @ketobbang 에서 소식을 확인해주세요.',
         ],
         storeImages: [
           'https://picsum.photos/id/46/800/600',
@@ -303,7 +317,7 @@ export const storeHandlers = [
               second: 0,
               nano: 0,
             },
-            isClosed: false,
+            isClosed: true,
           },
           {
             dayOfWeek: 'TUESDAY',
@@ -347,10 +361,10 @@ export const storeHandlers = [
               second: 0,
               nano: 0,
             },
-            isClosed: false,
+            isClosed: true,
           },
           {
-            dayOfWeek: 'THURDAY',
+            dayOfWeek: 'THURSDAY',
             openingTime: {
               hour: 9,
               minute: 0,
@@ -436,6 +450,16 @@ export const storeHandlers = [
               nano: 0,
             },
             isClosed: false,
+          },
+        ],
+        holidays: [
+          {
+            date: 'MONDAY',
+            reason: '정기 휴무',
+          },
+          {
+            date: 'WEDNESDAY',
+            reason: '정기 휴무',
           },
         ],
         storeImages: [

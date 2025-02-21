@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef, useState } from 'react';
 
 import markerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-marker.svg';
