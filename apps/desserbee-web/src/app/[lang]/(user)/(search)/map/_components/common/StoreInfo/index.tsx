@@ -5,7 +5,7 @@ import IconClock from '@repo/design-system/components/icons/IconClock';
 import IconPhone from '@repo/design-system/components/icons/IconPhone';
 import IconHome from '@repo/design-system/components/icons/IconHome';
 import IconBaseball from '@repo/design-system/components/icons/IconBaseball';
-import IconUp from '@repo/design-system/components/icons/IconUp';
+import IconDirection from '@repo/design-system/components/icons/IconDirection';
 
 import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 import { IconSize } from '@repo/design-system/components/icons';
@@ -52,7 +52,7 @@ export function StoreInfo({
               <span className="mr-[11px] font-semibold">영업중</span>
               <span>19:00에 영업 종료</span>
               <div>
-                <IconUp
+                <IconDirection
                   className={cn(
                     'text-[#6F6F6F] w-[10px] md:w-5',
                     isOperationHourOpen && 'rotate-180',

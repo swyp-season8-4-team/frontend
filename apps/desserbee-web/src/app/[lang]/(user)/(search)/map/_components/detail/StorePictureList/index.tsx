@@ -4,7 +4,7 @@ type StorePictureListProps = Pick<StoreSummaryInfoData, 'storeImages'>;
 
 export function StorePictureList({ storeImages }: StorePictureListProps) {
   return (
-    <div className="flex gap-[9px] md:gap-[22px] py-7">
+    <div className="flex gap-[9px] md:gap-[22px] py-3 md:py-7">
       {storeImages?.map((image, index) =>
         index === storeImages.length - 1 ? (
           <button

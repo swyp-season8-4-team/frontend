@@ -1,6 +1,12 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
 import { StorePictureList } from '../StorePictureList';
 import { DetailInfoContainer } from '../DetailInfoContainer';
+import IconDirection from '@repo/design-system/components/icons/IconDirection';
+import IconX from '@repo/design-system/components/icons/IconX';
 
 interface DetailContainerProps {
   storeDetail: StoreDetailInfoData;
@@ -12,6 +18,8 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
   const storePicureListProps = {
     storeImages: storeDetail.storeImages,
   };
+
+  const router = useRouter();
 
   const detailInfoContainerProps = {
     name: storeDetail.name,
@@ -35,10 +43,24 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
     notice: storeDetail.notice,
   };
 
+  const handleBack = () => {
+    router.back();
+  };
+
   return (
-    <div className="z-modal absolute bg-white px-base w-full h-fit min-h-[100vh]">
-      <StorePictureList {...storePicureListProps} />
-      <DetailInfoContainer {...detailInfoContainerProps} />
+    <div className="z-modal absolute bg-white w-full h-fit min-h-[100vh]">
+      <header className="flex justify-between items-center shadow-base px-4 md:px-6 py-5 md:py-[46px] w-full">
+        <button onClick={handleBack} className="w-[21px] md:w-[40px]">
+          <IconDirection className="w-full h-full text-[#6F6F6F] rotate-90 transform" />
+        </button>
+        <button onClick={handleBack} className="w-[20px] md:w-[40px]">
+          <IconX className="w-full h-full text-[#6F6F6F]" />
+        </button>
+      </header>
+      <div className="px-base">
+        <StorePictureList {...storePicureListProps} />
+        <DetailInfoContainer {...detailInfoContainerProps} />
+      </div>
       <div></div>
     </div>
   );
