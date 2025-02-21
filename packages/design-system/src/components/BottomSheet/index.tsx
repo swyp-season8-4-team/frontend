@@ -18,7 +18,7 @@ export function BottomSheet({
       {isBottomSheetOpen && (
         <motion.div
         // TODO: 바텀시트 어떻게 닫히는지 (빈 공간 클릭 OR 드래그)
-        // className="fixed inset-0  z-bottomSheet"
+        // className="z-bottomSheet fixed inset-0"
         // animate={isOpen ? { opacity: 1 } : { opacity: 0, display: 'none' }}
         // initial={{ opacity: 0 }}
         // onClick={toggleOpen}
@@ -27,7 +27,7 @@ export function BottomSheet({
             layoutId="map-bottom-sheet"
             layout={false}
             style={{ willChange: 'transform' }}
-            className="fixed bottom-0 left-0 right-0  w-full rounded-t-base bg-white px-base pt-[19px] pb-4  z-bottomSheet"
+            className="right-0 bottom-0 z-bottomSheet left-0 fixed bg-white px-base pt-[19px] pb-4 rounded-t-base w-full"
             key="content"
             initial="collapsed"
             animate="open"
@@ -69,8 +69,8 @@ export function BottomSheet({
             }}
           >
             <div className="h-full">
-              <div className="w-full flex justify-center items-center mb-[21px]">
-                <div className="absolute border-[3px] rounded-[5px] w-[115.5px] h- border-[#545454] "></div>
+              <div className="flex justify-center items-center mb-[21px] w-full">
+                <div className="absolute border-[#545454] border-[2.14px] md:border-[3px] rounded-[5px] w-[49.33px] md:w-[115.5px]"></div>
               </div>
               {children}
             </div>

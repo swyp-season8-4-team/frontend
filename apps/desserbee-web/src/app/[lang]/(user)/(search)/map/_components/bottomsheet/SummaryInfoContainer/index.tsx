@@ -1,16 +1,16 @@
 import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 
 import IconStar from '@repo/design-system/components/icons/IconStar';
-import IconDetail from '@repo/design-system/components/icons/IconDetail';
 
 import { StoreInfo } from '../../common/StoreInfo';
-import { BeforeDetailJoinNowModal } from '../../modal/BeforeDetailJoinNowModal';
 import { StoreFeatureIconList } from '../../common/StoreFeatureIconList';
 
+type StoreSummaryProps = Omit<StoreSummaryInfoData, 'storeImages' | 'storeId'>;
+
+import IconDetail from '@repo/design-system/components/icons/IconDetail';
 import { useContext } from 'react';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
-
-type StoreSummaryProps = Omit<StoreSummaryInfoData, 'storeImages' | 'storeId'>;
+import { BeforeDetailJoinNowModal } from '../../modal/BeforeDetailJoinNowModal';
 
 export function SummaryInfoContainer({
   storeUuid,
@@ -27,8 +27,6 @@ export function SummaryInfoContainer({
   description,
   holidays,
 }: StoreSummaryProps) {
-  const { push, pop } = useContext(PortalContext);
-
   const storeFeatureIconListProps = {
     animalYn,
     tumblerYn,
@@ -43,6 +41,8 @@ export function SummaryInfoContainer({
     description,
     holidays,
   };
+
+  const { push, pop } = useContext(PortalContext);
 
   const closeModal = () => {
     pop('modal');
@@ -59,28 +59,35 @@ export function SummaryInfoContainer({
   return (
     <div className="flex flex-col gap-y-2 w-full text-nowrap">
       <div className="flex justify-between">
-        <div className="flex items-center mb-[9px]">
+        <div className="flex items-center mb-[5.78px] md:mb-[9px]">
           <StoreFeatureIconList {...storeFeatureIconListProps} />
-          <IconStar className="mx-2 text-[#FFB700]" />
-          <span className="text-xl">{averageRating}</span>
+          <div className="mx-[3px] md:mx-2 w-[9px] md:w-[21px]">
+            <IconStar className="w-full h-full text-[#FFB700]" />
+          </div>
+          <span className="text-[8px] md:text-xl">{averageRating}</span>
         </div>
         <button
           onClick={handleGoDetailBtnClick}
-          className="bg-[#DE8332] px-5 py-[10px] rounded-[100px] min-w-fit font-semibold text-white text-lg"
+          className="bg-[#DE8332] px-[4.6px] md:px-5 md:py-[10px] rounded-[42.71px] md:rounded-[100px] max-h-fit font-semibold text-white"
         >
           <div className="flex items-center">
-            <div>
-              <IconDetail />
+            <div className="flex justify-center items-center mr-[0.57px] w-[7.72px] md:w-[18.08px]">
+              <IconDetail className="w-full h-full" />
             </div>
-            <div>자세히 보기</div>
+            <div className="text-[6px] md:text-lg">자세히 보기</div>
           </div>
         </button>
       </div>
-      <div className="flex items-center mb-[15px]">
-        <span className="mr-[10.37px] font-semibold text-t28">{name}</span>
+      <div className="flex md:flex-row flex-col items-start md:items-center md:mb-[15px]">
+        <span className="mr-[4.44px] md:mr-[10.37px] font-semibold md:text-t28 text-xs">
+          {name}
+        </span>
         <span className="flex">
           {tags.map((tag, index) => (
-            <span className="font-medium text-[#6F6F6F] text-t20" key={tag}>
+            <span
+              className="font-medium text-[#6F6F6F] text-[8px] md:text-t20"
+              key={tag}
+            >
               {tag}
               {index < tags.length - 1 && ', '}&nbsp;
             </span>

@@ -26,7 +26,7 @@ function Hexagon({ className, content, imgSrc }: HexagonProps) {
       )}
     >
       {content && (
-        <div className="absolute inset-0 flex justify-center items-center text-white text-[16.8px] font-bold">
+        <div className="absolute inset-0 flex justify-center items-center font-bold text-[10px] text-white md:text-[16.8px]">
           {content}
         </div>
       )}
@@ -35,7 +35,7 @@ function Hexagon({ className, content, imgSrc }: HexagonProps) {
         <div className="absolute inset-0 w-full h-full">
           <img
             src={imgSrc}
-            className=" w-full h-full aspect-square [clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)]"
+            className="[clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)] w-full h-full aspect-square"
           />
         </div>
       )}
@@ -60,7 +60,7 @@ export function HexagonGrid({
   ];
 
   return (
-    <div className="relative aspect-square w-full max-w-[250px]">
+    <div className="relative w-[175px] md:w-[247.29px] md:max-w-[250px] aspect-square">
       {hexagonConfig.map((config, index) => (
         <Hexagon
           key={index}

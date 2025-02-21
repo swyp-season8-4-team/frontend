@@ -4,18 +4,18 @@ type StorePictureListProps = Pick<StoreSummaryInfoData, 'storeImages'>;
 
 export function StorePictureList({ storeImages }: StorePictureListProps) {
   return (
-    <div className="flex gap-[22px] py-7">
+    <div className="flex gap-[9px] md:gap-[22px] py-7">
       {storeImages?.map((image, index) =>
         index === storeImages.length - 1 ? (
           <button
             key={image}
-            className="relative w-full aspect-[190/162] overflow-hidden"
+            className="relative w-full aspect-[77/69] overflow-hidden"
           >
-            <div className="absolute z-10 opacity-100 w-full h-full flex justify-center items-center text-[6vw] text-black">
+            <div className="z-10 absolute flex justify-center items-center opacity-100 w-full h-full text-[6vw] text-black">
               +
             </div>
             <Image
-              className="w-full h-full object-cover opacity-50"
+              className="opacity-50 w-full h-full object-cover"
               src={image}
               alt="가게 사진"
               width={190}

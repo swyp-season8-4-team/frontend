@@ -17,20 +17,20 @@ const createFeatureList = (
 ) => [
   {
     key: 'parkingYn',
-    status: parkingYn,
-    icon: <IconCar size={IconSize.xl} className="text-[#FF6535]" />,
+    status: true,
+    icon: <IconCar className="w-full h-full text-[#FF6535]" />,
     tooltip: '주차 가능 합니다!',
   },
   {
     key: 'tumblerYn',
     status: tumblerYn,
-    icon: <IconTumbler size={IconSize.xl} />,
+    icon: <IconTumbler className="w-full h-full text-[#FF6535]" />,
     tooltip: '텀블러 할인 가능합니다!',
   },
   {
     key: 'animalYn',
     status: animalYn,
-    icon: <IconDog size={IconSize.xl} />,
+    icon: <IconDog className="w-full h-full text-[#FF6535]" />,
     tooltip: '반려동물 출입 가능합니다!',
   },
 ];
@@ -78,16 +78,19 @@ export function StoreFeatureIconList({
   );
 
   return (
-    <span className="flex">
+    <span className="flex items-start">
       {featureList.map(
         (feature, index) =>
           feature.status && (
             <div className="relative ml-1" key={feature.key}>
-              <div onPointerDown={() => handleIconClick(index)}>
+              <div
+                className="w-[17.94px] md:w-[42px]"
+                onPointerDown={() => handleIconClick(index)}
+              >
                 {feature.icon}
               </div>
               {selectedIconIndex === index && (
-                <div className="absolute z-10 text-sm text-nowrap rounded-[5px] top-12 left-1/2 -translate-x-1/2  bg-[#E8E8E8]  px-[10px] py-1 before:content-[''] before:absolute before:top-[-6px] before:left-1/2 before:-translate-x-1/2 before:border-l-[6px] before:border-l-transparent before:border-r-[6px] before:border-r-transparent before:border-b-[6px] before:border-b-[#E8E8E8]">
+                <div className="top-12 before:top-[-6px] left-1/2 before:left-1/2 z-10 absolute before:absolute bg-[#E8E8E8] px-[10px] py-1 before:border-r-[6px] before:border-r-transparent before:border-b-[6px] before:border-b-[#E8E8E8] before:border-l-[6px] before:border-l-transparent rounded-[5px] text-sm text-nowrap before:content-[''] -translate-x-1/2 before:-translate-x-1/2">
                   {feature.tooltip}
                 </div>
               )}
