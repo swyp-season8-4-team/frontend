@@ -7,7 +7,7 @@ import {
   type CarouselApi,
 } from '@repo/ui/components/carousel';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { cn } from '@repo/ui/lib/utils';
 
 import { BANNERS } from '../../../_consts/banner';
@@ -15,9 +15,33 @@ import { BANNERS } from '../../../_consts/banner';
 import Image from 'next/image';
 import Link from 'next/link';
 
+// import { ReviewNotReadyModal } from '../../modal/ReviewNotReadyModal';
+import { ReviewNotReadyModal } from '../../modal/ReviewNotReadyModal/bee';
+import { PortalContext } from '@repo/ui/contexts/PortalContext';
+import { CouponIsNotReadyModal } from '../../modal/CouponIsNotReadyModal';
+
 export function BannerCarousel() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const { push, pop } = useContext(PortalContext);
+
+  const closeModal = () => {
+    pop('modal');
+  };
+
+  const handleDessertReviewBtnClick = (e: React.MouseEvent, index: number) => {
+    if (index === 3) {
+      e.preventDefault();
+      push('modal', {
+        component: <ReviewNotReadyModal onClose={closeModal} />,
+      });
+    } else if (index === 2) {
+      e.preventDefault();
+      push('modal', {
+        component: <CouponIsNotReadyModal onClose={closeModal} />,
+      });
+    }
+  };
 
   useEffect(() => {
     if (!api) {
@@ -47,7 +71,7 @@ export function BannerCarousel() {
         setApi={setApi}
       >
         <CarouselContent className="mb-[9px] md:mb-[13px] -ml-0">
-          {BANNERS.map((banner) => (
+          {BANNERS.map((banner, index) => (
             <CarouselItem
               className={cn(
                 banner.bgColor,
@@ -64,6 +88,7 @@ export function BannerCarousel() {
                 </div>
               </div>
               <Link
+                onClick={(e) => handleDessertReviewBtnClick(e, index)}
                 href={banner.path}
                 className="right-[15px] bottom-[15px] absolute flex justify-center items-center bg-[#AA6120] px-[12.88px] md:px-[27px] py-[3.68px] md:py-[9px] rounded-[100px] font-semibold text-[10.12px] text-white md:text-[22px] text-nowrap"
               >
