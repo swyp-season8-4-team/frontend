@@ -28,7 +28,7 @@ import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 
 import { KAKAO_MAP_API_URL } from '../../../_consts/map';
-import type { SavedListData } from '@repo/entity/src/store';
+import type { NearByStoreData, SavedListData } from '@repo/entity/src/store';
 
 import { LocationPermissionModal } from '../../modal/LocationPermissionModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
@@ -159,11 +159,62 @@ export function KakaoMap({
         userMarkerImage.src,
       );
 
-      const nearByStores = await services.storeService.getNearbyStores({
-        latitude: result.latitude,
-        longitude: result.longitude,
-        radius: 2,
-      });
+      // const nearByStores = await services.storeService.getNearbyStores({
+      //   latitude: result.latitude,
+      //   longitude: result.longitude,
+      //   radius: 2,
+      // });
+
+      const nearByStores: NearByStoreData[] = [
+        {
+          storeId: 1,
+          storeUuid: 'uuid-1',
+          name: '디저트39 강남점',
+          address: '서울 강남구 강남대로 396',
+          latitude: 37.497175,
+          longitude: 127.027926,
+        },
+        {
+          storeId: 2,
+          storeUuid: 'uuid-2',
+          name: '아티제 강남역점',
+          address: '서울 강남구 테헤란로 151',
+          latitude: 37.499462,
+          longitude: 127.028274,
+        },
+        {
+          storeId: 3,
+          storeUuid: 'uuid-3',
+          name: '투썸플레이스 강남파이낸스센터점',
+          address: '서울 강남구 테헤란로 152',
+          latitude: 37.500175,
+          longitude: 127.029046,
+        },
+        {
+          storeId: 4,
+          storeUuid: 'uuid-4',
+          name: '설빙 강남역점',
+          address: '서울 강남구 강남대로 358',
+          latitude: 37.496533,
+          longitude: 127.0268,
+        },
+        {
+          storeId: 5,
+          storeUuid: 'uuid-5',
+          name: '폴바셋 강남역사거리점',
+          address: '서울 강남구 테헤란로 129',
+          latitude: 37.498325,
+          longitude: 127.027892,
+        },
+        {
+          storeId: 6,
+          storeUuid: 'uuid-6',
+          name: '배스킨라빈스 강남우성점',
+          address: '서울 강남구 테헤란로 156',
+          latitude: 37.500929,
+          longitude: 127.028979,
+        },
+      ];
 
       if (!nearByStores) {
         console.log('가게 없음!');
@@ -389,12 +440,12 @@ export function KakaoMap({
       services.geoService &&
       services.storeService
     ) {
-      startTracking();
+      // startTracking();
       return () => {
         stopTracking();
       };
     }
-  }, [isMapLoaded, services, startTracking, stopTracking]);
+  }, [isMapLoaded, services, stopTracking]);
 
   return (
     <div>
