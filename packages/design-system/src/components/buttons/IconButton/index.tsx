@@ -3,27 +3,26 @@
 import { cloneElement, useMemo } from 'react';
 import type { WithRef } from '@repo/ui';
 import { type Iconable, IconSize } from '../../icons';
-import Button, { type ButtonProps } from '../Button';
-import { ButtonSize } from '..';
+import Button, { type ButtonProps } from '../Button';import { ButtonSize } from '..';
 
 interface Props
   extends Omit<ButtonProps, 'children' | 'size'>,
     WithRef<HTMLButtonElement> {
   children: Iconable;
-  iconSize?: IconSize;
-  size?: ButtonSize;
+  iconSize?: IconSize | number;
+  size?: IconSize | number;
 }
 
 export default function IconButton({
   children,
   className,
   iconSize,
-  size = ButtonSize.medium,
+  size = IconSize.m,
   ...props
 }: Props) {
   const buttonClasses = useMemo(() => {
     const baseClasses = 'flex items-center justify-center flex-shrink-0 rounded-full bg-none';
-    const sizeClasses = size === ButtonSize.small 
+    const sizeClasses = size === IconSize.xs 
       ? 'w-4 h-4 scale-[2.5]' 
       : 'w-6 h-6 scale-[2]';
     const hoverClasses = 'hover:bg-[#f8f9fb] hover:not:disabled:opacity-100';
@@ -32,7 +31,7 @@ export default function IconButton({
   }, [className, size]);
 
   const iconClasses = useMemo(() => {
-    return size === ButtonSize.small 
+    return size === IconSize.xs 
       ? 'scale-[0.4] fill-current transition-colors duration-200' 
       : 'scale-[0.5] fill-current transition-colors duration-200';
   }, [size]);
@@ -42,7 +41,7 @@ export default function IconButton({
       return iconSize;
     }
 
-    return size === ButtonSize.small ? IconSize.xs : IconSize.m;
+    return size === IconSize.xs ? IconSize.xs : IconSize.m;
   }, [iconSize, size]);
 
   return (

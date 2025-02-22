@@ -3,7 +3,7 @@ import NavigationContainer from './(search)/_components/NavigationContainer';
 
 export default async function UserLayout({ children }: WithChildren) {
   return (
-    <div className="bg-page h-dvh text-default">
+    <div className="bg-page text-default">
       {children}
       <NavigationContainer />
     </div>

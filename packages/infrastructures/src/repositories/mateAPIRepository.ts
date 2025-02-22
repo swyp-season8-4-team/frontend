@@ -2,10 +2,13 @@ import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import type {
   Mate,
   MateAcceptRequest,
+  MateAllListResponse,
   MateApplyRequest,
   MateCreateRequest,
   MateFireRequest,
   MateLeaveRequest,
+  MateListRequest,
+  MateRawAllListResponse,
   MateRejectRequest,
   MateRepository,
   MateRequest,
@@ -127,6 +130,28 @@ export default class MateAPIRepository
     });
 
     return response;
+  }
+
+  async getMateList({ data }: BaseRequestData<MateListRequest>): Promise<MateAllListResponse> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+    
+    const { from, to } = data;
+
+    const response = await fetch<MateListRequest, MateRawAllListResponse>({
+      method: 'GET',
+      url: `${this.endpoint}/mates`,
+      query: {
+        from: from.toString(),
+        to: to.toString(),
+      },
+    });
+
+    return {
+      mates: response.mates.map((mate) => this.mateConverter.convertRawToMate(mate)),
+      isLast: true,
+    };
   }
 
   async getDetails({ data }: BaseRequestData<MateRequest>): Promise<Mate[]> {
