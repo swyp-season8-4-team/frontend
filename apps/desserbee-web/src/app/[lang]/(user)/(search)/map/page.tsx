@@ -1,81 +1,84 @@
-'use client';
-
-import { useState } from 'react';
-
-import { BannerCarousel } from './_components/main/BannerCarousel';
-import { BottomSheetContainer } from './_components/bottomsheet/BottomSheetContainer';
 import { KakaoMap } from './_components/main/KakaoMap';
+import { BannerCarousel } from './_components/main/BannerCarousel';
 
 import { CATEGORIES, USER_PREFERENCES } from './_consts/tag';
-import { useBottomSheet } from '../_hooks/useBottomSheet';
-import { MapPanel } from './_components/main/MapPanel';
-import { SideBarContainer } from './_components/sidebar/SidebarContainer';
-import { useSideBar } from '../_hooks/useSidebar';
-import { PreferenceTags } from './_components/main/PreferenceTags';
-import { useMap } from '../_hooks/useMap';
 
-export default function MapPage() {
-  const [selectedStoreUuid, setSelectedStoreUuid] = useState<string>();
+import StoreService from '@repo/usecase/src/storeService';
+import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 
-  const { isBottomSheetOpen, handleBottomSheetOpen, handleBottomSheetClose } =
-    useBottomSheet();
+export default async function MapPage() {
+  // 불러올 데이터
+  // 1. 선호도 태그 카테고리
+  // 2. 유저 선호도 태그
+  // 3. 유저가 저장한 가게목록
+  // 모두 KakaoMap으로 props 전달 - SideBar에 유저저장 가게목록 전달
+  // BottomSheet는 csr로?
+  // 상세페이지는 그냥 페이지 이동하는걸로? 아니면 interceptiong으로.
 
-  const { isSideBarOpen, handleSideBarOpen, handleSideBarClose } = useSideBar();
+  const storeService = new StoreService({
+    storeRepository: new StoreAPIReopository(),
+  });
 
-  const handleMakerClick = (storeUuid: string) => {
-    setSelectedStoreUuid(storeUuid);
-    handleBottomSheetOpen();
-  };
+  const userPreferences = USER_PREFERENCES; // TODO: API 요청으로 수정
+  const preferenceCategories = CATEGORIES; // TODO: API 요청으로 수정
 
-  const {
-    mapRef,
-    errorMessage,
-    apiUrl,
-    loadMap,
-    stopTracking,
-    startTracking,
-    moveToCurrentPosition,
-  } = useMap(handleMakerClick);
+  // const totalSavedList = await storeService.getSavedListAll(
+  //   '인증 토큰',
+  //   'user-uuid-1',
+  // );
+
+  const totalSavedList = [
+    {
+      listId: 1,
+      userUuid: 'user-uuid-123',
+      iconColorId: 1,
+      listName: '비건 맛집',
+      storeCount: 22,
+    },
+    {
+      listId: 2,
+      userUuid: 'user-uuid-123',
+      iconColorId: 2,
+      listName: '다이어터를 위한 곳',
+      storeCount: 15,
+    },
+    {
+      listId: 3,
+      userUuid: 'user-uuid-123',
+      iconColorId: 3,
+      listName: '배고프다',
+      storeCount: 31,
+    },
+    {
+      listId: 4,
+      userUuid: 'user-uuid-123',
+      iconColorId: 4,
+      listName: '이게 디저트지',
+      storeCount: 18,
+    },
+    {
+      listId: 5,
+      userUuid: 'user-uuid-123',
+      iconColorId: 1,
+      listName: '할미 입맛',
+      storeCount: 25,
+    },
+  ];
+
+  console.log(totalSavedList);
 
   const kakaoMapProps = {
-    mapRef,
-    errorMessage,
-    apiUrl,
-    loadMap,
-    stopTracking,
-    startTracking,
-  };
-
-  const mapPanelProps = {
-    handleSideBarOpen,
-    moveToCurrentPosition,
-  };
-
-  const bottomSheetProps = {
-    storeUuid: selectedStoreUuid as string,
-    isBottomSheetOpen,
-    handleBottomSheetClose,
-  };
-
-  const sideBarProps = {
-    isSideBarOpen,
-    handleSideBarClose,
+    userPreferences,
+    preferenceCategories,
+    totalSavedList,
   };
 
   return (
     <div className="overflow-hidden">
       <div className="px-base h-full">
-        <KakaoMap {...kakaoMapProps}>
-          <PreferenceTags
-            userPreferences={USER_PREFERENCES}
-            categories={CATEGORIES}
-          />
-          <MapPanel {...mapPanelProps} />
-          <SideBarContainer {...sideBarProps} />
-        </KakaoMap>
+        <KakaoMap {...kakaoMapProps} />
         <BannerCarousel />
         {/* <Modal buttons={<Button>test</Button>} title="test" visible={true} /> */}
-        <BottomSheetContainer {...bottomSheetProps} />
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ export const useTag = () => {
   );
   const [isMyPreferSelected, setIsMyPreferSelected] = useState(false);
 
-  const handleTagClick = (category: string) => {
+  const updateSelectedTag = (category: string) => {
     setSelectedCategories((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(category)) {
@@ -30,7 +30,7 @@ export const useTag = () => {
   return {
     selectedCategories,
     isMyPreferSelected,
-    handleTagClick,
+    updateSelectedTag,
     handleMyPreferenceTagClick,
   };
 };
