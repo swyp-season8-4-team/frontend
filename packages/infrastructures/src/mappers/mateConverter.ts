@@ -8,6 +8,7 @@ export default class MateConverter {
       userId: rawMate.userId,
       title: rawMate.title,
       content: rawMate.content,
+      nickname: rawMate.nickname,
       mateImage: rawMate.mateImage,
       mateCategory: rawMate.mateCategory,
     };

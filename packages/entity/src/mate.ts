@@ -7,6 +7,7 @@ export interface RawMate {
   userId: string;
   title: string;
   content: string;
+  nickname: string;
   recruit: boolean;
   mateImage: string[];
   mateCategory: MateCategory;
@@ -94,7 +95,7 @@ export interface MateRepository {
   fireMyTeamMember(data: BaseRequestData<MateFireRequest>): Promise<unknown>; // 팀 멤버 추방
   getMateList(data: BaseRequestData<MateListRequest>): Promise<MateAllListResponse>; // 모임 목록 조회
   getMyTeamMembers(data: BaseRequestData<MateRequest>): Promise<Mate[]>; // 내 팀 멤버들 조회
-  getDetails(data: BaseRequestData<MateRequest>): Promise<Mate[]>; // 모임 상세 페이지
+  getDetails(data: BaseRequestData<MateRequest>): Promise<Mate>; // 모임 상세 페이지
   create(data: BaseRequestData<MateCreateRequest>): Promise<Mate>; // 모임 생성
   delete(data: BaseRequestData<MateRequest>): Promise<void>; // 모임 삭제
   update(data: BaseRequestData<MateUpdateRequest>): Promise<void>; // 모임 수정
