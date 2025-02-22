@@ -90,6 +90,7 @@ export function KakaoMap({
   const sideBarProps = {
     isSideBarOpen,
     handleSideBarClose,
+    handleSideBarOpen,
     totalSavedList,
   };
 

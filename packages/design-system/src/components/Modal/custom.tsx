@@ -9,10 +9,13 @@ interface CustomModal extends WithChildren, WithClassName {
 export function CustomModal({ onClose, children, className }: CustomModal) {
   return (
     <div className="z-modal relative">
-      <div onClick={onClose} className="fixed inset-0 bg-neutral-800/60" />
+      <div
+        onClick={onClose}
+        className="fixed inset-0 bg-neutral-800/60 animate-fadeIn"
+      />
       <div
         className={cn(
-          'top-[40%] left-1/2 fixed  bg-white border border-[#6F6F6F] rounded-[10px]  text-nowrap -translate-x-1/2 -translate-y-1/2 transform',
+          'top-[40%] left-1/2 fixed bg-white border border-[#6F6F6F] rounded-[10px] text-nowrap -translate-x-1/2 -translate-y-1/2 transform animate-fadeIn',
           className,
         )}
       >

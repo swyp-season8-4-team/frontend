@@ -5,28 +5,57 @@ import IconPlus from '@repo/design-system/components/icons/IconPlus';
 import IconTrashCan from '@repo/design-system/components/icons/IconTrashCan';
 import IconShare from '@repo/design-system/components/icons/IconShare';
 import { cn } from '@repo/ui/lib/utils';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import type { SavedListData } from '@repo/entity/src/store';
+import { PortalContext } from '@repo/ui/contexts/PortalContext';
+import { CreateListModal } from '../../modals/CreateListModal';
 
 interface sideBarProps {
   isSideBarOpen: boolean;
   handleSideBarClose: () => void;
+  handleSideBarOpen: () => void;
   totalSavedList: SavedListData[];
 }
 
 export function SideBarContainer({
   isSideBarOpen,
   handleSideBarClose,
+  handleSideBarOpen,
   totalSavedList,
 }: sideBarProps) {
   const sideBarProps = {
     className: 'absolute top-0 h-full w-[320px] right-0',
     isSideBarOpen,
     handleSideBarClose,
+    handleSideBarOpen,
   };
+
+  const { push, pop } = useContext(PortalContext);
 
   const modalRef = useRef<HTMLDivElement>(null);
   const [selectedListId, setSelectedListId] = useState<number | null>(null);
+
+  const handleCreateList = (listName: string, colorId: number) => {
+    // TODO: API를 통해 새 리스트 생성 로직 구현
+    handleSideBarOpen();
+    console.log(listName, colorId);
+  };
+
+  const handleCreateListBtnClick = () => {
+    push('modal', {
+      component: (
+        <CreateListModal
+          onClose={() => {
+            pop('modal');
+          }}
+          onComplete={(listName, colorId) => {
+            pop('modal');
+            handleCreateList(listName, colorId);
+          }}
+        />
+      ),
+    });
+  };
 
   const handleDotsClick = (listId: number, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -70,14 +99,20 @@ export function SideBarContainer({
             <span>저장 리스트 &nbsp;</span>
             <span>{totalSavedList.length}</span>
           </div>
-          <div className="flex items-center my-[11.97px] md:my-[22px]">
+          <button
+            className="flex items-center my-[11.97px] md:my-[22px]"
+            onClick={() => {
+              handleSideBarClose();
+              handleCreateListBtnClick();
+            }}
+          >
             <span className="flex justify-center items-center mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm w-[20.7px] md:w-[30.45px] aspect-square">
               <IconPlus className="w-[70%] h-[70%] text-[#6F6F6F]" />
             </span>
             <span className="text-[#6F6F6F] md:text-[18px] text-xs">
               새 리스트 만들기
             </span>
-          </div>
+          </button>
         </div>
         <div className="[&::-webkit-scrollbar]:hidden flex-grow pr-1 [-ms-overflow-style:none] overflow-y-auto [scrollbar-width:none]">
           {totalSavedList.map((saveListItem, index) => (
