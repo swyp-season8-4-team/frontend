@@ -93,10 +93,13 @@ export function KakaoMap({
     totalSavedList,
   };
 
-  const handleStoreMarkerClick = (storeUuid: string) => {
-    setSelectedStoreUuid(storeUuid);
-    handleBottomSheetOpen();
-  };
+  const handleStoreMarkerClick = useCallback(
+    (storeUuid: string) => {
+      setSelectedStoreUuid(storeUuid);
+      handleBottomSheetOpen();
+    },
+    [handleBottomSheetOpen],
+  );
 
   const initializeServices = () => {
     const mapService = new MapService({
@@ -129,13 +132,25 @@ export function KakaoMap({
         return;
       }
 
+      if (
+        !services.geoService ||
+        !services.mapService ||
+        !services.storeService
+      ) {
+        throw new Error('services are not initialized');
+        return;
+      }
+
       const result = await services.geoService.getCurrentPosition();
+
       if ('errorMessage' in result) {
-        setGeoErrorMessage(result.errorMessage as string);
+        setGeoErrorMessage(result.errorMessage);
         setIsPermissionModalOpen(true);
         return;
       }
+
       setCurrentPosition(result);
+
       await services.mapService.initializeMap(container, result);
       await services.mapService.setMapCenter(result);
       await services.mapService.addCurrentPositionMaker(
@@ -149,19 +164,54 @@ export function KakaoMap({
         radius: 2,
       });
 
+      if (!nearByStores) {
+        console.log('가게 없음!');
+        setError(
+          '가게 정보를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.',
+        );
+        return;
+      }
+
       await services.mapService.addMarkersWithClustering(
         nearByStores,
         storeMarkerImage.src,
         handleStoreMarkerClick,
       );
     } catch (err) {
-      console.error('맵 초기화 중 오류 발생:', err);
-      setGeoErrorMessage('맵을 불러오는 데 실패했습니다.');
-      setIsPermissionModalOpen(true);
+      console.error('초기화 중 오류 발생:', err);
+      setError('서비스 초기화에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
-  const startTracking = async () => {
+  const [lastFetchPosition, setLastFetchPosition] = useState<MapPosition>({
+    latitude: 0,
+    longitude: 0,
+  });
+  const FETCH_RADIUS_KM = 3; // 3km 반경
+  const REFETCH_THRESHOLD_KM = 2; // 마지막 위치에서 2km 이상 멀어지면 새로 불러옴
+
+  // 두 지점 간의 거리를 계산하는 함수 (Haversine formula)
+  const calculateDistance = (pos1: MapPosition, pos2: MapPosition): number => {
+    const R = 6371; // 지구의 반지름 (km)
+    const dLat = ((pos2.latitude - pos1.latitude) * Math.PI) / 180;
+    const dLon = ((pos2.longitude - pos1.longitude) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((pos1.latitude * Math.PI) / 180) *
+        Math.cos((pos2.latitude * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  };
+
+  const POSITION_UPDATE_INTERVAL = 3000; // 3초
+  const lastUpdateTimeRef = useRef(0);
+  const isLoadingRef = useRef(false);
+
+  const [error, setError] = useState<string | null>(null);
+
+  const startTracking = useCallback(() => {
     if (services.mapService && services.geoService && services.storeService) {
       const onSuccess = async (position: MapPosition) => {
         if (
@@ -169,25 +219,77 @@ export function KakaoMap({
           !services.geoService ||
           !services.storeService
         ) {
-          console.error('필요한 서비스가 초기화되지 않았습니다.');
           return;
         }
 
+        const now = Date.now();
+        if (
+          now - lastUpdateTimeRef.current < POSITION_UPDATE_INTERVAL ||
+          isLoadingRef.current
+        ) {
+          return;
+        }
+        lastUpdateTimeRef.current = now;
+
         try {
-          await services?.mapService.addCurrentPositionMaker(
+          await services.mapService.addCurrentPositionMaker(
             position,
             userMarkerImage.src,
           );
           setCurrentPosition(position);
+          setError(null); // 성공 시 에러 초기화
+
+          const distanceFromLastFetch = calculateDistance(
+            lastFetchPosition,
+            position,
+          );
+
+          if (
+            lastFetchPosition.latitude === 0 ||
+            distanceFromLastFetch > REFETCH_THRESHOLD_KM
+          ) {
+            services.mapService.clearAllMarkers();
+
+            isLoadingRef.current = true;
+            try {
+              const nearByStores = await services.storeService.getNearbyStores({
+                latitude: position.latitude,
+                longitude: position.longitude,
+                radius: FETCH_RADIUS_KM,
+              });
+
+              await services.mapService.addMarkersWithClustering(
+                nearByStores,
+                storeMarkerImage.src,
+                handleStoreMarkerClick,
+              );
+
+              setLastFetchPosition(position);
+              setError(null);
+            } catch (error) {
+              console.error('가게 정보를 불러오는데 실패했습니다:', error);
+              setError(
+                '가게 정보를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.',
+              );
+            } finally {
+              isLoadingRef.current = false;
+            }
+          }
         } catch (error) {
+          console.error('위치 정보 처리 중 오류 발생:', error);
           if (error instanceof Error) {
             setGeoErrorMessage(error.message);
           }
         }
       };
-      await services.geoService.startWatchingPosition(onSuccess);
+
+      services.geoService.startWatchingPosition(onSuccess, {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0,
+      });
     }
-  };
+  }, [handleStoreMarkerClick, lastFetchPosition, services]);
 
   const stopTracking = useCallback(async () => {
     if (
@@ -228,11 +330,70 @@ export function KakaoMap({
     }
   }, [geoErrorMessage, openPermissionModal]);
 
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
+
   useEffect(() => {
-    return () => {
-      stopTracking();
-    };
-  }, [stopTracking]);
+    if (
+      !isInitialized &&
+      !isInitializing &&
+      isMapLoaded &&
+      services.mapService &&
+      services.geoService &&
+      services.storeService
+    ) {
+      const initialize = async () => {
+        setIsInitializing(true); // 초기화 시작
+        try {
+          if (
+            !services.geoService ||
+            !services.mapService ||
+            !services.storeService
+          ) {
+            throw new Error('services are not initialized');
+          }
+
+          const result = await services.geoService.getCurrentPosition();
+
+          if ('errorMessage' in result) {
+            setGeoErrorMessage(result.errorMessage);
+            setIsPermissionModalOpen(true);
+            return;
+          }
+
+          await services.mapService.initializeMap(mapRef.current!, result);
+          await services.mapService.setMapCenter(result);
+          await services.mapService.addCurrentPositionMaker(
+            result,
+            userMarkerImage.src,
+          );
+
+          setIsInitialized(true);
+        } catch (err) {
+          console.error('초기화 중 오류 발생:', err);
+          setError('서비스 초기화에 실패했습니다. 잠시 후 다시 시도해주세요.');
+        } finally {
+          setIsInitializing(false); // 초기화 완료 또는 실패
+        }
+      };
+
+      initialize();
+    }
+  }, [isMapLoaded, services, isInitialized, isInitializing]);
+
+  useEffect(() => {
+    if (
+      isMapLoaded &&
+      services.mapService &&
+      services.geoService &&
+      services.storeService
+    ) {
+      startTracking();
+      return () => {
+        stopTracking();
+      };
+    }
+  }, [isMapLoaded, services, startTracking, stopTracking]);
 
   return (
     <div>
@@ -242,21 +403,21 @@ export function KakaoMap({
         async
         src={KAKAO_MAP_API_URL}
         onReady={() => {
+          console.log('Kakao script ready');
           window.kakao.maps.load(async () => {
+            console.log('Kakao maps loaded');
+            if (isInitialized) return;
+
             try {
               const initializedServices = initializeServices();
               setServices(initializedServices);
-
-              // 상태 업데이트를 기다리기 위한 짧은 지연
-              await new Promise((resolve) => setTimeout(resolve, 100));
-
-              await initializeMap(initializedServices);
-              await startTracking();
               setIsMapLoaded(true);
+              await initializeMap(initializedServices); // 여기서 500 에러 발생
+              // 에러가 발생해도 isInitialized가 true로 설정되지 않음
             } catch (error) {
-              console.error('맵 초기화 중 오류 발생:', error);
-              setGeoErrorMessage('맵을 불러오는 데 실패했습니다.');
-              setIsPermissionModalOpen(true);
+              console.error('맵 초기화 중 오류:', error);
+            } finally {
+              setIsInitialized(true); // 에러가 나도 초기화 완료로 처리
             }
           });
         }}
@@ -264,8 +425,13 @@ export function KakaoMap({
       <div
         ref={mapRef}
         // className="relative bg-[#E8E8E8] mb-[9px] md:mb-4 rounded-base w-full h-[calc(100dvh-311.68px)] md:h-[calc(100dvh-450px)] overflow-x-hidden"
-        className="relative bg-[#E8E8E8] mb-[9px] rounded-base w-full h-[calc(100dvh-295px)]  overflow-x-hidden"
+        className="relative bg-[#E8E8E8] mb-[9px] rounded-base w-full h-[calc(100dvh-295px)] overflow-x-hidden"
       >
+        {error && (
+          <div className="top-4 left-1/2 z-50 absolute bg-red-100 px-4 py-2 border border-red-400 rounded text-red-700 -translate-x-1/2 transform">
+            {error}
+          </div>
+        )}
         <PreferenceTags
           userPreferences={userPreferences}
           categories={preferenceCategories}

@@ -63,4 +63,11 @@ export default class MapService {
     }
     this.mapController.setMapCenter(position);
   }
+
+  async clearAllMarkers() {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+    this.mapController.clearAllMarkers();
+  }
 }
