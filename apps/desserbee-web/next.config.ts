@@ -33,6 +33,15 @@ const NextFunctionConfig = async (phase: any) => {
         },
       ], // 외부 이미지 도메인 추가 //TODO: 나중에 실제 데이터 받으면 변경
     },
+    // API 프록시 설정 추가
+    async rewrites() {
+      return [
+        {
+          source: '/api/:path*',
+          destination: `${process.env.NEXT_PUBLIC_SERVICE_API_URL}/:path*`,
+        },
+      ];
+    },
   };
 
   return nextConfig;
