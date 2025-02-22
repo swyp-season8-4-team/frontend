@@ -42,17 +42,15 @@ export function MapPanel({
               handleOpenSideBarBtnClick();
             }
           }}
-          className="flex justify-center items-center bg-white rounded-sm aspect-square"
+          className="flex justify-center items-center bg-white p-1 rounded-sm w-8 h-8 aspect-square"
         >
-          <IconFlowerOutline className="text-[#6F6F6F]" />
+          <IconFlowerOutline className="w-full h-full text-[#6F6F6F]" />
         </button>
         <button
           onClick={moveToCurrentPosition}
-          className={cn(
-            'flex justify-center items-center aspect-square rounded-sm bg-white',
-          )}
+          className="flex justify-center items-center bg-white p-1 rounded-sm w-8 h-8 aspect-square"
         >
-          <IconTarget className="text-[#6F6F6F]" />
+          <IconTarget className="text-[#6F6F6F] w-full h-full" />
         </button>
       </div>
     </div>

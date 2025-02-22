@@ -70,27 +70,32 @@ export function BannerCarousel() {
         ]}
         setApi={setApi}
       >
-        <CarouselContent className="mb-[9px] md:mb-[13px] -ml-0">
+        {/* <CarouselContent className="mb-[9px] md:mb-[13px] -ml-0"> */}
+        <CarouselContent className="mb-[9px] -ml-0">
           {BANNERS.map((banner, index) => (
             <CarouselItem
               className={cn(
                 banner.bgColor,
-                'relative flex justify-between items-center pt-[13px] pb-[17px] md:pr-[27px] md:py-6 pl-0 rounded-base w-full',
+                // 'relative flex justify-between items-center pt-[13px] pb-[17px] md:pr-[27px] md:py-6 pl-0 rounded-base w-full',
+                'relative flex justify-between items-center pt-[13px] pb-[17px] pl-0 rounded-base w-full',
               )}
               key={banner.content}
             >
               <div className="flex items-center">
-                <div className="flex justify-center items-center mr-[9.51px] md:mr-[18px] ml-2 md:ml-6 w-[33.49px] md:w-[69px] h-[33px] md:h-[68px]">
+                {/* <div className="flex justify-center items-center mr-[9.51px] md:mr-[18px] ml-2 md:ml-6 w-[33.49px] md:w-[69px] h-[33px] md:h-[68px]"> */}
+                <div className="flex justify-center items-center mr-[9.51px] ml-2 w-[33.49px] h-[33px] ">
                   <Image src={banner.imgSrc} alt={banner.content} />
                 </div>
-                <div className="font-semibold text-[#393939] text-base md:text-3xl text-nowrap -tracking-[3%] whitespace-pre-line">
+                {/* <div className="font-semibold text-[#393939] text-base md:text-3xl text-nowrap -tracking-[3%] whitespace-pre-line"> */}
+                <div className="font-semibold text-[#393939] text-base text-nowrap -tracking-[3%] whitespace-pre-line">
                   {banner.content}
                 </div>
               </div>
               <Link
                 onClick={(e) => handleDessertReviewBtnClick(e, index)}
                 href={banner.path}
-                className="right-[15px] bottom-[15px] absolute flex justify-center items-center bg-[#AA6120] px-[12.88px] md:px-[27px] py-[3.68px] md:py-[9px] rounded-[100px] font-semibold text-[10.12px] text-white md:text-[22px] text-nowrap"
+                // className="right-[15px] bottom-[15px] absolute flex justify-center items-center bg-[#AA6120] px-[12.88px] md:px-[27px] py-[3.68px] md:py-[9px] rounded-[100px] font-semibold text-[10.12px] text-white md:text-[22px] text-nowrap"
+                className="right-[15px] bottom-[15px] absolute flex justify-center items-center bg-[#AA6120] px-[12.88px]  py-[3.68px]  rounded-[100px] font-semibold text-[10.12px] text-white text-nowrap"
               >
                 {banner.btnContent}
               </Link>
@@ -98,12 +103,14 @@ export function BannerCarousel() {
           ))}
         </CarouselContent>
       </Carousel>
-      <div className="bottom-4 md:bottom-6 left-1/2 absolute flex gap-2 -translate-x-1/2 transform">
+      {/* <div className="bottom-4 md:bottom-6 left-1/2 absolute flex gap-2 -translate-x-1/2 transform"> */}
+      <div className="bottom-4 left-1/2 absolute flex gap-2 -translate-x-1/2 transform">
         {BANNERS.map((_, index) => (
           <div
             key={index}
             className={cn(
-              'w-[3.77px] h-[3.77px] md:w-2 md:h-2 rounded-full',
+              // 'w-[3.77px] h-[3.77px] md:w-2 md:h-2 rounded-full',
+              'w-[3.77px] h-[3.77px] rounded-full',
               index === current ? 'bg-[#714115]' : 'bg-[#DE8332]',
             )}
           ></div>

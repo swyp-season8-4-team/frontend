@@ -29,7 +29,7 @@ export function PreferenceTags({
 
   const { push, pop } = useContext(PortalContext);
 
-  const [isUserSignIn, setIsUserSignIn] = useState(true); // TODO: 후에 인증 구현되면 수정
+  const [isUserSignIn] = useState(true); // TODO: 후에 인증 구현되면 수정
 
   const closeModal = () => {
     pop('modal');
@@ -69,7 +69,8 @@ export function PreferenceTags({
           <div className="px-1 py-1">
             <Tag
               className={cn(
-                'text-3 md:text-lg py-[6px] md:py-2 md:px-3 font-medium select-none text-nowrap text-[#DE8332]',
+                // 'text-3 md:text-lg py-[6px] md:py-2 md:px-3 font-medium select-none text-nowrap text-[#DE8332]',
+                'text-3  py-[6px] font-medium select-none text-nowrap text-[#DE8332]',
                 isMyPreferSelected && 'text-white bg-[#DE8332]',
               )}
               onClick={() => {
@@ -88,7 +89,8 @@ export function PreferenceTags({
                 <Tag
                   onClick={() => handleTagClick(category)}
                   className={cn(
-                    'text-3 md:text-lg font-medium py-[6px] md:py-2 md:px-3',
+                    // 'text-3 md:text-lg font-medium py-[6px] md:py-2 md:px-3',
+                    'text-3  font-medium py-[6px]',
                     selectedCategories.has(category) && 'bg-primary text-white',
                   )}
                 >

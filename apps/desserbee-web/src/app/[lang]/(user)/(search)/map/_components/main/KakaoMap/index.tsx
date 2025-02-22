@@ -1,7 +1,7 @@
 'use client';
 
 import Script from 'next/script';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 
 import storeMarkerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-marker.svg';
 import userMarkerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-current-marker.svg';
@@ -30,8 +30,8 @@ import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPI
 import { KAKAO_MAP_API_URL } from '../../../_consts/map';
 import type { SavedListData } from '@repo/entity/src/store';
 
-import withModal from '@repo/design-system/hocs/withModal';
 import { LocationPermissionModal } from '../../modal/LocationPermissionModal';
+import { PortalContext } from '@repo/ui/contexts/PortalContext';
 
 interface KakaoMapProps {
   userPreferences: string[];
@@ -47,7 +47,7 @@ export function KakaoMap({
   const mapRef = useRef<HTMLDivElement>(null);
   const [selectedStoreUuid, setSelectedStoreUuid] = useState<string>();
   const [geoErrorMessage, setGeoErrorMessage] = useState<string>();
-  const [isPermissionModalOpen, setIsPermissionModalOpen] = useState(false);
+  const [, setIsPermissionModalOpen] = useState(false);
   const [currentPosition, setCurrentPosition] = useState<MapPosition>({
     latitude: 0,
     longitude: 0,
@@ -69,6 +69,18 @@ export function KakaoMap({
 
   const { isSideBarOpen, handleSideBarOpen, handleSideBarClose } = useSideBar();
 
+  const { push, pop } = useContext(PortalContext);
+
+  const closeModal = useCallback(() => {
+    pop('modal');
+  }, [pop]);
+
+  const openPermissionModal = useCallback(() => {
+    push('modal', {
+      component: <LocationPermissionModal onClose={closeModal} />,
+    });
+  }, [closeModal, push]);
+
   const bottomSheetProps = {
     storeUuid: selectedStoreUuid as string,
     isBottomSheetOpen,
@@ -85,8 +97,6 @@ export function KakaoMap({
     setSelectedStoreUuid(storeUuid);
     handleBottomSheetOpen();
   };
-
-  const LocPermissionModal = withModal(LocationPermissionModal);
 
   const initializeServices = () => {
     const mapService = new MapService({
@@ -179,7 +189,7 @@ export function KakaoMap({
     }
   };
 
-  const stopTracking = async () => {
+  const stopTracking = useCallback(async () => {
     if (
       services.mapService &&
       services.geoService &&
@@ -189,7 +199,12 @@ export function KakaoMap({
       await services.geoService.stopWatchingPosition();
       await services.mapService.removeCurrentPositionMarker();
     }
-  };
+  }, [
+    isMapLoaded,
+    services.geoService,
+    services.mapService,
+    services.storeService,
+  ]);
 
   const moveToCurrentPosition = () => {
     if (
@@ -208,10 +223,16 @@ export function KakaoMap({
   };
 
   useEffect(() => {
+    if (geoErrorMessage) {
+      openPermissionModal();
+    }
+  }, [geoErrorMessage, openPermissionModal]);
+
+  useEffect(() => {
     return () => {
       stopTracking();
     };
-  }, []);
+  }, [stopTracking]);
 
   return (
     <div>
@@ -242,25 +263,16 @@ export function KakaoMap({
       />
       <div
         ref={mapRef}
-        className="relative bg-[#E8E8E8] mb-[9px] md:mb-4 rounded-base w-full h-[calc(100dvh-311.68px)] md:h-[calc(100dvh-450px)] overflow-x-hidden"
+        // className="relative bg-[#E8E8E8] mb-[9px] md:mb-4 rounded-base w-full h-[calc(100dvh-311.68px)] md:h-[calc(100dvh-450px)] overflow-x-hidden"
+        className="relative bg-[#E8E8E8] mb-[9px] rounded-base w-full h-[calc(100dvh-295px)]  overflow-x-hidden"
       >
-        {geoErrorMessage ? (
-          <LocPermissionModal value={isPermissionModalOpen} /> // 모달
-        ) : (
-          <>
-            <PreferenceTags
-              userPreferences={userPreferences}
-              categories={preferenceCategories}
-            />
-            <MapPanel {...mapPanelProps} />
-            {isBottomSheetOpen && (
-              <BottomSheetContainer {...bottomSheetProps} /> // TODO: portal (+hook 삭제)
-            )}
-            {isSideBarOpen && (
-              <SideBarContainer {...sideBarProps} /> // TODO: portal (+hook 삭제)
-            )}
-          </>
-        )}
+        <PreferenceTags
+          userPreferences={userPreferences}
+          categories={preferenceCategories}
+        />
+        <MapPanel {...mapPanelProps} />
+        {isBottomSheetOpen && <BottomSheetContainer {...bottomSheetProps} />}
+        {isSideBarOpen && <SideBarContainer {...sideBarProps} />}
       </div>
     </div>
   );

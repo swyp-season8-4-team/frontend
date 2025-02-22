@@ -5,9 +5,9 @@ import NavigationContainer from './_components/NavigationContainer';
 
 export default function UserSearchLayout({ children }: WithChildren) {
   return (
-    <div className="bg-page text-default">
+    <div className="flex flex-col h-[100dvh] bg-page text-default">
       <HeaderContainer fontClass={recipeKorea.className} />
-      {children}
+      <div className="flex-1">{children}</div>
       <NavigationContainer />
     </div>
   );
