@@ -31,7 +31,7 @@ export function StoreInfo({
 }: StoreInfoProps) {
   const [isOperationHourOpen, setIsOperationHourOpen] = useState(false);
   return (
-    <div className="flex flex-col md:gap-y-2 w-full text-[8px] md:text-lg text-nowrap leading-4">
+    <div className="flex flex-col md:gap-y-2 w-full text-[8px] md:text-lg text-nowrap leading-normal">
       <div className="flex items-center gap-[6px]">
         <div className="w-[6.83px] md:w-4">
           <IconLocation className="w-full h-full text-[#BABABA]" />
@@ -75,7 +75,7 @@ export function StoreInfo({
                     key={dayOfWeek}
                     className={cn(isClosed ? 'font-semibold' : '')}
                   >
-                    <div className="flex items-center gap-[6px] leading-3 md:leading-[100%]">
+                    <div className="flex items-center gap-[6px] leading-none md:leading-[100%]">
                       <div className="w-4"></div>
                       <div className="flex gap-[10px]">
                         <div>{convertDayToKorean(dayOfWeek)}</div>

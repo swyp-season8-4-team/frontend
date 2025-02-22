@@ -24,7 +24,7 @@ export function SideBarContainer({
   totalSavedList,
 }: sideBarProps) {
   const sideBarProps = {
-    className: 'absolute top-0 h-full w-[320px] right-0',
+    className: 'absolute top-0 h-full w-1/2 right-0',
     isSideBarOpen,
     handleSideBarClose,
     handleSideBarOpen,

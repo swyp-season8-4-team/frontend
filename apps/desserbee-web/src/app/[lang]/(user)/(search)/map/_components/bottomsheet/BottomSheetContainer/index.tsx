@@ -245,7 +245,7 @@ export function BottomSheetContainer({
 
   return (
     <BottomSheet {...bottomSheetProps}>
-      <div className="grid grid-cols-[1fr_2fr] md:grid-cols-[0.3fr_2fr] mb-[37px]">
+      <div className="grid grid-cols-[0.5fr_2fr] md:grid-cols-[0.3fr_2fr] ">
         <HexagonGrid {...hexaGridProps} />
         <SummaryInfoContainer {...storeSummaryProps} />
       </div>
