@@ -154,17 +154,21 @@ export default class MateAPIRepository
     };
   }
 
-  async getDetails({ data }: BaseRequestData<MateRequest>): Promise<Mate[]> {
+  async getDetails({ data }: BaseRequestData<MateRequest>): Promise<Mate> {
     if (!data) {
       throw new Error('data is required');
     }
 
     const response = await fetch<MateRequest, RawMate[]>({
       method: 'GET',
-      url: `${this.endpoint}/mates/${data.id}/details`,
+      url: `${this.endpoint}/mates/${data.id}`,
     });
 
-    return response.map((mate) => this.mateConverter.convertRawToMate(mate));
+    if (response.length === 0) {
+      throw new Error('mate not found');
+    }
+
+    return this.mateConverter.convertRawToMate(response[0]);
   }
 
   async create({ data }: BaseRequestData<MateCreateRequest>): Promise<Mate> {

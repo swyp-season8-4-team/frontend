@@ -17,6 +17,7 @@ export const mateHandlers = [
           mateImage: [
             "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/10/a1b2c3d4-e5f6-7890-ab12-cd34ef56gh78-"
           ],
+          nickname: "John",
           mateCategory: "친목도모"
         },
         {
