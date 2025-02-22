@@ -1,14 +1,12 @@
 import { NextResponse } from 'next/server';
 
 export async function httpHandler(request: Request): Promise<Response> {
-  // if (process.env.NEXT_PUBLIC_APP_ENV !== 'local') {
-  //   return new Response(null, { status: 404, statusText: 'Not Found' });
-  // }
 
+  // FIXME: origin 환경변수로 고치기
   const origin =
     process.env.NEXT_PUBLIC_APP_ENV !== 'prod'
       ? 'http://localhost:3000'
-      : 'https://www.desserbee.com';
+      : 'https://frontend-desserbee-web-git-vercel-test-eepyzs-projects.vercel.app';
 
   const endpoint = request.url.replace(
     origin,
