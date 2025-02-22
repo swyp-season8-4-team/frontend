@@ -6,17 +6,15 @@ import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPI
 export default async function StoreDetailPage({
   params,
 }: {
-  params: { storeId: string };
+  params: { storeId: string; lang: string };
 }) {
-  const storeId = (await params).storeId;
-
-  // console.log(storeUuid);
+  const { storeId } = await params;
 
   const storeService = new StoreService({
     storeRepository: new StoreAPIReopository(),
   });
 
-  const storeDetail = await storeService.getStoreDetail(storeId[0]);
+  const storeDetail = await storeService.getStoreDetail(storeId);
 
   return <DetailContainer storeDetail={storeDetail} />;
 }

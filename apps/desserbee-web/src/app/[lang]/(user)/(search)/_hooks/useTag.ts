@@ -20,7 +20,7 @@ export const useTag = () => {
   };
 
   const handleMyPreferenceTagClick = (userPreferences: string[]) => {
-    setSelectedCategories((prev) => {
+    setSelectedCategories(() => {
       const newSet = new Set([...userPreferences]);
       return newSet;
     });

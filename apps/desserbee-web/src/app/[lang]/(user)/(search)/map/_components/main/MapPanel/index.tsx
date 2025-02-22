@@ -1,6 +1,5 @@
 import IconFlowerOutline from '@repo/design-system/components/icons/IconFlowerOutline';
 import IconTarget from '@repo/design-system/components/icons/IconTarget';
-import { cn } from '@repo/ui/lib/utils';
 import { useContext, useState } from 'react';
 import { SaveListNotSignInModal } from '../../modal/SaveListNotSignInModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
@@ -16,7 +15,7 @@ export function MapPanel({
 }: MapPanelProps) {
   const { push, pop } = useContext(PortalContext);
 
-  const [isUserSignIn, setIsUserSignIn] = useState(true); // TODO: 후에 인증 구현되면 수정
+  const [isUserSignIn] = useState(true); // TODO: 후에 인증 구현되면 수정
 
   const closeModal = () => {
     pop('modal');

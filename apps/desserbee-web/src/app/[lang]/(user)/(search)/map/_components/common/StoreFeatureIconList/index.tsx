@@ -2,7 +2,6 @@
 import IconCar from '@repo/design-system/components/icons/IconCar';
 import IconDog from '@repo/design-system/components/icons/IconDog';
 import IconTumbler from '@repo/design-system/components/icons/IconTumbler';
-import { IconSize } from '@repo/design-system/components/icons';
 import { useEffect, useMemo, useState } from 'react';
 
 interface StoreFeatureIconListProps {
@@ -71,7 +70,7 @@ export function StoreFeatureIconList({
         setTimeoutId(null);
       }
     };
-  }, [selectedIconIndex]);
+  }, [selectedIconIndex, timeoutId]);
 
   const featureList = useMemo(
     () => createFeatureList(parkingYn, tumblerYn, animalYn),

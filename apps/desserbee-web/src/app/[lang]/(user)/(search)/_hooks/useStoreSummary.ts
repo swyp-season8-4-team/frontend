@@ -12,7 +12,7 @@ export function useStoreSummary(storeUuid: string) {
   const [storeSummary, setStoreSummary] = useState<
     StoreSummaryInfoData | undefined
   >();
-  const [error, setError] = useState<string>();
+  const [error] = useState<string>();
 
   useEffect(() => {
     const fetchStoreSummary = async (storeUuid: string) => {
