@@ -1,25 +1,19 @@
 import type { BaseRequestData } from "./appMetadata";
 
+export type MateCategory = '친목도모' | '인생사진' | '카공모임' | '건강맛집' | '빵지순례' | '카공모임 ';
+
 export interface RawMate {
   mateId: string;
   userId: string;
   title: string;
   content: string;
-  recruitYn: boolean;
-  createdAt?: string;
-  updatedAt?: string;
-  mateCategoryId: string;
+  recruit: boolean;
+  mateImage: string[];
+  mateCategory: MateCategory;
 }
 
-export interface Mate {
+export interface Mate extends Omit<RawMate, 'mateId'> {
   id: string;
-  userId: string;
-  title: string;
-  content: string;
-  recruit: boolean; // 모집 여부
-  createdAt?: string;
-  updatedAt?: string;
-  mateCategoryId: string;
 }
 
 export interface MateCreateRequest {
@@ -54,6 +48,16 @@ export interface MateFireRequest {
   mateId: string;
 }
 
+export interface MateListRequest {
+  from: number;
+  to: number;
+}
+
+export interface MateListResponse {
+  mates: Mate[];
+  isLast: boolean;
+}
+
 export interface MateRequest {
   id: string;
 }
@@ -72,13 +76,24 @@ export interface MateUpdateRequest extends MateRequest {
   mateCategoryId: string;
 }
 
+export interface MateAllListResponse {
+  mates: Mate[];
+  isLast: boolean;
+}
+
+export interface MateRawAllListResponse {
+  mates: RawMate[];
+  isLast: boolean;
+}
+
 export interface MateRepository {
   apply(data: BaseRequestData<MateApplyRequest>): Promise<unknown>; // 모임 참여
   leave(data: BaseRequestData<MateLeaveRequest>): Promise<unknown>; // 모임 탈퇴
-  getMyTeamMembers(data: BaseRequestData<MateRequest>): Promise<Mate[]>; // 내 팀 멤버들 조회
   acceptMyTeamMember(data: BaseRequestData<MateAcceptRequest>): Promise<unknown>; // 팀 멤버 수락
   rejectMyTeamMember(data: BaseRequestData<MateRejectRequest>): Promise<unknown>; // 팀 멤버 거절
   fireMyTeamMember(data: BaseRequestData<MateFireRequest>): Promise<unknown>; // 팀 멤버 추방
+  getMateList(data: BaseRequestData<MateListRequest>): Promise<MateAllListResponse>; // 모임 목록 조회
+  getMyTeamMembers(data: BaseRequestData<MateRequest>): Promise<Mate[]>; // 내 팀 멤버들 조회
   getDetails(data: BaseRequestData<MateRequest>): Promise<Mate[]>; // 모임 상세 페이지
   create(data: BaseRequestData<MateCreateRequest>): Promise<Mate>; // 모임 생성
   delete(data: BaseRequestData<MateRequest>): Promise<void>; // 모임 삭제
