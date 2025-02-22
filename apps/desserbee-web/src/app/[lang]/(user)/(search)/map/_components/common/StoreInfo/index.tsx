@@ -8,7 +8,6 @@ import IconBaseball from '@repo/design-system/components/icons/IconBaseball';
 import IconDirection from '@repo/design-system/components/icons/IconDirection';
 
 import type { StoreSummaryInfoData } from '@repo/entity/src/store';
-import { IconSize } from '@repo/design-system/components/icons';
 import { convertDayToKorean } from '@/utils/weekday';
 import { cn } from '@repo/ui/lib/utils';
 import { useState } from 'react';
@@ -31,7 +30,7 @@ export function StoreInfo({
 }: StoreInfoProps) {
   const [isOperationHourOpen, setIsOperationHourOpen] = useState(false);
   return (
-    <div className="flex flex-col md:gap-y-2 w-full text-[8px] md:text-lg text-nowrap leading-normal">
+    <div className="flex flex-col w-full text-[8px] md:text-lg text-nowrap leading-3">
       <div className="flex items-center gap-[6px]">
         <div className="w-[6.83px] md:w-4">
           <IconLocation className="w-full h-full text-[#BABABA]" />
@@ -40,7 +39,7 @@ export function StoreInfo({
       </div>
       <div>
         <div className="flex flex-col">
-          <div className="flex items-center gap-[6px] mb-[5px]">
+          <div className="flex items-center gap-[6px]">
             <div className="w-[6.83px] md:w-4">
               <IconClock className="w-full h-full text-[#BABABA]" />
             </div>
@@ -75,12 +74,12 @@ export function StoreInfo({
                     key={dayOfWeek}
                     className={cn(isClosed ? 'font-semibold' : '')}
                   >
-                    <div className="flex items-center gap-[6px] leading-none md:leading-[100%]">
+                    <div className="flex items-center gap-[6px]  md:leading-[100%]">
                       <div className="w-4"></div>
                       <div className="flex gap-[10px]">
                         <div>{convertDayToKorean(dayOfWeek)}</div>
                         {!isClosed ? (
-                          <div className="flex flex-col gap-[6px]">
+                          <div className="flex flex-col md:gap-[6px]">
                             <div className="flex">
                               <span>{openingTime.hour}:</span>
                               <span>{openingTime.minute}</span>
