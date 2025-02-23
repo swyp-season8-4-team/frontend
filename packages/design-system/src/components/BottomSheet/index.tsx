@@ -1,13 +1,18 @@
 import { useRef, useState } from 'react';
 import { cn } from '@repo/ui/lib/utils';
-import type { WithChildren } from '@repo/ui/index';
+import type { WithChildren, WithClassName } from '@repo/ui/index';
 
-interface BottomSheetProps extends WithChildren {
+interface BottomSheetProps extends WithChildren, WithClassName {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function BottomSheet({ children, isOpen, onClose }: BottomSheetProps) {
+export function BottomSheet({
+  children,
+  isOpen,
+  onClose,
+  className,
+}: BottomSheetProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [startY, setStartY] = useState(0);
   const [offsetY, setOffsetY] = useState(0);
@@ -52,12 +57,13 @@ export function BottomSheet({ children, isOpen, onClose }: BottomSheetProps) {
           <div
             ref={bottomSheetRef}
             className={cn(
-              'right-0 bottom-0 z-bottomSheet left-0 fixed  select-none',
+              'right-0 bottom-0 z-bottomSheet left-0 fixed  select-none ',
               'bg-white px-base pt-[19px] pb-4 rounded-t-base w-full',
               'animate-slide-up transition-transform',
               isDragging
                 ? 'transition-none'
                 : 'transition-transform duration-500',
+              className,
             )}
             onClick={(e) => e.stopPropagation()}
             onTouchStart={handleTouchStart}
