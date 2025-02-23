@@ -1,5 +1,5 @@
 import IconFlower from '@repo/design-system/components/icons/IconFlower';
-import { getIconColor } from '../../_utils/iconColor';
+import { getIconColor } from '../../../_utils/iconColor';
 import { useState } from 'react';
 import { cn } from '@repo/ui/lib/utils';
 

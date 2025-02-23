@@ -15,7 +15,6 @@ import { BANNERS } from '../../../_consts/banner';
 import Image from 'next/image';
 import Link from 'next/link';
 
-// import { ReviewNotReadyModal } from '../../modal/ReviewNotReadyModal';
 import { ReviewNotReadyModal } from '../../modal/ReviewNotReadyModal/bee';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { CouponIsNotReadyModal } from '../../modal/CouponIsNotReadyModal';

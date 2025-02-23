@@ -35,16 +35,76 @@ import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 
 import { KAKAO_MAP_API_URL } from '../../../_consts/map';
-import type { NearByStoreData, SavedListData } from '@repo/entity/src/store';
+import type { SavedListData } from '@repo/entity/src/store';
 
 import { LocationPermissionModal } from '../../modal/LocationPermissionModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
+
+const nearByStores = [
+  {
+    storeId: 1,
+    storeUuid: 'uuid-1',
+    name: '디저트39 강남점',
+    address: '서울 강남구 강남대로 396',
+    latitude: 37.497175,
+    longitude: 127.027926,
+  },
+  {
+    storeId: 2,
+    storeUuid: 'uuid-2',
+    name: '아티제 강남역점',
+    address: '서울 강남구 테헤란로 151',
+    latitude: 37.499462,
+    longitude: 127.028274,
+  },
+  {
+    storeId: 3,
+    storeUuid: 'uuid-3',
+    name: '투썸플레이스 강남파이낸스센터점',
+    address: '서울 강남구 테헤란로 152',
+    latitude: 37.500175,
+    longitude: 127.029046,
+  },
+  {
+    storeId: 4,
+    storeUuid: 'uuid-4',
+    name: '설빙 강남역점',
+    address: '서울 강남구 강남대로 358',
+    latitude: 37.496533,
+    longitude: 127.0268,
+  },
+  {
+    storeId: 5,
+    storeUuid: 'uuid-5',
+    name: '폴바셋 강남역사거리점',
+    address: '서울 강남구 테헤란로 129',
+    latitude: 37.498325,
+    longitude: 127.027892,
+  },
+  {
+    storeId: 6,
+    storeUuid: 'uuid-6',
+    name: '배스킨라빈스 강남우성점',
+    address: '서울 강남구 테헤란로 156',
+    latitude: 37.500929,
+    longitude: 127.028979,
+  },
+];
 
 interface KakaoMapProps {
   userPreferences: string[];
   preferenceCategories: string[];
   totalSavedList: SavedListData[];
 }
+
+// 서비스가 모두 초기화되었는지 확인하는 헬퍼 함수
+const areServicesInitialized = (services: {
+  mapService: MapService | null;
+  geoService: GeolocationService | null;
+  storeService: StoreService | null;
+}) => {
+  return services.mapService && services.geoService && services.storeService;
+};
 
 export function KakaoMap({
   userPreferences,
@@ -53,8 +113,6 @@ export function KakaoMap({
 }: KakaoMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [selectedStoreUuid, setSelectedStoreUuid] = useState<string>();
-  const [geoErrorMessage, setGeoErrorMessage] = useState<string>();
-  const [, setIsPermissionModalOpen] = useState(false);
   const [currentPosition, setCurrentPosition] = useState<MapPosition>({
     latitude: 0,
     longitude: 0,
@@ -63,13 +121,8 @@ export function KakaoMap({
     latitude: 0,
     longitude: 0,
   });
-
-  const FETCH_RADIUS_KM = 3;
-  const REFETCH_THRESHOLD_KM = 2;
-  const POSITION_UPDATE_INTERVAL = 3000;
-  const lastUpdateTimeRef = useRef(0);
-  const isLoadingRef = useRef(false);
-
+  const [error, setError] = useState<string | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [services, setServices] = useState<{
     mapService: MapService | null;
@@ -80,6 +133,12 @@ export function KakaoMap({
     geoService: null,
     storeService: null,
   });
+
+  const FETCH_RADIUS_KM = 3;
+  const REFETCH_THRESHOLD_KM = 2;
+  const POSITION_UPDATE_INTERVAL = 3000;
+  const lastUpdateTimeRef = useRef(0);
+  const isLoadingRef = useRef(false);
 
   const { isBottomSheetOpen, handleBottomSheetOpen, handleBottomSheetClose } =
     useBottomSheet();
@@ -187,18 +246,36 @@ export function KakaoMap({
         return null;
       }
     },
-    [services.storeService, retryCount],
+    [retryCount, services.storeService],
+  );
+
+  const updateNearbyStores = useCallback(
+    async (position: MapPosition) => {
+      if (!areServicesInitialized(services)) return;
+
+      try {
+        isLoadingRef.current = true;
+        if (nearByStores) {
+          await services.mapService?.addMarkersWithClustering(
+            nearByStores,
+            storeMarkerImage.src,
+            handleStoreMarkerClick,
+          );
+          setLastFetchPosition(position);
+        }
+      } catch (error) {
+        console.error('가게 마커 업데이트 중 오류:', error);
+        setError('가게 정보 업데이트에 실패했습니다.');
+      } finally {
+        isLoadingRef.current = false;
+      }
+    },
+    [services, handleStoreMarkerClick],
   );
 
   const onPositionSuccess = useCallback(
     async (position: MapPosition) => {
-      if (
-        !services.mapService ||
-        !services.geoService ||
-        !services.storeService
-      ) {
-        return;
-      }
+      if (!areServicesInitialized(services)) return;
 
       const now = Date.now();
       if (
@@ -210,7 +287,8 @@ export function KakaoMap({
       lastUpdateTimeRef.current = now;
 
       try {
-        await services.mapService.addCurrentPositionMaker(
+        await services.mapService?.removeCurrentPositionMarker();
+        await services.mapService?.addCurrentPositionMaker(
           position,
           userMarkerImage.src,
         );
@@ -220,38 +298,25 @@ export function KakaoMap({
           lastFetchPosition,
           position,
         );
-
         if (
           lastFetchPosition.latitude === 0 ||
           distanceFromLastFetch > REFETCH_THRESHOLD_KM
         ) {
-          isLoadingRef.current = true;
-
-          const nearByStores = await fetchNearbyStores(position);
-          if (nearByStores) {
-            await services.mapService.addMarkersWithClustering(
-              nearByStores,
-              storeMarkerImage.src,
-              handleStoreMarkerClick,
-            );
-            setLastFetchPosition(position);
-          }
+          await updateNearbyStores(position);
         }
       } catch (error) {
-        console.error('위치 정보 처리 중 오류 발생:', error);
+        console.error('위치 마커 업데이트 중 오류 발생:', error);
         if (error instanceof Error) {
-          setGeoErrorMessage(error.message);
+          openPermissionModal();
         }
-      } finally {
-        isLoadingRef.current = false;
       }
     },
     [
       services,
-      lastFetchPosition,
       calculateDistance,
-      handleStoreMarkerClick,
-      fetchNearbyStores,
+      lastFetchPosition,
+      updateNearbyStores,
+      openPermissionModal,
     ],
   );
 
@@ -274,153 +339,60 @@ export function KakaoMap({
     return { mapService, geoService, storeService };
   };
 
-  const initializeMap = async (services: {
+  const loadMap = async (initializedServices: {
     mapService: MapService;
     geoService: GeolocationService;
     storeService: StoreService;
   }) => {
+    if (!mapRef.current) {
+      console.error('Map container not found');
+      return;
+    }
+
     try {
-      const container = mapRef.current;
-      if (!container) {
-        console.error('Map container not found');
-        return;
-      }
-
-      if (
-        !services.geoService ||
-        !services.mapService ||
-        !services.storeService
-      ) {
-        throw new Error('services are not initialized');
-        return;
-      }
-
-      const result = await services.geoService.getCurrentPosition();
-
+      const result = await initializedServices.geoService.getCurrentPosition();
       if ('errorMessage' in result) {
-        setGeoErrorMessage(result.errorMessage);
-        setIsPermissionModalOpen(true);
+        openPermissionModal();
         return;
       }
 
       setCurrentPosition(result);
+      await initializedServices.mapService.initializeMap(
+        mapRef.current,
+        result,
+      );
 
-      await services.mapService.initializeMap(container, result);
-      await services.mapService.setMapCenter(result);
-      await services.mapService.addCurrentPositionMaker(
+      await initializedServices.mapService.addCurrentPositionMaker(
         result,
         userMarkerImage.src,
       );
+      await initializedServices.mapService.setMapCenter(result);
 
-      const nearByStores = await fetchNearbyStores(result);
-      if (nearByStores) {
-        await services.mapService.addMarkersWithClustering(
-          nearByStores,
-          storeMarkerImage.src,
-          handleStoreMarkerClick,
-        );
-      }
+      await initializedServices.mapService.addMarkersWithClustering(
+        nearByStores,
+        storeMarkerImage.src,
+        handleStoreMarkerClick,
+      );
+
+      initializedServices.geoService.startWatchingPosition(onPositionSuccess, {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0,
+      });
     } catch (err) {
       console.error('초기화 중 오류 발생:', err);
       setError('서비스 초기화에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
-  const [error, setError] = useState<string | null>(null);
-
-  const startTracking = () => {
-    if (services.mapService && services.geoService && services.storeService) {
-      const geoService = services.geoService;
-      geoService.startWatchingPosition(onPositionSuccess, {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0,
-      });
-    }
-  };
-
-  const stopTracking = useCallback(async () => {
-    if (
-      services.mapService &&
-      services.geoService &&
-      services.storeService &&
-      isMapLoaded
-    ) {
-      await services.geoService.stopWatchingPosition();
-      await services.mapService.removeCurrentPositionMarker();
-    }
-  }, [services, isMapLoaded]);
-
   useEffect(() => {
-    if (geoErrorMessage) {
-      openPermissionModal();
-    }
-  }, [geoErrorMessage, openPermissionModal]);
-
-  const [isInitialized, setIsInitialized] = useState(false);
-  const [isInitializing, setIsInitializing] = useState(false);
-
-  useEffect(() => {
-    if (
-      !isInitialized &&
-      !isInitializing &&
-      isMapLoaded &&
-      services.mapService &&
-      services.geoService &&
-      services.storeService
-    ) {
-      const initialize = async () => {
-        setIsInitializing(true);
-        try {
-          if (
-            !services.geoService ||
-            !services.mapService ||
-            !services.storeService
-          ) {
-            throw new Error('services are not initialized');
-          }
-
-          const result = await services.geoService.getCurrentPosition();
-
-          if ('errorMessage' in result) {
-            setGeoErrorMessage(result.errorMessage);
-            setIsPermissionModalOpen(true);
-            return;
-          }
-
-          await services.mapService.initializeMap(mapRef.current!, result);
-          await services.mapService.setMapCenter(result);
-          await services.mapService.addCurrentPositionMaker(
-            result,
-            userMarkerImage.src,
-          );
-
-          setIsInitialized(true);
-        } catch (err) {
-          console.error('초기화 중 오류 발생:', err);
-          setError('서비스 초기화에 실패했습니다. 잠시 후 다시 시도해주세요.');
-        } finally {
-          setIsInitializing(false);
-        }
-      };
-
-      initialize();
-    }
-  }, [isMapLoaded, services, isInitialized, isInitializing]);
-
-  useEffect(() => {
-    if (
-      isMapLoaded &&
-      services.mapService &&
-      services.geoService &&
-      services.storeService
-    ) {
-      const startTracking = async () => {
-        return () => stopTracking();
-      };
-      startTracking();
-    }
-  }, [isMapLoaded, services, lastFetchPosition, stopTracking]);
+    return () => {
+      if (services.geoService && services.mapService) {
+        services.geoService.stopWatchingPosition();
+        services.mapService.removeCurrentPositionMarker();
+      }
+    };
+  }, [services]);
 
   return (
     <div>
@@ -430,31 +402,21 @@ export function KakaoMap({
         async
         src={KAKAO_MAP_API_URL}
         onReady={() => {
-          console.log('Kakao script ready');
           window.kakao.maps.load(async () => {
-            console.log('Kakao maps loaded');
             if (isInitialized) return;
-
             try {
               const initializedServices = initializeServices();
+              if (!areServicesInitialized(initializedServices)) {
+                throw new Error('서비스 초기화 실패');
+              }
               setServices(initializedServices);
               setIsMapLoaded(true);
-              await initializeMap(initializedServices);
-
-              if (geoErrorMessage) {
-                openPermissionModal();
-              }
-
-              if (
-                isMapLoaded &&
-                initializedServices.mapService &&
-                initializedServices.geoService &&
-                initializedServices.storeService
-              ) {
-                startTracking();
-              }
+              await loadMap(initializedServices);
             } catch (error) {
               console.error('맵 초기화 중 오류:', error);
+              setError(
+                '서비스 초기화에 실패했습니다. 잠시 후 다시 시도해주세요.',
+              );
             } finally {
               setIsInitialized(true);
             }
