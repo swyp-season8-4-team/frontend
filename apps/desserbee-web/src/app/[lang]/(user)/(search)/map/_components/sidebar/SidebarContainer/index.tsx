@@ -161,7 +161,7 @@ export function SideBarContainer({
                       ref={modalRef}
                       className="top-6 right-0 z-modal absolute gap-[4.35px] md:gap-2 bg-white shadow-[2px_2px_5px_0px_rgba(0,0,0,0.05)] px-3 rounded-[10px] w-fit"
                     >
-                      <div className="flex items-center md:py-[11.5px] border-[#D2D2D2] border-b">
+                      {/* <div className="flex items-center md:py-[11.5px] border-[#D2D2D2] border-b">
                         <span className="flex justify-center items-center mr-2 w-3 md:w-5 h-3 md:h-5">
                           <IconShare className="w-full h-full" />
                         </span>
@@ -176,7 +176,7 @@ export function SideBarContainer({
                         <button className="text-[8px] md:text-[14px] text-nowrap">
                           지도에서 숨기기
                         </button>
-                      </div>
+                      </div> */}
                       <div className="flex items-center md:py-[11.5px]">
                         <span className="flex justify-center items-center mr-2 w-3 md:w-5 h-3 md:h-5">
                           <IconTrashCan className="w-full h-full" />
