@@ -1,7 +1,14 @@
 'use client';
 
 import Script from 'next/script';
-import { useEffect, useRef, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useMemo,
+} from 'react';
 
 import storeMarkerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-marker.svg';
 import userMarkerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-current-marker.svg';
@@ -28,10 +35,10 @@ import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 
 import { KAKAO_MAP_API_URL } from '../../../_consts/map';
-import type { SavedListData } from '@repo/entity/src/store';
+import type { NearByStoreData, SavedListData } from '@repo/entity/src/store';
 
-import withModal from '@repo/design-system/hocs/withModal';
 import { LocationPermissionModal } from '../../modal/LocationPermissionModal';
+import { PortalContext } from '@repo/ui/contexts/PortalContext';
 
 interface KakaoMapProps {
   userPreferences: string[];
@@ -47,11 +54,21 @@ export function KakaoMap({
   const mapRef = useRef<HTMLDivElement>(null);
   const [selectedStoreUuid, setSelectedStoreUuid] = useState<string>();
   const [geoErrorMessage, setGeoErrorMessage] = useState<string>();
-  const [isPermissionModalOpen, setIsPermissionModalOpen] = useState(false);
+  const [, setIsPermissionModalOpen] = useState(false);
   const [currentPosition, setCurrentPosition] = useState<MapPosition>({
     latitude: 0,
     longitude: 0,
   });
+  const [lastFetchPosition, setLastFetchPosition] = useState<MapPosition>({
+    latitude: 0,
+    longitude: 0,
+  });
+
+  const FETCH_RADIUS_KM = 3;
+  const REFETCH_THRESHOLD_KM = 2;
+  const POSITION_UPDATE_INTERVAL = 3000;
+  const lastUpdateTimeRef = useRef(0);
+  const isLoadingRef = useRef(false);
 
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [services, setServices] = useState<{
@@ -69,24 +86,174 @@ export function KakaoMap({
 
   const { isSideBarOpen, handleSideBarOpen, handleSideBarClose } = useSideBar();
 
-  const bottomSheetProps = {
-    storeUuid: selectedStoreUuid as string,
-    isBottomSheetOpen,
-    handleBottomSheetClose,
-  };
+  const { push, pop } = useContext(PortalContext);
 
-  const sideBarProps = {
-    isSideBarOpen,
-    handleSideBarClose,
-    totalSavedList,
-  };
+  const closeModal = useCallback(() => {
+    pop('modal');
+  }, [pop]);
 
-  const handleStoreMarkerClick = (storeUuid: string) => {
-    setSelectedStoreUuid(storeUuid);
-    handleBottomSheetOpen();
-  };
+  const openPermissionModal = useCallback(() => {
+    push('modal', {
+      component: <LocationPermissionModal onClose={closeModal} />,
+    });
+  }, [closeModal, push]);
 
-  const LocPermissionModal = withModal(LocationPermissionModal);
+  const handleStoreMarkerClick = useCallback(
+    (storeUuid: string) => {
+      setSelectedStoreUuid(storeUuid);
+      handleBottomSheetOpen();
+    },
+    [handleBottomSheetOpen],
+  );
+
+  const calculateDistance = useCallback(
+    (pos1: MapPosition, pos2: MapPosition): number => {
+      const R = 6371;
+      const dLat = ((pos2.latitude - pos1.latitude) * Math.PI) / 180;
+      const dLon = ((pos2.longitude - pos1.longitude) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((pos1.latitude * Math.PI) / 180) *
+          Math.cos((pos2.latitude * Math.PI) / 180) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    },
+    [],
+  );
+
+  const bottomSheetProps = useMemo(
+    () => ({
+      storeUuid: selectedStoreUuid as string,
+      isBottomSheetOpen,
+      handleBottomSheetClose,
+    }),
+    [selectedStoreUuid, isBottomSheetOpen, handleBottomSheetClose],
+  );
+
+  const sideBarProps = useMemo(
+    () => ({
+      isSideBarOpen,
+      handleSideBarClose,
+      handleSideBarOpen,
+      totalSavedList,
+    }),
+    [isSideBarOpen, handleSideBarClose, handleSideBarOpen, totalSavedList],
+  );
+
+  const handleMoveToCurrentPosition = useCallback(() => {
+    if (services.mapService && isMapLoaded) {
+      services.mapService.setMapCenter(currentPosition);
+    }
+  }, [services.mapService, isMapLoaded, currentPosition]);
+
+  const mapPanelProps = useMemo(
+    () => ({
+      handleSideBarOpen,
+      moveToCurrentPosition: handleMoveToCurrentPosition,
+    }),
+    [handleSideBarOpen, handleMoveToCurrentPosition],
+  );
+
+  const [retryCount, setRetryCount] = useState(0);
+  const MAX_RETRY = 3;
+  const RETRY_DELAY = 3000;
+
+  const fetchNearbyStores = useCallback(
+    async (position: MapPosition) => {
+      try {
+        if (!services.storeService) return null;
+
+        const nearByStores = await services.storeService.getNearbyStores({
+          latitude: position.latitude,
+          longitude: position.longitude,
+          radius: FETCH_RADIUS_KM,
+        });
+
+        setRetryCount(0);
+        setError(null);
+        return nearByStores;
+      } catch (error) {
+        console.error('가게 정보를 불러오는데 실패했습니다:', error);
+        if (retryCount < MAX_RETRY) {
+          setRetryCount((prev) => prev + 1);
+          setTimeout(() => fetchNearbyStores(position), RETRY_DELAY);
+        } else {
+          setError(
+            '가게 정보를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.',
+          );
+        }
+        return null;
+      }
+    },
+    [services.storeService, retryCount],
+  );
+
+  const onPositionSuccess = useCallback(
+    async (position: MapPosition) => {
+      if (
+        !services.mapService ||
+        !services.geoService ||
+        !services.storeService
+      ) {
+        return;
+      }
+
+      const now = Date.now();
+      if (
+        now - lastUpdateTimeRef.current < POSITION_UPDATE_INTERVAL ||
+        isLoadingRef.current
+      ) {
+        return;
+      }
+      lastUpdateTimeRef.current = now;
+
+      try {
+        await services.mapService.addCurrentPositionMaker(
+          position,
+          userMarkerImage.src,
+        );
+        setCurrentPosition(position);
+
+        const distanceFromLastFetch = calculateDistance(
+          lastFetchPosition,
+          position,
+        );
+
+        if (
+          lastFetchPosition.latitude === 0 ||
+          distanceFromLastFetch > REFETCH_THRESHOLD_KM
+        ) {
+          isLoadingRef.current = true;
+
+          const nearByStores = await fetchNearbyStores(position);
+          if (nearByStores) {
+            await services.mapService.addMarkersWithClustering(
+              nearByStores,
+              storeMarkerImage.src,
+              handleStoreMarkerClick,
+            );
+            setLastFetchPosition(position);
+          }
+        }
+      } catch (error) {
+        console.error('위치 정보 처리 중 오류 발생:', error);
+        if (error instanceof Error) {
+          setGeoErrorMessage(error.message);
+        }
+      } finally {
+        isLoadingRef.current = false;
+      }
+    },
+    [
+      services,
+      lastFetchPosition,
+      calculateDistance,
+      handleStoreMarkerClick,
+      fetchNearbyStores,
+    ],
+  );
 
   const initializeServices = () => {
     const mapService = new MapService({
@@ -119,13 +286,25 @@ export function KakaoMap({
         return;
       }
 
+      if (
+        !services.geoService ||
+        !services.mapService ||
+        !services.storeService
+      ) {
+        throw new Error('services are not initialized');
+        return;
+      }
+
       const result = await services.geoService.getCurrentPosition();
+
       if ('errorMessage' in result) {
-        setGeoErrorMessage(result.errorMessage as string);
+        setGeoErrorMessage(result.errorMessage);
         setIsPermissionModalOpen(true);
         return;
       }
+
       setCurrentPosition(result);
+
       await services.mapService.initializeMap(container, result);
       await services.mapService.setMapCenter(result);
       await services.mapService.addCurrentPositionMaker(
@@ -133,53 +312,34 @@ export function KakaoMap({
         userMarkerImage.src,
       );
 
-      const nearByStores = await services.storeService.getNearbyStores({
-        latitude: result.latitude,
-        longitude: result.longitude,
-        radius: 2,
-      });
-
-      await services.mapService.addMarkersWithClustering(
-        nearByStores,
-        storeMarkerImage.src,
-        handleStoreMarkerClick,
-      );
+      const nearByStores = await fetchNearbyStores(result);
+      if (nearByStores) {
+        await services.mapService.addMarkersWithClustering(
+          nearByStores,
+          storeMarkerImage.src,
+          handleStoreMarkerClick,
+        );
+      }
     } catch (err) {
-      console.error('맵 초기화 중 오류 발생:', err);
-      setGeoErrorMessage('맵을 불러오는 데 실패했습니다.');
-      setIsPermissionModalOpen(true);
+      console.error('초기화 중 오류 발생:', err);
+      setError('서비스 초기화에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
-  const startTracking = async () => {
+  const [error, setError] = useState<string | null>(null);
+
+  const startTracking = () => {
     if (services.mapService && services.geoService && services.storeService) {
-      const onSuccess = async (position: MapPosition) => {
-        if (
-          !services.mapService ||
-          !services.geoService ||
-          !services.storeService
-        ) {
-          console.error('필요한 서비스가 초기화되지 않았습니다.');
-          return;
-        }
-
-        try {
-          await services?.mapService.addCurrentPositionMaker(
-            position,
-            userMarkerImage.src,
-          );
-          setCurrentPosition(position);
-        } catch (error) {
-          if (error instanceof Error) {
-            setGeoErrorMessage(error.message);
-          }
-        }
-      };
-      await services.geoService.startWatchingPosition(onSuccess);
+      const geoService = services.geoService;
+      geoService.startWatchingPosition(onPositionSuccess, {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0,
+      });
     }
   };
 
-  const stopTracking = async () => {
+  const stopTracking = useCallback(async () => {
     if (
       services.mapService &&
       services.geoService &&
@@ -189,29 +349,78 @@ export function KakaoMap({
       await services.geoService.stopWatchingPosition();
       await services.mapService.removeCurrentPositionMarker();
     }
-  };
-
-  const moveToCurrentPosition = () => {
-    if (
-      services.mapService &&
-      services.geoService &&
-      services.storeService &&
-      isMapLoaded
-    ) {
-      services.mapService.setMapCenter(currentPosition);
-    }
-  };
-
-  const mapPanelProps = {
-    handleSideBarOpen,
-    moveToCurrentPosition,
-  };
+  }, [services, isMapLoaded]);
 
   useEffect(() => {
-    return () => {
-      stopTracking();
-    };
-  }, []);
+    if (geoErrorMessage) {
+      openPermissionModal();
+    }
+  }, [geoErrorMessage, openPermissionModal]);
+
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
+
+  useEffect(() => {
+    if (
+      !isInitialized &&
+      !isInitializing &&
+      isMapLoaded &&
+      services.mapService &&
+      services.geoService &&
+      services.storeService
+    ) {
+      const initialize = async () => {
+        setIsInitializing(true);
+        try {
+          if (
+            !services.geoService ||
+            !services.mapService ||
+            !services.storeService
+          ) {
+            throw new Error('services are not initialized');
+          }
+
+          const result = await services.geoService.getCurrentPosition();
+
+          if ('errorMessage' in result) {
+            setGeoErrorMessage(result.errorMessage);
+            setIsPermissionModalOpen(true);
+            return;
+          }
+
+          await services.mapService.initializeMap(mapRef.current!, result);
+          await services.mapService.setMapCenter(result);
+          await services.mapService.addCurrentPositionMaker(
+            result,
+            userMarkerImage.src,
+          );
+
+          setIsInitialized(true);
+        } catch (err) {
+          console.error('초기화 중 오류 발생:', err);
+          setError('서비스 초기화에 실패했습니다. 잠시 후 다시 시도해주세요.');
+        } finally {
+          setIsInitializing(false);
+        }
+      };
+
+      initialize();
+    }
+  }, [isMapLoaded, services, isInitialized, isInitializing]);
+
+  useEffect(() => {
+    if (
+      isMapLoaded &&
+      services.mapService &&
+      services.geoService &&
+      services.storeService
+    ) {
+      const startTracking = async () => {
+        return () => stopTracking();
+      };
+      startTracking();
+    }
+  }, [isMapLoaded, services, lastFetchPosition, stopTracking]);
 
   return (
     <div>
@@ -221,46 +430,53 @@ export function KakaoMap({
         async
         src={KAKAO_MAP_API_URL}
         onReady={() => {
+          console.log('Kakao script ready');
           window.kakao.maps.load(async () => {
+            console.log('Kakao maps loaded');
+            if (isInitialized) return;
+
             try {
               const initializedServices = initializeServices();
               setServices(initializedServices);
-
-              // 상태 업데이트를 기다리기 위한 짧은 지연
-              await new Promise((resolve) => setTimeout(resolve, 100));
-
-              await initializeMap(initializedServices);
-              await startTracking();
               setIsMapLoaded(true);
+              await initializeMap(initializedServices);
+
+              if (geoErrorMessage) {
+                openPermissionModal();
+              }
+
+              if (
+                isMapLoaded &&
+                initializedServices.mapService &&
+                initializedServices.geoService &&
+                initializedServices.storeService
+              ) {
+                startTracking();
+              }
             } catch (error) {
-              console.error('맵 초기화 중 오류 발생:', error);
-              setGeoErrorMessage('맵을 불러오는 데 실패했습니다.');
-              setIsPermissionModalOpen(true);
+              console.error('맵 초기화 중 오류:', error);
+            } finally {
+              setIsInitialized(true);
             }
           });
         }}
       />
       <div
         ref={mapRef}
-        className="relative bg-[#E8E8E8] mb-[9px] md:mb-4 rounded-base w-full h-[calc(100dvh-311.68px)] md:h-[calc(100dvh-450px)] overflow-x-hidden"
+        className="relative bg-[#E8E8E8] mb-[9px] rounded-base w-full h-[calc(100dvh-295px)] overflow-x-hidden"
       >
-        {geoErrorMessage ? (
-          <LocPermissionModal value={isPermissionModalOpen} /> // 모달
-        ) : (
-          <>
-            <PreferenceTags
-              userPreferences={userPreferences}
-              categories={preferenceCategories}
-            />
-            <MapPanel {...mapPanelProps} />
-            {isBottomSheetOpen && (
-              <BottomSheetContainer {...bottomSheetProps} /> // TODO: portal (+hook 삭제)
-            )}
-            {isSideBarOpen && (
-              <SideBarContainer {...sideBarProps} /> // TODO: portal (+hook 삭제)
-            )}
-          </>
+        {error && (
+          <div className="top-4 left-1/2 z-50 absolute bg-red-100 px-4 py-2 border border-red-400 rounded text-red-700 -translate-x-1/2 transform">
+            {error}
+          </div>
         )}
+        <PreferenceTags
+          userPreferences={userPreferences}
+          categories={preferenceCategories}
+        />
+        <MapPanel {...mapPanelProps} />
+        {isBottomSheetOpen && <BottomSheetContainer {...bottomSheetProps} />}
+        {isSideBarOpen && <SideBarContainer {...sideBarProps} />}
       </div>
     </div>
   );

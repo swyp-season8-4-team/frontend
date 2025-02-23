@@ -10,7 +10,6 @@ const storeService = new StoreService({
 
 export function useStoreDetail(storeUuid: string) {
   const [storeDetail, setStoreDetail] = useState<StoreDetailInfoData>();
-  const [error, setError] = useState<unknown>();
 
   useEffect(() => {
     const fetchStoreDetail = async (storeUuid: string) => {

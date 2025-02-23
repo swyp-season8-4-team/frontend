@@ -1,6 +1,5 @@
 import IconFlowerOutline from '@repo/design-system/components/icons/IconFlowerOutline';
 import IconTarget from '@repo/design-system/components/icons/IconTarget';
-import { cn } from '@repo/ui/lib/utils';
 import { useContext, useState } from 'react';
 import { SaveListNotSignInModal } from '../../modal/SaveListNotSignInModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
@@ -16,7 +15,7 @@ export function MapPanel({
 }: MapPanelProps) {
   const { push, pop } = useContext(PortalContext);
 
-  const [isUserSignIn, setIsUserSignIn] = useState(false); // TODO: 후에 인증 구현되면 수정
+  const [isUserSignIn] = useState(true); // TODO: 후에 인증 구현되면 수정
 
   const closeModal = () => {
     pop('modal');
@@ -42,17 +41,15 @@ export function MapPanel({
               handleOpenSideBarBtnClick();
             }
           }}
-          className="flex justify-center items-center bg-white rounded-sm aspect-square"
+          className="flex justify-center items-center bg-white p-1 rounded-sm w-8 h-8 aspect-square"
         >
-          <IconFlowerOutline className="text-[#6F6F6F]" />
+          <IconFlowerOutline className="w-full h-full text-[#6F6F6F]" />
         </button>
         <button
           onClick={moveToCurrentPosition}
-          className={cn(
-            'flex justify-center items-center aspect-square rounded-sm bg-white',
-          )}
+          className="flex justify-center items-center bg-white p-1 rounded-sm w-8 h-8 aspect-square"
         >
-          <IconTarget className="text-[#6F6F6F]" />
+          <IconTarget className="text-[#6F6F6F] w-full h-full" />
         </button>
       </div>
     </div>

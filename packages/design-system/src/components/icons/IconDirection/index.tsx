@@ -1,6 +1,9 @@
 import Icon, { IconSize, type SVGProps } from '..';
 
-export default function IconUp({ size = IconSize.m, ...props }: SVGProps) {
+export default function IconDirection({
+  size = IconSize.m,
+  ...props
+}: SVGProps) {
   return (
     <Icon viewBox="0 0 16 16" size={size} {...props}>
       <path

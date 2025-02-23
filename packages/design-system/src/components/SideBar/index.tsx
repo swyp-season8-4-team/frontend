@@ -1,9 +1,7 @@
 import type { WithChildren, WithClassName } from '@repo/ui/index';
 import IconX from '../icons/IconX';
-import { IconSize } from '../icons';
-import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@repo/ui/lib/utils';
-import { memo } from 'react';
+import { useRef, useState } from 'react';
 
 interface SideBarProps extends WithChildren, WithClassName {
   isSideBarOpen: boolean;
@@ -16,56 +14,67 @@ export function SideBar({
   isSideBarOpen,
   handleSideBarClose,
 }: SideBarProps) {
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [offsetX, setOffsetX] = useState(0);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  const handleTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    setIsDragging(true);
+    setStartX(clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent | React.MouseEvent) => {
+    if (!isDragging) return;
+
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const delta = clientX - startX;
+
+    if (delta > 0) {
+      // 오른쪽으로 드래그할 때만
+      setOffsetX(delta);
+      if (sidebarRef.current) {
+        sidebarRef.current.style.transform = `translateX(${delta}px)`;
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+    if (offsetX > 100) {
+      // 100px 이상 드래그하면 닫기
+      handleSideBarClose();
+    } else {
+      // 원위치로 돌아가기
+      if (sidebarRef.current) {
+        sidebarRef.current.style.transform = 'translateX(0)';
+      }
+    }
+    setOffsetX(0);
+  };
+
   return (
-    <AnimatePresence mode="sync">
+    <>
       {isSideBarOpen && (
-        <motion.div
+        <div
+          ref={sidebarRef}
           className={cn(
-            'relative h-full px-[13.05px] py-[10.88px] md:px-6  md:py-5 bg-white rounded-base z-sidebar',
+            'relative h-full px-[13.05px] py-[10.88px] md:px-6 md:py-5 bg-white rounded-[10px] md:rounded-base z-sidebar',
+            'animate-slide-in transition-transform',
+            isDragging
+              ? 'transition-none'
+              : 'transition-transform duration-500',
             className,
           )}
-          layoutId="map-sidebar"
-          layout={false}
-          style={{ willChange: 'transform' }}
-          key="content"
-          initial="collapsed"
-          animate="open"
-          exit="collapsed"
           onClick={(e) => e.stopPropagation()}
-          drag="x"
-          dragConstraints={{ left: 0, right: 0 }}
-          dragDirectionLock
-          dragMomentum={false}
-          dragElastic={0.1}
-          onDragEnd={(_, info) => {
-            if (info.offset.x > 100 || info.velocity.x > 300) {
-              handleSideBarClose();
-            }
-          }}
-          variants={{
-            open: {
-              x: 0,
-              width: '50%',
-              transition: {
-                type: 'spring',
-                damping: 20,
-                stiffness: 150,
-                restDelta: 0.0001,
-                restSpeed: 0.0001,
-              },
-            },
-            collapsed: {
-              x: '100%',
-              width: '50%', // 닫힐 때 너비 유지
-              transition: {
-                type: 'spring',
-                damping: 25,
-                stiffness: 120,
-                restDelta: 0.0001,
-                restSpeed: 0.0001,
-              },
-            },
-          }}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          onMouseDown={handleTouchStart}
+          onMouseMove={handleTouchMove}
+          onMouseUp={handleTouchEnd}
+          onMouseLeave={handleTouchEnd}
         >
           <button
             className="hidden md:block top-7 right-[26.19px] md:absolute"
@@ -74,8 +83,8 @@ export function SideBar({
             <IconX />
           </button>
           {children}
-        </motion.div>
+        </div>
       )}
-    </AnimatePresence>
+    </>
   );
 }

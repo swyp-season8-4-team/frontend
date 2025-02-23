@@ -7,9 +7,9 @@ export function StorePreviewPicList({ storeImages }: StorePreviewPicListProps) {
   if (!storeImages) return;
 
   return (
-    <div className="flex gap-[22px]">
+    <div className="flex gap-[9.4px] md:gap-[22px]">
       {storeImages.map((image) => (
-        <div key={image} className="w-full aspect-[190/162]">
+        <div key={image} className="w-full aspect-[165/161]">
           <Image
             className="w-full h-full object-cover"
             src={image}
@@ -20,7 +20,7 @@ export function StorePreviewPicList({ storeImages }: StorePreviewPicListProps) {
         </div>
       ))}
       {Array.from({ length: 4 - storeImages.length }, (_, i) => (
-        <div key={i} className="w-full aspect-[190/162] " />
+        <div key={i} className="w-full aspect-[165/161]" />
       ))}
     </div>
   );

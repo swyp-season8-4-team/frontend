@@ -9,17 +9,17 @@ import NavBar from '@repo/design-system/components/Navbar';
 
 const NAVBAR_BUTTON_CONTENT = [
   {
-    icon: <IconLocationOutline />,
+    icon: <IconLocationOutline className="w-full h-full" />,
     text: '커뮤니티',
     path: NavigationPathname.Community,
   },
   {
-    icon: <IconTalkOutline />,
+    icon: <IconTalkOutline className="w-full h-full" />,
     text: '지도',
     path: NavigationPathname.Map,
   },
   {
-    icon: <IconProfileOutline />,
+    icon: <IconProfileOutline className="w-full h-full" />,
     text: '마이',
     path: NavigationPathname.My,
   },

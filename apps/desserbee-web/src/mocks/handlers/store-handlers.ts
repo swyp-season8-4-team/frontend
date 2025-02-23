@@ -10,10 +10,10 @@ import type {
 export const storeHandlers = [
   // 반경내 가게 조회
   http.get('http://localhost:3000/api/stores', async ({ request }) => {
-    const url = new URL(request.url);
-    const latitude = url.searchParams.get('latitude');
-    const longitude = url.searchParams.get('longitude');
-    const radius = url.searchParams.get('radius');
+    // const url = new URL(request.url);
+    // const latitude = url.searchParams.get('latitude');
+    // const longitude = url.searchParams.get('longitude');
+    // const radius = url.searchParams.get('radius');
 
     const storeMapDataList: NearByStoreData[] = [
       {
@@ -75,414 +75,408 @@ export const storeHandlers = [
   }),
 
   // 가게 상세정보 조회
-  http.get(
-    `http://localhost:3000/api/stores/:storeUuid/details`,
-    async ({ params }) => {
-      const storeUuid = params.storeUuid;
+  http.get(`http://localhost:3000/api/stores/:storeUuid/details`, async () => {
+    // const storeUuid = params.storeUuid;
 
-      const storeDetailInfoData: StoreDetailInfoData = {
-        name: '스타벅스 강남점',
-        address: '서울 강남구 테헤란로 101',
-        phone: '02-555-1234',
-        storeLink: 'https://instagram.com/store1',
-        description: '스타벅스 강남점입니다.',
-        animalYn: true,
-        tumblerYn: true,
-        parkingYn: false,
-        averageRating: 4.5,
-        latitude: 37.4989,
-        longitude: 127.0287,
-        tags: ['케이크', '구움과자', '건강 디저트'],
-        operatingHours: [
-          {
-            dayOfWeek: 'MONDAY',
-            openingTime: {
-              hour: 9,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            closingTime: {
-              hour: 22,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            lastOrderTime: {
-              hour: 21,
-              minute: 30,
-              second: 0,
-              nano: 0,
-            },
-            isClosed: true,
+    const storeDetailInfoData: StoreDetailInfoData = {
+      name: '스타벅스 강남점',
+      address: '서울 강남구 테헤란로 101',
+      phone: '02-555-1234',
+      storeLink: 'https://instagram.com/store1',
+      description: '스타벅스 강남점입니다.',
+      animalYn: true,
+      tumblerYn: true,
+      parkingYn: false,
+      averageRating: 4.5,
+      latitude: 37.4989,
+      longitude: 127.0287,
+      tags: ['케이크', '구움과자', '건강 디저트'],
+      operatingHours: [
+        {
+          dayOfWeek: 'MONDAY',
+          openingTime: {
+            hour: 9,
+            minute: 0,
+            second: 0,
+            nano: 0,
           },
-          {
-            dayOfWeek: 'TUESDAY',
-            openingTime: {
-              hour: 9,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            closingTime: {
-              hour: 22,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            lastOrderTime: {
-              hour: 21,
-              minute: 30,
-              second: 0,
-              nano: 0,
-            },
-            isClosed: false,
+          closingTime: {
+            hour: 22,
+            minute: 0,
+            second: 0,
+            nano: 0,
           },
-          {
-            dayOfWeek: 'WEDNESDAY',
-            openingTime: {
-              hour: 9,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            closingTime: {
-              hour: 22,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            lastOrderTime: {
-              hour: 21,
-              minute: 30,
-              second: 0,
-              nano: 0,
-            },
-            isClosed: true,
+          lastOrderTime: {
+            hour: 21,
+            minute: 30,
+            second: 0,
+            nano: 0,
           },
-          {
-            dayOfWeek: 'THURSDAY',
-            openingTime: {
-              hour: 9,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            closingTime: {
-              hour: 22,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            lastOrderTime: {
-              hour: 21,
-              minute: 30,
-              second: 0,
-              nano: 0,
-            },
-            isClosed: false,
-          },
-          {
-            dayOfWeek: 'FRIDAY',
-            openingTime: {
-              hour: 9,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            closingTime: {
-              hour: 22,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            lastOrderTime: {
-              hour: 21,
-              minute: 30,
-              second: 0,
-              nano: 0,
-            },
-            isClosed: false,
-          },
-          {
-            dayOfWeek: 'SATURDAY',
-            openingTime: {
-              hour: 9,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            closingTime: {
-              hour: 22,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            lastOrderTime: {
-              hour: 21,
-              minute: 30,
-              second: 0,
-              nano: 0,
-            },
-            isClosed: false,
-          },
-          {
-            dayOfWeek: 'SUNDAY',
-            openingTime: {
-              hour: 9,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            closingTime: {
-              hour: 22,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            lastOrderTime: {
-              hour: 21,
-              minute: 30,
-              second: 0,
-              nano: 0,
-            },
-            isClosed: false,
-          },
-        ],
-        holidays: [
-          {
-            date: 'MONDAY',
-            reason: '정기 휴무',
-          },
-          {
-            date: 'WEDNESDAY',
-            reason: '정기 휴무',
-          },
-        ],
-        notice: [
-          'No sugar, Low carb, Gluten free _ 초콜릿과 팥앙금 등 부재료 또한 하나부터 열까지 설탕 없이 직접 만듭니다.',
-          '인스타그램 @ketobbang 에서 소식을 확인해주세요.',
-        ],
-        storeImages: [
-          'https://picsum.photos/id/46/800/600',
-          'https://picsum.photos/id/47/800/600',
-          'https://picsum.photos/id/48/800/600',
-          'https://picsum.photos/id/49/800/600',
-        ],
-        ownerPickImages: [
-          'https://picsum.photos/id/50/800/600',
-          'https://picsum.photos/id/51/800/600',
-          'https://picsum.photos/id/52/800/600',
-        ],
-      };
-      return HttpResponse.json(storeDetailInfoData);
-    },
-  ),
-
-  http.get(
-    `http://localhost:3000/api/stores/:storeUuid/summary`,
-    async ({ params }) => {
-      const storeUuid = params.storeUuid;
-
-      const storeSummaryInfoData: StoreSummaryInfoData = {
-        storeUuid: 'store-uuid-123',
-        name: '스타벅스 강남점',
-        address: '서울 강남구 테헤란로 101',
-        phone: '02-555-1234',
-        storeLink: 'https://instagram.com/store1',
-        description: '스타벅스 강남점입니다.',
-        animalYn: true,
-        tumblerYn: true,
-        parkingYn: false,
-        averageRating: 4.5,
-        tags: ['케이크', '구움과자', '건강 디저트'],
-        operatingHours: [
-          {
-            dayOfWeek: 'MONDAY',
-            openingTime: {
-              hour: 9,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            closingTime: {
-              hour: 22,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            lastOrderTime: {
-              hour: 21,
-              minute: 30,
-              second: 0,
-              nano: 0,
-            },
-            isClosed: true,
-          },
-          {
-            dayOfWeek: 'TUESDAY',
-            openingTime: {
-              hour: 9,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            closingTime: {
-              hour: 22,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            lastOrderTime: {
-              hour: 21,
-              minute: 30,
-              second: 0,
-              nano: 0,
-            },
-            isClosed: false,
-          },
-          {
-            dayOfWeek: 'WEDNESDAY',
-            openingTime: {
-              hour: 9,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            closingTime: {
-              hour: 22,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            lastOrderTime: {
-              hour: 21,
-              minute: 30,
-              second: 0,
-              nano: 0,
-            },
-            isClosed: true,
-          },
-          {
-            dayOfWeek: 'THURSDAY',
-            openingTime: {
-              hour: 9,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            closingTime: {
-              hour: 22,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            lastOrderTime: {
-              hour: 21,
-              minute: 30,
-              second: 0,
-              nano: 0,
-            },
-            isClosed: false,
-          },
-          {
-            dayOfWeek: 'FRIDAY',
-            openingTime: {
-              hour: 9,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            closingTime: {
-              hour: 22,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            lastOrderTime: {
-              hour: 21,
-              minute: 30,
-              second: 0,
-              nano: 0,
-            },
-            isClosed: false,
-          },
-          {
-            dayOfWeek: 'SATURDAY',
-            openingTime: {
-              hour: 9,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            closingTime: {
-              hour: 22,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            lastOrderTime: {
-              hour: 21,
-              minute: 30,
-              second: 0,
-              nano: 0,
-            },
-            isClosed: false,
-          },
-          {
-            dayOfWeek: 'SUNDAY',
-            openingTime: {
-              hour: 9,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            closingTime: {
-              hour: 22,
-              minute: 0,
-              second: 0,
-              nano: 0,
-            },
-            lastOrderTime: {
-              hour: 21,
-              minute: 30,
-              second: 0,
-              nano: 0,
-            },
-            isClosed: false,
-          },
-        ],
-        holidays: [
-          {
-            date: 'MONDAY',
-            reason: '정기 휴무',
-          },
-          {
-            date: 'WEDNESDAY',
-            reason: '정기 휴무',
-          },
-        ],
-        storeImages: [
-          'https://picsum.photos/id/46/800/600',
-          'https://picsum.photos/id/47/800/600',
-          'https://picsum.photos/id/48/800/600',
-          'https://picsum.photos/id/49/800/600',
-        ],
-        ownerPickImages: [
-          'https://picsum.photos/id/50/800/600',
-          'https://picsum.photos/id/51/800/600',
-          'https://picsum.photos/id/52/800/600',
-        ],
-      };
-
-      return new HttpResponse(JSON.stringify(storeSummaryInfoData), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json',
+          isClosed: true,
         },
-      });
-    },
-  ),
+        {
+          dayOfWeek: 'TUESDAY',
+          openingTime: {
+            hour: 9,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          closingTime: {
+            hour: 22,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          lastOrderTime: {
+            hour: 21,
+            minute: 30,
+            second: 0,
+            nano: 0,
+          },
+          isClosed: false,
+        },
+        {
+          dayOfWeek: 'WEDNESDAY',
+          openingTime: {
+            hour: 9,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          closingTime: {
+            hour: 22,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          lastOrderTime: {
+            hour: 21,
+            minute: 30,
+            second: 0,
+            nano: 0,
+          },
+          isClosed: true,
+        },
+        {
+          dayOfWeek: 'THURSDAY',
+          openingTime: {
+            hour: 9,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          closingTime: {
+            hour: 22,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          lastOrderTime: {
+            hour: 21,
+            minute: 30,
+            second: 0,
+            nano: 0,
+          },
+          isClosed: false,
+        },
+        {
+          dayOfWeek: 'FRIDAY',
+          openingTime: {
+            hour: 9,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          closingTime: {
+            hour: 22,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          lastOrderTime: {
+            hour: 21,
+            minute: 30,
+            second: 0,
+            nano: 0,
+          },
+          isClosed: false,
+        },
+        {
+          dayOfWeek: 'SATURDAY',
+          openingTime: {
+            hour: 9,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          closingTime: {
+            hour: 22,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          lastOrderTime: {
+            hour: 21,
+            minute: 30,
+            second: 0,
+            nano: 0,
+          },
+          isClosed: false,
+        },
+        {
+          dayOfWeek: 'SUNDAY',
+          openingTime: {
+            hour: 9,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          closingTime: {
+            hour: 22,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          lastOrderTime: {
+            hour: 21,
+            minute: 30,
+            second: 0,
+            nano: 0,
+          },
+          isClosed: false,
+        },
+      ],
+      holidays: [
+        {
+          date: 'MONDAY',
+          reason: '정기 휴무',
+        },
+        {
+          date: 'WEDNESDAY',
+          reason: '정기 휴무',
+        },
+      ],
+      notice: [
+        'No sugar, Low carb, Gluten free _ 초콜릿과 팥앙금 등 부재료 또한 하나부터 열까지 설탕 없이 직접 만듭니다.',
+        '인스타그램 @ketobbang 에서 소식을 확인해주세요.',
+      ],
+      storeImages: [
+        'https://picsum.photos/id/46/800/600',
+        'https://picsum.photos/id/47/800/600',
+        'https://picsum.photos/id/48/800/600',
+        'https://picsum.photos/id/49/800/600',
+      ],
+      ownerPickImages: [
+        'https://picsum.photos/id/50/800/600',
+        'https://picsum.photos/id/51/800/600',
+        'https://picsum.photos/id/52/800/600',
+      ],
+    };
+    return HttpResponse.json(storeDetailInfoData);
+  }),
+
+  http.get(`http://localhost:3000/api/stores/:storeUuid/summary`, async () => {
+    // const storeUuid = params.storeUuid;
+
+    const storeSummaryInfoData: StoreSummaryInfoData = {
+      storeUuid: 'store-uuid-123',
+      name: '스타벅스 강남점',
+      address: '서울 강남구 테헤란로 101',
+      phone: '02-555-1234',
+      storeLink: 'https://instagram.com/store1',
+      description: '스타벅스 강남점입니다.',
+      animalYn: true,
+      tumblerYn: true,
+      parkingYn: false,
+      averageRating: 4.5,
+      tags: ['케이크', '구움과자', '건강 디저트'],
+      operatingHours: [
+        {
+          dayOfWeek: 'MONDAY',
+          openingTime: {
+            hour: 9,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          closingTime: {
+            hour: 22,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          lastOrderTime: {
+            hour: 21,
+            minute: 30,
+            second: 0,
+            nano: 0,
+          },
+          isClosed: true,
+        },
+        {
+          dayOfWeek: 'TUESDAY',
+          openingTime: {
+            hour: 9,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          closingTime: {
+            hour: 22,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          lastOrderTime: {
+            hour: 21,
+            minute: 30,
+            second: 0,
+            nano: 0,
+          },
+          isClosed: false,
+        },
+        {
+          dayOfWeek: 'WEDNESDAY',
+          openingTime: {
+            hour: 9,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          closingTime: {
+            hour: 22,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          lastOrderTime: {
+            hour: 21,
+            minute: 30,
+            second: 0,
+            nano: 0,
+          },
+          isClosed: true,
+        },
+        {
+          dayOfWeek: 'THURSDAY',
+          openingTime: {
+            hour: 9,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          closingTime: {
+            hour: 22,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          lastOrderTime: {
+            hour: 21,
+            minute: 30,
+            second: 0,
+            nano: 0,
+          },
+          isClosed: false,
+        },
+        {
+          dayOfWeek: 'FRIDAY',
+          openingTime: {
+            hour: 9,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          closingTime: {
+            hour: 22,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          lastOrderTime: {
+            hour: 21,
+            minute: 30,
+            second: 0,
+            nano: 0,
+          },
+          isClosed: false,
+        },
+        {
+          dayOfWeek: 'SATURDAY',
+          openingTime: {
+            hour: 9,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          closingTime: {
+            hour: 22,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          lastOrderTime: {
+            hour: 21,
+            minute: 30,
+            second: 0,
+            nano: 0,
+          },
+          isClosed: false,
+        },
+        {
+          dayOfWeek: 'SUNDAY',
+          openingTime: {
+            hour: 9,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          closingTime: {
+            hour: 22,
+            minute: 0,
+            second: 0,
+            nano: 0,
+          },
+          lastOrderTime: {
+            hour: 21,
+            minute: 30,
+            second: 0,
+            nano: 0,
+          },
+          isClosed: false,
+        },
+      ],
+      holidays: [
+        {
+          date: 'MONDAY',
+          reason: '정기 휴무',
+        },
+        {
+          date: 'WEDNESDAY',
+          reason: '정기 휴무',
+        },
+      ],
+      storeImages: [
+        'https://picsum.photos/id/46/800/600',
+        'https://picsum.photos/id/47/800/600',
+        'https://picsum.photos/id/48/800/600',
+        'https://picsum.photos/id/49/800/600',
+      ],
+      ownerPickImages: [
+        'https://picsum.photos/id/50/800/600',
+        'https://picsum.photos/id/51/800/600',
+        'https://picsum.photos/id/52/800/600',
+      ],
+    };
+
+    return new HttpResponse(JSON.stringify(storeSummaryInfoData), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }),
 
   // 저장 리스트
   http.get(

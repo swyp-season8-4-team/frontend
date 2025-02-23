@@ -53,23 +53,38 @@ export default class GeolocationService {
             return {
               errorMessage: '이 브라우저는 위치 정보 기능을 지원하지 않습니다.',
             };
+          case 'unavailable':
+            return {
+              errorMessage:
+                '위치 정보를 사용할 수 없습니다. GPS를 확인해주세요.',
+            };
+          case 'unknown':
+            return {
+              errorMessage: '알 수 없는 오류가 발생했습니다.',
+            };
           default:
-            return { errorMessage: error.message };
+            return {
+              errorMessage:
+                '위치 정보를 가져오는데 실패했습니다. 잠시 후 다시 시도해주세요.',
+            };
         }
       }
-      return { errorMessage: String(error) };
+      return {
+        errorMessage:
+          '위치 정보 서비스에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.',
+      };
     }
   }
 
   async startWatchingPosition(
     onSuccess: (position: MapPosition) => void,
     options?: PositionOptions,
-  ) {
+  ): Promise<void> {
     if (!this.geolocationController) {
       throw new Error('geolocationController is not set');
     }
 
-    return await this.geolocationController.startWatching(onSuccess, options);
+    this.geolocationController.startWatching(onSuccess, options);
   }
 
   async stopWatchingPosition() {
