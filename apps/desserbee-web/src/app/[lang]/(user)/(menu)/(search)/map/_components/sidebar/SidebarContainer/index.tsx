@@ -3,12 +3,11 @@ import IconFlower from '@repo/design-system/components/icons/IconFlower';
 import IconPin from '@repo/design-system/components/icons/IconPin';
 import IconPlus from '@repo/design-system/components/icons/IconPlus';
 import IconTrashCan from '@repo/design-system/components/icons/IconTrashCan';
-import IconShare from '@repo/design-system/components/icons/IconShare';
 import { cn } from '@repo/ui/lib/utils';
 import { useContext, useEffect, useRef, useState } from 'react';
 import type { SavedListData } from '@repo/entity/src/store';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
-import { CreateListModal } from '../../modals/CreateListModal';
+import { CreateListModal } from '../../modal/CreateListModal';
 
 interface sideBarProps {
   isSideBarOpen: boolean;
