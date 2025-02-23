@@ -4,14 +4,10 @@ import { DetailContainer } from '../_components/detail/DetailContainer';
 // import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
 
-export default async function StoreDetailPage({
-  params,
-}: {
-  params: { storeId: string; lang: string };
-}) {
-  const { storeId } = await params;
+export default async function StoreDetailPage() {
+  // const { storeId } = await params;
 
-  console.log(storeId);
+  // console.log(storeId);
 
   // const storeService = new StoreService({
   //   storeRepository: new StoreAPIReopository(),
