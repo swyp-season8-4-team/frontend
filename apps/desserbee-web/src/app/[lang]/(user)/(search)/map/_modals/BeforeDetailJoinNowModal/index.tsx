@@ -1,5 +1,6 @@
 import { CustomModal } from '@repo/design-system/components/Modal/custom';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface BeforeDetailJoinNowModalProps {
   onClose: () => void;
@@ -10,6 +11,13 @@ export function BeforeDetailJoinNowModal({
   onClose,
   storeUuid,
 }: BeforeDetailJoinNowModalProps) {
+  const router = useRouter();
+
+  const handleLaterBtnClick = () => {
+    onClose();
+    router.push(`/store/${storeUuid}`);
+  };
+
   return (
     <CustomModal onClose={onClose}>
       <div>
@@ -30,13 +38,12 @@ export function BeforeDetailJoinNowModal({
             >
               회원가입하기
             </Link>
-            <Link
-              onClick={onClose}
-              href={`/map/${storeUuid}`}
+            <button
+              onClick={handleLaterBtnClick}
               className="bg-primary py-1 md:py-3 rounded-[100px] w-full text-white md:text-[22px] text-sm text-center"
             >
               다음에 하기
-            </Link>
+            </button>
           </div>
         </div>
       </div>
