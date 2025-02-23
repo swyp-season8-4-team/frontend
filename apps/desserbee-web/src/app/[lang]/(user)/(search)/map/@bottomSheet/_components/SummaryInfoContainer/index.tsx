@@ -2,15 +2,15 @@ import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 
 import IconStar from '@repo/design-system/components/icons/IconStar';
 
-import { StoreInfo } from '../../common/StoreInfo';
-import { StoreFeatureIconList } from '../../common/StoreFeatureIconList';
+import { StoreInfo } from '../StoreInfo';
+import { StoreFeatureIconList } from '../StoreFeatureIconList';
 
 type StoreSummaryProps = Omit<StoreSummaryInfoData, 'storeImages' | 'storeId'>;
 
 import IconDetail from '@repo/design-system/components/icons/IconDetail';
 import { useContext } from 'react';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
-import { BeforeDetailJoinNowModal } from '../../modal/BeforeDetailJoinNowModal';
+import { BeforeDetailJoinNowModal } from '../../../_modals/BeforeDetailJoinNowModal';
 
 export function SummaryInfoContainer({
   storeUuid,

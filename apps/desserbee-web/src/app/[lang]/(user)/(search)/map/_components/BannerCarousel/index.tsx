@@ -10,14 +10,14 @@ import {
 import { useContext, useEffect, useState } from 'react';
 import { cn } from '@repo/ui/lib/utils';
 
-import { BANNERS } from '../../../_consts/banner';
+import { BANNERS } from '../../_consts/banner';
 
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { ReviewNotReadyModal } from '../../modal/ReviewNotReadyModal/bee';
+import { ReviewNotReadyModal } from '../../_modals/ReviewNotReadyModal/bee';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
-import { CouponIsNotReadyModal } from '../../modal/CouponIsNotReadyModal';
+import { CouponIsNotReadyModal } from '../../_modals/CouponIsNotReadyModal';
 
 export function BannerCarousel() {
   const [api, setApi] = useState<CarouselApi>();
@@ -82,7 +82,7 @@ export function BannerCarousel() {
             >
               <div className="flex items-center">
                 {/* <div className="flex justify-center items-center mr-[9.51px] md:mr-[18px] ml-2 md:ml-6 w-[33.49px] md:w-[69px] h-[33px] md:h-[68px]"> */}
-                <div className="flex justify-center items-center mr-[9.51px] ml-2 w-[33.49px] h-[33px] ">
+                <div className="flex justify-center items-center mr-[9.51px] ml-2 w-[33.49px] h-[33px]">
                   <Image src={banner.imgSrc} alt={banner.content} />
                 </div>
                 {/* <div className="font-semibold text-[#393939] text-base md:text-3xl text-nowrap -tracking-[3%] whitespace-pre-line"> */}
@@ -94,7 +94,7 @@ export function BannerCarousel() {
                 onClick={(e) => handleDessertReviewBtnClick(e, index)}
                 href={banner.path}
                 // className="right-[15px] bottom-[15px] absolute flex justify-center items-center bg-[#AA6120] px-[12.88px] md:px-[27px] py-[3.68px] md:py-[9px] rounded-[100px] font-semibold text-[10.12px] text-white md:text-[22px] text-nowrap"
-                className="right-[15px] bottom-[15px] absolute flex justify-center items-center bg-[#AA6120] px-[12.88px]  py-[3.68px]  rounded-[100px] font-semibold text-[10.12px] text-white text-nowrap"
+                className="right-[15px] bottom-[15px] absolute flex justify-center items-center bg-[#AA6120] px-[12.88px] py-[3.68px] rounded-[100px] font-semibold text-[10.12px] text-white text-nowrap"
               >
                 {banner.btnContent}
               </Link>

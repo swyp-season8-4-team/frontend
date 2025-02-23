@@ -6,9 +6,9 @@ import {
 
 import { Tag } from '@repo/design-system/components/Tag';
 import { cn } from '@repo/ui/lib/utils';
-import { useTag } from '../../../../_hooks/useTag';
+import { useTag } from '../../../_hooks/useTag';
 import { useContext, useState } from 'react';
-import { MyPreferNotSignInModal } from '../../modal/MyPreferNotSignInModal';
+import { MyPreferNotSignInModal } from '../../_modals/MyPreferNotSignInModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 
 interface PreferenceTagsProps {
@@ -58,7 +58,7 @@ export function PreferenceTags({
   return (
     <div>
       <Carousel
-        className="top-4 left-[18px] z-10 absolute w-full"
+        className="top-4 left-[18px] z-10 absolute w-full select-none"
         opts={{
           align: 'start',
           dragFree: true,
