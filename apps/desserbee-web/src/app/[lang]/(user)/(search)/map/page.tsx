@@ -65,6 +65,8 @@ export default async function MapPage() {
   //   },
   // ];
 
+  // console.log(totalSavedList);
+
   const kakaoMapProps = {
     userPreferences,
     preferenceCategories,
