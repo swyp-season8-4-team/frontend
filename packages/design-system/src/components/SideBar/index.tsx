@@ -60,7 +60,8 @@ export function SideBar({
         <div
           ref={sidebarRef}
           className={cn(
-            'relative h-full px-[13.05px] py-[10.88px] md:px-6 md:py-5 bg-white rounded-[10px] md:rounded-base z-sidebar',
+            'bottom-0 overflow-hidden"',
+            'inset-1/2  relative h-full px-[13.05px] py-[10.88px] md:px-6 md:py-5 bg-white rounded-[10px] md:rounded-base z-sidebar overflow-hidden"',
             'animate-slide-in transition-transform',
             isDragging
               ? 'transition-none'

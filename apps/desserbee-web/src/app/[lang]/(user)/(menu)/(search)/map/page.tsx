@@ -71,7 +71,7 @@ export default async function MapPage() {
   };
 
   return (
-    <div className="h-full">
+    <div className="h-full overflow-hidden scroll-none">
       <div className="px-base h-full">
         <KakaoMap {...kakaoMapProps} />
         <BannerCarousel />

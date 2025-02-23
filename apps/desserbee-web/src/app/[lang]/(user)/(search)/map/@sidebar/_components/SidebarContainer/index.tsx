@@ -84,7 +84,7 @@ export function SideBarContainer({
   };
 
   const sideBarProps = {
-    className: 'absolute top-0 h-full w-1/2 right-0',
+    className: 'fixed top-[100px] w-1/2 right-4 h-[calc(100dvh-287px)]',
     isSideBarOpen,
     handleSideBarClose,
   };
