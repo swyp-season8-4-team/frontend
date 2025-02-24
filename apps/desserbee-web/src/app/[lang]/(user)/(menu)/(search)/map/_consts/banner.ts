@@ -1,7 +1,7 @@
-import bee from '@/app/[lang]/(user)/(search)/map/_assets/svg/logo-bee.svg';
-import map from '@/app/[lang]/(user)/(search)/map/_assets/svg/banner-map.png';
-import store from '@/app/[lang]/(user)/(search)/map/_assets/svg/banner-store.png';
-import ticket from '@/app/[lang]/(user)/(search)/map/_assets/svg/banner-ticket.png';
+import bee from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/logo-bee.svg';
+import map from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/banner-map.png';
+import store from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/banner-store.png';
+import ticket from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/banner-ticket.png';
 
 export const BANNERS = [
   {

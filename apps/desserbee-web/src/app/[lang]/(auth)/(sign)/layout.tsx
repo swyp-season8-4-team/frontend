@@ -1,6 +1,6 @@
 import { recipeKorea } from "@/app/fonts";
 import type { WithChildren } from "@repo/ui/index";
-import { HeaderContainer } from "../../(user)/(search)/_components/HeaderContainer";
+import { HeaderContainer } from "../../(user)/(menu)/(search)/_components/HeaderContainer";
 
 export default async function SignLayout({ children }: WithChildren) {
   return (

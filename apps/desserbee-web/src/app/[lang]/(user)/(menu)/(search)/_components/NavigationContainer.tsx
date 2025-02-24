@@ -1,11 +1,11 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import NavBar from '@/app/[lang]/_components/Navbar';
 import IconLocationOutline from '@repo/design-system/components/icons/IconLocationOutline';
-import IconTalkOutline from '@repo/design-system/components/icons/IconTalkOutline';
 import IconProfileOutline from '@repo/design-system/components/icons/IconProfileOutline';
+import IconTalkOutline from '@repo/design-system/components/icons/IconTalkOutline';
 import { NavigationPathname } from '@repo/entity/src/navigation';
-import NavBar from '@repo/design-system/components/Navbar';
+import { usePathname } from 'next/navigation';
 
 const NAVBAR_BUTTON_CONTENT = [
   {
@@ -30,17 +30,10 @@ export default function NavigationContainer() {
   const normalizedPath = pathname.split('/', 3)[2];
   const currentPathName = `/${normalizedPath}`;
 
-  const router = useRouter();
-
-  const handleMenuClick = (path: string) => {
-    router.push(path);
-  };
-
   return (
     <NavBar
       menuList={NAVBAR_BUTTON_CONTENT}
       pathname={currentPathName}
-      onClick={handleMenuClick}
     />
   );
 }
