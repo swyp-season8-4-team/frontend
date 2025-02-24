@@ -38,20 +38,14 @@ export interface OperatingHoursItem {
   openingTime: {
     hour: number;
     minute: number;
-    second: number;
-    nano: number;
   };
   closingTime: {
     hour: number;
     minute: number;
-    second: number;
-    nano: number;
   };
   lastOrderTime: {
     hour: number;
     minute: number;
-    second: number;
-    nano: number;
   };
   isClosed: boolean;
 }

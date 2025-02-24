@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
 import { StorePictureList } from '../StorePictureList';
@@ -20,7 +20,6 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
   };
 
   const router = useRouter();
-  const params = useParams();
 
   const detailInfoContainerProps = {
     name: storeDetail.name,
@@ -45,7 +44,6 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
   };
 
   const handleBack = () => {
-    // router.replace('');
     router.back();
   };
 
