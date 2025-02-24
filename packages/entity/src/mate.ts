@@ -8,7 +8,7 @@ export interface RawMate {
   title: string;
   content: string;
   nickname: string;
-  recruit: boolean;
+  recruitYn: boolean;
   mateImage: string[];
   profileImage: string[];
   mateCategory: MateCategory;
@@ -20,10 +20,11 @@ export interface RawMate {
   };
 }
 
-export interface Mate extends Omit<RawMate, 'mateUuid' | 'userUuid' | 'profileImage'> {
+export interface Mate extends Omit<RawMate, 'mateUuid' | 'userUuid' | 'profileImage' | 'recruitYn'> {
   id: string;
   userId: string;
   profileImage: string;
+  recruit: boolean;
 }
 
 export interface MateCreateRequest {
