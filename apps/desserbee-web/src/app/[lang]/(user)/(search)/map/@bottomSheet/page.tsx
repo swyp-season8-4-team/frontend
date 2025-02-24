@@ -16,152 +16,86 @@ export default async function BottomSheetPage({
   //TODO: api 불러오기
 
   const storeSummary: StoreSummaryInfoData = {
-    storeUuid: 'store-uuid-123',
-    name: '스타벅스 강남점',
-    address: '서울 강남구 테헤란로 101',
-    phone: '02-555-1234',
-    storeLink: 'https://instagram.com/store1',
-    description: '스타벅스 강남점입니다.',
+    storeId: 1234,
+    storeUuid: 'a7e9b5c3-8d21-4f67-90e5-12ab3456789c',
+    name: '카페 아로마',
+    address: '서울특별시 강남구 테헤란로 123, 1층',
+    phone: '02-1234-5678',
+    storeLink: 'https://cafe-aroma.com',
     animalYn: true,
     tumblerYn: true,
     parkingYn: false,
-    averageRating: 4.5,
-    tags: ['케이크', '구움과자', '건강 디저트'],
+    averageRating: 4.7,
+    description:
+      '조용한 분위기에서 최고급 원두로 내린 커피를 즐길 수 있는 프리미엄 카페입니다. 다양한 디저트와 함께 여유로운 시간을 보내세요.',
     operatingHours: [
       {
         dayOfWeek: 'MONDAY',
-        openingTime: {
-          hour: 9,
-          minute: 0,
-        },
-        closingTime: {
-          hour: 22,
-          minute: 0,
-        },
-        lastOrderTime: {
-          hour: 21,
-          minute: 30,
-        },
-        isClosed: true,
+        openingTime: '08:00',
+        closingTime: '22:00',
+        lastOrderTime: '21:30',
+        isClosed: false,
       },
       {
         dayOfWeek: 'TUESDAY',
-        openingTime: {
-          hour: 9,
-          minute: 0,
-        },
-        closingTime: {
-          hour: 22,
-          minute: 0,
-        },
-        lastOrderTime: {
-          hour: 21,
-          minute: 30,
-        },
+        openingTime: '08:00',
+        closingTime: '22:00',
+        lastOrderTime: '21:30',
         isClosed: false,
       },
       {
         dayOfWeek: 'WEDNESDAY',
-        openingTime: {
-          hour: 9,
-          minute: 0,
-        },
-        closingTime: {
-          hour: 22,
-          minute: 0,
-        },
-        lastOrderTime: {
-          hour: 21,
-          minute: 30,
-        },
-        isClosed: true,
+        openingTime: '08:00',
+        closingTime: '22:00',
+        lastOrderTime: '21:30',
+        isClosed: false,
       },
       {
         dayOfWeek: 'THURSDAY',
-        openingTime: {
-          hour: 9,
-          minute: 0,
-        },
-        closingTime: {
-          hour: 22,
-          minute: 0,
-        },
-        lastOrderTime: {
-          hour: 21,
-          minute: 30,
-        },
+        openingTime: '08:00',
+        closingTime: '22:00',
+        lastOrderTime: '21:30',
         isClosed: false,
       },
       {
         dayOfWeek: 'FRIDAY',
-        openingTime: {
-          hour: 9,
-          minute: 0,
-        },
-        closingTime: {
-          hour: 22,
-          minute: 0,
-        },
-        lastOrderTime: {
-          hour: 21,
-          minute: 30,
-        },
+        openingTime: '08:00',
+        closingTime: '23:00',
+        lastOrderTime: '22:30',
         isClosed: false,
       },
       {
         dayOfWeek: 'SATURDAY',
-        openingTime: {
-          hour: 9,
-          minute: 0,
-        },
-        closingTime: {
-          hour: 22,
-          minute: 0,
-        },
-        lastOrderTime: {
-          hour: 21,
-          minute: 30,
-        },
+        openingTime: '10:00',
+        closingTime: '23:00',
+        lastOrderTime: '22:30',
         isClosed: false,
       },
       {
         dayOfWeek: 'SUNDAY',
-        openingTime: {
-          hour: 9,
-          minute: 0,
-        },
-        closingTime: {
-          hour: 22,
-          minute: 0,
-        },
-        lastOrderTime: {
-          hour: 21,
-          minute: 30,
-        },
+        openingTime: '10:00',
+        closingTime: '21:00',
+        lastOrderTime: '20:30',
         isClosed: false,
       },
     ],
+    tags: ['핸드드립', '디저트', '아늑한', '데이트', '스터디'],
     holidays: [
-      {
-        date: 'MONDAY',
-        reason: '정기 휴무',
-      },
-      {
-        date: 'WEDNESDAY',
-        reason: '정기 휴무',
-      },
+      { date: '2025-01-01', reason: '신정' },
+      { date: '2025-02-09', reason: '설날' },
+      { date: '2025-05-05', reason: '어린이날' },
     ],
     storeImages: [
-      'https://picsum.photos/id/46/800/600',
-      'https://picsum.photos/id/47/800/600',
       'https://picsum.photos/id/48/800/600',
       'https://picsum.photos/id/49/800/600',
-    ],
-    ownerPickImages: [
       'https://picsum.photos/id/50/800/600',
       'https://picsum.photos/id/51/800/600',
-      'https://picsum.photos/id/52/800/600',
     ],
+    ownerPickImages: [
+      'https://picsum.photos/id/52/800/600',
+      'https://picsum.photos/id/53/800/600',
+    ],
+    topPreferences: ['에스프레소', '아메리카노', '카페라떼'],
   };
 
   return (

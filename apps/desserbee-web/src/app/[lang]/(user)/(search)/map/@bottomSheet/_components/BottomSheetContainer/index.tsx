@@ -53,6 +53,8 @@ export function BottomSheetContainer({
     storeLink: storeSummary.storeLink,
     description: storeSummary.description,
     holidays: storeSummary.holidays,
+    topPreferences: storeSummary.topPreferences,
+    ownerPickImages: storeSummary.ownerPickImages,
   };
 
   const hexaGridProps = {

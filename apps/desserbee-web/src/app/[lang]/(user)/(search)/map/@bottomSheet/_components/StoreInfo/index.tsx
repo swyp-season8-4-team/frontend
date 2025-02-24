@@ -30,7 +30,7 @@ export function StoreInfo({
 }: StoreInfoProps) {
   const [isOperationHourOpen, setIsOperationHourOpen] = useState(false);
   return (
-    <div className="flex flex-col w-full text-[8px] md:text-lg text-nowrap leading-3">
+    <div className="flex flex-col w-full text-[8px] md:text-lg leading-3">
       <div className="flex items-center gap-[6px]">
         <div className="w-[6.83px] md:w-4">
           <IconLocation className="w-full h-full text-[#BABABA]" />
@@ -74,22 +74,19 @@ export function StoreInfo({
                     key={dayOfWeek}
                     className={cn(isClosed ? 'font-semibold' : '')}
                   >
-                    <div className="flex items-center gap-[6px]  md:leading-[100%]">
+                    <div className="flex items-center gap-[6px] md:leading-[100%]">
                       <div className="w-4"></div>
                       <div className="flex gap-[10px]">
                         <div>{convertDayToKorean(dayOfWeek)}</div>
                         {!isClosed ? (
                           <div className="flex flex-col md:gap-[6px]">
                             <div className="flex">
-                              <span>{openingTime.hour}:</span>
-                              <span>{openingTime.minute}</span>
+                              <span>{openingTime}</span>
                               <span>&nbsp;-&nbsp;</span>
-                              <span>{closingTime.hour}:</span>
-                              <span>{closingTime.minute}</span>
+                              <span>{closingTime}</span>
                             </div>
                             <div>
-                              <span>{lastOrderTime.hour}:</span>
-                              <span>{lastOrderTime.minute}&nbsp;</span>
+                              <span>{lastOrderTime}&nbsp;</span>
                               <span>라스트 오더</span>
                             </div>
                           </div>
@@ -107,7 +104,7 @@ export function StoreInfo({
                     <span className="w-4"></span>
                     {holidays.map((holiday, index) => (
                       <div key={holiday.date}>
-                        <span>{convertDayToKorean(holiday.date)} &nbsp;</span>
+                        <span>{holiday.date} &nbsp;</span>
                         <span>{holiday.reason}</span>
                         {index !== holidays.length - 1 && <span>, </span>}
                       </div>

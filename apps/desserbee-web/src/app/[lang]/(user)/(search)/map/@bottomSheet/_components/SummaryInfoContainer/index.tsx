@@ -57,7 +57,7 @@ export function SummaryInfoContainer({
   };
 
   return (
-    <div className="flex flex-col w-full text-nowrap">
+    <div className="flex flex-col w-full">
       <div className="flex justify-between mb-[5.78px] md:mb-[9px]">
         <div className="flex items-center">
           <StoreFeatureIconList {...storeFeatureIconListProps} />

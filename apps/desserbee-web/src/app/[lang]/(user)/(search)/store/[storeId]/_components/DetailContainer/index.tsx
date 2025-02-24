@@ -23,6 +23,7 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
   const router = useRouter();
 
   const detailInfoContainerProps = {
+    // DetailInfoContainer에서 사용하는 필드
     name: storeDetail.name,
     animalYn: storeDetail.animalYn,
     tumblerYn: storeDetail.tumblerYn,
@@ -35,15 +36,28 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
     storeLink: storeDetail.storeLink,
     description: storeDetail.description,
     contents: ['비건', '로우슈거', '글루텐프리'],
-    previewImages: storeDetail.storeImages,
     storeImages: storeDetail.storeImages,
     ownerPickImages: storeDetail.ownerPickImages,
     latitude: storeDetail.latitude,
     longitude: storeDetail.longitude,
     holidays: storeDetail.holidays,
     notice: storeDetail.notice,
-  };
 
+    // StoreDetailInfoData의 추가 필드들
+    storeId: storeDetail.storeId,
+    storeUuid: storeDetail.storeUuid,
+    topPreferences: storeDetail.topPreferences,
+    userId: storeDetail.userId,
+    userUuid: storeDetail.userUuid,
+    ownerId: storeDetail.ownerId,
+    ownerUuid: storeDetail.ownerUuid,
+    menus: storeDetail.menus,
+    totalReviewCount: storeDetail.totalReviewCount,
+    storeReviews: storeDetail.storeReviews,
+    mate: storeDetail.mate,
+    saved: storeDetail.saved,
+    savedListId: storeDetail.savedListId,
+  };
   const handleBack = () => {
     router.back();
   };

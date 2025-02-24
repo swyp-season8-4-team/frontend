@@ -70,7 +70,7 @@ export function DetailInfoContainer({
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-[9px] text-nowrap">
+      <div className="flex justify-between items-center mb-[9px]">
         <div className="flex justify-start items-center">
           <span className="md:mr-[10.37px] font-semibold text-3 md:text-t28">
             {name}
