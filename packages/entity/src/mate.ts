@@ -3,18 +3,27 @@ import type { BaseRequestData } from "./appMetadata";
 export type MateCategory = '친목도모' | '인생사진' | '카공모임' | '건강맛집' | '빵지순례' | '카공모임 ';
 
 export interface RawMate {
-  mateId: string;
-  userId: string;
+  mateUuid: string;
+  userUuid: string;
   title: string;
   content: string;
   nickname: string;
   recruit: boolean;
   mateImage: string[];
+  profileImage: string[];
   mateCategory: MateCategory;
+  place?: {
+    placeName: string;
+    address: string | null;
+    latitude: number | null;
+    longitude: number | null;
+  };
 }
 
-export interface Mate extends Omit<RawMate, 'mateId'> {
+export interface Mate extends Omit<RawMate, 'mateUuid' | 'userUuid' | 'profileImage'> {
   id: string;
+  userId: string;
+  profileImage: string;
 }
 
 export interface MateCreateRequest {
@@ -84,7 +93,7 @@ export interface MateAllListResponse {
 
 export interface MateRawAllListResponse {
   mates: RawMate[];
-  isLast: boolean;
+  last: boolean;
 }
 
 export interface MateRepository {
@@ -93,6 +102,7 @@ export interface MateRepository {
   acceptMyTeamMember(data: BaseRequestData<MateAcceptRequest>): Promise<unknown>; // 팀 멤버 수락
   rejectMyTeamMember(data: BaseRequestData<MateRejectRequest>): Promise<unknown>; // 팀 멤버 거절
   fireMyTeamMember(data: BaseRequestData<MateFireRequest>): Promise<unknown>; // 팀 멤버 추방
+  getWaitList(data: BaseRequestData<MateRequest>): Promise<Mate[]>; // 모임 대기 목록 조회
   getMateList(data: BaseRequestData<MateListRequest>): Promise<MateAllListResponse>; // 모임 목록 조회
   getMyTeamMembers(data: BaseRequestData<MateRequest>): Promise<Mate[]>; // 내 팀 멤버들 조회
   getDetails(data: BaseRequestData<MateRequest>): Promise<Mate>; // 모임 상세 페이지
