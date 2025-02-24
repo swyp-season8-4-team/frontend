@@ -2,10 +2,10 @@ import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 import { BottomSheetContainer } from './_components/BottomSheetContainer';
 
 interface BottomSheetPageProps {
-  searchParams: {
+  searchParams: Promise<{
     bottomsheet: boolean;
     storeId: string;
-  };
+  }>;
 }
 
 export default async function BottomSheetPage({

@@ -1,9 +1,9 @@
 import { SideBarContainer } from './_components/SidebarContainer';
 
 interface SideBarPageProps {
-  searchParams: {
+  searchParams: Promise<{
     sidebar?: boolean;
-  };
+  }>;
 }
 
 export default async function SideBarPage({ searchParams }: SideBarPageProps) {
