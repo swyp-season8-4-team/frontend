@@ -16,6 +16,7 @@ const userService = new UserService({
 
 export default async function UserLayout({ children }: WithChildren) {
   const auth = await authService.getAuthorization();
+  console.log('auth', auth);
   if (!auth) {
     return children;
   }

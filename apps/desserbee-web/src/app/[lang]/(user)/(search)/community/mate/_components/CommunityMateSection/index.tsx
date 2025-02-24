@@ -8,7 +8,7 @@ const mateService = new MateService({
 })
 
 export default async function CommunityMateSection() {
-  const { mates, isLast } = await mateService.getMateList({ from: 0, to: 10 });
+  const { mates, isLast } = await mateService.getMateList({ from: 0, to: 9 });
 
   return (
     <CommunityMateProvider initialIsLast={isLast} initialMates={mates}>

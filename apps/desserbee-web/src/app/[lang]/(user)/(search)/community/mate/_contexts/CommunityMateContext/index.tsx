@@ -39,12 +39,12 @@ export function CommunityMateProvider({ children, initialIsLast, initialMates }:
     
     const response = await mateService.getMateList({
       from: page,
-      to: page + 10,
+      to: page + 9,
     });
 
     setMates(prev => [...prev, ...response.mates]);
     setIsLast(response.isLast);
-    setPage(page + 1);
+    setPage(page + 10);
   };
 
   return (

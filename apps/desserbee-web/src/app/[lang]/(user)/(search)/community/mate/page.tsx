@@ -1,5 +1,7 @@
+import { NavigationPathname } from "@repo/entity/src/navigation";
 import CommunityMateSection from "./_components/CommunityMateSection";
 import CommunityMateTitle from "./_components/CommunityMateTitle";
+import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
 
@@ -10,8 +12,13 @@ export default async function CommunityMatePage() {
   return (
     <main className="max-w-screen-md mx-auto px-4 py-6 h-[calc(100dvh-174.5px)] overflow-hidden flex flex-col">
       {/* 검색바 */}
-      <div className="relative mb-8">
+      <div className="flex justify-between relative mb-8">
         <CommunityMateTitle />
+        <div className="flex gap-2">
+          <Link className="px-[10.641px] py-[5.32px] rounded-[53.204px] bg-[#898989] text-sm whitespace-nowrap flex justify-center items-center gap-[10.641px] w-[43px] h-[19px] flex-shrink-0 text-[9.577px] text-white font-semibold leading-[130%] tracking-[-0.287px]" href={NavigationPathname.MateWrite}>
+            글쓰기
+          </Link>
+        </div>
       </div>
 
       {/* 카테고리 필터 */}
