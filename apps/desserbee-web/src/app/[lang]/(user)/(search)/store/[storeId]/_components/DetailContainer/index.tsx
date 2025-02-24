@@ -52,7 +52,7 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
   };
 
   return (
-    <div className="z-modal absolute bg-white w-full top-0 h-[100dvh]">
+    <>
       <header className="flex justify-between items-center shadow-base px-4 md:px-6 py-5 md:py-[46px] w-full">
         <button onClick={handleBack} className="w-[21px] md:w-[40px]">
           <IconDirection className="w-full h-full text-[#6F6F6F] rotate-90 transform" />
@@ -66,6 +66,6 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
         <DetailInfoContainer {...detailInfoContainerProps} />
       </div>
       <div></div>
-    </div>
+    </>
   );
 }
