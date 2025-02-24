@@ -5,9 +5,9 @@ import { DetailContainer } from './_components/DetailContainer';
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
 
 interface StoreDetailPageProps {
-  params: {
+  params: Promise<{
     storeId: string;
-  };
+  }>;
 }
 
 export default async function StoreDetailPage({
