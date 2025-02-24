@@ -67,7 +67,7 @@ export function BottomSheetContainer({
 
   return (
     <BottomSheet isOpen={isBottomSheetOpen} onClose={handleBottomSheetClose}>
-      <div className="grid grid-cols-[0.5fr_2fr] md:grid-cols-[0.3fr_2fr] md:mb-[37px]">
+      <div className="grid grid-cols-[0.5fr_2fr] md:grid-cols-[0.3fr_2fr] mb-2 md:mb-[37px]">
         <HexagonGrid {...hexaGridProps} />
         <SummaryInfoContainer {...storeSummaryProps} />
       </div>

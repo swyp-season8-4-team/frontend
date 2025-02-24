@@ -68,13 +68,13 @@ export function SummaryInfoContainer({
         </div>
         <button
           onClick={handleGoDetailBtnClick}
-          className="bg-[#DE8332] px-[4.6px] md:px-5 md:py-[10px] rounded-[42.71px] md:rounded-[100px] max-h-fit font-semibold text-white"
+          className="bg-[#DE8332] px-[5.6px] md:px-5 md:py-[5px] rounded-[42.71px] md:rounded-[100px] max-h-fit font-semibold text-white text-nowrap"
         >
           <div className="flex items-center">
-            <div className="flex justify-center items-center mr-[0.57px] w-[7.72px] md:w-[18.08px]">
+            <div className="flex justify-center items-center mr-[0.57px] w-[10px] md:w-[18.08px]">
               <IconDetail className="w-full h-full" />
             </div>
-            <div className="text-[6px] md:text-lg">자세히 보기</div>
+            <div className="text-[10px] md:text-lg">자세히 보기</div>
           </div>
         </button>
       </div>
@@ -82,7 +82,7 @@ export function SummaryInfoContainer({
         <span className="mr-[4.44px] md:mr-[10.37px] font-semibold md:text-t28 text-xs">
           {name}
         </span>
-        <span className="flex">
+        <span className="flex flex-wrap">
           {tags.map((tag, index) => (
             <span
               className="font-medium text-[#6F6F6F] text-[8px] md:text-t20"

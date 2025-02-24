@@ -30,9 +30,9 @@ export function StoreInfo({
 }: StoreInfoProps) {
   const [isOperationHourOpen, setIsOperationHourOpen] = useState(false);
   return (
-    <div className="flex flex-col w-full text-[8px] md:text-lg leading-3">
+    <div className="flex flex-col w-full text-[8px] md:text-lg leading-[10px]">
       <div className="flex items-center gap-[6px]">
-        <div className="w-[6.83px] md:w-4">
+        <div className="flex-shrink-0 w-[7.83px] md:w-4">
           <IconLocation className="w-full h-full text-[#BABABA]" />
         </div>
         <span>{address}</span>
@@ -40,7 +40,7 @@ export function StoreInfo({
       <div>
         <div className="flex flex-col">
           <div className="flex items-center gap-[6px]">
-            <div className="w-[6.83px] md:w-4">
+            <div className="flex-shrink-0 w-[6.83px] md:w-4">
               <IconClock className="w-full h-full text-[#BABABA]" />
             </div>
             <div
@@ -50,10 +50,10 @@ export function StoreInfo({
               {/**TODO:오늘 날짜에 따라 계산 */}
               <span className="mr-[11px] font-semibold">영업중</span>
               <span>19:00에 영업 종료</span>
-              <div>
+              <div className="flex-shrink-0 w-[10px] md:w-5">
                 <IconDirection
                   className={cn(
-                    'text-[#6F6F6F] w-[10px] md:w-5',
+                    'w-full h-full text-[#BABABA]',
                     isOperationHourOpen && 'rotate-180',
                   )}
                 />
@@ -117,13 +117,13 @@ export function StoreInfo({
         </div>
       </div>
       <div className="flex items-center gap-[6px]">
-        <div className="w-[6.83px] md:w-4">
+        <div className="flex-shrink-0 w-[6.83px] md:w-4">
           <IconPhone className="w-full h-full text-[#BABABA]" />
         </div>
         <span>{phone}</span>
       </div>
       <div className="flex items-center gap-[6px]">
-        <div className="w-[6.83px] md:w-4">
+        <div className="flex-shrink-0 w-[6.83px] md:w-4">
           <IconHome className="w-full h-full text-[#BABABA]" />
         </div>
         <span>{description}</span>
