@@ -4,7 +4,7 @@ export default class MateConverter {
   convertRawToMate(rawMate: RawMate): Mate {
     return {
       id: rawMate.mateUuid,
-      recruit: rawMate.recruit,
+      recruit: rawMate.recruitYn,
       userId: rawMate.userUuid,
       title: rawMate.title,
       content: rawMate.content,
