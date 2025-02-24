@@ -5,7 +5,7 @@ import MBTIIntro from "../MBTIIntro";
 import MBTIQnA from "../MBTIQnA";
 import { useRouter } from "next/navigation";
 import { NavigationLanguageGroup, NavigationPathname } from "@repo/entity/src/navigation";
-import { MBTIContext } from "../../../_contexts/MBTIContext";
+import { MBTIContext } from "../../_contexts/MBTIContext";
 
 export default function MBTIController() {
   const router = useRouter();

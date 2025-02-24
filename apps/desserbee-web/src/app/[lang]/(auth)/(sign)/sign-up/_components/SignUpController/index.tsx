@@ -8,15 +8,14 @@ import SignUpEmailForm from "../SignUpEmailForm";
 import SignUpGenderForm from "../SignUpGenderForm";
 import SignUpNicknameImageForm from "../SignUpNicknameImageForm";
 import SignUpPasswordForm from "../SignUpPasswordForm";
+import SignUpTermsOfServiceForm from "../SignUpTermsOfServiceForm";
 
 interface Props {
   token: string | null;
 }
 
 export default function SignUpController({ token }: Props) {
-  const [step, setStep] = useState<SignUpStep | null>(
-    !!token ? SignUpStep.PASSWORD : SignUpStep.EMAIL
-  );
+  const [step, setStep] = useState<SignUpStep>(SignUpStep.EMAIL);
 
   const updateStep = (step: SignUpStep) => {
     setStep(step);
@@ -29,6 +28,7 @@ export default function SignUpController({ token }: Props) {
       {step === SignUpStep.PASSWORD && <SignUpPasswordForm  updateStep={updateStep}/>}
       {step === SignUpStep.GENDER && <SignUpGenderForm updateStep={updateStep}/>}
       {step === SignUpStep.NICKNAME && <SignUpNicknameImageForm updateStep={updateStep} />}
+      {step === SignUpStep.TERMS_OF_SERVICE && <SignUpTermsOfServiceForm />}
     </SignUpProvider>
   )
 }

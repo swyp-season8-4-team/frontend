@@ -2,7 +2,7 @@ import { NavigationLanguageGroup, NavigationPathname } from "@repo/entity/src/na
 import { isTargetUser } from "@repo/entity/src/user";
 import type { WithChildren } from "@repo/ui";
 import { notFound, redirect } from "next/navigation";
-import { MBTIProvider } from "../_contexts/MBTIContext";
+import { MBTIProvider } from "./_contexts/MBTIContext";
 import type { WithParams } from "@/app";
 import UserService from "@repo/usecase/src/userService";
 import UserAPIRepository from "@repo/infrastructures/src/repositories/userAPIRepository";

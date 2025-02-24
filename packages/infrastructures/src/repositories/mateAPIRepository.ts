@@ -77,6 +77,21 @@ export default class MateAPIRepository
     return response.map((mate) => this.mateConverter.convertRawToMate(mate));
   }
 
+  async getWaitList({ data }: BaseRequestData<MateRequest>): Promise<Mate[]> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+
+    const { id } = data;
+
+    const response = await fetch<void, RawMate[]>({
+      method: 'GET',
+      url: `${this.endpoint}/mates/${id}/apply`,
+    });
+
+    return response.map((mate) => this.mateConverter.convertRawToMate(mate));
+  }
+
   async acceptMyTeamMember({ data }: BaseRequestData<MateAcceptRequest>): Promise<unknown> {
     if (!data) {
       throw new Error('data is required');
@@ -148,9 +163,11 @@ export default class MateAPIRepository
       },
     });
 
+    console.log(response);
+
     return {
       mates: response.mates.map((mate) => this.mateConverter.convertRawToMate(mate)),
-      isLast: true,
+      isLast: response.last,
     };
   }
 
@@ -159,16 +176,12 @@ export default class MateAPIRepository
       throw new Error('data is required');
     }
 
-    const response = await fetch<MateRequest, RawMate[]>({
+    const response = await fetch<MateRequest, RawMate>({
       method: 'GET',
       url: `${this.endpoint}/mates/${data.id}`,
     });
 
-    if (response.length === 0) {
-      throw new Error('mate not found');
-    }
-
-    return this.mateConverter.convertRawToMate(response[0]);
+    return this.mateConverter.convertRawToMate(response);
   }
 
   async create({ data }: BaseRequestData<MateCreateRequest>): Promise<Mate> {

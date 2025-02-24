@@ -1,11 +1,47 @@
 import { http, HttpResponse } from "msw";
 
 export const mateHandlers = [
+  http.get('http://localhost:3000/api/mates/6f1fcad5-bac1-4851-a6fe-34262ebf9b04', async ({ request }) => {
+    const url = new URL(request.url);
+    const id = url.pathname.split('/').pop();
+
+    if (!id) {
+      return new HttpResponse('Mate ID is required', { status: 400 });
+    }
+
+    const data = {
+      mateUuid: "6f1fcad5-bac1-4851-a6fe-34262ebf9b04",
+      recruit: true,
+      nickname: "John",
+      userUuid: "550e8400-e29b-41d4-a716-446655440000",
+      title: "Weekend Hiking Group",
+      content: "Join us for a refreshing mountain hike this weekend!",
+      recruitYn: true,
+      mateImage: [
+        "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/10/a1b2c3d4-e5f6-7890-ab12-cd34ef56gh78-"
+      ],
+      profileImage: [
+        "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
+      ],
+      mateCategory: "친목도모",
+      place: {
+        placeName: "키토빵앗간",
+        address: null,
+        latitude: null,
+        longitude: null
+      }
+    }
+
+    return new HttpResponse(JSON.stringify(data), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }),
   http.get('http://localhost:3000/api/mates', async ({ request }) => {
     const url = new URL(request.url);
     const from = url.searchParams.get('from');
-    const to = url.searchParams.get('to');
-    
     const responseData = {
       mates: [
         {

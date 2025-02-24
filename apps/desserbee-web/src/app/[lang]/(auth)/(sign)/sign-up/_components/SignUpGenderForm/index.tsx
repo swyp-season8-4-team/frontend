@@ -1,24 +1,24 @@
 'use client';
 
+import type { Gender } from '@repo/entity/src/user';
 import { Button } from '@repo/ui/components/button';
 import { SignUpStep } from '@repo/usecase/src/authService';
-import { useState } from 'react';
-
-type Gender = 'FEMALE' | 'MALE' | null;
+import { useContext } from 'react';
+import { SignUpContext } from '../../_contexts/SignUpContext';
 
 interface Props {
   updateStep: (step: SignUpStep) => void;
 }
 
 export default function SignUpGenderForm({ updateStep }: Props) {
-  const [selectedGender, setSelectedGender] = useState<Gender>(null);
+  const { gender, updateGender } = useContext(SignUpContext);
 
   const handleGenderSelect = (gender: Gender) => {
-    setSelectedGender(gender);
+    updateGender(gender);
   };
 
   const handleSubmit = async () => {
-    if (!selectedGender) {
+    if (!gender) {
       return;
     }
     
@@ -34,7 +34,7 @@ export default function SignUpGenderForm({ updateStep }: Props) {
           type="button"
           onClick={() => handleGenderSelect('FEMALE')}
           className={`flex-1  py-3 text-center transition-colors
-            ${selectedGender === 'FEMALE' 
+            ${gender === 'FEMALE' 
               ? 'bg-[#FFB700] text-white' 
               : 'bg-white text-gray-900 hover:bg-gray-50'
             }`}
@@ -45,7 +45,7 @@ export default function SignUpGenderForm({ updateStep }: Props) {
           type="button"
           onClick={() => handleGenderSelect('MALE')}
           className={`flex-1 py-3 text-center transition-colors
-            ${selectedGender === 'MALE' 
+            ${gender === 'MALE' 
               ? 'bg-[#FFB700] text-white' 
               : 'bg-white text-gray-900 hover:bg-gray-50'
             }`}
@@ -56,11 +56,11 @@ export default function SignUpGenderForm({ updateStep }: Props) {
 
       <Button
         className={`w-full py-3 text-white rounded-[100px] font-medium transition-colors
-          ${selectedGender
+          ${gender
             ? 'bg-[#FFB700] hover:bg-[#FFB700]/90' 
             : 'bg-gray-400 cursor-not-allowed opacity-50'
           }`}
-        disabled={!selectedGender}
+        disabled={!gender}
         onClick={handleSubmit}
       >
         계속하기

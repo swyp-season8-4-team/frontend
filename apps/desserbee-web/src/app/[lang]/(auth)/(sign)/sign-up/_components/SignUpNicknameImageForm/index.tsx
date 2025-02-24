@@ -7,7 +7,8 @@ import { Button } from "@repo/ui/components/button";
 import { SignUpStep } from "@repo/usecase/src/authService";
 import UserService from "@repo/usecase/src/userService";
 import Image from 'next/image';
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useContext, useRef, useState } from "react";
+import { SignUpContext } from "../../_contexts/SignUpContext";
 
 const userService = new UserService({
   userRepository: new UserAPIRepository(),
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export default function SignUpNicknameImageForm({ updateStep }: Props) {
+  const { updateNickname, updateProfileImage } = useContext(SignUpContext);
   const [message, setMessage] = useState('');
   const [error, setError] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -34,8 +36,12 @@ export default function SignUpNicknameImageForm({ updateStep }: Props) {
       setError(true);
       return;
     }
-    
-    updateStep(SignUpStep.NICKNAME);
+
+    updateNickname(message);
+    if (imagePreview) {
+      updateProfileImage(imagePreview);
+    }
+    updateStep(SignUpStep.TERMS_OF_SERVICE);
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -136,7 +142,7 @@ export default function SignUpNicknameImageForm({ updateStep }: Props) {
       {/* 계속하기 버튼 */}
       <Button 
         className="w-full mt-auto"
-        disabled={!message || !imagePreview}
+        disabled={!message}
         size="lg"
         onClick={handleContinue}
       >

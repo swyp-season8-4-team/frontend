@@ -1,7 +1,7 @@
 import { isServer } from '@repo/api';
 import fetch from '@repo/api/src/fetch';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { AuthRepository, JWTTokens, OAuthSignInData, SignInData, SignInResponse, SignUpData, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
+import type { AuthRepository, JWTTokens, OAuthSignInData, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, SignUpData, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
 import APIRepository from './apiRepository';
 
 export default class AuthAPIRespository extends APIRepository implements AuthRepository {
@@ -20,8 +20,13 @@ export default class AuthAPIRespository extends APIRepository implements AuthRep
     return response;
   }
 
-  async resetPassword(data: BaseRequestData<{ email: string; }>): Promise<unknown> {
-    const response = await fetch<void, void>({
+  async resetPassword({ data }: BaseRequestData<ResetPasswordData>): Promise<ResetPasswordResponse> {
+    if (!data) {
+      throw new Error('data is not exist');
+    }
+
+    const response = await fetch<ResetPasswordData, ResetPasswordResponse>({
+      data,
       method: 'POST',
       url: `${this.endpoint}/auth/password/reset`,
     });

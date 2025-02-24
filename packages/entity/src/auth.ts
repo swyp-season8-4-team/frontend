@@ -1,4 +1,5 @@
 import type { BaseRequestData } from "./appMetadata";
+import type { Gender } from "./user";
 
 export enum OAuthSocialProvider {
   KAKAO = "kakao",
@@ -35,11 +36,11 @@ export interface SignInData {
 
 export interface SignUpData extends Omit<SignInData, 'keepLoggedIn'> {
   confirmPassword: string;
-  nickname?: string;
+  nickname: string;
   name?: string;
   phoneNumber?: string;
   address?: string;
-  gender: string;
+  gender: Gender;
   preferenceIds?: number[];
 }
 
@@ -67,13 +68,21 @@ export interface VerifyEmailResponse {
   verificationToken: string;
 }
 
+export interface ResetPasswordData {
+  email: string;
+  password: string;
+}
+
+export interface ResetPasswordResponse {
+  message: string;
+}
 
 export interface AuthRepository {
   socialSignIn(data: BaseRequestData<OAuthSignInData>): Promise<unknown>; // 소셜 로그인
   signIn(data: BaseRequestData<SignInData>): Promise<SignInResponse>; // 일반 로그인
   signUp(data: BaseRequestData<unknown>): Promise<unknown>; // 회원가입
   signOut(): Promise<void>;
-  resetPassword(data: BaseRequestData<{ email: string }>): Promise<unknown>;
+  resetPassword(data: BaseRequestData<ResetPasswordData>): Promise<ResetPasswordResponse>;
   findPassword(data: BaseRequestData<{ email: string }>): Promise<unknown>;  
   validateResetPasswordToken(data: BaseRequestData<{ email: string, token: string }>): Promise<unknown>;
   verifyEmailRequest(data: BaseRequestData<VerifyEmailRequestData>): Promise<VerifyEmailRequestResponse>; // 이메일 검증 요청

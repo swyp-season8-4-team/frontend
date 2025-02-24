@@ -41,13 +41,13 @@ export default function CommunityMateCard({ mate }: Props) {
           </div>
           <div className="flex justify-between items-center self-stretch">
             <span className="text-gray-500 text-sm">{nickname}</span>
-            <LinkChip href={`/mate/${mate.id}`}>
+            {recruit && <LinkChip href={`/mate/${mate.id}`}>
               <Chip
                 className={cn("gap-[6.05px] rounded-[75.63px] px-[12.101px] py-[4.538px] text-white",recruit ? "bg-[#FFB700]" : "bg-[#545454]")}
-                text={recruit ? '참여하기' : '모집완료'}
+                text={'참여하기'}
               />
-            </LinkChip>
-            
+            </LinkChip>}
+            {!recruit && <Chip className={cn("gap-[6.05px] rounded-[75.63px] px-[12.101px] py-[4.538px] text-white",recruit ? "bg-[#FFB700]" : "bg-[#545454]")} text="모집완료" />}
           </div>
           
         </div>

@@ -1,4 +1,3 @@
-import type { BaseRequestData } from "@repo/entity/src/appMetadata";
 import type { MateAllListResponse, MateCreateRequest, MateListRequest, MateRepository, MateRequest, MateUpdateRequest } from "@repo/entity/src/mate";
 
 export default class MateService {
@@ -18,42 +17,62 @@ export default class MateService {
     return response;
   }
 
-  async getDetails(data: BaseRequestData<MateRequest>) {
+  async getDetails(data: MateRequest) {
     if (!this.mateRepository) {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.getDetails(data);
+    const response = await this.mateRepository.getDetails({ data});
 
     return response;
   }
 
-  async create(data: BaseRequestData<MateCreateRequest>) {
+  async getMyTeamMembers(data: MateRequest) {
     if (!this.mateRepository) {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.create(data);
+    const response = await this.mateRepository.getMyTeamMembers({ data });
 
     return response;
   }
 
-  async update(data: BaseRequestData<MateUpdateRequest>) {
+  async getWaitList(data: MateRequest) {
     if (!this.mateRepository) {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.update(data);
+    const response = await this.mateRepository.getWaitList({ data });
 
     return response;
   }
 
-  async delete(data: BaseRequestData<MateRequest>) {
+  async create(data: MateCreateRequest) {
     if (!this.mateRepository) {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.delete(data);
+    const response = await this.mateRepository.create({ data });
+
+    return response;
+  }
+
+  async update(data: MateUpdateRequest) {
+    if (!this.mateRepository) {
+      throw new Error('mateRepository is not set');
+    }
+
+    const response = await this.mateRepository.update({ data });
+
+    return response;
+  }
+
+  async delete(data: MateRequest) {
+    if (!this.mateRepository) {
+      throw new Error('mateRepository is not set');
+    }
+
+    const response = await this.mateRepository.delete({ data });
 
     return response;
   }
