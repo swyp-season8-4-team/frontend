@@ -27,6 +27,13 @@ import type {
   SavedListRequest,
   StoresInSavedListRequest,
   CreateMenuRequest,
+  CreateMenuRequestFormData,
+  StoreInSavedListRequest,
+  StoreInSavedListResponse,
+  NearByStoreRequest,
+  NearByStoreSearchRequest,
+  NearbyFilteredStoresRequest,
+  MenuRequests,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -38,11 +45,7 @@ export default class StoreAPIRepository
   // store
   async getNearbyStores({
     data,
-  }: BaseRequestData<{
-    latitude: number;
-    longitude: number;
-    radius: number;
-  }>): Promise<NearByStoreData[]> {
+  }: BaseRequestData<NearByStoreRequest>): Promise<NearByStoreData[]> {
     if (!data) {
       throw Error('data required');
     }
@@ -51,7 +54,64 @@ export default class StoreAPIRepository
 
     const response = await fetch<void, NearByStoreData[]>({
       method: 'GET',
-      url: `${this.endpoint}/stores?latitude=${latitude}&longitude=${longitude}&radius=${radius}`,
+      url: `${this.endpoint}/stores/map?latitude=${latitude}&longitude=${longitude}&radius=${radius}`,
+    });
+
+    return response;
+  }
+
+  async getNearbyPreferStores({
+    authorization,
+    data,
+  }: BaseRequestData<NearByStoreRequest>): Promise<NearByStoreData[]> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { latitude, longitude, radius } = data || {};
+
+    const response = await fetch<void, NearByStoreData[]>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      method: 'GET',
+      url: `${this.endpoint}/stores/map/my-preferences?latitude=${latitude}&longitude=${longitude}&radius=${radius}`,
+    });
+
+    return response;
+  }
+
+  async getNearbyFilteredStores({
+    data,
+  }: BaseRequestData<NearbyFilteredStoresRequest>): Promise<NearByStoreData[]> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { latitude, longitude, radius, preferenceTagId } = data || {};
+
+    const response = await fetch<void, NearByStoreData[]>({
+      method: 'GET',
+      url: `${this.endpoint}/stores/map?latitude=${latitude}&longitude=${longitude}&radius=${radius}&preference=${preferenceTagId}`,
+    });
+
+    return response;
+  }
+
+  async getNearBySearchStores({
+    data,
+  }: BaseRequestData<NearByStoreSearchRequest>): Promise<NearByStoreData[]> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { latitude, longitude, radius, searchKeyword } = data || {};
+
+    const response = await fetch<void, NearByStoreData[]>({
+      method: 'GET',
+      url: `${this.endpoint}/stores/map?latitude=${latitude}&longitude=${longitude}&radius=${radius}&searchKeyword=${searchKeyword}`,
     });
 
     return response;
@@ -108,6 +168,7 @@ export default class StoreAPIRepository
       ...(authorization && {
         headers: {
           Authorization: authorization,
+          'Content-Type': 'multipart/form-data',
         },
       }),
       data,
@@ -126,17 +187,20 @@ export default class StoreAPIRepository
       throw Error('data required');
     }
 
-    const { storeUuid } = data || {};
+    const { storeUuid, ...rest } = data || {};
 
     const url = `${this.endpoint}/stores/${storeUuid}`;
 
-    const response = await fetch<EditStoreRequest, EditStoreResponse>({
+    const response = await fetch<
+      Omit<EditStoreRequest, 'storeUuid'>,
+      EditStoreResponse
+    >({
       ...(authorization && {
         headers: {
           Authorization: authorization,
         },
       }),
-      data,
+      data: { ...rest },
       method: 'PATCH',
       url,
     });
@@ -178,12 +242,12 @@ export default class StoreAPIRepository
       throw Error('data required');
     }
 
-    const { userUuid } = data || {};
+    const { userUuid, listName, iconColorId } = data || {};
 
     const url = `${this.endpoint}/user-store/${userUuid}/lists`;
 
     const response = await fetch<
-      CreateSavedListRequest,
+      { listName: string; iconColorId: number },
       CreateSavedListResponse
     >({
       ...(authorization && {
@@ -191,7 +255,7 @@ export default class StoreAPIRepository
           Authorization: authorization,
         },
       }),
-      data,
+      data: { listName, iconColorId },
       method: 'POST',
       url,
     });
@@ -207,17 +271,20 @@ export default class StoreAPIRepository
       throw Error('data required');
     }
 
-    const { listId } = data || {};
+    const { listId, newName, newIconColor } = data || {};
 
     const url = `${this.endpoint}/user-store/lists/${listId}`;
 
-    const response = await fetch<EditSavedListRequest, EditSavedListResponse>({
+    const response = await fetch<
+      { newName: string; newIconColor: number },
+      EditSavedListResponse
+    >({
       ...(authorization && {
         headers: {
           Authorization: authorization,
         },
       }),
-      data,
+      data: { newName, newIconColor },
       method: 'PATCH', // TODO: PATCH으로 변경
       url,
     });
@@ -258,20 +325,21 @@ export default class StoreAPIRepository
       throw Error('data required');
     }
 
-    const { listId, storeUuid } = data || {};
+    const { listId, storeUuid, userPreferences } = data || {};
 
     const url = `${this.endpoint}/user-store/lists/${listId}/stores/${storeUuid}`;
 
     const response = await fetch<
-      AddStoreInSavedListRequest,
+      typeof userPreferences,
       AddStoreInSavedListResponse
     >({
       ...(authorization && {
         headers: {
           Authorization: authorization,
+          'Content-Type': 'application/json',
         },
       }),
-      data,
+      data: userPreferences,
       method: 'POST',
       url,
     });
@@ -304,6 +372,32 @@ export default class StoreAPIRepository
     return response;
   }
 
+  async getStoreInSavedList({
+    authorization,
+    data,
+  }: BaseRequestData<StoreInSavedListRequest>): Promise<StoreInSavedListResponse> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { listId } = data || {};
+
+    const response = await fetch<
+      StoreInSavedListRequest,
+      StoreInSavedListResponse
+    >({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      method: 'GET',
+      url: `${this.endpoint}/user-store/lists/${listId}`,
+    });
+
+    return response;
+  }
+
   async getStoresInSavedList({
     authorization,
     data,
@@ -320,11 +414,11 @@ export default class StoreAPIRepository
       StoresInSavedListRequest,
       StoresInSavedListData[]
     >({
-      // ...(authorization && {
-      //   headers: {
-      //     Authorization: authorization,
-      //   },
-      // }),
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'GET',
       url: `${this.endpoint}/user-store/lists/${listId}/stores`,
     });
@@ -359,22 +453,25 @@ export default class StoreAPIRepository
   async createMenu({
     authorization,
     data,
-  }: BaseRequestData<CreateMenuRequest>): Promise<void> {
+  }: BaseRequestData<CreateMenuRequestFormData>): Promise<void> {
     if (!data) {
       throw Error('data required');
     }
-
-    const { storeUuid } = data || {};
+    const { storeUuid, requests, menuImages } = data || {};
 
     const url = `${this.endpoint}/stores/${storeUuid}/menus`;
 
-    const response = await fetch<CreateMenuRequest, void>({
+    const response = await fetch<
+      { requests: MenuRequests; menuImages?: File | File[] },
+      void
+    >({
       ...(authorization && {
         headers: {
           Authorization: authorization,
+          'Content-Type': 'multipart/form-data',
         },
       }),
-      data,
+      data: { requests, menuImages },
       method: 'POST',
       url,
     });
@@ -390,17 +487,18 @@ export default class StoreAPIRepository
       throw Error('data required');
     }
 
-    const { storeUuid, menuUuid } = data || {};
+    const { storeUuid, menuUuid, file } = data || {};
 
     const url = `${this.endpoint}/stores/${storeUuid}/menus/${menuUuid}`;
 
-    const response = await fetch<EditMenuRequest, void>({
+    const response = await fetch<{ file: File }, void>({
       ...(authorization && {
         headers: {
           Authorization: authorization,
+          'Content-Type': 'multipart/form-data', //TODO: content-type 테스트 해보기
         },
       }),
-      data,
+      data: { file },
       method: 'PATCH',
       url,
     });
@@ -462,5 +560,14 @@ export default class StoreAPIRepository
   }
 
   // coupon
-  async updateCouponCount({ data }: BaseRequestData<void>): Promise<void> {} // TODO: api 아직
+  async updateCouponCount(): Promise<void> {
+    const url = `${this.endpoint}/banners/click`;
+
+    const response = await fetch<void, void>({
+      method: 'POST',
+      url,
+    });
+
+    return response;
+  }
 }
