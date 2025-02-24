@@ -163,8 +163,6 @@ export default class MateAPIRepository
       },
     });
 
-    console.log(response);
-
     return {
       mates: response.mates.map((mate) => this.mateConverter.convertRawToMate(mate)),
       isLast: response.last,

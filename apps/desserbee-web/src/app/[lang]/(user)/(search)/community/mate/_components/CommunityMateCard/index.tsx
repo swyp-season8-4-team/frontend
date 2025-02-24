@@ -5,7 +5,8 @@ import Image from 'next/image';
 import type { Mate } from "@repo/entity/src/mate";
 import Link from "next/link";
 import { Fragment } from "react";
-
+import defaultImage from "../../_assets/images/image-default-mate.png";
+import { nanoid } from "nanoid";
 interface Props {
   mate: Mate;
 }
@@ -28,8 +29,8 @@ export default function CommunityMateCard({ mate }: Props) {
       </div>
       <div className="flex gap-2 w-full">
         <Image
-          alt={title}
-          src={mateImage.length > 0 ? mateImage[0] : '/images/default-image.png'}
+          alt={``}
+          src={mateImage.length > 0 ? mateImage[0] : defaultImage}
           width={97}
           height={97}
           className="w-16 h-16 rounded-md"
