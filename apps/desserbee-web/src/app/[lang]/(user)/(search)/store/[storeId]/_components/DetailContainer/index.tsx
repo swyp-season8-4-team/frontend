@@ -7,6 +7,7 @@ import { StorePictureList } from '../StorePictureList';
 import { DetailInfoContainer } from '../DetailInfoContainer';
 import IconDirection from '@repo/design-system/components/icons/IconDirection';
 import IconX from '@repo/design-system/components/icons/IconX';
+import { NavigationPathname } from '@repo/entity/src/navigation';
 
 interface DetailContainerProps {
   storeDetail: StoreDetailInfoData;
@@ -48,7 +49,7 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
   };
 
   const handleGoMap = () => {
-    router.replace('/map');
+    router.replace(NavigationPathname.Map);
   };
 
   return (

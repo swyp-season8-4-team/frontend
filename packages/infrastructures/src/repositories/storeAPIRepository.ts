@@ -26,7 +26,6 @@ import type {
   GetMenuListRequest,
   SavedListRequest,
   StoresInSavedListRequest,
-  CreateMenuRequest,
   CreateMenuRequestFormData,
   StoreInSavedListRequest,
   StoreInSavedListResponse,

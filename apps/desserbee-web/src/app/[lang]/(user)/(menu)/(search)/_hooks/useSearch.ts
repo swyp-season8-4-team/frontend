@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { SEARCH_CONFIG } from '../_consts/search';
+import { NavigationPathname } from '@repo/entity/src/navigation';
 
 interface SearchConfig {
   placeHolder: string;
@@ -18,7 +19,7 @@ export function useSearch() {
 
   const getSearchConfig = (): SearchConfig => {
     switch (path) {
-      case '/community':
+      case NavigationPathname.Community:
         return {
           placeHolder: SEARCH_CONFIG.COMMUNITY.placeholder,
           onSearch: (value: string) => {
@@ -26,7 +27,7 @@ export function useSearch() {
             console.log('커뮤니티 검색:', value);
           },
         };
-      case '/map':
+      case NavigationPathname.Map:
         return {
           placeHolder: SEARCH_CONFIG.MAP.placeholder,
           onSearch: (value: string) => {

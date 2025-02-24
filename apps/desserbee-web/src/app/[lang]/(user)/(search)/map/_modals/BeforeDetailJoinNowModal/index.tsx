@@ -1,4 +1,5 @@
 import { CustomModal } from '@repo/design-system/components/Modal/custom';
+import { NavigationPathGroup } from '@repo/entity/src/navigation';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -15,7 +16,7 @@ export function BeforeDetailJoinNowModal({
 
   const handleLaterBtnClick = () => {
     onClose();
-    router.push(`/store/${storeUuid}`);
+    router.push(`${NavigationPathGroup.Store + storeUuid}`);
   };
 
   return (
