@@ -3,6 +3,8 @@ import {
   type AuthRepository,
   type JWTTokens,
   type OAuthSignInData,
+  type ResetPasswordData,
+  type ResetPasswordResponse,
   type SignInData,
   type SignInResponse,
   type SignUpData,
@@ -16,7 +18,7 @@ import { type StorageRepository } from '@repo/entity/src/storage';
 
 export enum VerifyEmailPurpose {
   SIGNUP = 'SIGNUP',
-  RESET_PASSWORD = 'RESET_PASSWORD',
+  RESET_PASSWORD = 'PASSWORD_RESET',
 }
 
 export enum SignUpStep {
@@ -26,6 +28,12 @@ export enum SignUpStep {
   GENDER = 'gender',
   NICKNAME = 'nickname',
   AGREE = 'agree',
+  TERMS_OF_SERVICE = 'terms-of-service',
+}
+
+export enum EmailAuthSessionKey {
+  SIGNUP = 'authService-emailAuth-signup',
+  RESET_PASSWORD = 'authService-emailAuth-resetPassword',
 }
 
 export interface EmailAuthSession {
@@ -46,10 +54,6 @@ export default class AuthService {
   }) {
     this.authRepository = authRepository ?? null;
     this.storageRepository = storageRepository ?? null;
-  }
-
-  private get emailAuthSessionKey() {
-    return 'authService-emailAuth';
   }
 
   private get signUpStepKey() {
@@ -142,28 +146,38 @@ export default class AuthService {
     return response;
   }
 
-  getEmailAuthSession(): EmailAuthSession | null {
-    if (!this.storageRepository) {
-      throw new Error('storageRepository is not set');
+  async resetPassword(data: ResetPasswordData): Promise<ResetPasswordResponse> {
+    if (!this.authRepository) {
+      throw new Error('authRepository is not set');
     }
 
-    return this.storageRepository.get<EmailAuthSession>(this.emailAuthSessionKey);
+    const response = await this.authRepository.resetPassword({ data });
+
+    return response;
   }
 
-  saveEmailAuthSession(value: EmailAuthSession) {
+  getEmailAuthSession(key: EmailAuthSessionKey): EmailAuthSession | null {
     if (!this.storageRepository) {
       throw new Error('storageRepository is not set');
     }
 
-    this.storageRepository.set<EmailAuthSession>(this.emailAuthSessionKey, value);
+    return this.storageRepository.get<EmailAuthSession>(key);
   }
 
-  clearEmailAuthSession() {
+  saveEmailAuthSession(key: EmailAuthSessionKey, value: EmailAuthSession) {
     if (!this.storageRepository) {
       throw new Error('storageRepository is not set');
     }
 
-    this.storageRepository.delete(this.emailAuthSessionKey);
+    this.storageRepository.set<EmailAuthSession>(key, value);
+  }
+
+  clearEmailAuthSession(key: EmailAuthSessionKey) {
+    if (!this.storageRepository) {
+      throw new Error('storageRepository is not set');
+    }
+
+    this.storageRepository.delete(key);
   }
 
   getSignUpStep() {

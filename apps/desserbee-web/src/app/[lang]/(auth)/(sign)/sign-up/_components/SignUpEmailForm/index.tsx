@@ -4,7 +4,7 @@ import { HTTPError } from '@repo/api/src/error';
 import AuthAPIRespository from '@repo/infrastructures/src/repositories/authAPIRespository';
 import SessionStorageRepository from '@repo/infrastructures/src/repositories/SessionStorageRepository';
 import { Button } from '@repo/ui/components/button';
-import AuthService, { SignUpStep, VerifyEmailPurpose } from '@repo/usecase/src/authService';
+import AuthService, { EmailAuthSessionKey, SignUpStep, VerifyEmailPurpose } from '@repo/usecase/src/authService';
 import { validateEmail } from '@repo/utility/src/regex';
 import { useCallback, useContext, useState } from 'react';
 import { SignUpContext } from '../../_contexts/SignUpContext';
@@ -44,7 +44,7 @@ export default function SignUpEmailForm({ updateStep }: Props) {
         purpose: VerifyEmailPurpose.SIGNUP,
       });
 
-      authService.saveEmailAuthSession({
+      authService.saveEmailAuthSession(EmailAuthSessionKey.SIGNUP, {
         email: message,
         expirationTimes: expirationMinutes * 60,
       });

@@ -3,7 +3,7 @@
 import { Button } from "@repo/ui/components/button";
 import { useContext, useState } from "react";
 import { SignUpContext } from "../../_contexts/SignUpContext";
-import AuthService, { SignUpStep, VerifyEmailPurpose } from "@repo/usecase/src/authService";
+import AuthService, { EmailAuthSessionKey, SignUpStep, VerifyEmailPurpose } from "@repo/usecase/src/authService";
 import SignUpTimer from "../SignUpTimer";
 import SessionStorageRepository from "@repo/infrastructures/src/repositories/SessionStorageRepository";
 import { validateEmailCode } from "@repo/utility/src/regex";
@@ -49,7 +49,7 @@ export default function SignUpEmailCodeForm({ updateStep }: Props) {
 
       await verifyTokenAction({ token: verificationToken });
 
-      authService.clearEmailAuthSession();
+      authService.clearEmailAuthSession(EmailAuthSessionKey.SIGNUP);
 
       setDisabled(false);
 
@@ -62,11 +62,11 @@ export default function SignUpEmailCodeForm({ updateStep }: Props) {
           <Modal
             buttons={
               <Button
-                className="flex w-[274px] px-[60px] py-2 justify-between items-center rounded-full bg-[#FFB700]"
-                size="lg"
+                className="px-[60px] py-2 justify-between items-center rounded-full bg-[#FFB700]"
+                
                 onClick={closeModal}
               >
-                확인
+                계속하기
               </Button>
             }
             visible={true}
@@ -87,7 +87,7 @@ export default function SignUpEmailCodeForm({ updateStep }: Props) {
   }
 
   const handleExpire = () => {
-    authService.clearEmailAuthSession();
+    authService.clearEmailAuthSession(EmailAuthSessionKey.SIGNUP);
   }
 
   return (

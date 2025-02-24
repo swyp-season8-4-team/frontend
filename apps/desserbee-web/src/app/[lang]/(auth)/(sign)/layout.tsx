@@ -1,13 +1,11 @@
 import { recipeKorea } from "@/app/fonts";
 import type { WithChildren } from "@repo/ui/index";
-import { cn } from "@repo/ui/lib/utils";
+import { HeaderContainer } from "../../(user)/(search)/_components/HeaderContainer";
 
 export default async function SignLayout({ children }: WithChildren) {
   return (
-    <div className="min-h-screen bg-white px-4">
-      <header className="flex items-center text-center h-14">
-        <h1 className={cn(recipeKorea.className, "text-lg mt-2 font-medium")}>디저비</h1>
-      </header>
+    <div className="min-h-screen bg-white">
+      <HeaderContainer fontClass={recipeKorea.className} />
       {children}
     </div>
   );

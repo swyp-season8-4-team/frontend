@@ -11,7 +11,7 @@ export enum NavigationPathname {
   SignIn = '/sign-in',
   SignUp = '/sign-up',
   Map = '/map',
-  ForgotPassword = '/forgot-password',
+  ForgotPassword = '/sign-in/forgot-password',
   Community = '/community',
   My = '/my',
 }

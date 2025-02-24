@@ -1,23 +1,19 @@
-import { loginAction } from "@/actions/loginAction";
-import type { WithParams, WithSearchParams } from "@/app";
-import { encrypt } from "@/utils/crypto";
+import type { WithParams } from "@/app";
 import { NavigationPathname } from "@repo/entity/src/navigation";
+import { Button } from "@repo/ui/components/button";
 import Link from "next/link";
 import KakaoLogo from "./_components/KakaoLogo";
-import { Button } from "@repo/ui/components/button";
 import LoginForm from "./_components/LoginForm";
 
-interface Props extends WithParams, WithSearchParams {}
+interface Props extends WithParams {}
 
-export default async function SignInPage({ searchParams }: Props) {
-  const { next } = await searchParams;
-
-  const state = encrypt(`${next}:${Date.now()}`);
+export default async function SignInPage() {
+  // const { next } = await searchParams;
 
   return (
     <>
       {/* 메인 컨텐츠 */}
-      <main className="flex flex-col justify-center mt-16 h-full">
+      <main className="flex flex-col justify-center px-4 mt-16 h-full">
         <h2 className="text-2xl font-medium text-center mb-8">로그인</h2>
         
         <LoginForm className="space-y-4">
@@ -38,19 +34,29 @@ export default async function SignInPage({ searchParams }: Props) {
           <div className="flex items-center justify-between">
             <label className="flex items-center">
               <input type="radio" name="containLogin" className="w-4 h-4 rounded-full border-gray-300" />
-              <span className="ml-2 text-sm text-gray-600">로그인 유지</span>
+              <span className="ml-2 text-[10px] text-gray-600">로그인 유지</span>
             </label>
             <div className="flex items-center gap-2">
-              <Link href={NavigationPathname.SignUp} className="text-b-400 text-sm text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font">회원가입</Link>
-              <Link href={NavigationPathname.ForgotPassword} className="text-b-400 text-sm text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font">비밀번호 찾기</Link>
+              <Link href={NavigationPathname.SignUp} className="text-b-400 text-[10px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font">일반 회원가입</Link>
+              <Link href={NavigationPathname.SignUp} className="text-b-400 text-[10px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font">사장님 회원가입</Link>
+              <Link href={NavigationPathname.ForgotPassword} className="text-b-400 text-[10px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font">비밀번호 찾기</Link>
             </div>
           </div>
-          <Button
-            type="submit"
-            className="w-full py-[15px] py-3 bg-[#FDB813] text-white rounded-[100px] font-medium mt-8"
-          >
-            로그인
-          </Button>
+          <div className="flex flex-col gap-2 ">
+            <Button
+              type="submit"
+              className="w-full py-[15px] py-3 bg-[#FDB813] text-white rounded-[100px] font-medium text-center font-bold leading-[130%] tracking-[-0.334px]"
+            >
+              로그인
+            </Button>
+            <Button
+              type="submit"
+              className="w-full py-[15px] py-3 bg-[#DE8332] text-white rounded-[100px] font-medium text-center font-bold leading-[130%] tracking-[-0.334px]"
+            >
+              사장님 로그인
+            </Button>
+          </div>
+          
         </LoginForm>
 
         {/* 간편 로그인 섹션 */}

@@ -41,8 +41,8 @@ export default function SignUpPasswordForm({ updateStep }: Props) {
             type="password"
             value={password}
             onChange={handlePasswordChange}
-            placeholder="비밀번호를 입력해 주세요."
-            className={`w-full py-[10px] border-b ${
+            placeholder="비밀번호 (8자 이상, 영어 소문자, 특수문자 포함)"
+            className={`w-full text-[10px] font-medium leading-[-0.3px] py-[10px] border-b ${
               error ? 'border-red-500' : 'border-gray-200'
             } focus:outline-none placeholder:text-[#BABABA]`}
           />
@@ -69,7 +69,7 @@ export default function SignUpPasswordForm({ updateStep }: Props) {
             type="password"
             value={confirmPassword}
             onChange={handleConfirmPasswordChange}
-            placeholder="비밀번호를 확인해 주세요."
+            placeholder="비밀번호 (8자 이상, 영어 소문자, 특수문자 포함) 를 다시 입력해주세요."
             className={`w-full py-[10px] border-b ${
               error ? 'border-red-500' : 'border-gray-200'
             } focus:outline-none placeholder:text-[#BABABA]`}

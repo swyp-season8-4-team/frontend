@@ -1,6 +1,11 @@
 import type { BaseRequestData } from "./appMetadata";
 
-export enum UserType {}
+export enum UserType {
+  USER = 'ROLE_USER',
+  OWNER = 'ROLE_OWNER',
+}
+
+export type Gender = 'MALE' | 'FEMALE';
 
 export interface User {
   id: string;

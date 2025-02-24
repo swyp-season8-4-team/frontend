@@ -1,5 +1,5 @@
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { AuthRepository, JWTTokens, SignInData, SignInResponse, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
+import type { AuthRepository, JWTTokens, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
 import { headers } from 'next/headers';
 
 export default class AuthNextAppRouteRepository implements AuthRepository {
@@ -22,7 +22,7 @@ export default class AuthNextAppRouteRepository implements AuthRepository {
   signOut(): Promise<void> {
     throw new Error('Method not implemented.');
   }
-  resetPassword(data: BaseRequestData<{ email: string; }>): Promise<unknown> {
+  resetPassword(data: BaseRequestData<ResetPasswordData>): Promise<ResetPasswordResponse> {
     throw new Error('Method not implemented.');
   }
   findPassword(data: BaseRequestData<{ email: string; }>): Promise<unknown> {

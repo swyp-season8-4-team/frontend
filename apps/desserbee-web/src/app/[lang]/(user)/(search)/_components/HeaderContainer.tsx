@@ -1,16 +1,17 @@
 'use client';
 
 import { Header } from '@repo/design-system/components/Header';
+import type { WithChildren } from '@repo/ui';
 import { usePathname } from 'next/navigation';
-import { SearchBarContainer } from './SearchBarContainer';
 
-interface HeaderContainer {
+interface HeaderContainer extends WithChildren {
   fontClass: string;
 }
 
-export function HeaderContainer({ fontClass }: HeaderContainer) {
+export function HeaderContainer({ fontClass, children }: HeaderContainer) {
   const pathname = usePathname();
 
+  // FIXME: 이 조건이 왜 들어가야하는지 모르겠음. 라우트를 변경하는게 맞음
   const isStoreDetailPage = () => {
     const segments = pathname.split('/');
     return (
@@ -22,7 +23,7 @@ export function HeaderContainer({ fontClass }: HeaderContainer) {
 
   return (
     <Header title="디저비" fontClass={fontClass}>
-      <SearchBarContainer />
+      {children}
     </Header>
   );
 }

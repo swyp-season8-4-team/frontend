@@ -1,7 +1,7 @@
 'use client';
 
 import SessionStorageRepository from '@repo/infrastructures/src/repositories/SessionStorageRepository';
-import AuthService from '@repo/usecase/src/authService';
+import AuthService, { EmailAuthSessionKey } from '@repo/usecase/src/authService';
 import { useEffect, useState } from 'react';
 
 const authService = new AuthService({
@@ -14,7 +14,7 @@ interface Props {
 
 export default function SignUpTimer({ onExpire }: Props) {
   const [seconds, setSeconds] = useState(() => {
-    const session = authService.getEmailAuthSession();
+    const session = authService.getEmailAuthSession(EmailAuthSessionKey.SIGNUP);
     return session ? session.expirationTimes : 0;
   });
 
@@ -29,9 +29,9 @@ export default function SignUpTimer({ onExpire }: Props) {
         const newSeconds = prevSeconds - 1;
         
         // 세션 스토리지 업데이트
-        const session = authService.getEmailAuthSession();
+        const session = authService.getEmailAuthSession(EmailAuthSessionKey.SIGNUP);
         if (session) {
-          authService.saveEmailAuthSession({
+          authService.saveEmailAuthSession(EmailAuthSessionKey.SIGNUP, {
             ...session,
             expirationTimes: newSeconds
           });
