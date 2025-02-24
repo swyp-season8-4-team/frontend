@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 
-import type { StoreDetailInfoData } from '@repo/entity/src/store';
+import type { Menu, StoreDetailInfoData } from '@repo/entity/src/store';
 import { StorePictureList } from '../StorePictureList';
 import { DetailInfoContainer } from '../DetailInfoContainer';
 import IconDirection from '@repo/design-system/components/icons/IconDirection';
@@ -14,13 +14,21 @@ interface DetailContainerProps {
 }
 
 export function DetailContainer({ storeDetail }: DetailContainerProps) {
+  const router = useRouter();
+
   if (!storeDetail) throw Error('store 상세 정보 불러오기 실패');
+
+  const getAllMenuImages = (menus: Menu[]): string[] => {
+    return menus.reduce((allImages: string[], menu) => {
+      const menuImages = menu.images || [];
+      return [...allImages, ...menuImages];
+    }, []);
+  };
 
   const storePicureListProps = {
     storeImages: storeDetail.storeImages,
+    menuImages: getAllMenuImages(storeDetail.menus),
   };
-
-  const router = useRouter();
 
   const detailInfoContainerProps = {
     // DetailInfoContainer에서 사용하는 필드

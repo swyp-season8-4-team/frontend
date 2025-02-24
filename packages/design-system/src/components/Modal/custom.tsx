@@ -4,9 +4,15 @@ import IconX from '../icons/IconX';
 
 interface CustomModal extends WithChildren, WithClassName {
   onClose: () => void;
+  isCloseBtnShow?: boolean;
 }
 
-export function CustomModal({ onClose, children, className }: CustomModal) {
+export function CustomModal({
+  onClose,
+  children,
+  className,
+  isCloseBtnShow = true,
+}: CustomModal) {
   return (
     <div className="z-modal relative">
       <div
@@ -19,12 +25,14 @@ export function CustomModal({ onClose, children, className }: CustomModal) {
           className,
         )}
       >
-        <div
-          onClick={onClose}
-          className="top-2 md:top-4 right-2 md:right-4 absolute flex justify-center items-center w-5 md:w-7 md:h-7"
-        >
-          <IconX className="w-full h-full text-[#545454]" />
-        </div>
+        {isCloseBtnShow && (
+          <div
+            onClick={onClose}
+            className="top-2 md:top-4 right-2 md:right-4 absolute flex justify-center items-center w-5 md:w-7 md:h-7"
+          >
+            <IconX className="w-full h-full text-[#545454]" />
+          </div>
+        )}
         {children}
       </div>
     </div>

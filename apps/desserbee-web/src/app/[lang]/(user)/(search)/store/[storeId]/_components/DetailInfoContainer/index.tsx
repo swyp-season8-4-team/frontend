@@ -110,7 +110,7 @@ export function DetailInfoContainer({
         <div className="-top-[10px] right-[80px] z-50 absolute bg-white border-[#9F9F9F] border-l-[1px] rounded-full w-4 h-4 -rotate-90"></div>
         <div className="right-[80px] -bottom-[10px] z-50 absolute bg-white border-[#9F9F9F] border-l-[1px] rounded-full w-4 h-4 rotate-90"></div>
       </div>
-      <div className="grid grid-cols-[2fr_1fr] md:grid-cols-[2fr_1fr] md:mb-[37px]">
+      <div className="items-center grid grid-cols-[2fr_1fr] md:grid-cols-[2fr_1fr] md:mb-[37px]">
         <div>
           <div className="my-[10.93px] md:my-[26px]">
             <StoreInfo {...storeInfoProps} />

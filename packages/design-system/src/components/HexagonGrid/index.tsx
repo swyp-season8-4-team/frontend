@@ -21,7 +21,7 @@ function Hexagon({ className, content, imgSrc }: HexagonProps) {
         'w-[36%] absolute ',
         'before:content-[""] before:block before:pt-[86.6%]',
         'before:[clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)]',
-        'before:bg-primary',
+        imgSrc ? 'before:bg-[#D2D2D2]' : 'before:bg-primary',
         className,
       )}
     >

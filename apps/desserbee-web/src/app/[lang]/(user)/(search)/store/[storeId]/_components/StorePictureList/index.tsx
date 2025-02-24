@@ -1,17 +1,44 @@
 import type { StoreSummaryInfoData } from '@repo/entity/src/store';
+import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import Image from 'next/image';
-type StorePictureListProps = Pick<StoreSummaryInfoData, 'storeImages'>;
+import { useContext } from 'react';
+import { StorePictureCarouselModal } from '../../_modals/StorePictureCarouselModal';
+interface StorePictureListProps
+  extends Pick<StoreSummaryInfoData, 'storeImages'> {
+  menuImages: string[];
+}
 
-export function StorePictureList({ storeImages }: StorePictureListProps) {
+export function StorePictureList({
+  storeImages = [],
+  menuImages = [],
+}: StorePictureListProps) {
+  const { push, pop } = useContext(PortalContext);
+
+  const closeModal = () => {
+    pop('modal');
+  };
+
+  const handlePlusBtnClick = () => {
+    push('modal', {
+      component: (
+        <StorePictureCarouselModal
+          images={[...storeImages, ...menuImages]}
+          onClose={closeModal}
+        />
+      ),
+    });
+  };
+
   return (
     <div className="flex gap-[9px] md:gap-[22px] py-3 md:py-7">
       {storeImages?.map((image, index) =>
         index === storeImages.length - 1 ? (
           <button
+            onClick={handlePlusBtnClick}
             key={image}
             className="relative w-full aspect-[77/69] overflow-hidden"
           >
-            <div className="z-10 absolute flex justify-center items-center opacity-100 w-full h-full text-[6vw] text-black">
+            <div className="z-10 absolute flex justify-center items-center opacity-100 w-full h-full text-[6vw] text-black cursor-pointer">
               +
             </div>
             <Image
@@ -34,8 +61,6 @@ export function StorePictureList({ storeImages }: StorePictureListProps) {
           </div>
         ),
       )}
-
-      {/* TODO: 사진 더보기 논의되면 추가 */}
     </div>
   );
 }
