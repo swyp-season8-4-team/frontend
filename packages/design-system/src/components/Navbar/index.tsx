@@ -27,16 +27,16 @@ export default function NavBar({ menuList, pathname, onClick }: Props) {
                   {icon}
                 </div>
               </div>
-              <div
+              <span
                 className={cn(
-                  'text-nowrap text-sm md:text-lg ',
+                  'whitespace-nowrap text-sm md:text-lg ',
                   path === pathname
                     ? 'text-[#DE8332] font-semibold'
                     : 'text-[#545454] font-normal',
                 )}
               >
                 {text}
-              </div>
+              </span>
             </div>
           </button>
         ))}

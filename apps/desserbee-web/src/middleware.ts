@@ -20,6 +20,7 @@ export async function middleware(request: NextRequest) {
   }
 
   const token = await getToken(request);
+  console.log('token', token);
   if (token) {
     requestHeaders.set('authorization', `Bearer ${token}`);
   }
@@ -105,9 +106,9 @@ async function getToken(request: NextRequest): Promise<string | null> {
   const { cookies } = request;
 
   const accessToken = cookies.get('accessToken')?.value;
-  const refreshToken = cookies.get('refreshToken')?.value;
+  // const refreshToken = cookies.get('refreshToken')?.value;
   // 둘다 없으면 로그인을 다시 해야하는것
-  if (!accessToken || !refreshToken) {
+  if (!accessToken) {
     return null;
   }
 
@@ -119,7 +120,7 @@ async function getToken(request: NextRequest): Promise<string | null> {
   }
 
   const isAccessTokenExpired = isExpiredJWT(accessToken);
-  const isRefreshTokenExpired = isExpiredJWT(refreshToken);
+  // const isRefreshTokenExpired = isExpiredJWT(refreshToken);
 
   let newAccessToken: string | null = accessToken;
 
@@ -128,9 +129,9 @@ async function getToken(request: NextRequest): Promise<string | null> {
   });
 
   if (isAccessTokenExpired) {
-    if (isRefreshTokenExpired) {
-      return null;
-    }
+    // if (isRefreshTokenExpired) {
+    //   return null;
+    // }
     
     // 리프레시 토큰을 가지고 다시 accessToken 발급
     const { accessToken: updatedAccessToken }: { accessToken: string } =

@@ -3,7 +3,7 @@ import BackButton from "../../_components/BackButton";
 
 export default async function MateLayout({ children }: WithChildren) {
   return (
-    <div className="flex flex-col h-full gap-[21px]">
+    <div className="flex flex-col h-[100dvh] gap-[21px] bg-[#f6f6f6]">
       <header className="flex items-center justify-between h-[52px] py-[18px]">
         <div className="flex items-center gap-[2px]">
           <BackButton />
