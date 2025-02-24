@@ -26,7 +26,6 @@ export function SideBarContainer({
   const modalRef = useRef<HTMLDivElement>(null);
 
   const [selectedListId, setSelectedListId] = useState<number | null>(null);
-  const [isSideBarOpen] = useState(showSidebar);
 
   const { push, pop } = useContext(PortalContext);
 
@@ -34,8 +33,8 @@ export function SideBarContainer({
     router.back();
   };
 
-  const handleCreateList = (listName: string, colorId: number) => {
-    // TODO: API를 통해 새 리스트 생성 로직 구현 // Parallel
+  const handleCreateListComplete = (listName: string, colorId: number) => {
+    // TODO: API를 통해 새 리스트 생성 로직 구현
     console.log(listName, colorId);
   };
 
@@ -45,10 +44,12 @@ export function SideBarContainer({
         <CreateListModal
           onClose={() => {
             pop('modal');
+            router.push('?sidebar=true'); // 모달 닫을 때 사이드바 다시 열기
           }}
           onComplete={(listName: string, colorId: number) => {
             pop('modal');
-            handleCreateList(listName, colorId);
+            handleCreateListComplete(listName, colorId);
+            router.push('?sidebar=true'); // 완료 후 사이드바 다시 열기
           }}
         />
       ),
@@ -83,14 +84,31 @@ export function SideBarContainer({
     }
   };
 
-  const sideBarProps = {
-    className: 'fixed top-[100px] w-1/2 right-4 h-[calc(100dvh-287px)]',
-    isSideBarOpen,
-    handleSideBarClose,
+  const handleDeleteList = async (listId: number) => {
+    try {
+      // TODO: API를 통해 리스트 삭제 요청
+      // const response = await fetch(`/api/lists/${listId}`, {
+      //   method: 'DELETE',
+      // });
+
+      console.log('삭제된 리스트:', listId);
+
+      // 삭제 후 사이드바를 새로고침하여 업데이트된 리스트 표시
+      setSelectedListId(null); // 삭제 메뉴 닫기
+      router.refresh(); // 서버 컴포넌트 리프레시
+    } catch (error) {
+      console.error('리스트 삭제 실패:', error);
+    }
   };
 
   return (
-    <SideBar {...sideBarProps}>
+    <SideBar
+      {...{
+        className: 'fixed top-[100px] w-1/2 right-4 h-[calc(100dvh-287px)]',
+        isSideBarOpen: showSidebar,
+        handleSideBarClose,
+      }}
+    >
       <div className="flex flex-col h-full" onClick={handleGlobalClick}>
         <div className="flex-none">
           <div className="flex p-2 w-full font-semibold text-[#393939] md:text-[22px] text-xs text-start">
@@ -179,7 +197,10 @@ export function SideBarContainer({
                         <span className="flex justify-center items-center mr-2 w-3 md:w-5 h-3 md:h-5">
                           <IconTrashCan className="w-full h-full" />
                         </span>
-                        <button className="text-[8px] md:text-[14px] text-nowrap">
+                        <button
+                          className="text-[8px] md:text-[14px] text-nowrap"
+                          onClick={() => handleDeleteList(saveListItem.listId)}
+                        >
                           리스트 삭제하기
                         </button>
                       </div>

@@ -1,7 +1,10 @@
 import IconFlower from '@repo/design-system/components/icons/IconFlower';
+import IconCheck from '@repo/design-system/components/icons/IconCheck';
+
 import { getIconColor } from '../../_utils/iconColor';
 import { useState } from 'react';
 import { cn } from '@repo/ui/lib/utils';
+import IconX from '@repo/design-system/components/icons/IconX';
 
 interface CreateListModalProps {
   onClose: () => void;
@@ -26,13 +29,18 @@ export function CreateListModal({ onClose, onComplete }: CreateListModalProps) {
 
   return (
     <div>
-      <div className="z-modal fixed animate-fadeIn" onClick={onClose} />
+      <div className="z-modal animate-fadeIn" onClick={onClose} />
       <div className="top-[108px] right-4 z-modal absolute flex flex-col justify-between bg-white px-[9.43px] md:px-[18px] py-[10.99px] md:py-[21px] rounded-[20px] w-[167px] md:w-[320px] md:h-[289px] animate-fadeIn">
-        <h2 className="pb-[6] md:pb-[20px] border-b border-b-[#BABABA] font-semibold md:text-[22px] text-xs">
-          {/* <div className="top-[108px] right-4 z-modal absolute flex flex-col justify-between bg-white px-[9.43px] py-[10.99px] rounded-[20px] w-[167px] animate-fadeIn"> */}
-          {/* <h2 className="border-b border-b-[#BABABA] font-semibold text-xs"> */}
-          새 리스트 추가
-        </h2>
+        <div className="flex justify-between border-b border-b-[#BABABA]">
+          <h2 className="pb-[6] md:pb-[20px] font-semibold md:text-[22px] text-xs">
+            {/* <div className="top-[108px] right-4 z-modal absolute flex flex-col justify-between bg-white px-[9.43px] py-[10.99px] rounded-[20px] w-[167px] animate-fadeIn"> */}
+            {/* <h2 className="border-b border-b-[#BABABA] font-semibold text-xs"> */}
+            새 리스트 추가
+          </h2>
+          <button onClick={onClose} className="w-[13px] md:w-5 h-[13px] md:h-5">
+            <IconX className="w-full h-full" />
+          </button>
+        </div>
         <input
           type="text"
           value={listName}
@@ -49,16 +57,22 @@ export function CreateListModal({ onClose, onComplete }: CreateListModalProps) {
           <div className="flex gap-[6.53px] md:gap-2">
             {/* <div className="flex gap-[6.53px]"> */}
             {colors.map((colorId) => (
-              <button
-                key={colorId}
-                onClick={() => setSelectedColor(colorId)}
-                className="border border-[#D5D5D5] rounded-[2.09px] w-[19.65px] md:w-[37.5px] aspect-square"
-                // className="border border-[#D5D5D5] rounded-[2.09px] w-[19.65px] aspect-square"
-              >
-                <IconFlower
-                  className={cn(getIconColor(colorId), 'w-full h-full')}
-                />
-              </button>
+              <div key={colorId} className="relative">
+                {selectedColor === colorId && (
+                  <div className="top-[-10%] right-1/2 absolute w-[30%] translate-x-1/2 transform">
+                    <IconCheck className="w-full h-full" />
+                  </div>
+                )}
+                <button
+                  onClick={() => setSelectedColor(colorId)}
+                  className="border border-[#D5D5D5] rounded-[2.09px] w-[19.65px] md:w-[37.5px] aspect-square"
+                  // className="border border-[#D5D5D5] rounded-[2.09px] w-[19.65px] aspect-square"
+                >
+                  <IconFlower
+                    className={cn(getIconColor(colorId), 'w-full h-full')}
+                  />
+                </button>
+              </div>
             ))}
           </div>
         </div>
