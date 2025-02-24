@@ -47,7 +47,7 @@ export function StoreInfo({
               className="flex items-center"
               onClick={() => setIsOperationHourOpen((prev) => !prev)}
             >
-              {/**TODO: 영업중 받아오기 or 오늘 날짜에 따라 계산 */}
+              {/**TODO:오늘 날짜에 따라 계산 */}
               <span className="mr-[11px] font-semibold">영업중</span>
               <span>19:00에 영업 종료</span>
               <div>
