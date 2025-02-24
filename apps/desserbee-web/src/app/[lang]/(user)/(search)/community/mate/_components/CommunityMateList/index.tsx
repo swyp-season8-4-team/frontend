@@ -3,6 +3,7 @@
 import { useContext, useEffect, useRef } from "react";
 import { CommunityMateContext } from "../../_contexts/CommunityMateContext";
 import CommunityMateCard from "../CommunityMateCard";
+import { nanoid } from "nanoid";
 
 export default function CommunityMateList() {
   const { mates, isLast, loadMore } = useContext(CommunityMateContext);
@@ -11,7 +12,6 @@ export default function CommunityMateList() {
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        console.log(entries[0].isIntersecting, isLast);
         if (entries[0].isIntersecting && !isLast) {
           loadMore();
         }
@@ -33,7 +33,7 @@ export default function CommunityMateList() {
       {mates.map((mate) => {
         return (
           <CommunityMateCard
-            key={mate.id}
+            key={nanoid(10)}
             mate={mate}
           />
         )
