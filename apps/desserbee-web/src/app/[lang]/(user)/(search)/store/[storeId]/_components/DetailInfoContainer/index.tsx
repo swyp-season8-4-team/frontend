@@ -10,9 +10,7 @@ import { useContext } from 'react';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { CouponIsNotReadyModal } from '../../../../map/_modals/CouponIsNotReadyModal';
 
-interface DetailInfoContainerProps extends StoreDetailInfoData {
-  contents: string[];
-}
+interface DetailInfoContainerProps extends StoreDetailInfoData {}
 
 export function DetailInfoContainer({
   name,
@@ -25,13 +23,13 @@ export function DetailInfoContainer({
   phone,
   storeLink,
   description,
-  contents,
   storeImages,
   ownerPickImages,
   latitude,
   longitude,
   holidays,
   notice,
+  topPreferences,
 
   // TODO: 가게 위도, 경도 받아와야함 (길찾기)
 }: DetailInfoContainerProps) {
@@ -51,7 +49,7 @@ export function DetailInfoContainer({
   };
 
   const hexagonGridProps = {
-    contents,
+    contents: topPreferences,
     previewImages: storeImages,
     ownerPickImages,
   };

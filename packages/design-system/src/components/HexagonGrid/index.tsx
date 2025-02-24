@@ -26,8 +26,14 @@ function Hexagon({ className, content, imgSrc }: HexagonProps) {
       )}
     >
       {content && (
-        <div className="absolute inset-0 flex justify-center items-center font-bold text-[10px] text-white md:text-[16.8px]">
-          {content}
+        <div className="absolute inset-0 flex-col justify-center items-center px-1 font-bold text-[10px] text-white md:text-[16.8px] text-center leading-none p">
+          <div className="flex flex-col justify-center items-center h-full">
+            {content.split(' ').map((word, index) => (
+              <span key={index} className="block w-full">
+                {word}
+              </span>
+            ))}
+          </div>
         </div>
       )}
 
