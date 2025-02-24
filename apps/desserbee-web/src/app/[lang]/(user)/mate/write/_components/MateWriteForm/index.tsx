@@ -36,7 +36,7 @@ export default function MateWriteForm() {
     e.preventDefault();
     // TODO: 폼 제출 로직 구현
 
-    router.replace(NavigationPathname.CommunityMate);
+    router.replace(NavigationPathname.CommunityDessertMate);
   };
 
   return (

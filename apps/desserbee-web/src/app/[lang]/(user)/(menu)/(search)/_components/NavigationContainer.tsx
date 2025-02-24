@@ -5,7 +5,7 @@ import IconLocationOutline from '@repo/design-system/components/icons/IconLocati
 import IconTalkOutline from '@repo/design-system/components/icons/IconTalkOutline';
 import IconProfileOutline from '@repo/design-system/components/icons/IconProfileOutline';
 import { NavigationPathname } from '@repo/entity/src/navigation';
-import NavBar from '@repo/design-system/components/Navbar';
+import NavBar from '@/app/[lang]/_components/Navbar';
 
 const NAVBAR_BUTTON_CONTENT = [
   {
