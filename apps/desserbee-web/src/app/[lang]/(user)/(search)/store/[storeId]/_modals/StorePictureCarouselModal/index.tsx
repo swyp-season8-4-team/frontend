@@ -21,7 +21,6 @@ export function StorePictureCarouselModal({
   const imagesPerPage = 6;
   const totalPages = Math.ceil(images.length / imagesPerPage);
 
-  // 페이지별로 이미지 나누기
   const getPageImages = (pageIndex: number) => {
     const startIndex = pageIndex * imagesPerPage;
     return images.slice(startIndex, startIndex + imagesPerPage);
