@@ -111,7 +111,7 @@ export function SideBarContainer({
     <SideBar
       {...{
         className:
-          'fixed top-[100px] w-1/2 right-4 h-[calc(100dvh-287px)] cursor-pointer',
+          'fixed top-[135px] w-1/2 right-4 h-[calc(100dvh-287px)] cursor-pointer',
         isSideBarOpen: showSidebar,
         handleSideBarClose,
       }}

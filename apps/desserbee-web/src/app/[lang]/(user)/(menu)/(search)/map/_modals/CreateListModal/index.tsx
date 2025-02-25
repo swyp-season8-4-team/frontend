@@ -30,7 +30,7 @@ export function CreateListModal({ onClose, onComplete }: CreateListModalProps) {
   return (
     <div>
       <div className="z-modal animate-fadeIn" onClick={onClose} />
-      <div className="top-[108px] right-4 z-modal absolute flex flex-col justify-between bg-white px-[9.43px] md:px-[18px] py-[10.99px] md:py-[21px] rounded-[20px] w-[167px] md:w-[320px] md:h-[289px] animate-fadeIn">
+      <div className="top-[138px] right-4 z-modal absolute flex flex-col justify-between bg-white px-[9.43px] md:px-[18px] py-[10.99px] md:py-[21px] rounded-[20px] w-[167px] md:w-[320px] md:h-[289px] animate-fadeIn">
         <div className="flex justify-between border-b border-b-[#BABABA]">
           <h2 className="pb-[6] md:pb-[20px] font-semibold md:text-[22px] text-xs">
             {/* <div className="top-[108px] right-4 z-modal absolute flex flex-col justify-between bg-white px-[9.43px] py-[10.99px] rounded-[20px] w-[167px] animate-fadeIn"> */}
