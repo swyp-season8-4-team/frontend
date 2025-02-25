@@ -41,10 +41,12 @@ export function StoreListContainer({
   };
 
   const handleEditBtnClick = () => {
+    if (!isEditing) setSelectedStoreUuId(null);
     setIsEditing((prev) => !prev);
   };
 
   const handleStoreSelectBtnClick = (storeUuId: string) => {
+    if (!isEditing) return;
     setSelectedStoreUuId(storeUuId);
   };
 
@@ -98,6 +100,7 @@ export function StoreListContainer({
         <div className="[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] overflow-y-auto [scrollbar-width:none]">
           {storesInSavedList.storeData.map((store, index) => (
             <div
+              onClick={() => handleStoreSelectBtnClick(store.storeUuid)}
               key={store.storeName}
               className={cn(
                 'relative px-[9.73px] py-[5.52px] md:py-[22.96px] md:px-[49px]',
@@ -106,7 +109,6 @@ export function StoreListContainer({
             >
               {isEditing && (
                 <button
-                  onClick={() => handleStoreSelectBtnClick(store.storeUuid)}
                   className={cn(
                     selectedStoreUuId === store.storeUuid
                       ? 'bg-[#DE8332]'
