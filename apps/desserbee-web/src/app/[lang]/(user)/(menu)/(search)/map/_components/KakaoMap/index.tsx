@@ -110,8 +110,17 @@ export function KakaoMap({
   preferenceCategories,
 }: KakaoMapProps) {
   const router = useRouter();
-
   const mapRef = useRef<HTMLDivElement>(null);
+  const servicesRef = useRef<{
+    mapService: MapService | null;
+    geoService: GeolocationService | null;
+    storeService: StoreService | null;
+  }>({
+    mapService: null,
+    geoService: null,
+    storeService: null,
+  });
+
   const [currentPosition, setCurrentPosition] = useState<MapPosition>({
     latitude: 0,
     longitude: 0,
@@ -123,15 +132,6 @@ export function KakaoMap({
   const [error, setError] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
-  const [services, setServices] = useState<{
-    mapService: MapService | null;
-    geoService: GeolocationService | null;
-    storeService: StoreService | null;
-  }>({
-    mapService: null,
-    geoService: null,
-    storeService: null,
-  });
   const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
 
   const FETCH_RADIUS_KM = 3;
@@ -180,10 +180,15 @@ export function KakaoMap({
   );
 
   const handleMoveToCurrentPosition = useCallback(() => {
-    if (services.mapService && isMapLoaded) {
-      services.mapService.setMapCenter(currentPosition);
+    if (servicesRef.current.mapService && isMapLoaded) {
+      servicesRef.current.mapService.setMapCenter(currentPosition);
     }
-  }, [services.mapService, isMapLoaded, currentPosition]);
+  }, [
+    servicesRef.current.mapService,
+    isMapLoaded,
+    currentPosition,
+    servicesRef.current,
+  ]);
 
   const mapPanelProps = useMemo(
     () => ({
@@ -199,13 +204,14 @@ export function KakaoMap({
   const fetchNearbyStores = useCallback(
     async (position: MapPosition) => {
       try {
-        if (!services.storeService) return null;
+        if (!servicesRef.current.storeService) return null;
 
-        const nearByStores = await services.storeService.getNearbyStores({
-          latitude: position.latitude,
-          longitude: position.longitude,
-          radius: FETCH_RADIUS_KM,
-        });
+        const nearByStores =
+          await servicesRef.current.storeService.getNearbyStores({
+            latitude: position.latitude,
+            longitude: position.longitude,
+            radius: FETCH_RADIUS_KM,
+          });
 
         setNearByStores(nearByStores);
 
@@ -225,12 +231,12 @@ export function KakaoMap({
         return null;
       }
     },
-    [retryCount, services.storeService],
+    [retryCount, servicesRef.current.storeService],
   );
 
   const updateNearbyStores = useCallback(
     async (position: MapPosition) => {
-      if (!areServicesInitialized(services)) {
+      if (!areServicesInitialized(servicesRef.current)) {
         console.log('서비스가 초기화되지 않음, 가게 정보 업데이트 스킵');
         return;
       }
@@ -241,7 +247,7 @@ export function KakaoMap({
 
         if (nearByStores) {
           console.log('새로운 가게 마커 추가 시작');
-          await services.mapService?.addMarkersWithClustering(
+          await servicesRef.current.mapService?.addMarkersWithClustering(
             nearByStores,
             storeMarkerImage.src,
             handleStoreMarkerClick,
@@ -259,14 +265,14 @@ export function KakaoMap({
         console.log('가게 정보 업데이트 프로세스 완료');
       }
     },
-    [services, handleStoreMarkerClick, nearByStores],
+    [servicesRef, handleStoreMarkerClick, nearByStores],
   );
 
   const onPositionSuccess = useCallback(
     async (position: MapPosition) => {
       console.log('위치 업데이트 콜백 실행', position);
 
-      if (!areServicesInitialized(services)) {
+      if (!areServicesInitialized(servicesRef.current)) {
         console.log('서비스가 초기화되지 않음, 위치 업데이트 스킵');
         return;
       }
@@ -287,10 +293,10 @@ export function KakaoMap({
 
       try {
         console.log('현재 위치 마커 제거 시작');
-        await services.mapService?.removeCurrentPositionMarker();
+        await servicesRef.current.mapService?.removeCurrentPositionMarker();
 
         console.log('새로운 현재 위치 마커 추가');
-        await services.mapService?.addCurrentPositionMaker(
+        await servicesRef.current.mapService?.addCurrentPositionMaker(
           position,
           userMarkerImage.src,
         );
@@ -325,7 +331,6 @@ export function KakaoMap({
       }
     },
     [
-      services,
       calculateDistance,
       lastFetchPosition,
       updateNearbyStores,
@@ -416,12 +421,12 @@ export function KakaoMap({
 
   useEffect(() => {
     return () => {
-      if (services.geoService && services.mapService) {
-        services.geoService.stopWatchingPosition();
-        services.mapService.removeCurrentPositionMarker();
+      if (servicesRef.current.geoService && servicesRef.current.mapService) {
+        servicesRef.current.geoService.stopWatchingPosition();
+        servicesRef.current.mapService.removeCurrentPositionMarker();
       }
     };
-  }, [services]);
+  }, [servicesRef]);
 
   return (
     <div>
@@ -430,9 +435,6 @@ export function KakaoMap({
         strategy="afterInteractive"
         async
         src={KAKAO_MAP_API_URL}
-        onLoad={() => {
-          console.log('카카오맵 스크립트 onLoad 이벤트 발생');
-        }}
         onReady={() => {
           console.log('카카오맵 스크립트 onReady 이벤트 발생');
           window.kakao.maps.load(async () => {
@@ -451,7 +453,8 @@ export function KakaoMap({
                 throw new Error('서비스 초기화 실패');
               }
 
-              setServices(initializedServices);
+              // useRef를 사용하여 서비스 인스턴스 저장
+              servicesRef.current = initializedServices;
               setIsMapLoaded(true);
               console.log('지도 로딩 시작 전 상태 설정 완료');
 
