@@ -142,7 +142,62 @@ export interface StoreSummaryInfoData
 
 export interface StoreDetailInfoRequest {
   storeUuid: string;
-  // TODO: USER 객체 (이야기했었는데,, 자세한 필드 모름)
+  user: {
+    //USER 객체 통채로 보내야함
+    id: number;
+    userUuid: string;
+    email: string;
+    password: string;
+    name: string;
+    nickname: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string;
+    phoneNumber: string;
+    address: string;
+    gender: string;
+    userRoles: [
+      {
+        id: number;
+        user: string;
+        role: {
+          id: number;
+          name: string;
+        };
+      },
+    ];
+    auths: [
+      {
+        id: number;
+        user: string;
+        provider: string;
+        providerId: string;
+        refreshToken: string;
+        refreshTokenExpiresAt: string;
+        active: boolean;
+        createdAt: string;
+        updatedAt: string;
+      },
+    ];
+    userPreferences: [
+      {
+        id: number;
+        user: string;
+        preference: {
+          id: number;
+          preferenceName: string;
+          preferenceDesc: string;
+          userPreferences: string[];
+        };
+      },
+    ];
+    mbti: {
+      id: number;
+      mbtiType: string;
+      mbtiName: string;
+      mbtiDesc: string;
+    };
+  };
 }
 
 export interface StoreDetailInfoData
@@ -202,7 +257,7 @@ export interface RegisterStoreRequest
     | 'description'
     | 'notice'
   > {
-  userUuid: string; // TODO: 이거 토큰에 담아서 인증으로 보내는 건지 모르겠음
+  userUuid: string;
   menus: Menu[];
   storeImageFiles?: File[];
   ownerPickImageFiles?: File[];
@@ -242,8 +297,8 @@ export interface RegisterStoreResponse
   totalReviewCount: number;
   storeReviews: any[]; //OneLineReview[]; //TODO: 어떻게 오는지 모름 (질문하기)
   mate: any[]; // TODO: Mate 타입 모름
-  saved: SavedList['saved']; // TODO: 필수..?
-  savedListId: SavedList['savedListId']; // TODO: 필수..?
+  saved: SavedList['saved'];
+  savedListId: SavedList['savedListId'];
 }
 
 export interface EditStoreRequest
@@ -330,10 +385,30 @@ export interface StoreInSavedListRequest {
   listId: number;
 }
 
-export interface StoreInSavedListResponse {
+// export interface StoreInSavedListResponse {
+//   listId: number;
+//   listName: string;
+//   iconColorId: number;
+// }
+
+export interface StoreInfoData {
+  userUuid: string;
+  storeUuid: string;
   listId: number;
   listName: string;
+  storeName: string;
+  storeAddress: string;
+  imageUrls: string[];
+  userPreference: string[];
+}
+
+export interface StoreInSavedListResponse {
+  listId: number;
+  userUuid: string;
+  listName: string;
   iconColorId: number;
+  storeCount: number;
+  storeData: StoreInfoData[];
 }
 
 export interface StoresInSavedListRequest {
@@ -422,7 +497,8 @@ export interface CreateMenuRequestFormData {
 export interface EditMenuRequest {
   storeUuid: string;
   menuUuid: string;
-  file: File; // TODO: file 바로 보내면된다는건지,,
+  imageFileKey: string;
+  file: File; // imageFileKey에  해당 파일 이름 담아 보내야함
 }
 
 export interface DeleteMenuRequest {
