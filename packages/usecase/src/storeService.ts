@@ -62,6 +62,7 @@ export default class StoreService {
     const requestData = {
       data: {
         storeUuid,
+        user: null,
       },
     };
 

@@ -21,13 +21,19 @@ function Hexagon({ className, content, imgSrc }: HexagonProps) {
         'w-[36%] absolute ',
         'before:content-[""] before:block before:pt-[86.6%]',
         'before:[clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)]',
-        'before:bg-primary',
+        imgSrc ? 'before:bg-[#D2D2D2]' : 'before:bg-primary',
         className,
       )}
     >
       {content && (
-        <div className="absolute inset-0 flex justify-center items-center font-bold text-[10px] text-white md:text-[16.8px]">
-          {content}
+        <div className="absolute inset-0 flex-col justify-center items-center px-1 font-bold text-[10px] text-white md:text-[16.8px] text-center leading-none p">
+          <div className="flex flex-col justify-center items-center h-full">
+            {content.split(' ').map((word, index) => (
+              <span key={index} className="block w-full">
+                {word}
+              </span>
+            ))}
+          </div>
         </div>
       )}
 

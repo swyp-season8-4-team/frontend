@@ -10,7 +10,7 @@ export interface Store {
   storeLink: string;
   latitude: number;
   longitude: number;
-  description: string;
+  description?: string;
   animalYn: boolean;
   parkingYn: boolean;
   tumblerYn: boolean;
@@ -18,43 +18,45 @@ export interface Store {
   holidays: HolidaysItem[];
   averageRating: number;
   notice: string[];
-  status: boolean;
+  status?: string;
   createdAt?: string;
   updatedAt?: string;
+  tagIds: number[];
   tags: string[];
+  topPreferences: string[];
+  storeImages?: string[];
+  ownerPickImages?: string[];
 }
 
 export interface Menu {
-  menuUuid: string;
+  menuUuid?: string;
   name: string;
   price: number;
-  isPopular: boolean;
-  description: string;
-  images?: string[];
+  isPopular?: boolean;
+  description?: string | null;
+  imageFileKey?: string | null; // 파일명임. 확장자 포함해야함 ex) menu_cake6.jpeg"
+  images?: string[]; // 응답
 }
 
 export interface OperatingHoursItem {
   dayOfWeek: string;
-  openingTime: {
-    hour: number;
-    minute: number;
-    second: number;
-    nano: number;
-  };
-  closingTime: {
-    hour: number;
-    minute: number;
-    second: number;
-    nano: number;
-  };
-  lastOrderTime: {
-    hour: number;
-    minute: number;
-    second: number;
-    nano: number;
-  };
+  openingTime: string;
+  closingTime: string;
+  lastOrderTime: string;
   isClosed: boolean;
 }
+// openingTime: {
+//   hour: number;
+//   minute: number;
+// };
+// closingTime: {
+//   hour: number;
+//   minute: number;
+// };
+// lastOrderTime: {
+//   hour: number;
+//   minute: number;
+// };
 
 export interface HolidaysItem {
   date: string;
@@ -79,6 +81,11 @@ export interface StoreCoupon {
   expiryDate: string;
 }
 
+export interface SavedList {
+  saved: boolean;
+  savedListId: number | null;
+}
+
 // export type StoreTag = '베이커리' | '루프탑 있음' | '애완동물 동반 가능'; // TODO: 전체 카테고리 정리하기
 
 // store
@@ -88,19 +95,33 @@ export interface NearByStoreRequest {
   radius: number;
 }
 
+export interface NearbyFilteredStoresRequest {
+  latitude: number;
+  longitude: number;
+  radius: number;
+  preferenceTagId: number[]; //TODO: 태그 여러 개 선택해야된다고 말씀드리기
+}
+
+export interface NearByStoreSearchRequest {
+  latitude: number;
+  longitude: number;
+  radius: number;
+  searchKeyword: string;
+}
+
 export type NearByStoreData = Pick<
   Store,
   'storeId' | 'storeUuid' | 'name' | 'address' | 'latitude' | 'longitude'
 >;
 
 export interface StoreSummaryInfoRequest {
-  // TODO: api 아직
   storeUuid: string;
 }
 
-export interface StoreSummaryInfoData // TODO: api 아직
+export interface StoreSummaryInfoData
   extends Pick<
     Store,
+    | 'storeId'
     | 'storeUuid'
     | 'name'
     | 'address'
@@ -114,21 +135,76 @@ export interface StoreSummaryInfoData // TODO: api 아직
     | 'operatingHours'
     | 'tags'
     | 'holidays'
-  > {
-  // userId: number;
-  // userUuid: string;
-  storeImages?: string[];
-  ownerPickImages?: string[];
-}
+    | 'storeImages'
+    | 'ownerPickImages'
+    | 'topPreferences'
+  > {}
 
 export interface StoreDetailInfoRequest {
-  // TODO: api 아직
   storeUuid: string;
+  // user: {
+  //   //USER 객체 통채로 보내야함
+  //   id: number;
+  //   userUuid: string;
+  //   email: string;
+  //   password: string;
+  //   name: string;
+  //   nickname: string;
+  //   createdAt: string;
+  //   updatedAt: string;
+  //   deletedAt: string;
+  //   phoneNumber: string;
+  //   address: string;
+  //   gender: string;
+  //   userRoles: [
+  //     {
+  //       id: number;
+  //       user: string;
+  //       role: {
+  //         id: number;
+  //         name: string;
+  //       };
+  //     },
+  //   ];
+  //   auths: [
+  //     {
+  //       id: number;
+  //       user: string;
+  //       provider: string;
+  //       providerId: string;
+  //       refreshToken: string;
+  //       refreshTokenExpiresAt: string;
+  //       active: boolean;
+  //       createdAt: string;
+  //       updatedAt: string;
+  //     },
+  //   ];
+  //   userPreferences: [
+  //     {
+  //       id: number;
+  //       user: string;
+  //       preference: {
+  //         id: number;
+  //         preferenceName: string;
+  //         preferenceDesc: string;
+  //         userPreferences: string[];
+  //       };
+  //     },
+  //   ];
+  //   mbti: {
+  //     id: number;
+  //     mbtiType: string;
+  //     mbtiName: string;
+  //     mbtiDesc: string;
+  //   };
+  // };
 }
 
-export interface StoreDetailInfoData // TODO: api 아직
+export interface StoreDetailInfoData
   extends Pick<
     Store,
+    | 'storeId'
+    | 'storeUuid'
     | 'name'
     | 'address'
     | 'phone'
@@ -141,49 +217,155 @@ export interface StoreDetailInfoData // TODO: api 아직
     | 'longitude'
     | 'description'
     | 'operatingHours'
-    | 'tags'
     | 'holidays'
     | 'notice'
+    | 'storeImages'
+    | 'tags'
+    | 'topPreferences'
+    | 'ownerPickImages'
+    | 'storeImages'
   > {
-  storeImages: string[];
-  ownerPickImages: string[];
+  userId: number | null; //userId, userUuid는 현재 인증된(로그인한) 사용자의 id (<--왜 주는건지..?)
+  userUuid: string | null;
+  ownerId: number;
+  ownerUuid: string;
+  menus: Menu[];
+  totalReviewCount: number;
+  storeReviews: any[]; //OneLineReview[]; // TODO: 필드 확인해야함
+  mate: any[]; //TODO: 메이트 타입 모름
+  saved: SavedList['saved'];
+  savedListId: SavedList['savedListId'];
 }
 
-export interface RegisterStoreRequest // TODO: api 아직
+export interface RegisterStoreRequest
+  extends Pick<
+    Store,
+    | 'name'
+    | 'phone'
+    | 'address'
+    | 'storeLink'
+    | 'latitude'
+    | 'longitude'
+    | 'animalYn'
+    | 'tumblerYn'
+    | 'parkingYn'
+    | 'averageRating'
+    | 'tagIds'
+    | 'status'
+    | 'operatingHours'
+    | 'holidays'
+    | 'description'
+    | 'notice'
+  > {
+  userUuid: string;
+  menus: Menu[];
+  storeImageFiles?: File[];
+  ownerPickImageFiles?: File[];
+  menuImageFiles?: File[];
+}
+
+export interface RegisterStoreResponse
   extends Pick<
     Store,
     | 'storeId'
     | 'storeUuid'
     | 'name'
     | 'phone'
+    | 'address'
     | 'storeLink'
+    | 'description'
+    | 'latitude'
+    | 'longitude'
     | 'animalYn'
     | 'tumblerYn'
     | 'parkingYn'
     | 'averageRating'
-    | 'tags'
+    | 'tagIds'
+    | 'status'
     | 'operatingHours'
     | 'holidays'
+    | 'notice'
+    | 'tags'
+    | 'topPreferences'
+    | 'storeImages'
+    | 'ownerPickImages'
   > {
   userId: number;
-  userUuid: string;
+  userUuid: string | null; // TODO: null..?
+  ownerId: number;
   menus: Menu[];
-  storeImages?: string[];
-  ownerPickImages?: string[];
-  storeReviews: OneLineReview[];
+  totalReviewCount: number;
+  storeReviews: any[]; //OneLineReview[]; //TODO: 어떻게 오는지 모름 (질문하기)
+  mate: any[]; // TODO: Mate 타입 모름
+  saved: SavedList['saved'];
+  savedListId: SavedList['savedListId'];
 }
 
-export interface RegisterStoreResponse {} // TODO: api 아직
+export interface EditStoreRequest
+  extends Pick<
+    Store,
+    | 'storeId'
+    | 'storeUuid'
+    | 'name'
+    | 'phone'
+    | 'address'
+    | 'storeLink'
+    | 'description'
+    | 'animalYn'
+    | 'tumblerYn'
+    | 'parkingYn'
+    | 'averageRating'
+    | 'operatingHours'
+    | 'holidays'
+    | 'notice'
+    | 'tags'
+    | 'topPreferences'
+    | 'storeImages'
+    | 'ownerPickImages'
+  > {
+  menus: Menu[];
+  totalReviewCount: number;
+  storeReviews: any[]; // TODO
+  mate: any[]; //TODO
+  menuImageFiles: File[]; // 파일명 확장자까지
+  storeImageFiles: File[]; // 파일명 확장자까지
+}
 
-export interface EditStoreRequest {
-  storeUuid: string;
-} // TODO: api 아직
-
-export interface EditStoreResponse {} // TODO: api 아직
+export interface EditStoreResponse
+  extends Pick<
+    Store,
+    | 'storeId'
+    | 'storeUuid'
+    | 'name'
+    | 'address'
+    | 'phone'
+    | 'storeLink'
+    | 'animalYn'
+    | 'tumblerYn'
+    | 'parkingYn'
+    | 'description'
+    | 'averageRating'
+    | 'storeImages'
+    | 'ownerPickImages'
+    | 'tags'
+    | 'notice'
+    | 'operatingHours'
+    | 'holidays'
+    | 'topPreferences'
+  > {
+  userId: number | null;
+  userUuid: string | null;
+  ownerId: number;
+  ownerUuid: string;
+  menus: Menu[];
+  totalReviewCount: number;
+  storeReviews: any[]; //TODO
+  mate: any[]; //TODO
+}
 
 export interface DeleteStoreRequest {
   storeUuid: string;
-} // TODO: api 아직
+}
 
 // saved list
 export interface SavedListRequest {
@@ -192,10 +374,41 @@ export interface SavedListRequest {
 
 export interface SavedListData {
   listId: number;
+  userUuid: string;
   listName: string;
   iconColorId: number;
   storeCount: number;
+}
+
+// 상세정보에서 사용
+export interface StoreInSavedListRequest {
+  listId: number;
+}
+
+// export interface StoreInSavedListResponse {
+//   listId: number;
+//   listName: string;
+//   iconColorId: number;
+// }
+
+export interface StoreInfoData {
   userUuid: string;
+  storeUuid: string;
+  listId: number;
+  listName: string;
+  storeName: string;
+  storeAddress: string;
+  imageUrls: string[];
+  userPreference: string[];
+}
+
+export interface StoreInSavedListResponse {
+  listId: number;
+  userUuid: string;
+  listName: string;
+  iconColorId: number;
+  storeCount: number;
+  storeData: StoreInfoData[];
 }
 
 export interface StoresInSavedListRequest {
@@ -218,6 +431,7 @@ export interface CreateSavedListRequest {
 }
 
 export interface CreateSavedListResponse {
+  listId: number;
   userUuid: string;
   listName: string;
   iconColorId: number;
@@ -231,6 +445,7 @@ export interface EditSavedListRequest {
 }
 
 export interface EditSavedListResponse {
+  listId: number;
   userUuid: string;
   listName: string;
   iconColorId: number;
@@ -240,15 +455,18 @@ export interface EditSavedListResponse {
 export interface AddStoreInSavedListRequest {
   listId: number;
   storeUuid: string;
+  userPreferences: string[];
 }
 
 export interface AddStoreInSavedListResponse {
   userUuid: string;
   storeUuid: string;
+  listId: number;
   listName: string;
   storeName: string;
   storeAddress: string;
   imageUrls: string[];
+  userPreferences: string[];
 }
 
 export interface DeleteSavedListRequest {
@@ -264,14 +482,23 @@ export interface DeleteStoreInSavedListRequest {
 export interface Id {
   storeUuid: string;
 }
-export interface CreateMenuRequest extends Omit<Menu, 'menuUuid'> {
+
+export interface CreateMenuRequest
+  extends Pick<Menu, 'name' | 'price' | 'isPopular' | 'description'> {}
+
+export type MenuRequests = CreateMenuRequest | CreateMenuRequest[];
+
+export interface CreateMenuRequestFormData {
   storeUuid: string;
+  requests: MenuRequests;
+  menuImages?: File | File[];
 }
 
 export interface EditMenuRequest {
   storeUuid: string;
   menuUuid: string;
-  file: string;
+  imageFileKey: string;
+  file: File; // imageFileKey에  해당 파일 이름 담아 보내야함
 }
 
 export interface DeleteMenuRequest {
@@ -292,6 +519,19 @@ export interface StoreRepository {
   // store
   getNearbyStores(
     data: BaseRequestData<NearByStoreRequest>,
+  ): Promise<NearByStoreData[]>;
+
+  getNearbyFilteredStores(
+    data: BaseRequestData<NearbyFilteredStoresRequest>,
+  ): Promise<NearByStoreData[]>;
+
+  getNearbyPreferStores({
+    authorization,
+    data,
+  }: BaseRequestData<NearByStoreRequest>): Promise<NearByStoreData[]>;
+
+  getNearBySearchStores(
+    data: BaseRequestData<NearByStoreSearchRequest>,
   ): Promise<NearByStoreData[]>;
 
   getStoreSummary(
@@ -343,6 +583,12 @@ export interface StoreRepository {
     data,
   }: BaseRequestData<DeleteStoreInSavedListRequest>): Promise<void>;
 
+  // 상세정보에서 사용
+  getStoreInSavedList({
+    authorization,
+    data,
+  }: BaseRequestData<StoreInSavedListRequest>): Promise<StoreInSavedListResponse>;
+
   getStoresInSavedList({
     authorization,
     data,
@@ -359,7 +605,7 @@ export interface StoreRepository {
   createMenu({
     authorization,
     data,
-  }: BaseRequestData<CreateMenuRequest>): Promise<void>;
+  }: BaseRequestData<CreateMenuRequestFormData>): Promise<void>;
 
   editMenu({
     authorization,

@@ -89,6 +89,14 @@ export default class KakaoMapController implements MapController {
     this.map.setCenter(position);
   }
 
+  getMapCenter() {
+    if (!this.map) {
+      throw new Error('Map is not initialized');
+    }
+
+    return this.map.getCenter();
+  }
+
   relayout(): void {
     if (!this.map) {
       throw new Error('Map is not initialized');

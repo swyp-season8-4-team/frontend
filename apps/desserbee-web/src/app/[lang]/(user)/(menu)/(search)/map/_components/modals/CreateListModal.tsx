@@ -26,11 +26,11 @@ export function CreateListModal({ onClose, onComplete }: CreateListModalProps) {
 
   return (
     <div>
-      <div className="fixed z-modal animate-fadeIn" onClick={onClose} />
-      <div className="flex flex-col justify-between absolute top-[108px] right-4 z-modal w-[167px] md:px-[18px] md:py-[21px] bg-white rounded-[20px] px-[9.43px] md:h-[289px] md:w-[320px] py-[10.99px] animate-fadeIn">
-        <h2 className="text-xs font-semibold md:text-[22px] md:pb-[20px]  pb-[6] border-b border-b-[#BABABA]">
-          {/* <div className="flex flex-col justify-between absolute top-[108px] right-4 z-modal w-[167px]   bg-white rounded-[20px] px-[9.43px] py-[10.99px] animate-fadeIn"> */}
-          {/* <h2 className="text-xs font-semibold    border-b border-b-[#BABABA]"> */}
+      <div className="z-modal fixed animate-fadeIn" onClick={onClose} />
+      <div className="top-[108px] right-4 z-modal absolute flex flex-col justify-between bg-white px-[9.43px] md:px-[18px] py-[10.99px] md:py-[21px] rounded-[20px] w-[167px] md:w-[320px] md:h-[289px] animate-fadeIn">
+        <h2 className="pb-[6] md:pb-[20px] border-b border-b-[#BABABA] font-semibold md:text-[22px] text-xs">
+          {/* <div className="top-[108px] right-4 z-modal absolute flex flex-col justify-between bg-white px-[9.43px] py-[10.99px] rounded-[20px] w-[167px] animate-fadeIn"> */}
+          {/* <h2 className="border-b border-b-[#BABABA] font-semibold text-xs"> */}
           새 리스트 추가
         </h2>
         <input
@@ -38,22 +38,22 @@ export function CreateListModal({ onClose, onComplete }: CreateListModalProps) {
           value={listName}
           onChange={(e) => setListName(e.target.value)}
           placeholder="새 리스트명을 입력해주세요"
-          className="w-full border-b border-b-[#393939] p-[3.75px] text-[10px] md:text-lg mb-[7.33px]"
-          // className="w-full border-b border-b-[#393939] p-[3.75px] text-[10px] mb-[7.33px]"
+          className="mb-[7.33px] p-[3.75px] border-b border-b-[#393939] w-full text-[10px] md:text-lg"
+          // className="mb-[7.33px] p-[3.75px] border-b border-b-[#393939] w-full text-[10px]"
         />
         <div className="mb-[10.82px]">
-          <p className="font-semibold text-[10px] md:text-lg mb-2">
+          <p className="mb-2 font-semibold text-[10px] md:text-lg">
             아이콘 선택
           </p>
-          {/* <p className="font-semibold text-[10px] mb-2">아이콘 선택</p> */}
-          <div className="flex gap-[6.53px] md:gap-2 ">
-            {/* <div className="flex gap-[6.53px] "> */}
+          {/* <p className="mb-2 font-semibold text-[10px]">아이콘 선택</p> */}
+          <div className="flex gap-[6.53px] md:gap-2">
+            {/* <div className="flex gap-[6.53px]"> */}
             {colors.map((colorId) => (
               <button
                 key={colorId}
                 onClick={() => setSelectedColor(colorId)}
-                className="border-[#D5D5D5] border rounded-[2.09px] w-[19.65px] md:w-[37.5px] aspect-square"
-                // className="border-[#D5D5D5] border rounded-[2.09px] w-[19.65px]  aspect-square"
+                className="border border-[#D5D5D5] rounded-[2.09px] w-[19.65px] md:w-[37.5px] aspect-square"
+                // className="border border-[#D5D5D5] rounded-[2.09px] w-[19.65px] aspect-square"
               >
                 <IconFlower
                   className={cn(getIconColor(colorId), 'w-full h-full')}
