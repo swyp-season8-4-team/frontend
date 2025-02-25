@@ -6,6 +6,7 @@ import { useRef, useState } from 'react';
 interface SideBarProps extends WithChildren, WithClassName {
   isSideBarOpen: boolean;
   handleSideBarClose: () => void;
+  isCloseBtnShow?: boolean;
 }
 
 export function SideBar({
@@ -13,6 +14,7 @@ export function SideBar({
   className,
   isSideBarOpen,
   handleSideBarClose,
+  isCloseBtnShow = true,
 }: SideBarProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -77,12 +79,14 @@ export function SideBar({
           onMouseUp={handleTouchEnd}
           onMouseLeave={handleTouchEnd}
         >
-          <button
-            className="hidden md:block top-7 right-[26.19px] md:absolute"
-            onClick={handleSideBarClose}
-          >
-            <IconX />
-          </button>
+          {isCloseBtnShow && (
+            <button
+              className="hidden md:block top-7 right-[26.19px] md:absolute"
+              onClick={handleSideBarClose}
+            >
+              <IconX />
+            </button>
+          )}
           {children}
         </div>
       )}

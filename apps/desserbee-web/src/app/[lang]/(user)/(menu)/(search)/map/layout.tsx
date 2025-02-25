@@ -8,6 +8,7 @@ export default async function MapLayout({
   bottomSheet: React.ReactNode;
   sidebar: React.ReactNode;
   children: React.ReactNode;
+  list: React.ReactNode;
 }) {
   const headerList = await headers();
   const authorization = headerList.get('authorization');

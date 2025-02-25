@@ -11,6 +11,7 @@ import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { CreateListModal } from '../../../_modals/CreateListModal';
 import type { SavedListData } from '@repo/entity/src/store';
 import { useRouter } from 'next/navigation';
+import { NavigationPathGroup } from '@repo/entity/src/navigation';
 
 interface SideBarContainerProps {
   showSidebar: boolean;
@@ -30,7 +31,8 @@ export function SideBarContainer({
   const { push, pop } = useContext(PortalContext);
 
   const handleSideBarClose = () => {
-    router.back();
+    const currentPath = window.location.pathname;
+    router.push(currentPath);
   };
 
   const handleCreateListComplete = (listName: string, colorId: number) => {
@@ -54,6 +56,10 @@ export function SideBarContainer({
         />
       ),
     });
+  };
+
+  const handleListClick = (listId: number) => {
+    router.push(`${NavigationPathGroup.Map + '?listId=' + listId}`); // TODO: UUID로 보내달라고 하기, listName, IconColorId도 보내달라고 하기
   };
 
   const handleDotsClick = (listId: number, e: React.MouseEvent) => {
@@ -104,7 +110,8 @@ export function SideBarContainer({
   return (
     <SideBar
       {...{
-        className: 'fixed top-[100px] w-1/2 right-4 h-[calc(100dvh-287px)]',
+        className:
+          'fixed top-[100px] w-1/2 right-4 h-[calc(100dvh-287px)] cursor-pointer',
         isSideBarOpen: showSidebar,
         handleSideBarClose,
       }}
@@ -133,6 +140,7 @@ export function SideBarContainer({
         <div className="[&::-webkit-scrollbar]:hidden flex-grow pr-1 [-ms-overflow-style:none] overflow-y-auto [scrollbar-width:none]">
           {totalSavedList.map((saveListItem, index) => (
             <div
+              onClick={() => handleListClick(saveListItem.listId)}
               key={saveListItem.listName}
               className={cn(
                 index !== 0 && 'border-t-[#6F6F6F] border-t-[0.5px]',
