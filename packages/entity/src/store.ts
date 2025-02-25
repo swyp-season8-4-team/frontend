@@ -142,62 +142,62 @@ export interface StoreSummaryInfoData
 
 export interface StoreDetailInfoRequest {
   storeUuid: string;
-  user: {
-    //USER 객체 통채로 보내야함
-    id: number;
-    userUuid: string;
-    email: string;
-    password: string;
-    name: string;
-    nickname: string;
-    createdAt: string;
-    updatedAt: string;
-    deletedAt: string;
-    phoneNumber: string;
-    address: string;
-    gender: string;
-    userRoles: [
-      {
-        id: number;
-        user: string;
-        role: {
-          id: number;
-          name: string;
-        };
-      },
-    ];
-    auths: [
-      {
-        id: number;
-        user: string;
-        provider: string;
-        providerId: string;
-        refreshToken: string;
-        refreshTokenExpiresAt: string;
-        active: boolean;
-        createdAt: string;
-        updatedAt: string;
-      },
-    ];
-    userPreferences: [
-      {
-        id: number;
-        user: string;
-        preference: {
-          id: number;
-          preferenceName: string;
-          preferenceDesc: string;
-          userPreferences: string[];
-        };
-      },
-    ];
-    mbti: {
-      id: number;
-      mbtiType: string;
-      mbtiName: string;
-      mbtiDesc: string;
-    };
-  };
+  // user: {
+  //   //USER 객체 통채로 보내야함
+  //   id: number;
+  //   userUuid: string;
+  //   email: string;
+  //   password: string;
+  //   name: string;
+  //   nickname: string;
+  //   createdAt: string;
+  //   updatedAt: string;
+  //   deletedAt: string;
+  //   phoneNumber: string;
+  //   address: string;
+  //   gender: string;
+  //   userRoles: [
+  //     {
+  //       id: number;
+  //       user: string;
+  //       role: {
+  //         id: number;
+  //         name: string;
+  //       };
+  //     },
+  //   ];
+  //   auths: [
+  //     {
+  //       id: number;
+  //       user: string;
+  //       provider: string;
+  //       providerId: string;
+  //       refreshToken: string;
+  //       refreshTokenExpiresAt: string;
+  //       active: boolean;
+  //       createdAt: string;
+  //       updatedAt: string;
+  //     },
+  //   ];
+  //   userPreferences: [
+  //     {
+  //       id: number;
+  //       user: string;
+  //       preference: {
+  //         id: number;
+  //         preferenceName: string;
+  //         preferenceDesc: string;
+  //         userPreferences: string[];
+  //       };
+  //     },
+  //   ];
+  //   mbti: {
+  //     id: number;
+  //     mbtiType: string;
+  //     mbtiName: string;
+  //     mbtiDesc: string;
+  //   };
+  // };
 }
 
 export interface StoreDetailInfoData
