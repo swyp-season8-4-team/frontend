@@ -8,6 +8,7 @@ import { DetailInfoContainer } from '../DetailInfoContainer';
 import IconDirection from '@repo/design-system/components/icons/IconDirection';
 import IconX from '@repo/design-system/components/icons/IconX';
 import { NavigationPathname } from '@repo/entity/src/navigation';
+import { TabContainer } from '../../(tabs)/TabContainer';
 
 interface DetailContainerProps {
   storeDetail: StoreDetailInfoData;
@@ -31,7 +32,6 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
   };
 
   const detailInfoContainerProps = {
-    // DetailInfoContainer에서 사용하는 필드
     name: storeDetail.name,
     animalYn: storeDetail.animalYn,
     tumblerYn: storeDetail.tumblerYn,
@@ -63,6 +63,13 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
     saved: storeDetail.saved,
     savedListId: storeDetail.savedListId,
   };
+
+  const tabContainerProps = {
+    onelineReviews: storeDetail.storeReviews,
+    menus: storeDetail.menus,
+    mate: storeDetail.mate,
+  };
+
   const handleBack = () => {
     router.back();
   };
@@ -70,7 +77,6 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
   const handleGoMap = () => {
     router.replace(NavigationPathname.Map);
   };
-
   return (
     <>
       <header className="flex justify-between items-center shadow-base px-4 md:px-6 py-5 md:py-[46px] w-full">
@@ -84,8 +90,8 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
       <div className="px-base">
         <StorePictureList {...storePicureListProps} />
         <DetailInfoContainer {...detailInfoContainerProps} />
+        <TabContainer {...tabContainerProps} />
       </div>
-      <div></div>
     </>
   );
 }

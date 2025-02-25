@@ -225,7 +225,7 @@ export interface StoreDetailInfoData
     | 'ownerPickImages'
     | 'storeImages'
   > {
-  userId: number | null; //userId, userUuid는 현재 인증된(로그인한) 사용자의 id (<--왜 주는건지..?)
+  userId: number | null;
   userUuid: string | null;
   ownerId: number;
   ownerUuid: string;

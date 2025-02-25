@@ -31,7 +31,6 @@ export function DetailInfoContainer({
   holidays,
   notice,
   topPreferences,
-  menus,
 
   // TODO: 가게 위도, 경도 받아와야함 (길찾기)
 }: DetailInfoContainerProps) {

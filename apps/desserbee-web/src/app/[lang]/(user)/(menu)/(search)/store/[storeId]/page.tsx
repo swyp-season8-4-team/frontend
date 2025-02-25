@@ -1,7 +1,6 @@
-import { DetailContainer } from './_components/DetailContainer';
-
-// import StoreService from '@repo/usecase/src/storeService';
-// import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
+import { DetailContainer } from './(detail)/DetailContainer';
+import StoreService from '@repo/usecase/src/storeService';
+import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
 
 interface StoreDetailPageProps {
@@ -17,9 +16,9 @@ export default async function StoreDetailPage({
 
   console.log('상세페이지: ' + storeId);
 
-  // const storeService = new StoreService({
-  //   storeRepository: new StoreAPIReopository(),
-  // });
+  const storeService = new StoreService({
+    storeRepository: new StoreAPIReopository(),
+  });
 
   // const storeDetail = await storeService.getStoreDetail(storeId);
 
