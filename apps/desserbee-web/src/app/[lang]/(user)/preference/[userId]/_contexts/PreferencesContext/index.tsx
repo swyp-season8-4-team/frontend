@@ -2,7 +2,7 @@
 
 import type { TargetUser } from '@repo/entity/src/user';
 import type { WithChildren } from '@repo/ui';
-import { createContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useMemo, useState, type ReactNode } from 'react';
 
 import signupIllustQuestion1 from '../../_assets/images/signup-illust-question1.png';
 import signupIllustQuestion2 from '../../_assets/images/signup-illust-question2.png';
@@ -20,10 +20,12 @@ type CurrentSignUpQuestionType = 'none' | 'complete' | number | null;
 interface State {
   id: string;
   nickname: string;
-  qnaList: MBTIQuestion[];
-  noneMBTI: MBTIQuestion;
+  qnaList: PreferencesQuestion[];
+  noneMBTI: PreferencesQuestion;
   currentQuestion: CurrentSignUpQuestionType;
+  preferences: number[];
   updateCurrentQuestion: (stage: CurrentSignUpQuestionType) => void;
+  addPreference: (preference: number) => void;
 }
 
 const defaultState: State = {
@@ -32,32 +34,44 @@ const defaultState: State = {
   qnaList: [],
   noneMBTI: { question: '', answerA: '' },
   currentQuestion: null,
+  preferences: [],
   updateCurrentQuestion: () => {},
+  addPreference: () => {},
 };
 
-export const MBTIContext = createContext<State>(defaultState);
+export const PreferencesContext = createContext<State>(defaultState);
 
 interface Props extends WithChildren {
   user: TargetUser | null;
 }
 
-interface MBTIQuestion {
+interface PreferencesQuestion {
   question: ReactNode | string;
   answerA: string;
   answerB?: string;
   illust?: string;
 }
 
-export function MBTIProvider({ children, user: initialUser }: Props) {
+export function PreferencesProvider({ children, user: initialUser }: Props) {
   const [currentQuestion, setCurrentQuestion] = useState<CurrentSignUpQuestionType>(null);
 
-  const noneMBTI: MBTIQuestion = useMemo(() => ({
+  const [preferences, setPreferences] = useState<number[]>([]);
+
+  const addPreference = useCallback((preference: number) => {
+    setPreferences((prev) => [...prev, preference]);
+  }, []);
+
+  const updateCurrentQuestion = useCallback((stage: CurrentSignUpQuestionType) => {
+    setCurrentQuestion(stage);
+  }, []);
+
+  const noneMBTI: PreferencesQuestion = useMemo(() => ({
     question: <>정말 나중에 설정하시겠어요?<br /><br />선택한 취향은 마이페이지에서<br />언제든 변경할 수 있어요!</>,
     answerA: '네 다음에 할께요',
     answerB: '아뇨, 지금 할래요.',
   }), []);
 
-  const qnaList: MBTIQuestion[] = useMemo(() => [
+  const qnaList: PreferencesQuestion[] = useMemo(() => [
     {
       question: <>Q1. 우유, 계란 없이도 맛있는 디저트가 가능할까요?<br />비건 디저트 어때요?</>,
       answerA: '비건 디저트 좋아요',
@@ -120,22 +134,20 @@ export function MBTIProvider({ children, user: initialUser }: Props) {
     },
   ], []);
   
-  const updateCurrentQuestion = (stage: CurrentSignUpQuestionType) => {
-    setCurrentQuestion(stage);
-  };
-  
   return (
-    <MBTIContext.Provider
+    <PreferencesContext.Provider
       value={{
         id: initialUser?.userUuid ?? '',
         nickname: initialUser?.nickname ?? '',
         qnaList,
         noneMBTI,
         currentQuestion,
+        preferences,
+        addPreference,
         updateCurrentQuestion,
       }}
     >
       {children}
-    </MBTIContext.Provider>
+    </PreferencesContext.Provider>
   );
 }

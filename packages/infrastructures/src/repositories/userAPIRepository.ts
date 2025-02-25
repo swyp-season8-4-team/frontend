@@ -1,14 +1,18 @@
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { NicknameValidationRequestData, NicknameValidationResponse, TargetUser, User, UserRepository } from '@repo/entity/src/user';
+import type { NicknameValidationRequestData, NicknameValidationResponse, PreferencesRequestData, TargetUser, User, UserRepository } from '@repo/entity/src/user';
 import type { RawUser } from '@repo/api/src/desserbee-web/user';
 import fetch from '@repo/api/src/fetch';
 import APIRepository from './apiRepository';
+import UserConverter from '../mappers/userConverter';
 
 export default class UserAPIRepository extends APIRepository implements UserRepository {
-  uploadProfileImage(data: BaseRequestData<{ image: File; }>): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
+  private readonly userConverter: UserConverter = new UserConverter();
+  
   async addInfo({ authorization, data }: BaseRequestData<User>): Promise<User> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+
     const url = `${this.endpoint}/users/add-info`;
 
     const response = await fetch<void, RawUser>({
@@ -21,7 +25,7 @@ export default class UserAPIRepository extends APIRepository implements UserRepo
       url,
     });
 
-    return response;
+    return this.userConverter.convertRawToUser(response);
   }
 
   async getMe({ authorization }: BaseRequestData<void>): Promise<User> {
@@ -37,7 +41,26 @@ export default class UserAPIRepository extends APIRepository implements UserRepo
       url,
     });
 
-    return response;
+    return this.userConverter.convertRawToUser(response);
+  }
+
+  async updateMe({ authorization, data }: BaseRequestData<User>): Promise<User> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+
+    const response = await fetch<RawUser, RawUser>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      data: this.userConverter.convertUserToRaw(data),
+      method: 'PATCH',
+      url: `${this.endpoint}/users/me`,
+    });
+
+    return this.userConverter.convertRawToUser(response);
   }
 
   async getTarget({ authorization, data }: BaseRequestData<{ id: string; }>): Promise<TargetUser> {
@@ -59,21 +82,8 @@ export default class UserAPIRepository extends APIRepository implements UserRepo
     return response;
   }
 
-  async update({ authorization, data }: BaseRequestData<User>): Promise<void> {
-    const url = `${this.endpoint}/users/me`;
-
-    const response = await fetch<RawUser, void>({
-      ...(authorization && {
-        headers: {
-          Authorization: authorization,
-        },
-      }),
-      data,
-      method: 'PATCH',
-      url,
-    });
-
-    return response;
+  uploadProfileImage(data: BaseRequestData<{ image: File; }>): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 
   async delete({ authorization, data }: BaseRequestData<void>): Promise<void> {

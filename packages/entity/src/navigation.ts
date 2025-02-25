@@ -7,6 +7,7 @@ export enum NavigationPathGroup {
   SignIn = '/sign-in/',
   Map = '/map/',
   Store = '/store/',
+  Preference = '/preference/',
 }
 
 export enum NavigationPathname {

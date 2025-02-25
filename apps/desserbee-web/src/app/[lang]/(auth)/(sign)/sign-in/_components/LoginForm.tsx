@@ -1,7 +1,7 @@
 'use client';
 
 import { loginAction } from "@/actions/loginAction";
-import { NavigationLanguageGroup, NavigationPathGroup } from "@repo/entity/src/navigation";
+import { NavigationLanguageGroup, NavigationPathGroup, NavigationPathname } from "@repo/entity/src/navigation";
 import type { WithChildren, WithClassName } from "@repo/ui/index";
 import { useRouter } from "next/navigation";
 
@@ -15,9 +15,11 @@ export default function LoginForm({ className, children }: WithClassName & WithC
     if (!response) {
       return;
     }
-    const pathname = `${NavigationLanguageGroup.ko}${NavigationPathGroup.SignIn}${response.userUuid}`;
-    
-    router.replace(pathname)
+
+    const pathname = !response.isPreferencesSet
+      ? `${NavigationLanguageGroup.ko}${NavigationPathGroup.Preference}${response.userUuid}`
+      : `${NavigationLanguageGroup.ko}${NavigationPathname.Map}`;
+    router.replace(pathname);
   }
   
   return (
