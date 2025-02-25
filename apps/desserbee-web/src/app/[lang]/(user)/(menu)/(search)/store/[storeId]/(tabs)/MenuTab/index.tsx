@@ -25,24 +25,27 @@ export function MenuTab({ menus }: MenuTabProps) {
   };
 
   return (
-    <div className="pb-[19px] w-full">
+    <div className="pb-[19px] md:pb-[44px] w-full">
       <div className="flex justify-between">
-        <div className="flex w-fit font-semibold text-[8px] md:text-lg">
+        <div className="flex md:mb-[18px] w-fit font-semibold text-[8px] md:text-lg">
           <span>메뉴 &nbsp;</span>
           <span className="text-[#898989]">{menus.length}</span>
         </div>
-        <button onClick={handleMoreBtnClick} className="text-[6.833px] md:text-base">
+        <button
+          onClick={handleMoreBtnClick}
+          className="text-[6.833px] md:text-base"
+        >
           더보기
         </button>
       </div>
-      <div className="gap-x-[5px] grid grid-cols-2">
+      <div className="gap-x-[5px] md:gap-y-[18px] md:gap-x-[14px] grid grid-cols-2">
         {displayedMenus.map((menu, index) => (
           <div
             key={`${menu.menuUuid}-${index}`}
-            className="flex justify-between w-full text-[8px] "
+            className="flex justify-between w-full text-[8px]"
           >
-            <div className='md:text-xl'>{menu.name}</div>
-            <div className='md:text-lg'>{menu.price}</div>
+            <div className="md:text-xl">{menu.name}</div>
+            <div className="md:text-lg">{menu.price}</div>
           </div>
         ))}
       </div>

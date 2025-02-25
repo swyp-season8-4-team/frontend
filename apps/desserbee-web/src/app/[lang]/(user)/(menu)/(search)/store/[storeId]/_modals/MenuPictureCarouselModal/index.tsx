@@ -46,7 +46,7 @@ export function MenuPictureCarouselModal({
     <CustomModal
       isCloseBtnShow={false}
       onClose={onClose}
-      className="top-[50%] p-[21.49px] md:p-[46px] rounded-[6.91px] md:rounded-base w-[80%] md:w-[60%] aspect-[250/193]"
+      className="top-[50%] p-[21.49px] md:p-[46px] rounded-[6.91px] md:rounded-base w-[80%] aspect-[250/193]"
     >
       <div className="grid grid-rows-[auto_1fr] h-full">
         <Carousel setApi={setApi} className="relative w-full h-full">
