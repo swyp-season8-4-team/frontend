@@ -30,62 +30,65 @@ import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 
 import { KAKAO_MAP_API_URL } from '../../_consts/map';
-import type { SavedListData } from '@repo/entity/src/store';
+import {
+  type NearByStoreData,
+  type SavedListData,
+} from '@repo/entity/src/store';
 
 import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
 
-const nearByStores = [
-  {
-    storeId: 1,
-    storeUuid: 'uuid-1',
-    name: '디저트39 강남점',
-    address: '서울 강남구 강남대로 396',
-    latitude: 37.497175,
-    longitude: 127.027926,
-  },
-  {
-    storeId: 2,
-    storeUuid: 'uuid-2',
-    name: '아티제 강남역점',
-    address: '서울 강남구 테헤란로 151',
-    latitude: 37.499462,
-    longitude: 127.028274,
-  },
-  {
-    storeId: 3,
-    storeUuid: 'uuid-3',
-    name: '투썸플레이스 강남파이낸스센터점',
-    address: '서울 강남구 테헤란로 152',
-    latitude: 37.500175,
-    longitude: 127.029046,
-  },
-  {
-    storeId: 4,
-    storeUuid: 'uuid-4',
-    name: '설빙 강남역점',
-    address: '서울 강남구 강남대로 358',
-    latitude: 37.496533,
-    longitude: 127.0268,
-  },
-  {
-    storeId: 5,
-    storeUuid: 'uuid-5',
-    name: '폴바셋 강남역사거리점',
-    address: '서울 강남구 테헤란로 129',
-    latitude: 37.498325,
-    longitude: 127.027892,
-  },
-  {
-    storeId: 6,
-    storeUuid: 'uuid-6',
-    name: '배스킨라빈스 강남우성점',
-    address: '서울 강남구 테헤란로 156',
-    latitude: 37.500929,
-    longitude: 127.028979,
-  },
-];
+// const nearByStores = [
+//   {
+//     storeId: 1,
+//     storeUuid: 'uuid-1',
+//     name: '디저트39 강남점',
+//     address: '서울 강남구 강남대로 396',
+//     latitude: 37.497175,
+//     longitude: 127.027926,
+//   },
+//   {
+//     storeId: 2,
+//     storeUuid: 'uuid-2',
+//     name: '아티제 강남역점',
+//     address: '서울 강남구 테헤란로 151',
+//     latitude: 37.499462,
+//     longitude: 127.028274,
+//   },
+//   {
+//     storeId: 3,
+//     storeUuid: 'uuid-3',
+//     name: '투썸플레이스 강남파이낸스센터점',
+//     address: '서울 강남구 테헤란로 152',
+//     latitude: 37.500175,
+//     longitude: 127.029046,
+//   },
+//   {
+//     storeId: 4,
+//     storeUuid: 'uuid-4',
+//     name: '설빙 강남역점',
+//     address: '서울 강남구 강남대로 358',
+//     latitude: 37.496533,
+//     longitude: 127.0268,
+//   },
+//   {
+//     storeId: 5,
+//     storeUuid: 'uuid-5',
+//     name: '폴바셋 강남역사거리점',
+//     address: '서울 강남구 테헤란로 129',
+//     latitude: 37.498325,
+//     longitude: 127.027892,
+//   },
+//   {
+//     storeId: 6,
+//     storeUuid: 'uuid-6',
+//     name: '배스킨라빈스 강남우성점',
+//     address: '서울 강남구 테헤란로 156',
+//     latitude: 37.500929,
+//     longitude: 127.028979,
+//   },
+// ];
 
 interface KakaoMapProps {
   userPreferences: string[];
@@ -129,6 +132,7 @@ export function KakaoMap({
     geoService: null,
     storeService: null,
   });
+  const [nearByStores, setNearByStores] = useState<NearByStoreData[]>();
 
   const FETCH_RADIUS_KM = 3;
   const REFETCH_THRESHOLD_KM = 2;
@@ -196,7 +200,17 @@ export function KakaoMap({
   const fetchNearbyStores = useCallback(
     async (position: MapPosition) => {
       try {
-        if (!services.storeService) return null;
+        if (!services.storeService) {
+          console.log('🚨 storeService가 초기화되지 않았습니다.', services);
+          return null;
+        }
+
+        console.log('📍 주변 가게 요청 시작:', {
+          latitude: position.latitude,
+          longitude: position.longitude,
+          radius: FETCH_RADIUS_KM,
+          storeService: services.storeService,
+        });
 
         const nearByStores = await services.storeService.getNearbyStores({
           latitude: position.latitude,
@@ -204,12 +218,16 @@ export function KakaoMap({
           radius: FETCH_RADIUS_KM,
         });
 
+        console.log('✅ 주변 가게 응답 받음:', nearByStores);
+
+        setNearByStores(nearByStores);
         setRetryCount(0);
         setError(null);
         return nearByStores;
       } catch (error) {
-        console.error('가게 정보를 불러오는데 실패했습니다:', error);
+        console.error('🚨 가게 정보 요청 실패:', error);
         if (retryCount < MAX_RETRY) {
+          console.log(`재시도 ${retryCount + 1}/${MAX_RETRY} 시작...`);
           setRetryCount((prev) => prev + 1);
           setTimeout(() => fetchNearbyStores(position), RETRY_DELAY);
         } else {
@@ -220,7 +238,7 @@ export function KakaoMap({
         return null;
       }
     },
-    [retryCount, services.storeService],
+    [retryCount, services],
   );
 
   const updateNearbyStores = useCallback(
@@ -244,7 +262,7 @@ export function KakaoMap({
         isLoadingRef.current = false;
       }
     },
-    [services, handleStoreMarkerClick],
+    [services, handleStoreMarkerClick, nearByStores],
   );
 
   const onPositionSuccess = useCallback(
@@ -294,10 +312,13 @@ export function KakaoMap({
     ],
   );
 
-  const initializeServices = () => {
+  const initializeServices = useCallback(() => {
+    console.log('서비스 초기화 시작');
+
     const mapService = new MapService({
       mapController: new KakaoMapController(),
     });
+    console.log('mapService 초기화 완료');
 
     const geoService = new GeolocationService({
       geolocationController: new GeolocationController(
@@ -305,13 +326,15 @@ export function KakaoMap({
         new MovingAverageFilter(3),
       ),
     });
+    console.log('geoService 초기화 완료');
 
     const storeService = new StoreService({
       storeRepository: new StoreAPIReopository(),
     });
+    console.log('storeService 초기화 완료:', storeService);
 
     return { mapService, geoService, storeService };
-  };
+  }, []);
 
   const loadMap = async (initializedServices: {
     mapService: MapService;
@@ -324,6 +347,9 @@ export function KakaoMap({
     }
 
     try {
+      // 먼저 services 상태를 업데이트하고
+      setServices(initializedServices);
+
       const result = await initializedServices.geoService.getCurrentPosition();
       if ('errorMessage' in result) {
         openPermissionModal();
@@ -336,23 +362,39 @@ export function KakaoMap({
         result,
       );
 
+      // 현재 위치 마커 추가
       await initializedServices.mapService.addCurrentPositionMaker(
         result,
         userMarkerImage.src,
       );
       await initializedServices.mapService.setMapCenter(result);
 
-      await initializedServices.mapService.addMarkersWithClustering(
-        nearByStores,
-        storeMarkerImage.src,
-        handleStoreMarkerClick,
-      );
+      // 직접 initializedServices를 사용하여 가게 정보 가져오기
+      console.log('가게 정보 요청 시작', initializedServices.storeService);
+      const stores = await initializedServices.storeService.getNearbyStores({
+        latitude: result.latitude,
+        longitude: result.longitude,
+        radius: FETCH_RADIUS_KM,
+      });
+
+      console.log('가게 정보 응답:', stores);
+      if (stores) {
+        setNearByStores(stores);
+        await initializedServices.mapService.addMarkersWithClustering(
+          stores,
+          storeMarkerImage.src,
+          handleStoreMarkerClick,
+        );
+        setLastFetchPosition(result);
+      }
 
       initializedServices.geoService.startWatchingPosition(onPositionSuccess, {
         enableHighAccuracy: true,
         timeout: 5000,
         maximumAge: 0,
       });
+
+      setIsMapLoaded(true);
     } catch (err) {
       console.error('초기화 중 오류 발생:', err);
       setError('서비스 초기화에 실패했습니다. 잠시 후 다시 시도해주세요.');
@@ -379,20 +421,21 @@ export function KakaoMap({
           window.kakao.maps.load(async () => {
             if (isInitialized) return;
             try {
+              console.log('카카오맵 로드 완료, 서비스 초기화 시작');
               const initializedServices = initializeServices();
-              if (!areServicesInitialized(initializedServices)) {
-                throw new Error('서비스 초기화 실패');
+
+              if (!initializedServices.storeService) {
+                throw new Error('storeService 초기화 실패');
               }
-              setServices(initializedServices);
-              setIsMapLoaded(true);
+
+              console.log('서비스 초기화 완료:', initializedServices);
+              setIsInitialized(true);
               await loadMap(initializedServices);
             } catch (error) {
               console.error('맵 초기화 중 오류:', error);
               setError(
                 '서비스 초기화에 실패했습니다. 잠시 후 다시 시도해주세요.',
               );
-            } finally {
-              setIsInitialized(true);
             }
           });
         }}
