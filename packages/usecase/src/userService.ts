@@ -54,6 +54,16 @@ export default class UserService {
     return sub;
   }
 
+  async updatePreferences(id: string,preferences: number[]): Promise<void> {
+    if (!this.userRepository) {
+      throw new Error('userRepository is not set');
+    }
+
+    const response = await this.userRepository.updatePreferences({ data: { id, preferences } });
+
+    return response;
+  }
+
   async validateNickname({ nickname, purpose }: NicknameValidationRequestData): Promise<NicknameValidationResponse> {
     if (!this.userRepository) {
       throw new Error('userRepository is not set');

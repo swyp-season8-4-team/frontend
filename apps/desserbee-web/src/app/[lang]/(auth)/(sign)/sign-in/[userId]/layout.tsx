@@ -2,7 +2,7 @@ import { NavigationLanguageGroup, NavigationPathname } from "@repo/entity/src/na
 import { isTargetUser } from "@repo/entity/src/user";
 import type { WithChildren } from "@repo/ui";
 import { notFound, redirect } from "next/navigation";
-import { MBTIProvider } from "./_contexts/MBTIContext";
+import { PreferencesProvider } from "./_contexts/PreferencesContext";
 import type { WithParams } from "@/app";
 import UserService from "@repo/usecase/src/userService";
 import UserAPIRepository from "@repo/infrastructures/src/repositories/userAPIRepository";
@@ -27,8 +27,8 @@ export default async function SignInMBTILayout({ children, params }: WithChildre
   }
   
   return (
-    <MBTIProvider user={targetUser}>
+    <PreferencesProvider user={targetUser}>
       {children}
-    </MBTIProvider>
+    </PreferencesProvider>
   );
 }

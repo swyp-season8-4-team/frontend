@@ -11,7 +11,7 @@ interface Props {
   onClickB: () => void;
 }
 
-export default function MBTIQnA({ question, answerA, answerB, illust, onClickA, onClickB }: Props) {
+export default function PreferencesQnA({ question, answerA, answerB, illust, onClickA, onClickB }: Props) {
   return (
     <div className="flex flex-col items-center justify-center px-4 py-8 text-center gap-[32px]">
       <p className="text-[#393939] text-center font-pretendard text-[14px] font-semibold leading-[130%] tracking-[-0.42px]">{question}</p>

@@ -46,6 +46,11 @@ export interface NicknameValidationResponse {
   timestamp: string;
 }
 
+export interface PreferencesRequestData {
+  id: string;
+  preferences: number[];
+}
+
 export interface UserRepository {
   addInfo(data: BaseRequestData<User>): Promise<User>;
   delete(data: BaseRequestData<void>): Promise<void>;
@@ -54,4 +59,5 @@ export interface UserRepository {
   update(data: BaseRequestData<User>): Promise<void>;
   validateNickname(data: BaseRequestData<NicknameValidationRequestData>): Promise<NicknameValidationResponse>;
   uploadProfileImage(data: BaseRequestData<{ image: File }>): Promise<void>;
+  updatePreferences(data: BaseRequestData<PreferencesRequestData>): Promise<void>;
 }

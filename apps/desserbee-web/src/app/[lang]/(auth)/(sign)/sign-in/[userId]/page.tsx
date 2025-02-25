@@ -1,6 +1,5 @@
-import MBTIController from "./_components/MBTIController";
+import PreferencesController from "./_components/PreferencesController";
 
 export default async function SignInMBTIPage() {
-
-  return <MBTIController />;
+  return <PreferencesController />;
 }

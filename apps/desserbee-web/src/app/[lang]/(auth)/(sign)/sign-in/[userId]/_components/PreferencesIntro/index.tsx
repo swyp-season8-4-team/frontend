@@ -5,7 +5,7 @@ interface Props {
   onClickB: () => void;
 }
 
-export default function MBTIIntro({ onClickA, onClickB }: Props) {
+export default function PreferencesIntro({ onClickA, onClickB }: Props) {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 text-center">
       <p className="text-2xl font-bold mb-6">회원가입이 완료되었습니다!</p>

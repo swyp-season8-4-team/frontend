@@ -1,5 +1,5 @@
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { NicknameValidationRequestData, NicknameValidationResponse, TargetUser, User, UserRepository } from '@repo/entity/src/user';
+import type { NicknameValidationRequestData, NicknameValidationResponse, PreferencesRequestData, TargetUser, User, UserRepository } from '@repo/entity/src/user';
 import type { RawUser } from '@repo/api/src/desserbee-web/user';
 import fetch from '@repo/api/src/fetch';
 import APIRepository from './apiRepository';
@@ -71,6 +71,27 @@ export default class UserAPIRepository extends APIRepository implements UserRepo
       data,
       method: 'PATCH',
       url,
+    });
+
+    return response;
+  }
+
+  async updatePreferences({ authorization, data }: BaseRequestData<PreferencesRequestData>): Promise<void> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+
+    const response = await fetch<{ preferences: number[] }, void>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      data: {
+        preferences: data.preferences,
+      },
+      method: 'PATCH',
+      url:  `${this.endpoint}/users/${data.id}/preferences`,
     });
 
     return response;
