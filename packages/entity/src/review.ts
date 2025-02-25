@@ -1,11 +1,12 @@
 export interface OneLineReview {
-  reviewUuid: number;
+  reviewUuid: string;
   storeId: number;
+  nickname: string;
+  profileImage: string;
   content: string;
   rating: number;
+  createdAt: string;
   images: string[];
-  createdAt?: string;
-  updatedAt?: string;
 }
 
 export interface ReviewTag {

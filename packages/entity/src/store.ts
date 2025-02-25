@@ -99,7 +99,7 @@ export interface NearbyFilteredStoresRequest {
   latitude: number;
   longitude: number;
   radius: number;
-  preferenceTagId: number[]; //TODO: 태그 여러 개 선택해야된다고 말씀드리기
+  preferenceTagId: number[];
 }
 
 export interface NearByStoreSearchRequest {
@@ -231,8 +231,17 @@ export interface StoreDetailInfoData
   ownerUuid: string;
   menus: Menu[];
   totalReviewCount: number;
-  storeReviews: any[]; //OneLineReview[]; // TODO: 필드 확인해야함
-  mate: any[]; //TODO: 메이트 타입 모름
+  storeReviews: OneLineReview[];
+  mate: {
+    mateUuid: string;
+    mateCategory: string;
+    thumbnail: string;
+    title: string;
+    content: string;
+    nickname: string;
+    recruitYn: boolean;
+  }[];
+
   saved: SavedList['saved'];
   savedListId: SavedList['savedListId'];
 }
@@ -291,12 +300,20 @@ export interface RegisterStoreResponse
     | 'ownerPickImages'
   > {
   userId: number;
-  userUuid: string | null; // TODO: null..?
+  userUuid: string | null;
   ownerId: number;
   menus: Menu[];
   totalReviewCount: number;
-  storeReviews: any[]; //OneLineReview[]; //TODO: 어떻게 오는지 모름 (질문하기)
-  mate: any[]; // TODO: Mate 타입 모름
+  storeReviews: OneLineReview[];
+  mate: {
+    mateUuid: string;
+    mateCategory: string;
+    thumbnail: string;
+    title: string;
+    content: string;
+    nickname: string;
+    recruitYn: boolean;
+  }[];
   saved: SavedList['saved'];
   savedListId: SavedList['savedListId'];
 }
@@ -325,8 +342,16 @@ export interface EditStoreRequest
   > {
   menus: Menu[];
   totalReviewCount: number;
-  storeReviews: any[]; // TODO
-  mate: any[]; //TODO
+  storeReviews: OneLineReview[];
+  mate: {
+    mateUuid: string;
+    mateCategory: string;
+    thumbnail: string;
+    title: string;
+    content: string;
+    nickname: string;
+    recruitYn: boolean;
+  }[];
   menuImageFiles: File[]; // 파일명 확장자까지
   storeImageFiles: File[]; // 파일명 확장자까지
 }
@@ -359,8 +384,16 @@ export interface EditStoreResponse
   ownerUuid: string;
   menus: Menu[];
   totalReviewCount: number;
-  storeReviews: any[]; //TODO
-  mate: any[]; //TODO
+  storeReviews: OneLineReview[];
+  mate: {
+    mateUuid: string;
+    mateCategory: string;
+    thumbnail: string;
+    title: string;
+    content: string;
+    nickname: string;
+    recruitYn: boolean;
+  }[];
 }
 
 export interface DeleteStoreRequest {
@@ -436,6 +469,7 @@ export interface CreateSavedListResponse {
   listName: string;
   iconColorId: number;
   storeCount: number;
+  storeData: [];
 }
 
 export interface EditSavedListRequest {
@@ -450,6 +484,7 @@ export interface EditSavedListResponse {
   listName: string;
   iconColorId: number;
   storeCount: number;
+  storeData: [];
 }
 
 export interface AddStoreInSavedListRequest {
