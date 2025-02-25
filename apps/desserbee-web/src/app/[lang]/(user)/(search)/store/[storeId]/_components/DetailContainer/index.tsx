@@ -43,15 +43,12 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
     phone: storeDetail.phone,
     storeLink: storeDetail.storeLink,
     description: storeDetail.description,
-    contents: ['비건', '로우슈거', '글루텐프리'],
     storeImages: storeDetail.storeImages,
     ownerPickImages: storeDetail.ownerPickImages,
     latitude: storeDetail.latitude,
     longitude: storeDetail.longitude,
     holidays: storeDetail.holidays,
     notice: storeDetail.notice,
-
-    // StoreDetailInfoData의 추가 필드들
     storeId: storeDetail.storeId,
     storeUuid: storeDetail.storeUuid,
     topPreferences: storeDetail.topPreferences,

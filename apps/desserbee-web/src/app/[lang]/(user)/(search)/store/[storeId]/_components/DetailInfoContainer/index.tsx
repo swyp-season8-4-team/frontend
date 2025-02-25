@@ -9,6 +9,7 @@ import IconFlower from '@repo/design-system/components/icons/IconFlower';
 import { useContext } from 'react';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { CouponIsNotReadyModal } from '../../../../map/_modals/CouponIsNotReadyModal';
+import { MenuPictureCarouselModal } from '../../_modals/MenuPictureCarouselModal';
 
 interface DetailInfoContainerProps extends StoreDetailInfoData {}
 
@@ -30,6 +31,7 @@ export function DetailInfoContainer({
   holidays,
   notice,
   topPreferences,
+  menus,
 
   // TODO: 가게 위도, 경도 받아와야함 (길찾기)
 }: DetailInfoContainerProps) {
