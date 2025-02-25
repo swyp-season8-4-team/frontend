@@ -5,18 +5,19 @@ import UserService from '@repo/usecase/src/userService';
 import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 import AuthService from '@repo/usecase/src/authService';
 
+const authRepository = new AuthNextAppRouteRepository();
+
 const authService = new AuthService({
-  authRepository: new AuthNextAppRouteRepository(),
+  authRepository,
 });
 
 const userService = new UserService({
-  authRepository: new AuthNextAppRouteRepository(),
+  authRepository,
   userRepository: new UserAPIRepository(),
 });
 
 export default async function UserLayout({ children }: WithChildren) {
   const auth = await authService.getAuthorization();
-  console.log('auth', auth);
   if (!auth) {
     return children;
   }

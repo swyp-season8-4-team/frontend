@@ -19,6 +19,9 @@ export async function httpHandler(request: Request): Promise<Response> {
       ...(request.headers.has('cookie')
         ? { cookie: request.headers.get('cookie') as string }
         : {}),
+      ...request.headers.get('authorization') && {
+        Authorization: request.headers.get('authorization') as string,
+      },
     },
     method: request.method,
   };
