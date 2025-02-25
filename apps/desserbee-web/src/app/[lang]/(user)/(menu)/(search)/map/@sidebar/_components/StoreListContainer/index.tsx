@@ -6,8 +6,6 @@ import Image from 'next/image';
 import { SideBar } from '@repo/design-system/components/SideBar';
 import type { StoresInSavedListData } from '@repo/entity/src/store';
 
-import { getIconColor } from '../../../_utils/iconColor';
-
 import IconFlower from '@repo/design-system/components/icons/IconFlower';
 import IconLocation from '@repo/design-system/components/icons/IconLocation';
 import IconWriting from '@repo/design-system/components/icons/IconWriting';
@@ -66,7 +64,8 @@ export function StoreListContainer({
             <div className="border-[#D5D5D5] border-[0.5px] rounded-sm w-[11.93px] md:w-[28.07px] aspect-square">
               <IconFlower
                 className={cn(
-                  getIconColor(storesInSavedList.iconColorId),
+                  // getIconColor(storesInSavedList.iconColorId),
+
                   'w-full h-full',
                 )}
               />

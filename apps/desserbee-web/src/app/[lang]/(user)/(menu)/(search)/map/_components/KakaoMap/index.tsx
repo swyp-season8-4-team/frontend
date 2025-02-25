@@ -10,8 +10,8 @@ import {
   useMemo,
 } from 'react';
 
-import storeMarkerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-marker.svg';
-import userMarkerImage from '@/app/[lang]/(user)/(search)/map/_assets/svg/icon-current-marker.svg';
+import storeMarkerImage from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/icon-marker.svg';
+import userMarkerImage from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/icon-current-marker.svg';
 
 import { PreferenceTags } from '../PreferenceTags';
 import { MapPanel } from '../MapPanel';
