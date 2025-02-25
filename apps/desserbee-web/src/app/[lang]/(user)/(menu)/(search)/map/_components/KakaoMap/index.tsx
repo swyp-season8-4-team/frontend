@@ -30,65 +30,11 @@ import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 
 import { KAKAO_MAP_API_URL } from '../../_consts/map';
-import {
-  type NearByStoreData,
-  type SavedListData,
-} from '@repo/entity/src/store';
+import type { NearByStoreData, SavedListData } from '@repo/entity/src/store';
 
 import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
-
-// const nearByStores = [
-//   {
-//     storeId: 1,
-//     storeUuid: 'uuid-1',
-//     name: '디저트39 강남점',
-//     address: '서울 강남구 강남대로 396',
-//     latitude: 37.497175,
-//     longitude: 127.027926,
-//   },
-//   {
-//     storeId: 2,
-//     storeUuid: 'uuid-2',
-//     name: '아티제 강남역점',
-//     address: '서울 강남구 테헤란로 151',
-//     latitude: 37.499462,
-//     longitude: 127.028274,
-//   },
-//   {
-//     storeId: 3,
-//     storeUuid: 'uuid-3',
-//     name: '투썸플레이스 강남파이낸스센터점',
-//     address: '서울 강남구 테헤란로 152',
-//     latitude: 37.500175,
-//     longitude: 127.029046,
-//   },
-//   {
-//     storeId: 4,
-//     storeUuid: 'uuid-4',
-//     name: '설빙 강남역점',
-//     address: '서울 강남구 강남대로 358',
-//     latitude: 37.496533,
-//     longitude: 127.0268,
-//   },
-//   {
-//     storeId: 5,
-//     storeUuid: 'uuid-5',
-//     name: '폴바셋 강남역사거리점',
-//     address: '서울 강남구 테헤란로 129',
-//     latitude: 37.498325,
-//     longitude: 127.027892,
-//   },
-//   {
-//     storeId: 6,
-//     storeUuid: 'uuid-6',
-//     name: '배스킨라빈스 강남우성점',
-//     address: '서울 강남구 테헤란로 156',
-//     latitude: 37.500929,
-//     longitude: 127.028979,
-//   },
-// ];
 
 interface KakaoMapProps {
   userPreferences: string[];
@@ -102,7 +48,13 @@ const areServicesInitialized = (services: {
   geoService: GeolocationService | null;
   storeService: StoreService | null;
 }) => {
-  return services.mapService && services.geoService && services.storeService;
+  const initialized = !!(
+    services.mapService &&
+    services.geoService &&
+    services.storeService
+  );
+  console.log('🔍 서비스 초기화 상태 확인:', initialized, services);
+  return initialized;
 };
 
 export function KakaoMap({
@@ -132,7 +84,6 @@ export function KakaoMap({
     geoService: null,
     storeService: null,
   });
-  const [nearByStores, setNearByStores] = useState<NearByStoreData[]>();
 
   const FETCH_RADIUS_KM = 3;
   const REFETCH_THRESHOLD_KM = 2;
@@ -196,6 +147,8 @@ export function KakaoMap({
   const [retryCount, setRetryCount] = useState(0);
   const MAX_RETRY = 3;
   const RETRY_DELAY = 3000;
+
+  const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
 
   const fetchNearbyStores = useCallback(
     async (position: MapPosition) => {
@@ -371,8 +324,6 @@ export function KakaoMap({
     }
 
     try {
-      setServices(initializedServices);
-
       console.log('🌍 초기 위치 가져오기 시작');
       const result = await initializedServices.geoService.getCurrentPosition();
       if ('errorMessage' in result) {
@@ -394,7 +345,6 @@ export function KakaoMap({
       );
       await initializedServices.mapService.setMapCenter(result);
 
-      // 직접 initializedServices를 사용하여 가게 정보 가져오기
       console.log('가게 정보 요청 시작', initializedServices.storeService);
       const stores = await initializedServices.storeService.getNearbyStores({
         latitude: result.latitude,
@@ -412,6 +362,10 @@ export function KakaoMap({
         );
         setLastFetchPosition(result);
       }
+
+      // services 상태 업데이트를 위치 감시 시작 직전에 수행
+      setServices(initializedServices);
+      setIsInitialized(true);
 
       console.log('👀 위치 감시 시작...');
       initializedServices.geoService.startWatchingPosition(
@@ -436,17 +390,20 @@ export function KakaoMap({
 
   useEffect(() => {
     return () => {
-      console.log('🔄 cleanup: 위치 감시 중지 시도');
-      if (services.geoService) {
-        services.geoService.stopWatchingPosition();
-        console.log('✅ cleanup: 위치 감시 중지 완료');
-      }
-      if (services.mapService) {
-        services.mapService.removeCurrentPositionMarker();
-        console.log('✅ cleanup: 현재 위치 마커 제거 완료');
+      if (isInitialized) {
+        // isInitialized 상태를 확인
+        console.log('🔄 cleanup: 위치 감시 중지 시도');
+        if (services.geoService) {
+          services.geoService.stopWatchingPosition();
+          console.log('✅ cleanup: 위치 감시 중지 완료');
+        }
+        if (services.mapService) {
+          services.mapService.removeCurrentPositionMarker();
+          console.log('✅ cleanup: 현재 위치 마커 제거 완료');
+        }
       }
     };
-  }, [services]);
+  }, [services, isInitialized]);
 
   return (
     <div>
