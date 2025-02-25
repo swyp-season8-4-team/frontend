@@ -28,12 +28,28 @@ export default class UserService {
     return user;
   }
 
-  async getTargetUser(id: string): Promise<TargetUser> {
+  async updateMe(data: User): Promise<User> {
     if (!this.userRepository) {
       throw new Error('userRepository is not set');
     }
 
-    const response = await this.userRepository.getTarget({ data: { id } });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.userRepository.updateMe({ authorization, data });
+
+    return response;
+  }
+
+  async getTargetUser(id: string): Promise<TargetUser> {
+    if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    if (!this.userRepository) {
+      throw new Error('userRepository is not set');
+    }
+
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.userRepository.getTarget({ data: { id }, authorization });
 
     return response;
   }
@@ -52,16 +68,6 @@ export default class UserService {
     const { sub } = decodeJWT(authToken);
 
     return sub;
-  }
-
-  async updatePreferences(id: string,preferences: number[]): Promise<void> {
-    if (!this.userRepository) {
-      throw new Error('userRepository is not set');
-    }
-
-    const response = await this.userRepository.updatePreferences({ data: { id, preferences } });
-
-    return response;
   }
 
   async validateNickname({ nickname, purpose }: NicknameValidationRequestData): Promise<NicknameValidationResponse> {

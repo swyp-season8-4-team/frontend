@@ -1,4 +1,4 @@
-import SignInButtons from "../../../_components/SignInButton";
+import SignInButtons from "../../../../../(auth)/(sign)/sign-in/_components/SignInButton";
 
 interface Props {
   onClickA: () => void;

@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import SignInButtons from "../../../_components/SignInButton";
+import SignInButtons from "../../../../../(auth)/(sign)/sign-in/_components/SignInButton";
 import Image from "next/image";
 
 interface Props {

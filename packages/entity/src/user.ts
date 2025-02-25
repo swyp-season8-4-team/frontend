@@ -7,13 +7,19 @@ export enum UserType {
 
 export type Gender = 'MALE' | 'FEMALE';
 
+
+
 export interface User {
   id: string;
   email: string;
+  name?: string;
   nickname: string;
   phoneNumber: string;
   address: string;
   gender: string;
+  preferences: number[];
+  mbti?: string;
+  profileImageUrl?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -55,9 +61,8 @@ export interface UserRepository {
   addInfo(data: BaseRequestData<User>): Promise<User>;
   delete(data: BaseRequestData<void>): Promise<void>;
   getMe(data: BaseRequestData<void>): Promise<User>;
+  updateMe(data: BaseRequestData<User>): Promise<User>;
   getTarget(data: BaseRequestData<{ id: string }>): Promise<TargetUser>;
-  update(data: BaseRequestData<User>): Promise<void>;
   validateNickname(data: BaseRequestData<NicknameValidationRequestData>): Promise<NicknameValidationResponse>;
   uploadProfileImage(data: BaseRequestData<{ image: File }>): Promise<void>;
-  updatePreferences(data: BaseRequestData<PreferencesRequestData>): Promise<void>;
 }

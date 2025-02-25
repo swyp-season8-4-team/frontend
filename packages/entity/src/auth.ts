@@ -26,6 +26,7 @@ export interface SignInResponse extends JWTTokens {
   userUuid: string;
   email: string;
   nickname: string;
+  isPreferencesSet: boolean;
 }
 
 export interface SignInData {

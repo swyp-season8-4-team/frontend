@@ -1,22 +1,18 @@
 'use client';
 
+import submitPreferencesAction from "@/actions/submitPreferencesAction";
+import { UserContext } from "@/contexts/UserContext";
+import { NavigationLanguageGroup, NavigationPathname } from "@repo/entity/src/navigation";
+import { useRouter } from "next/navigation";
 import { useContext } from "react";
+import { PreferencesContext } from "../../_contexts/PreferencesContext";
 import PreferencesIntro from "../PreferencesIntro";
 import PreferencesQnA from "../PreferencesQnA";
-import { useRouter } from "next/navigation";
-import { NavigationLanguageGroup, NavigationPathname } from "@repo/entity/src/navigation";
-import { PreferencesContext } from "../../_contexts/PreferencesContext";
-import UserService from "@repo/usecase/src/userService";
-import UserAPIRepository from "@repo/infrastructures/src/repositories/userAPIRepository";
-
-const userService = new UserService({
-  userRepository: new UserAPIRepository(),
-});
 
 export default function PreferencesController() {
   const router = useRouter();
+  const { user } = useContext(UserContext);
   const {
-    id,
     noneMBTI,
     currentQuestion,
     qnaList,
@@ -24,6 +20,10 @@ export default function PreferencesController() {
     addPreference,
     updateCurrentQuestion,
   } = useContext(PreferencesContext);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <>
@@ -50,11 +50,14 @@ export default function PreferencesController() {
                 }}
                 onClickB={async () => {
                   if (index === qnaList.length - 1) {
-                    await userService.updatePreferences(id, preferences);
-                    updateCurrentQuestion('complete');
+                    await submitPreferencesAction({
+                      user,
+                      preferences,
+                    });
+                    router.replace(`${NavigationLanguageGroup.ko}${NavigationPathname.Map}`);
                     return;
                   }
-                  router.replace(`${NavigationLanguageGroup.ko}${NavigationPathname.Map}`);
+                  updateCurrentQuestion(index + 1);
                 }}
               />
             );

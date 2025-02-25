@@ -10,7 +10,7 @@ const authService = new AuthService({
   authRepository: new AuthAPIRespository(),
 });
 
-export async function loginAction(formData: FormData): Promise<SignInResponse | null | void> {
+export async function loginAction(formData: FormData): Promise<SignInResponse | null> {
   const email = formData.get('email');
   const password = formData.get('password');
   
@@ -38,6 +38,7 @@ export async function loginAction(formData: FormData): Promise<SignInResponse | 
     return response;
   } catch (error) {
     console.error(error);
+    return null;
     // TODO: error handling
   }
 }

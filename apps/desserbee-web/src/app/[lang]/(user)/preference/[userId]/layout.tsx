@@ -6,8 +6,10 @@ import { PreferencesProvider } from "./_contexts/PreferencesContext";
 import type { WithParams } from "@/app";
 import UserService from "@repo/usecase/src/userService";
 import UserAPIRepository from "@repo/infrastructures/src/repositories/userAPIRepository";
+import AuthNextAppRouteRepository from "@repo/infrastructures/src/repositories/authNextAppRouteRepository";
 
 const userService = new UserService({
+  authRepository: new AuthNextAppRouteRepository(),
   userRepository: new UserAPIRepository(),
 });
 
