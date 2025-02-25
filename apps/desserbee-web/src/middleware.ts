@@ -20,7 +20,6 @@ export async function middleware(request: NextRequest) {
   }
 
   const token = await getToken(request);
-  console.log('token', token);
   if (token) {
     requestHeaders.set('authorization', `Bearer ${token}`);
   }
