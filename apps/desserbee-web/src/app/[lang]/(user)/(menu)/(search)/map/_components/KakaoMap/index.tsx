@@ -230,23 +230,33 @@ export function KakaoMap({
 
   const updateNearbyStores = useCallback(
     async (position: MapPosition) => {
-      if (!areServicesInitialized(services)) return;
+      if (!areServicesInitialized(services)) {
+        console.log('서비스가 초기화되지 않음, 가게 정보 업데이트 스킵');
+        return;
+      }
 
       try {
+        console.log('가게 정보 업데이트 시작');
         isLoadingRef.current = true;
+
         if (nearByStores) {
+          console.log('새로운 가게 마커 추가 시작');
           await services.mapService?.addMarkersWithClustering(
             nearByStores,
             storeMarkerImage.src,
             handleStoreMarkerClick,
           );
+          console.log('새로운 가게 마커 추가 완료');
           setLastFetchPosition(position);
+        } else {
+          console.log('주변 가게 정보 없음');
         }
       } catch (error) {
         console.error('가게 마커 업데이트 중 오류:', error);
         setError('가게 정보 업데이트에 실패했습니다.');
       } finally {
         isLoadingRef.current = false;
+        console.log('가게 정보 업데이트 프로세스 완료');
       }
     },
     [services, handleStoreMarkerClick, nearByStores],
@@ -254,19 +264,32 @@ export function KakaoMap({
 
   const onPositionSuccess = useCallback(
     async (position: MapPosition) => {
-      if (!areServicesInitialized(services)) return;
+      console.log('위치 업데이트 콜백 실행', position);
 
-      const now = Date.now();
-      if (
-        now - lastUpdateTimeRef.current < POSITION_UPDATE_INTERVAL ||
-        isLoadingRef.current
-      ) {
+      if (!areServicesInitialized(services)) {
+        console.log('서비스가 초기화되지 않음, 위치 업데이트 스킵');
         return;
       }
+
+      const now = Date.now();
+      if (now - lastUpdateTimeRef.current < POSITION_UPDATE_INTERVAL) {
+        console.log('업데이트 간격이 너무 짧음, 스킵');
+        return;
+      }
+
+      if (isLoadingRef.current) {
+        console.log('이전 업데이트가 진행 중, 스킵');
+        return;
+      }
+
       lastUpdateTimeRef.current = now;
+      console.log('위치 업데이트 시작');
 
       try {
+        console.log('현재 위치 마커 제거 시작');
         await services.mapService?.removeCurrentPositionMarker();
+
+        console.log('새로운 현재 위치 마커 추가');
         await services.mapService?.addCurrentPositionMaker(
           position,
           userMarkerImage.src,
@@ -277,15 +300,26 @@ export function KakaoMap({
           lastFetchPosition,
           position,
         );
+        console.log(
+          '마지막 데이터 요청 위치와의 거리:',
+          distanceFromLastFetch,
+          'km',
+        );
+
         if (
           lastFetchPosition.latitude === 0 ||
           distanceFromLastFetch > REFETCH_THRESHOLD_KM
         ) {
+          console.log('재요청 임계값 초과, 주변 가게 정보 업데이트 시작');
           await updateNearbyStores(position);
+          console.log('주변 가게 정보 업데이트 완료');
+        } else {
+          console.log('재요청 임계값 이내, 업데이트 스킵');
         }
       } catch (error) {
         console.error('위치 마커 업데이트 중 오류 발생:', error);
         if (error instanceof Error) {
+          console.log('위치 권한 관련 오류, 권한 요청 모달 표시');
           openPermissionModal();
         }
       }
