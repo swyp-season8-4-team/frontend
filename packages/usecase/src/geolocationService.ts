@@ -6,6 +6,13 @@ interface GeolocationErrorMessage {
   errorType: string;
 }
 
+class GeolocationPermissionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'GeolocationPermissionError';
+  }
+}
+
 export default class GeolocationService {
   private readonly geolocationController: GeolocationController | null;
 
@@ -27,26 +34,16 @@ export default class GeolocationService {
       const permissionStatus = await navigator.permissions.query({
         name: 'geolocation',
       });
-      console.log(
-        '[GeolocationService] 현재 위치 권한 상태:',
-        permissionStatus.state,
-      );
 
-      let position;
-      switch (permissionStatus.state) {
-        case 'denied':
-          console.log('[GeolocationService] 위치 권한이 거부됨');
-          return {
-            errorMessage: '위치 권한 허용 후 서비스 이용이 가능합니다.',
-            errorType: 'PERMISSION_DENIED',
-          };
-        case 'prompt':
-        case 'granted':
-          console.log('[GeolocationService] 위치 정보 요청 시작');
-          position = await this.geolocationController.getCurrentPosition();
-          console.log('[GeolocationService] 위치 정보 획득 성공', position);
-          return position;
+      if (permissionStatus.state === 'denied') {
+        throw new GeolocationPermissionError('PERMISSION_DENIED');
       }
+      if (permissionStatus.state === 'prompt') {
+        throw new GeolocationPermissionError('PERMISSION_PROMPT');
+      }
+
+      const position = await this.geolocationController.getCurrentPosition();
+      return position;
     } catch (error) {
       console.error('[GeolocationService] 오류 발생:', error);
 
@@ -113,3 +110,5 @@ export default class GeolocationService {
     return await this.geolocationController.stopWatching();
   }
 }
+
+export { GeolocationPermissionError };

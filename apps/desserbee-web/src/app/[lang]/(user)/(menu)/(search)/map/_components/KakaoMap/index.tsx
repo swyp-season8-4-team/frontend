@@ -38,6 +38,7 @@ import {
 import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
+import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService';
 
 interface KakaoMapProps {
   userPreferences: string[];
@@ -236,33 +237,33 @@ export function KakaoMap({
   // 3. tracking 중 지속적으로 실행되는 메서드
   const onPositionSuccess = useCallback(
     async (position: MapPosition) => {
-      console.log(
-        'onPositionSuccess: 트래킹 시작, 위치 업데이트 콜백 실행',
-        position,
-      );
-
-      if (!areServicesInitialized(servicesRef.current)) {
-        console.log(
-          'onPositionSuccess: 서비스들이 초기화되지 않음, 위치 업데이트 중지 🛑',
-        );
-        return;
-      }
-
-      const now = Date.now();
-      if (now - lastUpdateTimeRef.current < POSITION_UPDATE_INTERVAL) {
-        console.log('onPositionSuccess: 업데이트 간격이 너무 짧음, 스킵 🛑');
-        return;
-      }
-
-      if (isLoadingRef.current) {
-        console.log('onPositionSuccess: 이전 업데이트가 진행 중, 스킵 🛑');
-        return;
-      }
-
-      lastUpdateTimeRef.current = now;
-      console.log('onPositionSuccess: 위치 업데이트 시작 🚩');
-
       try {
+        if (!areServicesInitialized(servicesRef.current)) {
+          console.log(
+            'onPositionSuccess: 서비스들이 초기화되지 않음, 위치 업데이트 중지 🛑',
+          );
+          return;
+        }
+
+        console.log(
+          'onPositionSuccess: 트래킹 시작, 위치 업데이트 콜백 실행',
+          position,
+        );
+
+        const now = Date.now();
+        if (now - lastUpdateTimeRef.current < POSITION_UPDATE_INTERVAL) {
+          console.log('onPositionSuccess: 업데이트 간격이 너무 짧음, 스킵 🛑');
+          return;
+        }
+
+        if (isLoadingRef.current) {
+          console.log('onPositionSuccess: 이전 업데이트가 진행 중, 스킵 🛑');
+          return;
+        }
+
+        lastUpdateTimeRef.current = now;
+        console.log('onPositionSuccess: 위치 업데이트 시작 🚩');
+
         console.log('onPositionSuccess: 현재 위치 마커 제거 시작 🗑️');
         await servicesRef.current.mapService?.removeCurrentPositionMarker();
 
@@ -313,12 +314,16 @@ export function KakaoMap({
           'onPositionSuccess: 위치 마커 업데이트 중 오류 발생 ⚠️:',
           error,
         );
-        if (error instanceof Error) {
+        if (error instanceof GeolocationPermissionError) {
           console.log(
             'onPositionSuccess: 위치 권한 관련 오류, 권한 요청 모달 표시 🪧',
           );
           openPermissionModal();
+        } else {
+          console.error('onPositionSuccess: 알 수 없는 오류 발생');
         }
+        // 에러를 throw하지 않고 여기서 처리 종료
+        return;
       }
     },
     [
