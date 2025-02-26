@@ -6,29 +6,34 @@ import IconProfileOutline from '@repo/design-system/components/icons/IconProfile
 import IconTalkOutline from '@repo/design-system/components/icons/IconTalkOutline';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import { usePathname } from 'next/navigation';
+import { useMemo } from 'react';
 
-const NAVBAR_BUTTON_CONTENT = [
-  {
-    icon: <IconLocationOutline className="w-full h-full" />,
-    text: '커뮤니티',
-    path: NavigationPathname.Community,
-  },
-  {
-    icon: <IconTalkOutline className="w-full h-full" />,
-    text: '지도',
-    path: NavigationPathname.Map,
-  },
-  {
-    icon: <IconProfileOutline className="w-full h-full" />,
-    text: '마이',
-    path: NavigationPathname.My,
-  },
-];
+interface Props {
+  isAuthorized: boolean;
+}
 
-export default function NavigationContainer() {
+export default function NavigationContainer({ isAuthorized }: Props) {
   const pathname = usePathname();
   const normalizedPath = pathname.split('/', 3)[2];
   const currentPathName = `/${normalizedPath}`;
+
+  const NAVBAR_BUTTON_CONTENT = useMemo(() => [
+    {
+      icon: <IconLocationOutline className="w-full h-full" />,
+      text: '커뮤니티',
+      path: NavigationPathname.Community,
+    },
+    {
+      icon: <IconTalkOutline className="w-full h-full" />,
+      text: '지도',
+      path: NavigationPathname.Map,
+    },
+    {
+      icon: <IconProfileOutline className="w-full h-full" />,
+      text: '마이',
+      path: isAuthorized ? NavigationPathname.My : NavigationPathname.SignIn,
+    },
+  ], [isAuthorized]);
 
   return (
     <NavBar

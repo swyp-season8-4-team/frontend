@@ -1,10 +1,20 @@
-import type { MateAllListResponse, MateCreateRequest, MateListRequest, MateRepository, MateRequest, MateUpdateRequest } from "@repo/entity/src/mate";
+import type { MateAcceptRequest, MateAllListResponse, MateApplyRequest, MateCreateRequest, MateListRequest, MateRejectRequest, MateRepository, MateRequest, MateUpdateRequest } from "@repo/entity/src/mate";
 
 export default class MateService {
   private readonly mateRepository: MateRepository | null;
   
   constructor({ mateRepository }: { mateRepository: MateRepository }) {
     this.mateRepository = mateRepository ?? null;
+  }
+
+  async applyMate(data: MateApplyRequest) {
+    if (!this.mateRepository) {
+      throw new Error('mateRepository is not set');
+    }
+
+    const response = await this.mateRepository.applyMate({ data });
+
+    return response;
   }
 
   async getMateList(data: MateListRequest): Promise<MateAllListResponse> {
@@ -73,6 +83,26 @@ export default class MateService {
     }
 
     const response = await this.mateRepository.delete({ data });
+
+    return response;
+  }
+
+  async acceptMyTeamMember(data: MateAcceptRequest) {
+    if (!this.mateRepository) {
+      throw new Error('mateRepository is not set');
+    }
+
+    const response = await this.mateRepository.acceptMyTeamMember({ data });
+
+    return response;
+  }
+
+  async rejectMyTeamMember(data: MateRejectRequest) {
+    if (!this.mateRepository) {
+      throw new Error('mateRepository is not set');
+    }
+    
+    const response = await this.mateRepository.rejectMyTeamMember({ data });
 
     return response;
   }

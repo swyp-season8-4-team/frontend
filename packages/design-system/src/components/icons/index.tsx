@@ -20,7 +20,7 @@ export interface SVGProps extends WithChildren, WithClassName, WithStyle {
 export default function Icon({
   id,
   children,
-  size,
+  size = IconSize.m,
   style,
   viewBox,
   ...props
@@ -32,7 +32,7 @@ export default function Icon({
       fill={'none'}
       width={size}
       height={size}
-      viewBox={viewBox ? viewBox : '0 0 24 24'}
+      viewBox={`0 0 ${size} ${size}`}
       style={{ ...style, flexShrink: 0 }}
       {...props}
     >

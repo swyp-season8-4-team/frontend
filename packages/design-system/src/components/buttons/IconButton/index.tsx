@@ -23,8 +23,8 @@ export default function IconButton({
   const buttonClasses = useMemo(() => {
     const baseClasses = 'flex items-center justify-center flex-shrink-0 rounded-full bg-none';
     const sizeClasses = size === IconSize.xs 
-      ? 'w-4 h-4 scale-[2.5]' 
-      : 'w-6 h-6 scale-[2]';
+      ? 'w-3 h-3 scale-[2.5]' 
+      : 'w-5 h-5 scale-[2]';
     const hoverClasses = 'hover:bg-[#f8f9fb] hover:not:disabled:opacity-100';
     
     return `${baseClasses} ${sizeClasses} ${hoverClasses} ${className || ''}`;

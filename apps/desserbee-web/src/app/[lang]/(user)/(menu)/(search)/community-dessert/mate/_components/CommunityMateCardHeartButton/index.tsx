@@ -1,18 +1,23 @@
 'use client';
 
 import IconButton from '@repo/design-system/components/buttons/IconButton';
-import IconHeart from '@repo/design-system/components/icons/IconHeart';
-import { useCallback } from 'react';
+import { IconSize } from '@repo/design-system/components/icons';
+import IconBookmark from '@repo/design-system/components/icons/IconBookmark';
+import { useCallback, useState } from 'react';
+
+// const 
 
 export default function CommunityMateCardHeartButton() {
-  
+  const [isBookmarked, setIsBookmarked] = useState(false);
+
   const handleClick = useCallback(() => {
-    console.log('click');
-  }, []);
+    setIsBookmarked(!isBookmarked);
+    // api
+  }, [isBookmarked]);
   
   return (
-    <IconButton onClick={handleClick}>
-      <IconHeart />
+    <IconButton size={IconSize.s} className={isBookmarked ? 'text-[#714115]' : 'text-white'} onClick={handleClick}>
+      <IconBookmark />
     </IconButton>
   )
 }
