@@ -4,7 +4,7 @@ import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIR
 
 interface BottomSheetPageProps {
   searchParams: Promise<{
-    bottomsheet: boolean;
+    bottomsheet: string;
     storeId?: string;
   }>;
 }
@@ -14,21 +14,24 @@ export default async function BottomSheetPage({
 }: BottomSheetPageProps) {
   const params = await searchParams;
   const storeId = params.storeId;
-  const bottomsheet = params.bottomsheet === true;
 
+  const bottomsheet = params.bottomsheet === 'true';
+  console.log('bottomsheet:', bottomsheet);
+  console.log('storeId:', storeId);
   const storeService = new StoreService({
     storeRepository: new StoreAPIRepository(),
   });
 
-  if (storeId && bottomsheet) {
-    const storeSummary = await storeService.getStoreSummary(storeId);
-    return (
-      <BottomSheetContainer
-        showBottomSheet={bottomsheet}
-        storeSummary={storeSummary}
-      />
-    );
-  } else {
+  // 조건문을 더 명확하게 수정
+  if (!storeId || !bottomsheet) {
     return null;
   }
+
+  const storeSummary = await storeService.getStoreSummary(storeId);
+  return (
+    <BottomSheetContainer
+      showBottomSheet={bottomsheet}
+      storeSummary={storeSummary}
+    />
+  );
 }

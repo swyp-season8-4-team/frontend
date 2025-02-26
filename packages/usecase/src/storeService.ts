@@ -49,91 +49,162 @@ export default class StoreService {
   }
 
   async getStoreSummary(storeUuid: string): Promise<StoreSummaryInfoData> {
-    if (!this.storeRepository) {
-      throw new Error('storeRepository is not set');
+    try {
+      console.log(`매장 요약 정보 조회 시작 - 매장 ID: ${storeUuid}`);
+
+      if (!this.storeRepository) {
+        throw new Error('storeRepository is not set');
+      }
+
+      const requestData = {
+        data: {
+          storeUuid,
+        },
+      };
+
+      const response = await this.storeRepository.getStoreSummary(requestData);
+      console.log(`매장 요약 정보 조회 완료 - 매장 ID: ${storeUuid}`);
+
+      return response;
+    } catch (error) {
+      console.error(
+        `매장 요약 정보 조회 중 오류 발생 - 매장 ID: ${storeUuid}:`,
+        error,
+      );
+      throw error;
     }
-
-    const requestData = {
-      data: {
-        storeUuid,
-      },
-    };
-
-    const response = await this.storeRepository.getStoreSummary(requestData);
-
-    return response;
   }
 
   async getStoreDetail(storeUuid: string): Promise<StoreDetailInfoData> {
-    if (!this.storeRepository) {
-      throw new Error('storeRepository is not set');
+    try {
+      console.log(`매장 상세 정보 조회 시작 - 매장 ID: ${storeUuid}`);
+
+      if (!this.storeRepository) {
+        throw new Error('storeRepository is not set');
+      }
+
+      const requestData = {
+        data: {
+          storeUuid,
+          user: null,
+        },
+      };
+
+      const response = await this.storeRepository.getStoreDetail(requestData);
+      console.log(`매장 상세 정보 조회 완료 - 매장 ID: ${storeUuid}`);
+
+      return response;
+    } catch (error) {
+      console.error(
+        `매장 상세 정보 조회 중 오류 발생 - 매장 ID: ${storeUuid}:`,
+        error,
+      );
+      throw error;
     }
-
-    const requestData = {
-      data: {
-        storeUuid,
-        user: null,
-      },
-    };
-
-    const response = await this.storeRepository.getStoreDetail(requestData);
-
-    return response;
   }
 
   async getUserSavedStores(authorization: string, listId: number) {
-    if (!this.storeRepository) {
-      throw new Error('storeRepository is not set');
+    try {
+      console.log(`저장된 매장 목록 조회 시작 - 목록 ID: ${listId}`);
+
+      if (!this.storeRepository) {
+        throw new Error('storeRepository is not set');
+      }
+
+      const reqestData = {
+        data: {
+          listId,
+        },
+      };
+
+      const result = await this.storeRepository.getStoresInSavedList({
+        authorization,
+        ...reqestData,
+      });
+      console.log(`저장된 매장 목록 조회 완료 - 목록 ID: ${listId}`);
+
+      return result;
+    } catch (error) {
+      console.error(
+        `저장된 매장 목록 조회 중 오류 발생 - 목록 ID: ${listId}:`,
+        error,
+      );
+      throw error;
     }
-
-    const reqestData = {
-      data: {
-        listId,
-      },
-    };
-
-    const result = await this.storeRepository.getStoresInSavedList({
-      authorization,
-      ...reqestData,
-    });
-
-    return result;
   }
 
   async getSavedListAll(authorization: string, userUuid: string) {
-    if (!this.storeRepository) {
-      throw new Error('storeRepository is not set');
+    try {
+      console.log(`전체 저장 목록 조회 시작 - 사용자 ID: ${userUuid}`);
+
+      if (!this.storeRepository) {
+        throw new Error('storeRepository is not set');
+      }
+
+      const reqestData = {
+        data: {
+          userUuid,
+        },
+      };
+
+      const result = await this.storeRepository.getSavedListAll({
+        authorization,
+        ...reqestData,
+      });
+      console.log(`전체 저장 목록 조회 완료 - 사용자 ID: ${userUuid}`);
+
+      return result;
+    } catch (error) {
+      console.error(
+        `전체 저장 목록 조회 중 오류 발생 - 사용자 ID: ${userUuid}:`,
+        error,
+      );
+      throw error;
     }
-
-    const reqestData = {
-      data: {
-        userUuid,
-      },
-    };
-
-    const result = await this.storeRepository.getSavedListAll({
-      authorization,
-      ...reqestData,
-    });
-
-    return result;
   }
 
   async registerStore() {
-    if (!this.storeRepository) {
-      throw new Error('storeRepository is not set');
+    try {
+      console.log('매장 등록 시작');
+
+      if (!this.storeRepository) {
+        throw new Error('storeRepository is not set');
+      }
+
+      console.log('매장 등록 완료');
+    } catch (error) {
+      console.error('매장 등록 중 오류 발생:', error);
+      throw error;
     }
   }
 
   async updateStore() {
-    if (!this.storeRepository) {
-      throw new Error('storeRepository is not set');
+    try {
+      console.log('매장 정보 업데이트 시작');
+
+      if (!this.storeRepository) {
+        throw new Error('storeRepository is not set');
+      }
+
+      console.log('매장 정보 업데이트 완료');
+    } catch (error) {
+      console.error('매장 정보 업데이트 중 오류 발생:', error);
+      throw error;
     }
   }
 
   async deleteStore() {
-    if (!this.storeRepository) {
-      throw new Error('storeRepository is not set');
+    try {
+      console.log('매장 삭제 시작');
+
+      if (!this.storeRepository) {
+        throw new Error('storeRepository is not set');
+      }
+
+      console.log('매장 삭제 완료');
+    } catch (error) {
+      console.error('매장 삭제 중 오류 발생:', error);
+      throw error;
     }
   }
 }
