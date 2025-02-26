@@ -7,7 +7,7 @@ interface StoreDetailLayoutProps extends WithChildren {
   params: Promise<{ storeId: string }>;
 }
 
-export default async function StoreDetailLayout({
+export default function StoreDetailLayout({
   children,
 }: StoreDetailLayoutProps) {
   return (
