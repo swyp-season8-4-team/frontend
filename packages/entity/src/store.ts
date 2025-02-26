@@ -403,7 +403,7 @@ export interface SavedListData {
 }
 
 // 상세정보에서 사용
-export interface StoreInSavedListRequest {
+export interface ParentSavedListRequest {
   listId: number;
 }
 
@@ -424,13 +424,10 @@ export interface StoreInfoData {
   userPreference: string[];
 }
 
-export interface StoreInSavedListResponse {
+export interface ParentSavedListResponse {
   listId: number;
-  userUuid: string;
   listName: string;
   iconColorId: number;
-  storeCount: number;
-  storeData: StoreInfoData[];
 }
 
 export interface StoresInSavedListRequest {
@@ -608,10 +605,10 @@ export interface StoreRepository {
   }: BaseRequestData<DeleteStoreInSavedListRequest>): Promise<void>;
 
   // 상세정보에서 사용
-  getStoreInSavedList({
+  getParentSavedList({
     authorization,
     data,
-  }: BaseRequestData<StoreInSavedListRequest>): Promise<StoreInSavedListResponse>;
+  }: BaseRequestData<ParentSavedListRequest>): Promise<ParentSavedListResponse>;
 
   getStoresInSavedList({
     authorization,

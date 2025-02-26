@@ -1,6 +1,10 @@
 'use client';
 
-import type { Menu, StoreDetailInfoData } from '@repo/entity/src/store';
+import type {
+  Menu,
+  ParentSavedListResponse,
+  StoreDetailInfoData,
+} from '@repo/entity/src/store';
 import { StorePictureList } from '../StorePictureList';
 import { DetailInfoContainer } from '../DetailInfoContainer';
 
@@ -9,9 +13,13 @@ import { DetailPageHeader } from '../../Header';
 
 interface DetailContainerProps {
   storeDetail: StoreDetailInfoData;
+  parentlistInfo?: ParentSavedListResponse;
 }
 
-export function DetailContainer({ storeDetail }: DetailContainerProps) {
+export function DetailContainer({
+  storeDetail,
+  parentlistInfo,
+}: DetailContainerProps) {
   if (!storeDetail) throw Error('store 상세 정보 불러오기 실패');
 
   const getAllMenuImages = (menus: Menu[]): string[] => {
@@ -57,6 +65,7 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
     mate: storeDetail.mate,
     saved: storeDetail.saved,
     savedListId: storeDetail.savedListId,
+    parentlistInfo,
   };
 
   const tabContainerProps = {

@@ -1,6 +1,9 @@
 'use client';
 
-import type { StoreDetailInfoData } from '@repo/entity/src/store';
+import type {
+  ParentSavedListResponse,
+  StoreDetailInfoData,
+} from '@repo/entity/src/store';
 import { StoreFeatureIconList } from '../../../../../map/@bottomSheet/_components/StoreFeatureIconList';
 import { StoreInfo } from '../../../../../map/@bottomSheet/_components/StoreInfo';
 import { HexagonGrid } from '@repo/design-system/components/HexagonGrid';
@@ -11,7 +14,12 @@ import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { CouponIsNotReadyModal } from '../../../../../map/_modals/CouponIsNotReadyModal';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
+import { cn } from '@repo/ui/lib/utils';
+import { getIconColor } from '../../../../../map/_utils/iconColor';
 
+interface DetailInfoContainerProps extends StoreDetailInfoData {
+  parentlistInfo?: ParentSavedListResponse;
+}
 export function DetailInfoContainer({
   name,
   animalYn,
@@ -30,10 +38,14 @@ export function DetailInfoContainer({
   holidays,
   notice,
   topPreferences,
-}: StoreDetailInfoData) {
+  parentlistInfo,
+  saved,
+}: DetailInfoContainerProps) {
   const storeService = new StoreService({
     storeRepository: new StoreAPIRepository(),
   });
+
+  const listColorId = parentlistInfo?.iconColorId;
 
   const storeFeatureIconListProps = {
     animalYn,
@@ -90,11 +102,18 @@ export function DetailInfoContainer({
             ))}
           </span>
         </div>
-        <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm">
-          <div className="w-4 md:w-[37.71px] h-4 md:h-[37.71px]">
-            <IconFlower className="w-full h-full text-primary" />
+        {saved && (
+          <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm">
+            <div className="w-4 md:w-[37.71px] h-4 md:h-[37.71px]">
+              <IconFlower
+                className={cn(
+                  listColorId && getIconColor(listColorId),
+                  'w-full h-full',
+                )}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="relative">
         <button

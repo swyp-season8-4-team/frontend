@@ -27,12 +27,12 @@ import type {
   SavedListRequest,
   StoresInSavedListRequest,
   CreateMenuRequestFormData,
-  StoreInSavedListRequest,
-  StoreInSavedListResponse,
   NearByStoreRequest,
   NearByStoreSearchRequest,
   NearbyFilteredStoresRequest,
   MenuRequests,
+  ParentSavedListResponse,
+  ParentSavedListRequest,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -371,10 +371,10 @@ export default class StoreAPIRepository
     return response;
   }
 
-  async getStoreInSavedList({
+  async getParentSavedList({
     authorization,
     data,
-  }: BaseRequestData<StoreInSavedListRequest>): Promise<StoreInSavedListResponse> {
+  }: BaseRequestData<ParentSavedListRequest>): Promise<ParentSavedListResponse> {
     if (!data) {
       throw Error('data required');
     }
@@ -382,8 +382,8 @@ export default class StoreAPIRepository
     const { listId } = data || {};
 
     const response = await fetch<
-      StoreInSavedListRequest,
-      StoreInSavedListResponse
+      ParentSavedListRequest,
+      ParentSavedListResponse
     >({
       ...(authorization && {
         headers: {

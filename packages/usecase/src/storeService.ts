@@ -5,11 +5,9 @@ import type {
   StoreRepository,
   StoreSummaryInfoData,
   Menu,
-  MenuRequests,
   CreateSavedListResponse,
   EditSavedListResponse,
   AddStoreInSavedListResponse,
-  StoreInSavedListResponse,
   StoresInSavedListData,
   RegisterStoreRequest,
   RegisterStoreResponse,
@@ -24,8 +22,9 @@ import type {
   DeleteSavedListRequest,
   AddStoreInSavedListRequest,
   DeleteStoreInSavedListRequest,
-  StoreInSavedListRequest,
   StoresInSavedListRequest,
+  ParentSavedListRequest,
+  ParentSavedListResponse,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -195,9 +194,11 @@ export default class StoreService {
         throw new Error('storeRepository is not set');
       }
 
+      const { authorization, ...rest } = params;
+
       const response = await this.storeRepository.registerStore({
-        authorization: params.authorization,
-        data: params,
+        authorization,
+        data: rest,
       });
       console.log(`매장 등록 완료 - 매장명: ${params.name}`);
 
@@ -217,10 +218,10 @@ export default class StoreService {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
-
+      const { authorization, ...rest } = params;
       const response = await this.storeRepository.editStore({
-        authorization: params.authorization,
-        data: params,
+        authorization,
+        data: rest,
       });
       console.log(`매장 정보 수정 완료 - 매장 ID: ${params.storeUuid}`);
 
@@ -258,10 +259,10 @@ export default class StoreService {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
-
+      const { authorization, ...rest } = params;
       await this.storeRepository.deleteStore({
-        authorization: params.authorization,
-        data: params,
+        authorization,
+        data: rest,
       });
       console.log(`매장 삭제 완료 - 매장 ID: ${params.storeUuid}`);
     } catch (error) {
@@ -425,9 +426,10 @@ export default class StoreService {
         throw new Error('storeRepository is not set');
       }
 
+      const { authorization, ...rest } = params;
       await this.storeRepository.createMenu({
-        authorization: params.authorization,
-        data: params,
+        authorization,
+        data: rest,
       });
       console.log(`메뉴 생성 완료 - 매장 ID: ${params.storeUuid}`);
     } catch (error) {
@@ -450,10 +452,10 @@ export default class StoreService {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
-
+      const { authorization, ...rest } = params;
       await this.storeRepository.editMenu({
-        authorization: params.authorization,
-        data: params,
+        authorization,
+        data: rest,
       });
       console.log(
         `메뉴 수정 완료 - 매장 ID: ${params.storeUuid}, 메뉴 ID: ${params.menuUuid}`,
@@ -479,9 +481,10 @@ export default class StoreService {
         throw new Error('storeRepository is not set');
       }
 
+      const { authorization, ...rest } = params;
       await this.storeRepository.deleteMenu({
-        authorization: params.authorization,
-        data: params,
+        authorization,
+        data: rest,
       });
       console.log(
         `메뉴 삭제 완료 - 매장 ID: ${params.storeUuid}, 메뉴 ID: ${params.menuUuid}`,
@@ -570,9 +573,10 @@ export default class StoreService {
         throw new Error('storeRepository is not set');
       }
 
+      const { authorization, ...rest } = params;
       const response = await this.storeRepository.createSavedList({
-        authorization: params.authorization,
-        data: params,
+        authorization,
+        data: rest,
       });
       console.log(`저장 목록 생성 완료 - 사용자 ID: ${params.userUuid}`);
 
@@ -595,10 +599,10 @@ export default class StoreService {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
-
+      const { authorization, ...rest } = params;
       const response = await this.storeRepository.editSavedList({
-        authorization: params.authorization,
-        data: params,
+        authorization,
+        data: rest,
       });
       console.log(`저장 목록 수정 완료 - 목록 ID: ${params.listId}`);
 
@@ -621,10 +625,10 @@ export default class StoreService {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
-
+      const { authorization, ...rest } = params;
       await this.storeRepository.deleteSavedList({
-        authorization: params.authorization,
-        data: params,
+        authorization,
+        data: rest,
       });
       console.log(`저장 목록 삭제 완료 - 목록 ID: ${params.listId}`);
     } catch (error) {
@@ -647,10 +651,10 @@ export default class StoreService {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
-
+      const { authorization, ...rest } = params;
       const response = await this.storeRepository.addStoreInSavedList({
-        authorization: params.authorization,
-        data: params,
+        authorization,
+        data: rest,
       });
       console.log(
         `저장 목록에 매장 추가 완료 - 목록 ID: ${params.listId}, 매장 ID: ${params.storeUuid}`,
@@ -677,10 +681,10 @@ export default class StoreService {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
-
+      const { authorization, ...rest } = params;
       await this.storeRepository.deleteStoreInSavedList({
-        authorization: params.authorization,
-        data: params,
+        authorization,
+        data: rest,
       });
       console.log(
         `저장 목록에서 매장 삭제 완료 - 목록 ID: ${params.listId}, 매장 ID: ${params.storeUuid}`,
@@ -694,19 +698,19 @@ export default class StoreService {
     }
   }
 
-  async getStoreInSavedList(
-    params: StoreInSavedListRequest & { authorization: string },
-  ): Promise<StoreInSavedListResponse> {
+  async getParentSavedList(
+    params: ParentSavedListRequest & { authorization: string | null },
+  ): Promise<ParentSavedListResponse> {
     try {
       console.log(`저장 목록의 매장 조회 시작 - 목록 ID: ${params.listId}`);
 
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
-
-      const response = await this.storeRepository.getStoreInSavedList({
-        authorization: params.authorization,
-        data: params,
+      const { authorization, ...rest } = params;
+      const response = await this.storeRepository.getParentSavedList({
+        authorization,
+        data: rest,
       });
       console.log(`저장 목록의 매장 조회 완료 - 목록 ID: ${params.listId}`);
 
@@ -729,10 +733,10 @@ export default class StoreService {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
-
+      const { authorization, ...rest } = params;
       const response = await this.storeRepository.getStoresInSavedList({
-        authorization: params.authorization,
-        data: params,
+        authorization,
+        data: rest,
       });
       console.log(`저장 목록의 매장들 조회 완료 - 목록 ID: ${params.listId}`);
 
