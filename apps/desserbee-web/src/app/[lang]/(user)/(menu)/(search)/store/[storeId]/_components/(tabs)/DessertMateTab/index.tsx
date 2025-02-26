@@ -34,7 +34,7 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
                   </div>
                 </div>
                 <div className="flex gap-x-[4.83px] items-center text-[10px] md:text-[14px]">
-                  <div className="text-[14px]">
+                  <div className="text-[10px] md:text-[14px]">
                     {recruitYn ? '모집중' : '마감'}
                   </div>
                   <div className="border-[#714115] rounded-full aspect-square border">
