@@ -30,7 +30,7 @@ export function StoreInfo({
 }: StoreInfoProps) {
   const [isOperationHourOpen, setIsOperationHourOpen] = useState(false);
   return (
-    <div className="flex flex-col w-full text-[8px] md:text-lg leading-[10px]">
+    <div className="flex flex-col w-full text-[8px] md:text-lg leading-[15px]">
       <div className="flex items-center gap-[6px]">
         <div className="flex-shrink-0 w-[7.83px] md:w-4">
           <IconLocation className="w-full h-full text-[#BABABA]" />
