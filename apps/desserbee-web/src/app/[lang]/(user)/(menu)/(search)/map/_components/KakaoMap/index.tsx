@@ -314,15 +314,17 @@ export function KakaoMap({
           'onPositionSuccess: 위치 마커 업데이트 중 오류 발생 ⚠️:',
           error,
         );
-        if (error instanceof GeolocationPermissionError) {
+        if (
+          error instanceof GeolocationPermissionError &&
+          error.message === 'PERMISSION_DENIED'
+        ) {
           console.log(
-            'onPositionSuccess: 위치 권한 관련 오류, 권한 요청 모달 표시 🪧',
+            'onPositionSuccess: 위치 권한 거부됨, 권한 요청 모달 표시 🪧',
           );
           openPermissionModal();
         } else {
           console.error('onPositionSuccess: 알 수 없는 오류 발생');
         }
-        // 에러를 throw하지 않고 여기서 처리 종료
         return;
       }
     },
@@ -377,11 +379,8 @@ export function KakaoMap({
       });
       console.log('loadMap - geoService.getCurrentPosition(): 위치 권한 확인');
 
-      if (
-        permissionStatus.state === 'denied' ||
-        permissionStatus.state === 'prompt'
-      ) {
-        console.log('loadMap: 위치 권한 필요: ', permissionStatus.state);
+      if (permissionStatus.state === 'denied') {
+        console.log('loadMap: 위치 권한 거부됨');
         openPermissionModal();
         return;
       }
@@ -458,14 +457,13 @@ export function KakaoMap({
       });
     } catch (err) {
       console.error('loadMap: 지도 초기화 중 오류 발생 ⚠️:', err);
-      if (err instanceof Error) {
-        console.error('loadMap: 오류 상세:', {
-          name: err.name,
-          message: err.message,
-          stack: err.stack,
-        });
+      if (err instanceof GeolocationPermissionError) {
+        if (err.message === 'PERMISSION_DENIED') {
+          openPermissionModal();
+        }
+      } else {
+        setError('지도 로딩에 실패했습니다. 잠시 후 다시 시도해주세요.');
       }
-      setError('지도 로딩에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
