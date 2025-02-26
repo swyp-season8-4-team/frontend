@@ -5,14 +5,16 @@ import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIR
 interface BottomSheetPageProps {
   searchParams: Promise<{
     bottomsheet: boolean;
-    storeId: string;
+    storeId?: string;
   }>;
 }
 
 export default async function BottomSheetPage({
   searchParams,
 }: BottomSheetPageProps) {
-  const { storeId, bottomsheet } = await searchParams;
+  const params = await searchParams;
+  const storeId = params.storeId;
+  const bottomsheet = params.bottomsheet === true;
 
   const storeService = new StoreService({
     storeRepository: new StoreAPIRepository(),
