@@ -43,7 +43,7 @@ export function StoreInfo({
       </div>
       <div>
         <div className="flex flex-col">
-          <div className="flex items-center gap-[6px]">
+          <div className="flex items-center gap-[6px] text-nowrap">
             <div className="flex-shrink-0 w-[6.83px] md:w-4">
               <IconClock className="w-full h-full text-[#BABABA]" />
             </div>
@@ -82,12 +82,12 @@ export function StoreInfo({
                     key={dayOfWeek}
                     className={cn(isClosed ? 'font-semibold' : '')}
                   >
-                    <div className="flex items-center gap-[6px] md:leading-[100%]">
+                    <div className="flex items-center ap-[6px] md:leading-[100%]">
                       <div className="w-4"></div>
-                      <div className="flex gap-[10px]">
+                      <div className="flex gap-[10px] pl-[10px] md:pl-10">
                         <div>{convertDayToKorean(dayOfWeek)}</div>
                         {!isClosed ? (
-                          <div className="flex flex-col md:gap-[6px]">
+                          <div className="flex flex-col md:gap-[6px] ">
                             <div className="flex">
                               <span>{openingTime}</span>
                               <span>&nbsp;-&nbsp;</span>
@@ -142,7 +142,7 @@ export function StoreInfo({
         <div className="w-[6.83px] md:w-4">
           <IconBaseball className="w-full h-full text-[#BABABA]" />
         </div>
-        <a className="underline" href={storeLink}>
+        <a className="underline break-all" href={storeLink}>
           {storeLink}
         </a>
       </div>
