@@ -567,6 +567,8 @@ export default class StoreAPIRepository
       url,
     });
 
+    console.log(response);
+
     return response;
   }
 }
