@@ -18,12 +18,15 @@ export default async function BottomSheetPage({
     storeRepository: new StoreAPIRepository(),
   });
 
-  const storeSummary = await storeService.getStoreSummary(storeId);
-
-  return (
-    <BottomSheetContainer
-      showBottomSheet={bottomsheet}
-      storeSummary={storeSummary}
-    />
-  );
+  if (storeId && bottomsheet) {
+    const storeSummary = await storeService.getStoreSummary(storeId);
+    return (
+      <BottomSheetContainer
+        showBottomSheet={bottomsheet}
+        storeSummary={storeSummary}
+      />
+    );
+  } else {
+    return null;
+  }
 }
