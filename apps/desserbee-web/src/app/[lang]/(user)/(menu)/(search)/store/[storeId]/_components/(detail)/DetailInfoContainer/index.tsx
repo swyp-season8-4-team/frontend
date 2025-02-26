@@ -28,8 +28,6 @@ export function DetailInfoContainer({
   holidays,
   notice,
   topPreferences,
-
-  // TODO: 가게 위도, 경도 받아와야함 (길찾기)
 }: StoreDetailInfoData) {
   const storeFeatureIconListProps = {
     animalYn,

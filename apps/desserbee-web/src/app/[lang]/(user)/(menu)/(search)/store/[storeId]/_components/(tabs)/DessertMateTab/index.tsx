@@ -4,5 +4,16 @@ interface DessertMateTabProps {
   mate: StoreDetailInfoData['mate'];
 }
 export function DessertMateTab({ mate }: DessertMateTabProps) {
-  return <div></div>;
+  return (
+    <div>
+      <div></div>
+      {mate.map((item) => (
+        <div>item.</div>
+      ))}
+
+      <div>
+        <div>\</div>
+      </div>
+    </div>
+  );
 }

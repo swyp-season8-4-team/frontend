@@ -1,7 +1,7 @@
-import { DetailContainer } from './_components/(detail)/DetailContainer';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
+import { DetailContainer } from './_components/(detail)/DetailContainer';
 
 interface StoreDetailPageProps {
   params: Promise<{
