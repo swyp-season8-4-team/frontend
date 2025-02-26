@@ -45,18 +45,6 @@ export interface OperatingHoursItem {
   lastOrderTime: string;
   isClosed: boolean;
 }
-// openingTime: {
-//   hour: number;
-//   minute: number;
-// };
-// closingTime: {
-//   hour: number;
-//   minute: number;
-// };
-// lastOrderTime: {
-//   hour: number;
-//   minute: number;
-// };
 
 export interface HolidaysItem {
   date: string;

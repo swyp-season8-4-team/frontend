@@ -11,6 +11,7 @@ import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 import { convertDayToKorean } from '@/utils/weekday';
 import { cn } from '@repo/ui/lib/utils';
 import { useState } from 'react';
+import { getOperationStatus } from '../../../_utils/operatingStatus';
 type StoreInfoProps = Pick<
   StoreSummaryInfoData,
   | 'address'
@@ -29,6 +30,9 @@ export function StoreInfo({
   holidays,
 }: StoreInfoProps) {
   const [isOperationHourOpen, setIsOperationHourOpen] = useState(false);
+  const { status, message } = getOperationStatus(operatingHours);
+
+  console.log(operatingHours);
   return (
     <div className="flex flex-col w-full text-[8px] md:text-lg leading-[15px]">
       <div className="flex items-center gap-[6px]">
@@ -47,9 +51,13 @@ export function StoreInfo({
               className="flex items-center"
               onClick={() => setIsOperationHourOpen((prev) => !prev)}
             >
-              {/**TODO:오늘 날짜에 따라 계산 */}
-              <span className="mr-[11px] font-semibold">영업중</span>
-              <span>19:00에 영업 종료</span>
+              <span className="mr-[11px] font-semibold">
+                {status === 'BEFORE_OPEN' && '오픈 전'}
+                {status === 'OPEN' && '영업중'}
+                {status === 'CLOSED' && '영업 종료'}
+                {status === 'DAY_OFF' && '휴무일'}
+              </span>
+              <span>{message}</span>
               <div className="flex-shrink-0 w-[10px] md:w-5">
                 <IconDirection
                   className={cn(
@@ -122,12 +130,14 @@ export function StoreInfo({
         </div>
         <span>{phone}</span>
       </div>
-      <div className="flex items-center gap-[6px]">
-        <div className="flex-shrink-0 w-[6.83px] md:w-4">
-          <IconHome className="w-full h-full text-[#BABABA]" />
+      {description && (
+        <div className="flex items-center gap-[6px]">
+          <div className="flex-shrink-0 w-[6.83px] md:w-4">
+            <IconHome className="w-full h-full text-[#BABABA]" />
+          </div>
+          <span>{description}</span>
         </div>
-        <span>{description}</span>
-      </div>
+      )}
       <div className="flex items-center gap-[6px]">
         <div className="w-[6.83px] md:w-4">
           <IconBaseball className="w-full h-full text-[#BABABA]" />
