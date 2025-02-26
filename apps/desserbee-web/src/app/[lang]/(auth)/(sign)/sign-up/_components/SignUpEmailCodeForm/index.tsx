@@ -11,6 +11,7 @@ import AuthAPIRespository from "@repo/infrastructures/src/repositories/authAPIRe
 import { PortalContext } from "@repo/ui/contexts/PortalContext";
 import dynamic from "next/dynamic";
 import { verifyTokenAction } from "@/actions/verfiyTokenAction";
+import Link from "next/link";
 
 const Modal = dynamic(() => import('@repo/design-system/components/Modal'));
 
@@ -28,6 +29,7 @@ export default function SignUpEmailCodeForm({ updateStep }: Props) {
   const { email } = useContext(SignUpContext);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  
   const [isDisabled, setDisabled] = useState(true);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,8 +64,7 @@ export default function SignUpEmailCodeForm({ updateStep }: Props) {
           <Modal
             buttons={
               <Button
-                className="px-[60px] py-2 justify-between items-center rounded-full bg-[#FFB700]"
-                
+                className="w-full py-3 text-white text-center rounded-[100px] font-medium transition-colors bg-[#FFB700] hover:bg-[#FFB700]/90"
                 onClick={closeModal}
               >
                 계속하기
@@ -119,13 +120,13 @@ export default function SignUpEmailCodeForm({ updateStep }: Props) {
         </div>
 
         <div className="flex justify-between">
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-[10px] text-gray-500 mt-2">
             인증번호는 5분 이내 입력하여 해요.<br />
             제한 시간이 지났을 경우 인증번호를 다시 받아주세요.
           </p>
 
           <div className="text-right mt-2">
-            <button className="text-sm text-gray-500">이메일을 받지 못하셨나요?</button>
+            <Link href="" className="text-[10px] text-gray-500">이메일을 받지 못하셨나요?</Link>
           </div>
         </div>
         

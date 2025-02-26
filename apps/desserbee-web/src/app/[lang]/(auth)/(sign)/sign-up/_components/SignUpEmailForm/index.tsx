@@ -22,6 +22,7 @@ export default function SignUpEmailForm({ updateStep }: Props) {
   const { updateEmail } = useContext(SignUpContext);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -39,6 +40,7 @@ export default function SignUpEmailForm({ updateStep }: Props) {
     }
 
     try {
+      setLoading(true);
       const { expirationMinutes } = await authService.verifyEmailRequest({
         email: message,
         purpose: VerifyEmailPurpose.SIGNUP,
@@ -53,9 +55,13 @@ export default function SignUpEmailForm({ updateStep }: Props) {
       updateEmail(message);
     } catch (error) {
       if (error instanceof HTTPError) {
+        console.log(error);
         setError(error.message);
       }
+    } finally {
+      setLoading(false);
     }
+
   }, [message, updateEmail, updateStep]);
 
   return (
@@ -68,6 +74,7 @@ export default function SignUpEmailForm({ updateStep }: Props) {
         <div className="relative">
           <input
             type="email"
+            name="email"
             value={message}
             onChange={handleChange}
             placeholder="이메일을 입력해주세요"
@@ -105,6 +112,7 @@ export default function SignUpEmailForm({ updateStep }: Props) {
               : 'bg-gray-400 cursor-not-allowed opacity-50'
             }`}
           disabled={!message.trim() || !!error}
+          isLoading={isLoading}
           onClick={handleClick}
         >
           계속하기

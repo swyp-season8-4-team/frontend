@@ -55,7 +55,9 @@ const baseFetch = async <Q, R>(
         }, duration = ${Date.now() - startTime}`,
       );
 
-      throw new HTTPError(response.status, response.statusText);
+      const { status, message } = await response.json();
+
+      throw new HTTPError(status, message);
     }
 
     const contents: R =
