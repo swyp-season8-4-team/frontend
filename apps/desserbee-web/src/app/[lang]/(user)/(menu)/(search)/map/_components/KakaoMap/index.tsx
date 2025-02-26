@@ -104,7 +104,6 @@ export function KakaoMap({
   const handleStoreMarkerClick = useCallback(
     (storeId: string) => {
       router.replace(`?storeId=${storeId}&bottomsheet=true`, {
-        // 바텀시트 열기위해
         scroll: false,
       });
     },
@@ -132,7 +131,7 @@ export function KakaoMap({
     if (servicesRef.current.mapService && isMapLoaded) {
       servicesRef.current.mapService.setMapCenter(currentPosition);
     }
-  }, [isMapLoaded, currentPosition]);
+  }, [isMapLoaded]);
 
   const mapPanelProps = useMemo(
     () => ({
@@ -319,14 +318,40 @@ export function KakaoMap({
     }
 
     try {
-      console.log('현재 위치 가져오기 시작');
+      console.log('[KakaoMap] 현재 위치 정보 요청 시작');
       const result = await initializedServices.geoService.getCurrentPosition();
+
       if ('errorMessage' in result) {
-        console.log('위치 권한 없음, 권한 요청 모달 표시');
+        console.log('[KakaoMap] 위치 정보 오류 발생:', {
+          message: result.errorMessage,
+          type: result.errorType,
+        });
+
+        const permissionStatus = await navigator.permissions.query({
+          name: 'geolocation',
+        });
+
+        console.log('[KakaoMap] 현재 위치 권한 상태:', {
+          state: permissionStatus.state,
+          errorType: result.errorType,
+        });
+
+        if (result.errorType === 'PERMISSION_DENIED') {
+          console.log('[KakaoMap] 위치 권한이 거부되어 있음');
+        } else if (result.errorType === 'POSITION_UNAVAILABLE') {
+          console.log('[KakaoMap] GPS 사용 불가');
+        } else if (result.errorType === 'TIMEOUT') {
+          console.log('[KakaoMap] 위치 정보 요청 시간 초과');
+        }
+
         openPermissionModal();
         return;
       }
-      console.log('현재 위치:', result);
+
+      console.log('[KakaoMap] 현재 위치 정보 획득 성공:', {
+        latitude: result.latitude,
+        longitude: result.longitude,
+      });
 
       setCurrentPosition(result);
       console.log('지도 초기화 시작');
@@ -336,12 +361,15 @@ export function KakaoMap({
       );
       console.log('지도 초기화 완료');
 
-      console.log('현재 위치 마커 추가');
+      console.log('현재 위치 마커 추가 시작');
       await initializedServices.mapService.addCurrentPositionMaker(
         result,
         userMarkerImage.src,
       );
+      console.log('현재 위치 마커 추가 완료');
+
       await initializedServices.mapService.setMapCenter(result);
+      console.log('지도 중심 위치 설정 완료');
 
       console.log('주변 가게 마커 추가 시작');
       await initializedServices.mapService.addMarkersWithClustering(
@@ -351,14 +379,21 @@ export function KakaoMap({
       );
       console.log('주변 가게 마커 추가 완료');
 
-      console.log('위치 추적 시작');
+      console.log('실시간 위치 추적 시작');
       initializedServices.geoService.startWatchingPosition(onPositionSuccess, {
         enableHighAccuracy: true,
         timeout: 5000,
         maximumAge: 0,
       });
     } catch (err) {
-      console.error('초기화 중 오류 발생:', err);
+      console.error('[KakaoMap] 지도 초기화 중 오류 발생:', err);
+      if (err instanceof Error) {
+        console.error('[KakaoMap] 오류 상세:', {
+          name: err.name,
+          message: err.message,
+          stack: err.stack,
+        });
+      }
       setError('서비스 초기화에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
