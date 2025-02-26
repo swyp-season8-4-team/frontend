@@ -16,9 +16,9 @@ export default async function StoreDetailPage({
 
   console.log('상세페이지: ' + storeId);
 
-  const storeService = new StoreService({
-    storeRepository: new StoreAPIReopository(),
-  });
+  // const storeService = new StoreService({
+  //   storeRepository: new StoreAPIReopository(),
+  // });
 
   // const storeDetail = await storeService.getStoreDetail(storeId);
 
