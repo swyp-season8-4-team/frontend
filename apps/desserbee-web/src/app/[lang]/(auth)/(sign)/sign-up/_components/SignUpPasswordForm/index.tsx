@@ -70,7 +70,7 @@ export default function SignUpPasswordForm({ updateStep }: Props) {
             value={confirmPassword}
             onChange={handleConfirmPasswordChange}
             placeholder="비밀번호 (8자 이상, 영어 소문자, 특수문자 포함) 를 다시 입력해주세요."
-            className={`w-full py-[10px] border-b ${
+            className={`w-full text-[10px] font-medium leading-[-0.3px] py-[10px] border-b ${
               error ? 'border-red-500' : 'border-gray-200'
             } focus:outline-none placeholder:text-[#BABABA]`}
           />
