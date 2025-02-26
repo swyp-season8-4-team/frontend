@@ -658,5 +658,5 @@ export interface StoreRepository {
   getMenuList({ data }: BaseRequestData<GetMenuListRequest>): Promise<Menu[]>;
 
   // coupon count
-  updateCouponCount({ data }: BaseRequestData<void>): Promise<void>; // TODO: api 아직
+  updateCouponCount(): Promise<void>; // TODO: api 아직
 }

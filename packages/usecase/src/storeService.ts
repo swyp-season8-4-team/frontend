@@ -207,4 +207,22 @@ export default class StoreService {
       throw error;
     }
   }
+
+  async updateCouponCount() {
+    try {
+      console.log('쿠폰 카운팅 시작');
+
+      if (!this.storeRepository) {
+        throw new Error('storeRepository is not set');
+      }
+      const result = await this.storeRepository.updateCouponCount();
+
+      console.log(result);
+
+      return result;
+    } catch (error) {
+      console.error('쿠폰 카운팅 중 오류 발생:', error);
+      throw error;
+    }
+  }
 }
