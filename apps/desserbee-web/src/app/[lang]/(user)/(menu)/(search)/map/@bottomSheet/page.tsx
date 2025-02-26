@@ -16,8 +16,10 @@ export default async function BottomSheetPage({
   const storeId = params.storeId;
 
   const bottomsheet = params.bottomsheet === 'true';
+
   console.log('bottomsheet:', bottomsheet);
   console.log('storeId:', storeId);
+
   const storeService = new StoreService({
     storeRepository: new StoreAPIRepository(),
   });
