@@ -79,4 +79,15 @@ export default class UserService {
 
     return response;
   }
+
+  async uploadProfileImage(image: File): Promise<unknown> {
+    if (!this.userRepository) {
+      throw new Error('userRepository is not set');
+    }
+
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.userRepository.uploadProfileImage({ data: { image }, authorization });
+
+    return response;
+  }
 }

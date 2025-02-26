@@ -1,26 +1,25 @@
 'use client';
 
+import signUpAction from '@/actions/signUpAction';
+import updateProfileImageAction from '@/actions/updateProfileImageAction';
 import { NavigationPathname } from '@repo/entity/src/navigation';
-import AuthAPIRespository from '@repo/infrastructures/src/repositories/authAPIRespository';
-import AuthService from '@repo/usecase/src/authService';
+import { Button } from '@repo/ui/components/button';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useContext, useState } from 'react';
 import { SignUpContext } from '../../_contexts/SignUpContext';
-import { getVerifyTokenAction } from '@/actions/getVerifyTokenAction';
 
-const authService = new AuthService({
-  authRepository: new AuthAPIRespository(),
-});
 
 export default function SignUpTermsOfServiceForm() {
   const { email, password, nickname, confirmPassword, gender, profileImage } = useContext(SignUpContext);
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
   const [agreements, setAgreements] = useState({
     all: false,
     terms: false,
     privacy: false,
+    location: false,
     marketing: false,
-    service: false,
   });
 
   const handleAllCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,8 +28,8 @@ export default function SignUpTermsOfServiceForm() {
       all: checked,
       terms: checked,
       privacy: checked,
+      location: checked,
       marketing: checked,
-      service: checked,
     });
   };
 
@@ -55,34 +54,39 @@ export default function SignUpTermsOfServiceForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (agreements.terms && agreements.privacy && gender) {
-      console.log('signUp', {
-        email,
-        password,
-        nickname,
-        confirmPassword,
-        gender,
-      });
-      await authService.signUp({
-        email,
-        password,
-        nickname,
-        confirmPassword,
-        gender,
-      }, await getVerifyTokenAction());
+    if (agreements.terms && agreements.privacy && agreements.location && gender) {
+      try {
+        setIsLoading(true);
 
-      router.replace(NavigationPathname.SignIn);
+        await signUpAction({
+          email,
+          password,
+          nickname,
+          confirmPassword,
+          gender,
+        });
+
+        if (profileImage) {
+          await updateProfileImageAction(profileImage);
+        }
+        
+      } catch (error) {
+        console.error('회원가입 오류:', error);
+      } finally {
+        setIsLoading(false);
+        router.replace(NavigationPathname.SignIn);
+      }
     }
   };
 
   return (
-    <main className="flex flex-col h-full bg-white px-5 pt-8">
-      <div className="mb-8">
-        <h2 className="text-lg mb-1">서비스 이용을 위해</h2>
-        <h2 className="text-lg">이용약관 동의가 필요해요!</h2>
+    <main className="flex flex-col h-full bg-white px-5 pt-8 gap-8">
+      <div className="text-[#393939] text-[18px] font-semibold leading-[130%] tracking-[-0.38px]">
+        <p>서비스 이용을 위해</p>
+        <p>이용약관 동의가 필요해요!</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-5 h-full">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
         {/* 전체 동의 */}
         <label className="flex items-center justify-between w-full cursor-pointer">
           <span className="font-semibold">전체 동의</span>
@@ -91,7 +95,7 @@ export default function SignUpTermsOfServiceForm() {
               type="checkbox"
               checked={agreements.all}
               onChange={handleAllCheck}
-              className="sr-only" // 시각적으로 숨기고 접근성 유지
+              className="sr-only"
             />
             <div className={`w-6 h-6 rounded-full border ${
               agreements.all ? 'bg-[#F5B01C] border-[#F5B01C]' : 'border-gray-300'
@@ -106,7 +110,9 @@ export default function SignUpTermsOfServiceForm() {
         {/* 개별 동의 항목들 */}
         <div className="space-y-4">
           <label className="flex items-center justify-between w-full cursor-pointer">
-            <span className="underline">이용약관 및 개인정보처리방침 (필수)</span>
+            <div>
+              <Link href="/terms/privacy" className="underline">이용약관</Link> 및 <Link href="/terms/privacy" className="underline">개인정보처리방침</Link> (필수)
+            </div>
             <div className="relative">
               <input
                 type="checkbox"
@@ -126,19 +132,21 @@ export default function SignUpTermsOfServiceForm() {
           </label>
 
           <label className="flex items-center justify-between w-full cursor-pointer">
-            <span className="underline">위치기반서비스 이용약관 (필수)</span>
+            <div>
+              <Link href="/terms/location" className="underline">위치기반서비스</Link> 이용약관 (필수)
+            </div>
             <div className="relative">
               <input
                 type="checkbox"
-                name="privacy"
-                checked={agreements.privacy}
+                name="location"
+                checked={agreements.location}
                 onChange={handleSingleCheck}
                 className="sr-only"
               />
               <div className={`w-6 h-6 rounded-full border ${
-                agreements.privacy ? 'bg-[#F5B01C] border-[#F5B01C]' : 'border-gray-300'
+                agreements.location ? 'bg-[#F5B01C] border-[#F5B01C]' : 'border-gray-300'
               }`}>
-                {agreements.privacy && (
+                {agreements.location && (
                   <span className="text-white flex items-center justify-center h-full">✓</span>
                 )}
               </div>
@@ -146,7 +154,9 @@ export default function SignUpTermsOfServiceForm() {
           </label>
 
           <label className="flex items-center justify-between w-full cursor-pointer">
-            <span className="underline">마케팅 활용 동의 (선택)</span>
+            <div>
+              <Link href="/terms/marketing" className="underline">마케팅 활용</Link> 동의 (선택)
+            </div>
             <div className="relative">
               <input
                 type="checkbox"
@@ -167,17 +177,18 @@ export default function SignUpTermsOfServiceForm() {
         </div>
 
         {/* 제출 버튼 */}
-        <button
+        <Button
           type="submit"
-          className={`mb-8 py-4 rounded-lg ${
-            agreements.terms && agreements.privacy
+          className={`mt-8 py-4 rounded-[100px] ${
+            agreements.terms && agreements.privacy && agreements.location
               ? 'bg-[#F5B01C] text-white'
               : 'bg-gray-200 text-gray-500'
           }`}
-          disabled={!agreements.terms || !agreements.privacy}
+          disabled={!agreements.terms || !agreements.privacy || !agreements.location}
+          isLoading={isLoading}
         >
           회원가입 완료
-        </button>
+        </Button>
       </form>
     </main>
   );

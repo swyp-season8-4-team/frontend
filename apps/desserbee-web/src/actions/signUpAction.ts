@@ -13,5 +13,5 @@ export default async function signUpAction(data: SignUpData) {
   const cookieList = await cookies();
   const verificationToken = cookieList.get('verificationToken')?.value;
 
-  const response = await authService.signUp(data, verificationToken);
+  await authService.signUp(data, verificationToken);
 }

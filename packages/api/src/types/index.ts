@@ -15,4 +15,5 @@ export interface RequestData<D = unknown> {
   headers?: Omit<Headers, 'Content-Type'>;
   query?: Queries;
   retry?: boolean;
+  formData?: FormData;
 }
