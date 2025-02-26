@@ -9,13 +9,13 @@ interface State {
   password: string;
   confirmPassword: string;
   nickname: string;
-  profileImage: string | null;
+  profileImage: File | null;
   gender: Gender | null;
   updateEmail: (email: string) => void;
   updatePassword: (password: string) => void;
   updateConfirmPassword: (confirmPassword: string) => void;
   updateNickname: (nickname: string) => void;
-  updateProfileImage: (image: string) => void;
+  updateProfileImage: (image: File) => void;
   updateGender: (gender: Gender) => void;
 }
 
@@ -42,7 +42,7 @@ export function SignUpProvider({ children }: WithChildren) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [gender, setGender] = useState<Gender | null>(null);
   const [nickname, setNickname] = useState('');
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [profileImage, setProfileImage] = useState<File | null>(null);
 
   const updateEmail = useCallback((email: string) => {
     setEmail(email);
@@ -60,7 +60,7 @@ export function SignUpProvider({ children }: WithChildren) {
     setNickname(nickname);
   }, []);
 
-  const updateProfileImage = useCallback((image: string) => {
+  const updateProfileImage = useCallback((image: File) => {
     setProfileImage(image);
   }, []);
 

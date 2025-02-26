@@ -10,7 +10,7 @@ const baseFetch = async <Q, R>(
   const requestData = { ...originalRequestData };
   const headers = modifyDefaultHeaders(requestData.headers, isServer);
 
-  const { query, url } = requestData;
+  const { query, url, formData } = requestData;
   delete requestData.url;
 
   if (!url) {
@@ -26,7 +26,17 @@ const baseFetch = async <Q, R>(
   const urlWithQuery = `${apiURL}${
     serializedQueries ? `?${serializedQueries}` : ''
   }`;
-  const body = requestData.data ? JSON.stringify(requestData.data) : undefined;
+
+   // FormData가 있으면 body에 FormData를 사용하고, 아니면 JSON 문자열 사용
+   let body;
+   if (formData) {
+     // FormData를 사용할 경우 Content-Type 헤더를 삭제 (브라우저가 자동으로 설정)
+     delete headers['Content-Type'];
+     body = formData;
+   } else {
+     body = requestData.data ? JSON.stringify(requestData.data) : undefined;
+   }
+
   const requestInfo: RequestInit = {
     body,
     credentials: 'include',

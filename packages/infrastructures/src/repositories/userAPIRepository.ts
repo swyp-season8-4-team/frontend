@@ -82,10 +82,6 @@ export default class UserAPIRepository extends APIRepository implements UserRepo
     return response;
   }
 
-  uploadProfileImage(data: BaseRequestData<{ image: File; }>): Promise<void> {
-    throw new Error('Method not implemented.');
-  }
-
   async delete({ authorization, data }: BaseRequestData<void>): Promise<void> {
     const url = `${this.endpoint}/users/me`;
 
@@ -114,6 +110,31 @@ export default class UserAPIRepository extends APIRepository implements UserRepo
       url,
     });
 
+    return response;
+  }
+
+  async uploadProfileImage({ authorization, data }: BaseRequestData<{ image: File; }>): Promise<unknown> {
+    if (!data || !data.image) {
+      throw new Error('Image file is required');
+    }
+  
+    const url = `${this.endpoint}/users/me/profile-image`;
+    
+    // FormData 객체 생성
+    const formData = new FormData();
+    formData.append('image', data.image);
+  
+    const response = await fetch<void, { imageUrl: string }>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      method: 'POST',
+      url,
+      formData,
+    });
+  
     return response;
   }
 }

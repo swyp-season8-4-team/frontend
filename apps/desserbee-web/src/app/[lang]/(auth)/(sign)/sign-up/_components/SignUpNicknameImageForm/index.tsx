@@ -23,6 +23,7 @@ export default function SignUpNicknameImageForm({ updateStep }: Props) {
   const [message, setMessage] = useState('');
   const [error, setError] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleContinue = async () => {
@@ -38,8 +39,8 @@ export default function SignUpNicknameImageForm({ updateStep }: Props) {
     }
 
     updateNickname(message);
-    if (imagePreview) {
-      updateProfileImage(imagePreview);
+    if (imagePreview && file) {
+      updateProfileImage(file);
     }
     updateStep(SignUpStep.TERMS_OF_SERVICE);
   }
@@ -71,6 +72,7 @@ export default function SignUpNicknameImageForm({ updateStep }: Props) {
 
     try {
       const objectUrl = URL.createObjectURL(file);
+      setFile(file);
       setImagePreview(objectUrl);
 
       // 메모리 누수 방지를 위해 이전 URL 해제
@@ -121,7 +123,7 @@ export default function SignUpNicknameImageForm({ updateStep }: Props) {
           aria-label="이미지 업로드"
           onClick={handleImageClick}
         >
-          <IconCamera size={IconSize.s} />
+          <IconCamera />
         </button>
       </div>
 
