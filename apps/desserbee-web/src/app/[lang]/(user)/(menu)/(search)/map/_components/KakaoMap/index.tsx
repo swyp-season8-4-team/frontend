@@ -476,6 +476,8 @@ export function KakaoMap({
     };
   }, [servicesRef]);
 
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+
   return (
     <div>
       <Script
@@ -483,49 +485,56 @@ export function KakaoMap({
         strategy="afterInteractive"
         async
         src={KAKAO_MAP_API_URL}
+        onLoad={() => setIsScriptLoaded(true)}
         onReady={() => {
-          console.log(
-            '-----------------카카오맵 스크립트 onReady 이벤트 발생-------------------',
-          );
-          window.kakao.maps.load(async () => {
-            console.log('카카오맵 API load 콜백 실행');
-            console.log(
-              '-----------------services 체크 시작-------------------',
-            );
-            if (isInitialized) {
-              console.log('이미 초기화된 상태, 초기화 스킵');
-              return;
-            }
-            try {
-              console.log('서비스 초기화 시작');
-              const initializedServices = initializeServices();
-              console.log('서비스 객체 생성 완료 ☑️', initializedServices);
-
-              if (!areServicesInitialized(initializedServices)) {
-                console.error('서비스 초기화 검증 실패 ⚠️');
-                throw new Error('서비스 초기화 실패 ⚠️');
+          if (!isScriptLoaded) {
+            console.log('카카오맵 스크립트 최초 로드');
+            window.kakao.maps.load(async () => {
+              console.log(
+                '-----------------services 체크 시작-------------------',
+              );
+              if (isInitialized) {
+                console.log('이미 초기화된 상태, 초기화 스킵');
+                return;
               }
+              try {
+                console.log('서비스 초기화 시작');
+                const initializedServices = initializeServices();
+                console.log('서비스 객체 생성 완료 ☑️', initializedServices);
 
-              // useRef를 사용하여 서비스 인스턴스 저장
-              servicesRef.current = initializedServices;
-              setIsMapLoaded(true);
-              console.log('지도 로딩 시작 전 서비스 상태 설정 완료');
-              console.log(
-                '-----------------services 체크 완료-------------------',
-              );
-              console.log('-----------------load map 시작-------------------');
-              await loadMap(initializedServices);
-              console.log('-----------------load map 완료-------------------');
-            } catch (error) {
-              console.error('서비스 초기화 및 지도 로드 중 오류:', error);
-              setError('지도 로드에 실패했습니다. 잠시 후 다시 시도해주세요.');
-            } finally {
-              setIsInitialized(true);
-              console.log(
-                '-----------------카카오맵 스크립트 onReady 이벤트 종료-------------------',
-              );
-            }
-          });
+                if (!areServicesInitialized(initializedServices)) {
+                  console.error('서비스 초기화 검증 실패 ⚠️');
+                  throw new Error('서비스 초기화 실패 ⚠️');
+                }
+
+                // useRef를 사용하여 서비스 인스턴스 저장
+                servicesRef.current = initializedServices;
+                setIsMapLoaded(true);
+                console.log('지도 로딩 시작 전 서비스 상태 설정 완료');
+                console.log(
+                  '-----------------services 체크 완료-------------------',
+                );
+                console.log(
+                  '-----------------load map 시작-------------------',
+                );
+                await loadMap(initializedServices);
+                console.log(
+                  '-----------------load map 완료-------------------',
+                );
+              } catch (error) {
+                console.error('서비스 초기화 및 지도 로드 중 오류:', error);
+                setError(
+                  '지도 로드에 실패했습니다. 잠시 후 다시 시도해주세요.',
+                );
+              } finally {
+                setIsInitialized(true);
+                console.log(
+                  '-----------------카카오맵 스크립트 onReady 이벤트 종료-------------------',
+                );
+              }
+            });
+            setIsScriptLoaded(true);
+          }
         }}
       />
       <div
