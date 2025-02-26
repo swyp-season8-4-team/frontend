@@ -180,32 +180,34 @@ export function KakaoMap({
   const updateNearbyStores = useCallback(
     async (position: MapPosition) => {
       if (!areServicesInitialized(servicesRef.current)) {
-        console.log('서비스가 초기화되지 않음, 가게 정보 업데이트 스킵');
+        console.log(
+          'updateNearbyStores: 서비스가 초기화되지 않음, 가게 정보 업데이트 스킵',
+        );
         return;
       }
 
       try {
-        console.log('가게 정보 업데이트 시작');
+        console.log('updateNearbyStores: 가게 정보 업데이트 시작');
         isLoadingRef.current = true;
 
         if (nearByStores) {
-          console.log('새로운 가게 마커 추가 시작');
+          console.log('updateNearbyStores: 새로운 가게 마커 추가 시작');
           await servicesRef.current.mapService?.addMarkersWithClustering(
             nearByStores,
             storeMarkerImage.src,
             handleStoreMarkerClick,
           );
-          console.log('새로운 가게 마커 추가 완료');
+          console.log('updateNearbyStores: 새로운 가게 마커 추가 완료');
           setLastFetchPosition(position);
         } else {
-          console.log('주변 가게 정보 없음');
+          console.log('updateNearbyStores: 주변 가게 정보 없음');
         }
       } catch (error) {
-        console.error('가게 마커 업데이트 중 오류:', error);
+        console.error('updateNearbyStores: 가게 마커 업데이트 중 오류:', error);
         setError('가게 정보 업데이트에 실패했습니다.');
       } finally {
         isLoadingRef.current = false;
-        console.log('가게 정보 업데이트 프로세스 완료');
+        console.log('updateNearbyStores: 가게 정보 업데이트 프로세스 완료');
       }
     },
     [servicesRef, handleStoreMarkerClick, nearByStores],
@@ -213,32 +215,34 @@ export function KakaoMap({
 
   const onPositionSuccess = useCallback(
     async (position: MapPosition) => {
-      console.log('위치 업데이트 콜백 실행', position);
+      console.log('onPositionSuccess: 위치 업데이트 콜백 실행', position);
 
       if (!areServicesInitialized(servicesRef.current)) {
-        console.log('서비스가 초기화되지 않음, 위치 업데이트 스킵');
+        console.log(
+          'onPositionSuccess: 서비스가 초기화되지 않음, 위치 업데이트 스킵',
+        );
         return;
       }
 
       const now = Date.now();
       if (now - lastUpdateTimeRef.current < POSITION_UPDATE_INTERVAL) {
-        console.log('업데이트 간격이 너무 짧음, 스킵');
+        console.log('onPositionSuccess: 업데이트 간격이 너무 짧음, 스킵');
         return;
       }
 
       if (isLoadingRef.current) {
-        console.log('이전 업데이트가 진행 중, 스킵');
+        console.log('onPositionSuccess: 이전 업데이트가 진행 중, 스킵');
         return;
       }
 
       lastUpdateTimeRef.current = now;
-      console.log('위치 업데이트 시작');
+      console.log('onPositionSuccess: 위치 업데이트 시작');
 
       try {
-        console.log('현재 위치 마커 제거 시작');
+        console.log('onPositionSuccess: 현재 위치 마커 제거 시작');
         await servicesRef.current.mapService?.removeCurrentPositionMarker();
 
-        console.log('새로운 현재 위치 마커 추가');
+        console.log('onPositionSuccess: 새로운 현재 위치 마커 추가');
         await servicesRef.current.mapService?.addCurrentPositionMaker(
           position,
           userMarkerImage.src,
@@ -250,7 +254,7 @@ export function KakaoMap({
           position,
         );
         console.log(
-          '마지막 데이터 요청 위치와의 거리:',
+          'onPositionSuccess: 마지막 데이터 요청 위치와의 거리:',
           distanceFromLastFetch,
           'km',
         );
@@ -259,16 +263,23 @@ export function KakaoMap({
           lastFetchPosition.latitude === 0 ||
           distanceFromLastFetch > REFETCH_THRESHOLD_KM
         ) {
-          console.log('재요청 임계값 초과, 주변 가게 정보 업데이트 시작');
+          console.log(
+            'onPositionSuccess: 재요청 임계값 초과, 주변 가게 정보 업데이트 시작',
+          );
           await updateNearbyStores(position);
-          console.log('주변 가게 정보 업데이트 완료');
+          console.log('onPositionSuccess: 주변 가게 정보 업데이트 완료');
         } else {
-          console.log('재요청 임계값 이내, 업데이트 스킵');
+          console.log('onPositionSuccess: 재요청 임계값 이내, 업데이트 스킵');
         }
       } catch (error) {
-        console.error('위치 마커 업데이트 중 오류 발생:', error);
+        console.error(
+          'onPositionSuccess: 위치 마커 업데이트 중 오류 발생:',
+          error,
+        );
         if (error instanceof Error) {
-          console.log('위치 권한 관련 오류, 권한 요청 모달 표시');
+          console.log(
+            'onPositionSuccess: 위치 권한 관련 오류, 권한 요청 모달 표시',
+          );
           openPermissionModal();
         }
       }
@@ -282,12 +293,12 @@ export function KakaoMap({
   );
 
   const initializeServices = () => {
-    console.log('서비스 초기화 시작');
+    console.log('initializeServices: 서비스 초기화 시작');
 
     const mapService = new MapService({
       mapController: new KakaoMapController(),
     });
-    console.log('MapService 초기화 완료');
+    console.log('initializeServices: MapService 초기화 완료');
 
     const geoService = new GeolocationService({
       geolocationController: new GeolocationController(
@@ -295,12 +306,12 @@ export function KakaoMap({
         new MovingAverageFilter(3),
       ),
     });
-    console.log('GeolocationService 초기화 완료');
+    console.log('initializeServices: GeolocationService 초기화 완료');
 
     const storeService = new StoreService({
       storeRepository: new StoreAPIReopository(),
     });
-    console.log('StoreService 초기화 완료');
+    console.log('initializeServices: StoreService 초기화 완료');
 
     return { mapService, geoService, storeService };
   };
@@ -310,19 +321,19 @@ export function KakaoMap({
     geoService: GeolocationService;
     storeService: StoreService;
   }) => {
-    console.log('지도 로딩 시작');
+    console.log('loadMap: 지도 로딩 시작');
 
     if (!mapRef.current) {
-      console.error('Map container not found');
+      console.error('loadMap: Map container not found');
       return;
     }
 
     try {
-      console.log('[KakaoMap] 현재 위치 정보 요청 시작');
+      console.log('loadMap: 현재 위치 정보 요청 시작');
       const result = await initializedServices.geoService.getCurrentPosition();
 
       if ('errorMessage' in result) {
-        console.log('[KakaoMap] 위치 정보 오류 발생:', {
+        console.log('loadMap: 위치 정보 오류 발생:', {
           message: result.errorMessage,
           type: result.errorType,
         });
@@ -331,64 +342,73 @@ export function KakaoMap({
           name: 'geolocation',
         });
 
-        console.log('[KakaoMap] 현재 위치 권한 상태:', {
+        console.log('loadMap: 현재 위치 권한 상태:', {
           state: permissionStatus.state,
           errorType: result.errorType,
         });
 
-        if (result.errorType === 'PERMISSION_DENIED') {
-          console.log('[KakaoMap] 위치 권한이 거부되어 있음');
-        } else if (result.errorType === 'POSITION_UNAVAILABLE') {
-          console.log('[KakaoMap] GPS 사용 불가');
-        } else if (result.errorType === 'TIMEOUT') {
-          console.log('[KakaoMap] 위치 정보 요청 시간 초과');
+        if (
+          permissionStatus.state === 'denied' ||
+          permissionStatus.state === 'prompt'
+        ) {
+          console.log('loadMap: 위치 권한 필요: ', permissionStatus.state);
+          openPermissionModal();
+          return;
         }
 
-        openPermissionModal();
+        if (result.errorType === 'POSITION_UNAVAILABLE') {
+          console.log('loadMap: GPS 사용 불가');
+          setError('GPS를 활성화하고 다시 시도해주세요.');
+        } else if (result.errorType === 'TIMEOUT') {
+          console.log('loadMap: 위치 정보 요청 시간 초과');
+          setError('위치 정보를 가져오는데 시간이 너무 오래 걸립니다.');
+        } else {
+          setError('위치 정보를 가져오는데 실패했습니다.');
+        }
         return;
       }
 
-      console.log('[KakaoMap] 현재 위치 정보 획득 성공:', {
+      console.log('loadMap: 현재 위치 정보 획득 성공:', {
         latitude: result.latitude,
         longitude: result.longitude,
       });
 
       setCurrentPosition(result);
-      console.log('지도 초기화 시작');
+      console.log('loadMap: 지도 초기화 시작');
       await initializedServices.mapService.initializeMap(
         mapRef.current,
         result,
       );
-      console.log('지도 초기화 완료');
+      console.log('loadMap: 지도 초기화 완료');
 
-      console.log('현재 위치 마커 추가 시작');
+      console.log('loadMap: 현재 위치 마커 추가 시작');
       await initializedServices.mapService.addCurrentPositionMaker(
         result,
         userMarkerImage.src,
       );
-      console.log('현재 위치 마커 추가 완료');
+      console.log('loadMap: 현재 위치 마커 추가 완료');
 
       await initializedServices.mapService.setMapCenter(result);
-      console.log('지도 중심 위치 설정 완료');
+      console.log('loadMap: 지도 중심 위치 설정 완료');
 
-      console.log('주변 가게 마커 추가 시작');
+      console.log('loadMap: 주변 가게 마커 추가 시작');
       await initializedServices.mapService.addMarkersWithClustering(
         nearByStores,
         storeMarkerImage.src,
         handleStoreMarkerClick,
       );
-      console.log('주변 가게 마커 추가 완료');
+      console.log('loadMap: 주변 가게 마커 추가 완료');
 
-      console.log('실시간 위치 추적 시작');
+      console.log('loadMap: 실시간 위치 추적 시작');
       initializedServices.geoService.startWatchingPosition(onPositionSuccess, {
         enableHighAccuracy: true,
         timeout: 5000,
         maximumAge: 0,
       });
     } catch (err) {
-      console.error('[KakaoMap] 지도 초기화 중 오류 발생:', err);
+      console.error('loadMap: 지도 초기화 중 오류 발생:', err);
       if (err instanceof Error) {
-        console.error('[KakaoMap] 오류 상세:', {
+        console.error('loadMap: 오류 상세:', {
           name: err.name,
           message: err.message,
           stack: err.stack,

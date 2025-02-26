@@ -34,8 +34,8 @@ export default class GeolocationController {
             timestamp: new Date(pos.timestamp).toISOString(),
           });
 
-          const latitude = 37.5554;
-          const longitude = 126.9068;
+          const latitude = 37.55498563;
+          const longitude = 126.90483844;
           // const latitude = pos.coords.latitude;
           // const longitude = pos.coords.longitude;
 
@@ -86,8 +86,8 @@ export default class GeolocationController {
             //   pos.coords.accuracy,
             // );
 
-            const latitude = 37.5554;
-            const longitude = 126.9068;
+            const latitude = 37.55498563;
+            const longitude = 126.90483844;
 
             const position = {
               latitude,
