@@ -21,27 +21,15 @@ export default class GeolocationController {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (pos) => {
-            if (process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true') {
-              // const latitude = 37.498095;
-              // const longitude = 127.028979;
-              const latitude = pos.coords.latitude;
-              const longitude = pos.coords.longitude;
-
-              const position = this.applyFilters(
-                { latitude, longitude },
-                pos.coords.accuracy,
-              );
-
-              resolve(position);
-            } else {
-              const latitude = pos.coords.latitude;
-              const longitude = pos.coords.longitude;
-              const position = this.applyFilters(
-                { latitude, longitude },
-                pos.coords.accuracy,
-              );
-              resolve(position);
-            }
+            const latitude = 37.555;
+            const longitude = 126.9054;
+            // const latitude = pos.coords.latitude;
+            // const longitude = pos.coords.longitude;
+            const position = this.applyFilters(
+              { latitude, longitude },
+              pos.coords.accuracy,
+            );
+            resolve(position);
           },
           (err) => {
             if (err.code === 3) {

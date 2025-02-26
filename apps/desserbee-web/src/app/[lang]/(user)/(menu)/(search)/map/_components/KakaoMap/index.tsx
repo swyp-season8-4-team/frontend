@@ -39,57 +39,6 @@ import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
 
-// const nearByStores = [
-//   {
-//     storeId: 1,
-//     storeUuid: 'uuid-1',
-//     name: '디저트39 강남점',
-//     address: '서울 강남구 강남대로 396',
-//     latitude: 37.497175,
-//     longitude: 127.027926,
-//   },
-//   {
-//     storeId: 2,
-//     storeUuid: 'uuid-2',
-//     name: '아티제 강남역점',
-//     address: '서울 강남구 테헤란로 151',
-//     latitude: 37.499462,
-//     longitude: 127.028274,
-//   },
-//   {
-//     storeId: 3,
-//     storeUuid: 'uuid-3',
-//     name: '투썸플레이스 강남파이낸스센터점',
-//     address: '서울 강남구 테헤란로 152',
-//     latitude: 37.500175,
-//     longitude: 127.029046,
-//   },
-//   {
-//     storeId: 4,
-//     storeUuid: 'uuid-4',
-//     name: '설빙 강남역점',
-//     address: '서울 강남구 강남대로 358',
-//     latitude: 37.496533,
-//     longitude: 127.0268,
-//   },
-//   {
-//     storeId: 5,
-//     storeUuid: 'uuid-5',
-//     name: '폴바셋 강남역사거리점',
-//     address: '서울 강남구 테헤란로 129',
-//     latitude: 37.498325,
-//     longitude: 127.027892,
-//   },
-//   {
-//     storeId: 6,
-//     storeUuid: 'uuid-6',
-//     name: '배스킨라빈스 강남우성점',
-//     address: '서울 강남구 테헤란로 156',
-//     latitude: 37.500929,
-//     longitude: 127.028979,
-//   },
-// ];
-
 interface KakaoMapProps {
   userPreferences: string[];
   preferenceCategories: string[];
@@ -183,12 +132,7 @@ export function KakaoMap({
     if (servicesRef.current.mapService && isMapLoaded) {
       servicesRef.current.mapService.setMapCenter(currentPosition);
     }
-  }, [
-    servicesRef.current.mapService,
-    isMapLoaded,
-    currentPosition,
-    servicesRef.current,
-  ]);
+  }, [isMapLoaded, currentPosition]);
 
   const mapPanelProps = useMemo(
     () => ({
@@ -231,7 +175,7 @@ export function KakaoMap({
         return null;
       }
     },
-    [retryCount, servicesRef.current.storeService],
+    [retryCount],
   );
 
   const updateNearbyStores = useCallback(
