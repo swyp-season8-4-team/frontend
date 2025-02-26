@@ -39,6 +39,7 @@ import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
 import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService';
+import { nearBystores } from '../../_consts/marker';
 
 interface KakaoMapProps {
   userPreferences: string[];
@@ -293,14 +294,16 @@ export function KakaoMap({
             'onPositionSuccess: 재요청 할 때 됨, (임계값 초과), 주변 가게 정보 업데이트 시작 ✅',
           );
 
-          const nearByStores =
-            await servicesRef.current.storeService!.getNearbyStores({
-              latitude: position.latitude,
-              longitude: position.longitude,
-              radius: FETCH_RADIUS_KM,
-            });
+          //TODO: 가짜 데이터
+          const stores = nearBystores;
+          // const nearByStores =
+          //   await servicesRef.current.storeService!.getNearbyStores({
+          //     latitude: position.latitude,
+          //     longitude: position.longitude,
+          //     radius: FETCH_RADIUS_KM,
+          //   });
 
-          await updateNewClusterMarkers(position, nearByStores);
+          await updateNewClusterMarkers(position, stores);
           console.log(
             'onPositionSuccess: 주변 가게 정보 업데이트 완료, 클러스터 마커들도 새로 추가 📍',
           );
