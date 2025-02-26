@@ -229,7 +229,68 @@ export default async function StoreDetailPage({
         images: [],
       },
     ],
-    mate: [],
+
+    mate: [
+      {
+        mateUuid: 'f01f-457d-8b43-cbe181e1b061',
+        mateCategory: '친목도모',
+        thumbnail: 'https://picsum.photos/id/54/800/600',
+        title: '망원동 카페에서 디저트 먹으며 수다 떨어요!',
+        content:
+          '디저트 추천도 해주고 새로운 맛집도 공유하면 좋을 것 같아요요 ',
+        nickname: '울랄라',
+        recruitYn: true,
+      },
+      {
+        mateUuid: 'f01f-457d-8b43-cbe181e1b061',
+        mateCategory: '친목도모',
+        thumbnail: 'https://picsum.photos/id/54/800/600',
+        title: '망원동 카페에서 디저트 먹으며 수다 떨어요!',
+        content:
+          '디저트 추천도 해주고 새로운 맛집도 공유하면 좋을 것 같아요요 ',
+        nickname: '울랄라',
+        recruitYn: false,
+      },
+      {
+        mateUuid: 'f01f-457d-8b43-cbe181e1b061',
+        mateCategory: '친목도모',
+        thumbnail: 'https://picsum.photos/id/54/800/600',
+        title: '망원동 카페에서 디저트 먹으며 수다 떨어요!',
+        content:
+          '디저트 추천도 해주고 새로운 맛집도 공유하면 좋을 것 같아요요 ',
+        nickname: '울랄라',
+        recruitYn: true,
+      },
+      {
+        mateUuid: 'f01f-457d-8b43-cbe181e1b061',
+        mateCategory: '친목도모',
+        thumbnail: 'https://picsum.photos/id/54/800/600',
+        title: '망원동 카페에서 디저트 먹으며 수다 떨어요!',
+        content:
+          '디저트 추천도 해주고 새로운 맛집도 공유하면 좋을 것 같아요요 ',
+        nickname: '울랄라',
+        recruitYn: false,
+      },
+      {
+        mateUuid: 'f01f-457d-8b43-cbe181e1b061',
+        mateCategory: '친목도모',
+        thumbnail: 'https://picsum.photos/id/54/800/600',
+        title: '망원동 카페에서 디저트 먹으며 수다 떨어요!',
+        content:
+          '디저트 추천도 해주고 새로운 맛집도 공유하면 좋을 것 같아요요 ',
+        nickname: '울랄라',
+        recruitYn: true,
+      },
+      {
+        mateUuid: 'f01f-457d-8b43-cbe181e1b061',
+        mateCategory: '친목도모',
+        thumbnail: 'https://picsum.photos/id/54/800/600',
+        title: '망원동 카페에서 디저트 먹으며 수다 떨어요!',
+        content: '디저트 추천도 해주고 새로운 맛집도 공유하면 좋을 것 같아요요',
+        nickname: '울랄라',
+        recruitYn: true,
+      },
+    ],
     saved: false,
     savedListId: null,
   };

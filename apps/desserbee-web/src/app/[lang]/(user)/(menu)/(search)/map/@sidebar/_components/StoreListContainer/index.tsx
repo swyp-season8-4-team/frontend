@@ -11,6 +11,7 @@ import IconLocation from '@repo/design-system/components/icons/IconLocation';
 import IconWriting from '@repo/design-system/components/icons/IconWriting';
 import { useState } from 'react';
 import IconCheck from '@repo/design-system/components/icons/IconCheck';
+import { getIconColor } from '../../../_utils/iconColor';
 
 interface StoresInSavedList {
   listName: string;
@@ -64,7 +65,7 @@ export function StoreListContainer({
             <div className="border-[#D5D5D5] border-[0.5px] rounded-sm w-[11.93px] md:w-[28.07px] aspect-square">
               <IconFlower
                 className={cn(
-                  // getIconColor(storesInSavedList.iconColorId),
+                  getIconColor(storesInSavedList.iconColorId),
 
                   'w-full h-full',
                 )}
@@ -142,7 +143,7 @@ export function StoreListContainer({
                         index === 0 && 'rounded-l-sm md:rounded-l-lg',
                         index === store.imageUrls.length - 1 &&
                           'rounded-r-sm md:rounded-r-lg',
-                        'w-[43.24px] md:w-[101.73px] aspect-square overflow-hidden',
+                        'w-[43.24px] md:w-[101.73px] aspect-square overflow-hidden bg-slate-300',
                       )}
                     >
                       <Image
