@@ -13,7 +13,7 @@ interface TabContainerProps {
     'storeReviews' | 'totalReviewCount' | 'averageRating'
   >;
   menus: StoreDetailInfoData['menus'];
-  mate: StoreDetailInfoData['mate'][];
+  mate: StoreDetailInfoData['mate'];
 }
 
 const DETAIL_TABS = [
