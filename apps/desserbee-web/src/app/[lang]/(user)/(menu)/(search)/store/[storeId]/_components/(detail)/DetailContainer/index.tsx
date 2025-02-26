@@ -1,22 +1,17 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-
 import type { Menu, StoreDetailInfoData } from '@repo/entity/src/store';
 import { StorePictureList } from '../StorePictureList';
 import { DetailInfoContainer } from '../DetailInfoContainer';
-import IconDirection from '@repo/design-system/components/icons/IconDirection';
-import IconX from '@repo/design-system/components/icons/IconX';
-import { NavigationPathname } from '@repo/entity/src/navigation';
+
 import { TabContainer } from '../../(tabs)/TabContainer';
+import { DetailPageHeader } from '../../Header';
 
 interface DetailContainerProps {
   storeDetail: StoreDetailInfoData;
 }
 
 export function DetailContainer({ storeDetail }: DetailContainerProps) {
-  const router = useRouter();
-
   if (!storeDetail) throw Error('store 상세 정보 불러오기 실패');
 
   const getAllMenuImages = (menus: Menu[]): string[] => {
@@ -65,28 +60,18 @@ export function DetailContainer({ storeDetail }: DetailContainerProps) {
   };
 
   const tabContainerProps = {
-    onelineReviews: storeDetail.storeReviews,
+    onelineReviews: {
+      storeReviews: storeDetail.storeReviews,
+      totalReviewCount: storeDetail.totalReviewCount,
+      averageRating: storeDetail.averageRating,
+    },
     menus: storeDetail.menus,
     mate: storeDetail.mate,
   };
 
-  const handleBack = () => {
-    router.back();
-  };
-
-  const handleGoMap = () => {
-    router.replace(NavigationPathname.Map);
-  };
   return (
     <>
-      <header className="flex justify-between items-center shadow-base px-4 md:px-6 py-5 md:py-[46px] w-full">
-        <button onClick={handleBack} className="w-[21px] md:w-[40px]">
-          <IconDirection className="w-full h-full text-[#6F6F6F] rotate-90 transform" />
-        </button>
-        <button onClick={handleGoMap} className="w-[20px] md:w-[40px]">
-          <IconX className="w-full h-full text-[#6F6F6F]" />
-        </button>
-      </header>
+      <DetailPageHeader />
       <div className="px-base">
         <StorePictureList {...storePicureListProps} />
         <DetailInfoContainer {...detailInfoContainerProps} />

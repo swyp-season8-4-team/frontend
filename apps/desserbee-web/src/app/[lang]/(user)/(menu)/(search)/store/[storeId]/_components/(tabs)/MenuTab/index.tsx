@@ -1,7 +1,7 @@
 import type { Menu } from '@repo/entity/src/store';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useContext, useState } from 'react';
-import { MenuPictureCarouselModal } from '../../_modals/MenuPictureCarouselModal';
+import { MenuPictureCarouselModal } from '../../../_modals/MenuPictureCarouselModal';
 
 interface MenuTabProps {
   menus: Menu[];

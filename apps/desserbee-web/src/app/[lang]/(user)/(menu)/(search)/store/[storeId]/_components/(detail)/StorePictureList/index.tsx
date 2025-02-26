@@ -2,7 +2,7 @@ import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import Image from 'next/image';
 import { useContext } from 'react';
-import { StorePictureCarouselModal } from '../../_modals/StorePictureCarouselModal';
+import { StorePictureCarouselModal } from '../../../_modals/StorePictureCarouselModal';
 interface StorePictureListProps
   extends Pick<StoreSummaryInfoData, 'storeImages'> {
   menuImages: string[];

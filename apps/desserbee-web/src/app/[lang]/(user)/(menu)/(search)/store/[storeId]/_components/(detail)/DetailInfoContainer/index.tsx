@@ -1,17 +1,14 @@
 'use client';
 
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
-import { StoreFeatureIconList } from '../../../../map/@bottomSheet/_components/StoreFeatureIconList';
-import { StoreInfo } from '../../../../map/@bottomSheet/_components/StoreInfo';
+import { StoreFeatureIconList } from '../../../../../map/@bottomSheet/_components/StoreFeatureIconList';
+import { StoreInfo } from '../../../../../map/@bottomSheet/_components/StoreInfo';
 import { HexagonGrid } from '@repo/design-system/components/HexagonGrid';
 import IconDownload from '@repo/design-system/components/icons/IconDownload';
 import IconFlower from '@repo/design-system/components/icons/IconFlower';
 import { useContext } from 'react';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
-import { CouponIsNotReadyModal } from '../../../../map/_modals/CouponIsNotReadyModal';
-import { MenuPictureCarouselModal } from '../../_modals/MenuPictureCarouselModal';
-
-interface DetailInfoContainerProps extends StoreDetailInfoData {}
+import { CouponIsNotReadyModal } from '../../../../../map/_modals/CouponIsNotReadyModal';
 
 export function DetailInfoContainer({
   name,
@@ -33,7 +30,7 @@ export function DetailInfoContainer({
   topPreferences,
 
   // TODO: 가게 위도, 경도 받아와야함 (길찾기)
-}: DetailInfoContainerProps) {
+}: StoreDetailInfoData) {
   const storeFeatureIconListProps = {
     animalYn,
     tumblerYn,

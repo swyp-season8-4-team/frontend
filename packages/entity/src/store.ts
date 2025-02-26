@@ -268,6 +268,7 @@ export interface RegisterStoreRequest
   > {
   userUuid: string;
   menus: Menu[];
+  ImageFileKey?: string;
   storeImageFiles?: File[];
   ownerPickImageFiles?: File[];
   menuImageFiles?: File[];

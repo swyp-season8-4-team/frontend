@@ -1,12 +1,17 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { CommunityReviewTab } from '../CommunityReviewTab';
 import { DessertMateTab } from '../DessertMateTab';
 import { MenuTab } from '../MenuTab';
 import { OnelineReviewTab } from '../OnelineReviewTab';
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
+import { PortalContext } from '@repo/ui/contexts/PortalContext';
+import { CommunityIsNotReadyModal } from '../../../../../map/_modals/CommunityIsNotReadyModal';
 
 interface TabContainerProps {
-  onelineReviews: StoreDetailInfoData['storeReviews'];
+  onelineReviews: Pick<
+    StoreDetailInfoData,
+    'storeReviews' | 'totalReviewCount' | 'averageRating'
+  >;
   menus: StoreDetailInfoData['menus'];
   mate: StoreDetailInfoData['mate'];
 }
@@ -27,6 +32,19 @@ export function TabContainer({
 }: TabContainerProps) {
   const [activeTab, setActiveTab] = useState<TabId>('menu');
 
+  const { push, pop } = useContext(PortalContext);
+
+  const closeModal = () => {
+    pop('modal');
+  };
+
+  const handleCommunityReviewTabClick = (id: string) => {
+    if (id !== 'community') return;
+    push('modal', {
+      component: <CommunityIsNotReadyModal onClose={closeModal} />,
+    });
+  };
+
   const renderTabContent = () => {
     switch (activeTab) {
       case 'menu':
@@ -46,10 +64,13 @@ export function TabContainer({
         {DETAIL_TABS.map(({ id, title }) => (
           <button
             key={id}
-            onClick={() => setActiveTab(id)}
-            className={`text-[8px] leading-3  ${
+            onClick={() => {
+              setActiveTab(id);
+              handleCommunityReviewTabClick(id);
+            }}
+            className={`text-[8px] md:text-lg leading-3  ${
               activeTab === id
-                ? 'border-b-[2.56px] border-[#FFB700] '
+                ? 'border-b-[3.56px] md:border-b-[4.56px] border-[#FFB700] '
                 : 'text-[#9F9F9F]'
             }`}
           >
@@ -57,7 +78,9 @@ export function TabContainer({
           </button>
         ))}
       </nav>
-      <div className="mt-4">{renderTabContent()}</div>
+      <div className="mt-4 min-h-[173.5px] md:min-h-[422px]">
+        {renderTabContent()}
+      </div>
     </div>
   );
 }
