@@ -207,7 +207,7 @@ export function KakaoMap({
       try {
         isLoadingRef.current = true;
 
-        if (stores) {
+        if (stores.length !== 0) {
           console.log(
             'updateNewClusterMarkers: 주변 가게 있음 🏪, 새로운 가게 마커 추가 시작  ',
           );
