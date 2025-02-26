@@ -1,19 +1,52 @@
 'use client';
 
-import { useState } from 'react';
+import { UserContext } from '@/contexts/UserContext';
+import IconChevronDown from '@repo/design-system/components/icons/IconChevronDown';
 import type { Mate } from "@repo/entity/src/mate";
+import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
+import MateService from '@repo/usecase/src/mateService';
 import Image from 'next/image';
+import { useContext, useState } from 'react';
+
+const mateService = new MateService({
+  mateRepository: new MateAPIRepository(),
+});
 
 interface Props {
   waitList: Mate[];
 }
 
 export default function CurrentApplyList({ waitList }: Props) {
-  const [isOpen, setIsOpen] = useState(true);
+  const { user } = useContext(UserContext);
+  const [isOpen, setIsOpen] = useState(false);
 
   const handleClick = () => {
     setIsOpen(prev => !prev);
   };
+
+  const handleClickReceive = async (mate: Mate) => {
+    if (!user) {
+      throw new Error('user is not set');
+    }
+
+    await mateService.acceptMyTeamMember({
+      creatorUserId: user.id,
+      userId: mate.userId,
+      mateId: mate.id,
+    });
+  }
+
+  const handleClickReject = async (mate: Mate) => {
+    if (!user) {
+      throw new Error('user is not set');
+    }
+
+    await mateService.rejectMyTeamMember({
+      creatorUserId: user.id,
+      userId: mate.userId,
+      mateId: mate.id,
+    });
+  }
 
   return (
     <>
@@ -22,11 +55,7 @@ export default function CurrentApplyList({ waitList }: Props) {
         onClick={handleClick}
       >
         <span className="font-semibold">요청 현황</span>
-        <button 
-          className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-        >
-          ▲
-        </button>
+        <IconChevronDown className={`transform transition-transform duration-200 ${isOpen ? 'rotate-[-90deg]' : ''}`} />
       </div>
 
       <div 
@@ -50,10 +79,16 @@ export default function CurrentApplyList({ waitList }: Props) {
               <span className="font-medium">{wait.nickname}</span>
             </div>
             <div className="flex gap-2">
-              <button className="px-4 py-1 text-sm text-white bg-[#F5B01C] rounded-full">
+              <button
+                className="px-4 py-1 text-sm text-white bg-[#F5B01C] rounded-full"
+                onClick={() => handleClickReceive(wait)}
+              >
                 수락
               </button>
-              <button className="px-4 py-1 text-sm text-white bg-[#CD7F32] rounded-full">
+              <button
+                className="px-4 py-1 text-sm text-white bg-[#CD7F32] rounded-full"
+                onClick={() => handleClickReject(wait)}
+              >
                 거절
               </button>
             </div>

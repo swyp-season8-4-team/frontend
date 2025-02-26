@@ -9,7 +9,7 @@ interface Props extends WithClassName {
 export default function Chip({ text, onClick, className }: Props) {
   return (  
     <span
-      className={cn("flex justify-center items-center gap-[6.05px] px-[9.076px] py-[6.05px] rounded-[75.63px] border-[0.756px] border-[#6F6F6F]", className)}
+      className={cn("flex justify-center items-center px-[3.219px] py-[4.829px] rounded-[40.239px] border-[0.402px] border-[#6F6F6F]", className)}
       onClick={onClick}
     >
       {text}

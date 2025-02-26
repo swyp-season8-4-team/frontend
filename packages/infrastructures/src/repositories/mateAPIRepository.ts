@@ -1,5 +1,6 @@
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import type {
+  GetMateReplyListRequest,
   Mate,
   MateAcceptRequest,
   MateAllListResponse,
@@ -10,10 +11,18 @@ import type {
   MateListRequest,
   MateRawAllListResponse,
   MateRejectRequest,
+  MateReply,
+  MateReplyRequest,
+  MateReplyUpdateRequest,
   MateRepository,
   MateRequest,
+  MateSaveRequest,
   MateUpdateRequest,
   RawMate,
+  RawMateAcceptRequest,
+  RawMateRejectRequest,
+  RawMateReply,
+  RawMateReplyRequest,
 } from '@repo/entity/src/mate';
 import fetch from '@repo/api/src/fetch';
 import APIRepository from './apiRepository';
@@ -25,7 +34,7 @@ export default class MateAPIRepository
 {
   private readonly mateConverter: MateConverter = new MateConverter();
 
-  async apply({ data }: BaseRequestData<MateApplyRequest>): Promise<unknown> {
+  async applyMate({ data }: BaseRequestData<MateApplyRequest>): Promise<unknown> {
     if (!data) {
       throw new Error('data is required');
     }
@@ -97,11 +106,12 @@ export default class MateAPIRepository
       throw new Error('data is required');
     }
 
-    const { userId, mateId } = data;
+    const { creatorUserId, userId, mateId } = data;
 
-    const response = await fetch<{ userUuid: string }, unknown>({
+    const response = await fetch<RawMateAcceptRequest, unknown>({
       data: {
-        userUuid: userId,
+        creatorUuid: creatorUserId,
+        targetUuid: userId,
       },
       method: 'PATCH',
       url: `${this.endpoint}/mates/${mateId}/apply`,
@@ -115,11 +125,12 @@ export default class MateAPIRepository
       throw new Error('data is required');
     }
 
-    const { userId, mateId } = data;
+    const { creatorUserId, userId, mateId } = data;
 
-    const response = await fetch<{ userUuid: string }, unknown>({
+    const response = await fetch<RawMateRejectRequest, unknown>({
       data: {
-        userUuid: userId,
+        creatorUuid: creatorUserId,
+        targetUuid: userId,
       },
       method: 'DELETE',
       url: `${this.endpoint}/mates/${mateId}/apply`,
@@ -225,5 +236,132 @@ export default class MateAPIRepository
     });
 
     return response;
+  }
+
+  async save({ data }: BaseRequestData<MateSaveRequest>): Promise<unknown> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+    
+    const { id, userId } = data;
+
+    const response = await fetch<{ userUuid: string }, unknown>({
+      data: {
+        userUuid: userId,
+      },
+      method: 'PATCH',
+      url: `${this.endpoint}/saved/${id}`,
+    });
+
+    return response;
+  }
+
+  async createReply({ data }: BaseRequestData<MateReplyRequest>): Promise<unknown> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+
+    const { id, userId, content } = data;
+
+    const response = await fetch<RawMateReplyRequest, unknown>({
+      data: {
+        userUuid: userId,
+        content,
+      },
+      method: 'POST',
+      url: `${this.endpoint}/mates/${id}/reply`,
+    });
+
+    return response;
+  }
+
+  async deleteReply({ data }: BaseRequestData<Omit<MateReplyUpdateRequest, 'content'>>): Promise<unknown> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+    
+    const { id, userId, replyId } = data;
+
+    const response = await fetch<{ userUuid: string }, unknown>({
+      data: {
+        userUuid: userId,
+      },
+      method: 'DELETE',
+      url: `${this.endpoint}/mates/${id}/reply/${replyId}`,
+    });
+
+    return response;
+  }
+
+  async editReply({ data }: BaseRequestData<MateReplyUpdateRequest>): Promise<unknown> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+    
+    const { id, userId, content, replyId } = data;
+
+    const response = await fetch<RawMateReplyRequest, unknown>({
+      data: {
+        userUuid: userId,
+        content,
+      },
+      method: 'PATCH',
+      url: `${this.endpoint}/mates/${id}/reply/${replyId}`,
+    });
+
+    return response;
+  }
+
+  async getReply({ data }: BaseRequestData<MateReplyUpdateRequest>): Promise<MateReply> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+    
+    const { id, replyId } = data;
+
+    const response = await fetch<RawMateReplyRequest, RawMateReply>({
+      method: 'GET',
+      url: `${this.endpoint}/mates/${id}/reply/${replyId}`,
+    });
+
+    return this.mateConverter.convertRawToMateReply(response);
+  }
+
+  async getReplyList({ data }: BaseRequestData<GetMateReplyListRequest>): Promise<MateReply[]> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+
+    const { id, from, to } = data;
+
+    const response = await fetch<GetMateReplyListRequest, RawMateReply[]>({
+      method: 'GET',
+      url: `${this.endpoint}/mates/${id}/reply`,
+      query: {
+        from: from.toString(),
+        to: to.toString(),
+      },
+    });
+
+    return response.map((reply) => this.mateConverter.convertRawToMateReply(reply));
+  }
+
+  async getSavedMateList({ data }: BaseRequestData<MateListRequest>): Promise<Mate[]> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+    
+    const { from, to } = data;
+
+    const response = await fetch<MateListRequest, RawMate[]>({
+      method: 'GET',
+      url: `${this.endpoint}/mates/saved`,
+      query: {
+        from: from.toString(),
+        to: to.toString(),
+      }
+    });
+    
+    return response.map((mate) => this.mateConverter.convertRawToMate(mate));
   }
 }

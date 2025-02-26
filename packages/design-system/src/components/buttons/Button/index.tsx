@@ -43,11 +43,6 @@ export default function Button({
       onClick={clickHandler}
     >
       {children}
-      <div 
-        className="absolute inset-0 
-          group-active:not-disabled:bg-[var(--opacity-pressed)]
-          hover:not-disabled:bg-[var(--opacity-hover)]"
-      />
     </button>
   );
 }

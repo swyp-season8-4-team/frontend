@@ -1,36 +1,20 @@
 import type { WithParams } from "@/app";
 import { NavigationPathname } from "@repo/entity/src/navigation";
-import { Button } from "@repo/ui/components/button";
 import Link from "next/link";
 import KakaoLogo from "./_components/KakaoLogo";
 import LoginForm from "./_components/LoginForm";
+import LoginButtons from "./_components/LoginButtons";
 
 interface Props extends WithParams {}
 
 export default async function SignInPage() {
-  // const { next } = await searchParams;
-
   return (
     <>
       {/* 메인 컨텐츠 */}
-      <main className="flex flex-col justify-center px-4 mt-16 h-full">
+      <main className="flex flex-col justify-center px-4 mt-16 h-full gap-2">
         <h2 className="text-2xl font-medium text-center mb-8">로그인</h2>
         
         <LoginForm className="space-y-4">
-          <input
-            type="email"
-            name="email"
-            placeholder="이메일을 입력 해주세요."
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-gray-400"
-          />
-        
-          <input
-            type="password"
-            name="password"
-            placeholder="비밀번호를 입력 해주세요."
-            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:border-gray-400"
-          />
-
           <div className="flex items-center justify-between">
             <label className="flex items-center">
               <input type="radio" name="containLogin" className="w-4 h-4 rounded-full border-gray-300" />
@@ -42,21 +26,7 @@ export default async function SignInPage() {
               <Link href={NavigationPathname.ForgotPassword} className="text-b-400 text-[10px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font">비밀번호 찾기</Link>
             </div>
           </div>
-          <div className="flex flex-col gap-2 ">
-            <Button
-              type="submit"
-              className="w-full py-[15px] py-3 bg-[#FDB813] text-white rounded-[100px] font-medium text-center font-bold leading-[130%] tracking-[-0.334px]"
-            >
-              로그인
-            </Button>
-            <Button
-              type="submit"
-              className="w-full py-[15px] py-3 bg-[#DE8332] text-white rounded-[100px] font-medium text-center font-bold leading-[130%] tracking-[-0.334px]"
-            >
-              사장님 로그인
-            </Button>
-          </div>
-          
+          <LoginButtons />
         </LoginForm>
 
         {/* 간편 로그인 섹션 */}

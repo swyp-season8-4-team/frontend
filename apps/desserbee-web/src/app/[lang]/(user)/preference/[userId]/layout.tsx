@@ -7,6 +7,8 @@ import type { WithParams } from "@/app";
 import UserService from "@repo/usecase/src/userService";
 import UserAPIRepository from "@repo/infrastructures/src/repositories/userAPIRepository";
 import AuthNextAppRouteRepository from "@repo/infrastructures/src/repositories/authNextAppRouteRepository";
+import { HeaderContainer } from "../../(menu)/(search)/_components/HeaderContainer";
+import { recipeKorea } from "@/app/fonts";
 
 const userService = new UserService({
   authRepository: new AuthNextAppRouteRepository(),
@@ -29,8 +31,11 @@ export default async function SignInMBTILayout({ children, params }: WithChildre
   }
   
   return (
-    <PreferencesProvider user={targetUser}>
-      {children}
-    </PreferencesProvider>
+    <div className="min-h-screen bg-white">
+      <HeaderContainer fontClass={recipeKorea.className} />
+      <PreferencesProvider user={targetUser}>
+        {children}
+      </PreferencesProvider>
+    </div>
   );
 }

@@ -1,8 +1,20 @@
 import { NavigationPathname } from "@repo/entity/src/navigation";
 import Link from "next/link";
 import CommunityNickName from "./_components/CommunityNickName";
+import AuthService from "@repo/usecase/src/authService";
+import AuthNextAppRouteRepository from "@repo/infrastructures/src/repositories/authNextAppRouteRepository";
+import { redirect } from "next/navigation";
+
+const authService = new AuthService({
+  authRepository: new AuthNextAppRouteRepository(),
+})
 
 export default async function CommunityIntroPage() {
+  const authorization = await authService.getAuthorization();
+  if (!authorization) {
+    redirect(NavigationPathname.SignIn);
+  }
+  
   return (
     <main className="flex flex-col px-5 py-6 bg-[#F6F6F6] h-[100dvh]">
       <h1 className="text-xl text-gray-600 mb-4">커뮤니티</h1>
