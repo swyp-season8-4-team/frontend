@@ -15,18 +15,23 @@ export default class KakaoMapController implements MapController {
   private map: KakaoMapAdapter | null = null;
 
   async createMap(container: HTMLDivElement, position: MapPosition) {
-    const level = 3;
-    const kakaoMap = new kakao.maps.Map(container, {
-      center: new kakao.maps.LatLng(position.latitude, position.longitude),
-      level,
-    });
+    try {
+      const level = 3;
+      const kakaoMap = new kakao.maps.Map(container, {
+        center: new kakao.maps.LatLng(position.latitude, position.longitude),
+        level,
+      });
 
-    const zoomControl = new kakao.maps.ZoomControl();
+      const zoomControl = new kakao.maps.ZoomControl();
+      kakaoMap.addControl(zoomControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
 
-    kakaoMap.addControl(zoomControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
-
-    this.map = new KakaoMapAdapter(kakaoMap);
-    return this.map;
+      this.map = new KakaoMapAdapter(kakaoMap);
+      console.log('지도가 성공적으로 생성되었습니다.');
+      return this.map;
+    } catch (error) {
+      console.error('지도 생성 중 오류가 발생했습니다:', error);
+      throw error;
+    }
   }
 
   createMarkersWithClusterer(
@@ -34,74 +39,121 @@ export default class KakaoMapController implements MapController {
     markerImageSrc: string,
     handleMarkerClick: (storeUuid: string) => void,
   ): void {
-    if (!this.map) {
-      throw new Error('Map is not initialized');
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      this.map.createMarkersWithClusterer(
+        storeMapData,
+        markerImageSrc,
+        handleMarkerClick,
+      );
+      console.log(
+        `${storeMapData.length}개의 마커가 성공적으로 생성되었습니다.`,
+      );
+    } catch (error) {
+      console.error('마커 생성 중 오류가 발생했습니다:', error);
+      throw error;
     }
-
-    this.map.createMarkersWithClusterer(
-      storeMapData,
-      markerImageSrc,
-      handleMarkerClick,
-    );
   }
 
   clearAllMarkers(): void {
-    if (!this.map) {
-      throw new Error('Map is not initialized');
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      this.map.clearAllMarkers();
+      console.log('모든 마커가 성공적으로 제거되었습니다.');
+    } catch (error) {
+      console.error('마커 제거 중 오류가 발생했습니다:', error);
+      throw error;
     }
-
-    this.map.clearAllMarkers();
   }
 
   getMarkerById(storeUuid: string): CustomMarker | undefined {
-    if (!this.map) {
-      throw new Error('Map is not initialized');
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      const marker = this.map.getMarkerById(storeUuid);
+      console.log(`마커 조회 완료 - ID: ${storeUuid}`);
+      return marker;
+    } catch (error) {
+      console.error(
+        `마커 조회 중 오류가 발생했습니다 (ID: ${storeUuid}):`,
+        error,
+      );
+      throw error;
     }
-
-    return this.map.getMarkerById(storeUuid);
   }
 
   createCurrentPositionMarker(
     position: MapPosition,
     markerImageSrc: string,
   ): void {
-    if (!this.map) {
-      throw new Error('Map is not initialized');
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      this.map.createCurrentPositionMarker(position, markerImageSrc);
+      this.map.setCenter(position);
+      console.log('현재 위치 마커가 성공적으로 생성되었습니다.');
+    } catch (error) {
+      console.error('현재 위치 마커 생성 중 오류가 발생했습니다:', error);
+      throw error;
     }
-
-    this.map.createCurrentPositionMarker(position, markerImageSrc);
-    this.map.setCenter(position);
   }
 
   removeCurrentPositionMarker(): void {
-    if (!this.map) {
-      throw new Error('Map is not initialized');
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      this.map.removeCurrentPositionMarker();
+      console.log('현재 위치 마커가 성공적으로 제거되었습니다.');
+    } catch (error) {
+      console.error('현재 위치 마커 제거 중 오류가 발생했습니다:', error);
+      throw error;
     }
-
-    this.map.removeCurrentPositionMarker();
   }
 
   setMapCenter(position: MapPosition) {
-    if (!this.map) {
-      throw new Error('Map is not initialized');
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      this.map.setCenter(position);
+      console.log('지도 중심이 성공적으로 이동되었습니다.');
+    } catch (error) {
+      console.error('지도 중심 이동 중 오류가 발생했습니다:', error);
+      throw error;
     }
-
-    this.map.setCenter(position);
   }
 
   getMapCenter() {
-    if (!this.map) {
-      throw new Error('Map is not initialized');
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      const center = this.map.getCenter();
+      console.log('지도 중심 좌표를 성공적으로 가져왔습니다.');
+      return center;
+    } catch (error) {
+      console.error('지도 중심 좌표를 가져오는 중 오류가 발생했습니다:', error);
+      throw error;
     }
-
-    return this.map.getCenter();
   }
 
   relayout(): void {
-    if (!this.map) {
-      throw new Error('Map is not initialized');
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      this.map.relayout();
+      console.log('지도 레이아웃이 성공적으로 재조정되었습니다.');
+    } catch (error) {
+      console.error('지도 레이아웃 재조정 중 오류가 발생했습니다:', error);
+      throw error;
     }
-
-    this.map.relayout();
   }
 }

@@ -1,8 +1,7 @@
-import { DetailContainer } from './_components/DetailContainer';
-
-// import StoreService from '@repo/usecase/src/storeService';
-// import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
+import StoreService from '@repo/usecase/src/storeService';
+import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
+import { DetailContainer } from './_components/(detail)/DetailContainer';
 
 interface StoreDetailPageProps {
   params: Promise<{
@@ -178,8 +177,120 @@ export default async function StoreDetailPage({
       },
     ],
     totalReviewCount: 245,
-    storeReviews: [],
-    mate: [],
+    storeReviews: [
+      {
+        nickname: '굳!',
+        profileImage: 'https://picsum.photos/id/54/800/600',
+        reviewUuid: 'a685344e-f01f-457d-8b43-cbe59e1b061',
+        storeId: 13,
+        content: '정말 맛있어요! 분위기도 최고예요 😊',
+        rating: 4.5,
+        createdAt: '2025-02-13T01:08:34.353868',
+        images: [],
+      },
+      {
+        nickname: '굳!',
+        profileImage: 'https://picsum.photos/id/54/800/600',
+        reviewUuid: 'a685344e-f01f-457d-38b43-cbe189e1b061',
+        storeId: 13,
+        content: '정말 맛있어요! 분위기도 최고예요 😊',
+        rating: 4.5,
+        createdAt: '2025-02-13T01:08:34.353868',
+        images: [],
+      },
+      {
+        nickname: '굳!',
+        profileImage: 'https://picsum.photos/id/54/800/600',
+        reviewUuid: 'a685344e-f01f-457d-8b43-cbe189e1b021',
+        storeId: 13,
+        content: '정말 맛있어요! 분위기도 최고예요 😊',
+        rating: 4.5,
+        createdAt: '2025-02-13T01:08:34.353868',
+        images: [],
+      },
+      {
+        nickname: '굳!',
+        profileImage: 'https://picsum.photos/id/54/800/600',
+        reviewUuid: 'a685344e-f01f-457d-8b43-cbe189e3b061',
+        storeId: 13,
+        content: '정말 맛있어요! 분위기도 최고예요 😊',
+        rating: 4.5,
+        createdAt: '2025-02-13T01:08:34.353868',
+        images: [],
+      },
+      {
+        nickname: '굳!',
+        profileImage: 'https://picsum.photos/id/54/800/600',
+        reviewUuid: 'a685344e-f01f-457d-8b43-cbe181e1b061',
+        storeId: 13,
+        content: '정말 맛있어요! 분위기도 최고예요 😊',
+        rating: 4.5,
+        createdAt: '2025-02-13T01:08:34.353868',
+        images: [],
+      },
+    ],
+
+    mate: [
+      {
+        mateUuid: 'f01f-457d-8b43-cbe181e1b061',
+        mateCategory: '친목도모',
+        thumbnail: 'https://picsum.photos/id/54/800/600',
+        title: '망원동 카페에서 디저트 먹으며 수다 떨어요!',
+        content:
+          '디저트 추천도 해주고 새로운 맛집도 공유하면 좋을 것 같아요요 ',
+        nickname: '울랄라',
+        recruitYn: true,
+      },
+      {
+        mateUuid: 'f01f-457d-8b43-cbe181e1b061',
+        mateCategory: '친목도모',
+        thumbnail: 'https://picsum.photos/id/54/800/600',
+        title: '망원동 카페에서 디저트 먹으며 수다 떨어요!',
+        content:
+          '디저트 추천도 해주고 새로운 맛집도 공유하면 좋을 것 같아요요 ',
+        nickname: '울랄라',
+        recruitYn: false,
+      },
+      {
+        mateUuid: 'f01f-457d-8b43-cbe181e1b061',
+        mateCategory: '친목도모',
+        thumbnail: 'https://picsum.photos/id/54/800/600',
+        title: '망원동 카페에서 디저트 먹으며 수다 떨어요!',
+        content:
+          '디저트 추천도 해주고 새로운 맛집도 공유하면 좋을 것 같아요요 ',
+        nickname: '울랄라',
+        recruitYn: true,
+      },
+      {
+        mateUuid: 'f01f-457d-8b43-cbe181e1b061',
+        mateCategory: '친목도모',
+        thumbnail: 'https://picsum.photos/id/54/800/600',
+        title: '망원동 카페에서 디저트 먹으며 수다 떨어요!',
+        content:
+          '디저트 추천도 해주고 새로운 맛집도 공유하면 좋을 것 같아요요 ',
+        nickname: '울랄라',
+        recruitYn: false,
+      },
+      {
+        mateUuid: 'f01f-457d-8b43-cbe181e1b061',
+        mateCategory: '친목도모',
+        thumbnail: 'https://picsum.photos/id/54/800/600',
+        title: '망원동 카페에서 디저트 먹으며 수다 떨어요!',
+        content:
+          '디저트 추천도 해주고 새로운 맛집도 공유하면 좋을 것 같아요요 ',
+        nickname: '울랄라',
+        recruitYn: true,
+      },
+      {
+        mateUuid: 'f01f-457d-8b43-cbe181e1b061',
+        mateCategory: '친목도모',
+        thumbnail: 'https://picsum.photos/id/54/800/600',
+        title: '망원동 카페에서 디저트 먹으며 수다 떨어요!',
+        content: '디저트 추천도 해주고 새로운 맛집도 공유하면 좋을 것 같아요요',
+        nickname: '울랄라',
+        recruitYn: true,
+      },
+    ],
     saved: false,
     savedListId: null,
   };

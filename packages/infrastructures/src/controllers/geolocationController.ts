@@ -17,50 +17,57 @@ export default class GeolocationController {
   }
 
   getCurrentPosition(): Promise<MapPosition> {
+    console.log('[GeolocationController] 위치 정보 요청 시작');
     return new Promise((resolve, reject) => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            if (process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true') {
-              // const latitude = 37.498095;
-              // const longitude = 127.028979;
-              const latitude = pos.coords.latitude;
-              const longitude = pos.coords.longitude;
-
-              const position = this.applyFilters(
-                { latitude, longitude },
-                pos.coords.accuracy,
-              );
-
-              resolve(position);
-            } else {
-              const latitude = pos.coords.latitude;
-              const longitude = pos.coords.longitude;
-              const position = this.applyFilters(
-                { latitude, longitude },
-                pos.coords.accuracy,
-              );
-              resolve(position);
-            }
-          },
-          (err) => {
-            if (err.code === 3) {
-              reject(new Error('delayed'));
-            }
-            if (err.code === 1) {
-              reject(new Error('blocked'));
-            }
-            reject(err);
-          },
-          {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0,
-          },
+      if (!navigator.geolocation) {
+        console.error(
+          '[GeolocationController] 브라우저가 위치 정보를 지원하지 않음',
         );
-      } else {
         reject(new Error('notSupport'));
+        return;
       }
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          console.log('[GeolocationController] 위치 정보 획득 성공', {
+            accuracy: pos.coords.accuracy,
+            timestamp: new Date(pos.timestamp).toISOString(),
+          });
+
+          const latitude = 37.55498563;
+          const longitude = 126.90483844;
+          // const latitude = pos.coords.latitude;
+          // const longitude = pos.coords.longitude;
+
+          const position = this.applyFilters(
+            { latitude, longitude },
+            pos.coords.accuracy,
+          );
+          console.log('[GeolocationController] 필터링된 위치 정보', position);
+          resolve(position);
+        },
+        (err) => {
+          console.error('[GeolocationController] 위치 정보 획득 실패', {
+            code: err.code,
+            message: err.message,
+          });
+
+          if (err.code === 3) {
+            reject(new Error('delayed'));
+          } else if (err.code === 1) {
+            reject(new Error('blocked'));
+          } else if (err.code === 2) {
+            reject(new Error('unavailable'));
+          } else {
+            reject(new Error('unknown'));
+          }
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000,
+          maximumAge: 0,
+        },
+      );
     });
   }
 
@@ -72,12 +79,20 @@ export default class GeolocationController {
       if (navigator.geolocation) {
         this.watchId = navigator.geolocation.watchPosition(
           (pos) => {
-            const latitude = pos.coords.latitude;
-            const longitude = pos.coords.longitude;
-            const position = this.applyFilters(
-              { latitude, longitude },
-              pos.coords.accuracy,
-            );
+            // const latitude = pos.coords.latitude;
+            // const longitude = pos.coords.longitude;
+            // const position = this.applyFilters(
+            //   { latitude, longitude },
+            //   pos.coords.accuracy,
+            // );
+
+            const latitude = 37.55498563;
+            const longitude = 126.90483844;
+
+            const position = {
+              latitude,
+              longitude,
+            };
 
             onSuccess(position);
             resolve(position);

@@ -21,21 +21,31 @@ export default class StoreService {
     longitude: number;
     radius: number;
   }): Promise<NearByStoreData[]> {
-    if (!this.storeRepository) {
-      throw new Error('storeRepository is not set');
+    try {
+      if (!this.storeRepository) {
+        throw new Error('storeRepository is not set');
+      }
+
+      console.log(
+        `주변 매장 검색 시작 - 위도: ${latitude}, 경도: ${longitude}, 반경: ${radius}m`,
+      );
+
+      const requestData = {
+        data: {
+          latitude,
+          longitude,
+          radius,
+        },
+      };
+
+      const response = await this.storeRepository.getNearbyStores(requestData);
+      console.log(`주변 매장 ${response.length}개를 성공적으로 조회했습니다.`);
+
+      return response;
+    } catch (error) {
+      console.error('주변 매장 검색 중 오류가 발생했습니다:', error);
+      throw error;
     }
-
-    const requestData = {
-      data: {
-        latitude,
-        longitude,
-        radius,
-      },
-    };
-
-    const response = await this.storeRepository.getNearbyStores(requestData);
-
-    return response;
   }
 
   async getStoreSummary(storeUuid: string): Promise<StoreSummaryInfoData> {
