@@ -275,8 +275,6 @@ export default class StoreService {
 
   async updateCouponCount() {
     try {
-      console.log('쿠폰 카운팅 시작');
-
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }

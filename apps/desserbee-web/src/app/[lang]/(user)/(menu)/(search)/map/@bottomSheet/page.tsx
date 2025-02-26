@@ -14,6 +14,7 @@ export default async function BottomSheetPage({
 }: BottomSheetPageProps) {
   const params = await searchParams;
   const storeId = params.storeId;
+  const fakeStoreId = '18c1cf2d-788c-4de5-8c2a-932515e06625';
 
   const bottomsheet = params.bottomsheet === 'true';
 
@@ -29,7 +30,7 @@ export default async function BottomSheetPage({
     return null;
   }
 
-  const storeSummary = await storeService.getStoreSummary(storeId);
+  const storeSummary = await storeService.getStoreSummary(fakeStoreId); //TODO 서버에 가게 모두 등록되면 수정
   return (
     <BottomSheetContainer
       showBottomSheet={bottomsheet}
