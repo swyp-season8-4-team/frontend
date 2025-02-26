@@ -39,6 +39,8 @@ export function BottomSheetContainer({
     });
   };
 
+  if (!storeSummary) return null;
+
   const storeSummaryProps = {
     storeUuid: storeSummary.storeUuid,
     name: storeSummary.name,
@@ -58,7 +60,7 @@ export function BottomSheetContainer({
   };
 
   const hexaGridProps = {
-    contents: ['비건', '로우슈거', '글루텐프리'],
+    contents: storeSummary.topPreferences,
     ownerPickImages: storeSummary.ownerPickImages,
   };
   const storePreviewPicListProps = {
@@ -71,7 +73,9 @@ export function BottomSheetContainer({
         <HexagonGrid {...hexaGridProps} />
         <SummaryInfoContainer {...storeSummaryProps} />
       </div>
-      <StorePreviewPicList {...storePreviewPicListProps} />
+      {(storeSummary?.storeImages ?? []).length > 0 && (
+        <StorePreviewPicList {...storePreviewPicListProps} />
+      )}
     </BottomSheet>
   );
 }
