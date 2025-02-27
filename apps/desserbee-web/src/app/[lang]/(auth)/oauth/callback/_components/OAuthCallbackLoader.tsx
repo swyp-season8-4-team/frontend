@@ -1,14 +1,12 @@
 'use client';
 
-import redirectAction from "@/actions/redirectAction";
 import type { OAuthSocialProvider } from "@repo/entity/src/auth";
-import { NavigationPathname } from "@repo/entity/src/navigation";
-import AuthAPIRespository from "@repo/infrastructures/src/repositories/authAPIRespository";
+import AuthAPIRepository from "@repo/infrastructures/src/repositories/authAPIRepository";
 import AuthService from "@repo/usecase/src/authService";
 import { useEffect } from "react";
 
 const authService = new AuthService({
-  authRepository: new AuthAPIRespository(),
+  authRepository: new AuthAPIRepository(),
 });
 
 interface Props {

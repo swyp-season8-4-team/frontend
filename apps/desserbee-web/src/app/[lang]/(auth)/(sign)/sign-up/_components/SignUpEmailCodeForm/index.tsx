@@ -7,7 +7,7 @@ import AuthService, { EmailAuthSessionKey, SignUpStep, VerifyEmailPurpose } from
 import SignUpTimer from "../SignUpTimer";
 import SessionStorageRepository from "@repo/infrastructures/src/repositories/SessionStorageRepository";
 import { validateEmailCode } from "@repo/utility/src/regex";
-import AuthAPIRespository from "@repo/infrastructures/src/repositories/authAPIRespository";
+import AuthAPIRepository from "@repo/infrastructures/src/repositories/authAPIRepository";
 import { PortalContext } from "@repo/ui/contexts/PortalContext";
 import dynamic from "next/dynamic";
 import { verifyTokenAction } from "@/actions/verfiyTokenAction";
@@ -16,7 +16,7 @@ import Link from "next/link";
 const Modal = dynamic(() => import('@repo/design-system/components/Modal'));
 
 const authService = new AuthService({
-  authRepository: new AuthAPIRespository(),
+  authRepository: new AuthAPIRepository(),
   storageRepository: new SessionStorageRepository(),
 });
 

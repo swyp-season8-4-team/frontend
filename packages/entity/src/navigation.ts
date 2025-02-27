@@ -19,6 +19,14 @@ export enum NavigationPathname {
   CommunityDessertMate = '/community-dessert/mate',
   CommunityDessertReview = '/community-dessert/review',
   MateWrite = '/mate/write',
+  
   My = '/my',
+  MySetting = '/my/setting',
+  MyBookmarkList = '/my/bookmark-list',
+  MyPoints = '/my/points',
+  MyCoupon = '/my/coupon',
+
   Store = '/store',
+
+  PrivacyPolicy = '/privacy-policy',
 }

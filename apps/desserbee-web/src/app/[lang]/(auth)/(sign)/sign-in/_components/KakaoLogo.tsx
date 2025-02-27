@@ -1,10 +1,10 @@
 import { OAuthSocialProvider } from "@repo/entity/src/auth";
-import AuthAPIRespository from "@repo/infrastructures/src/repositories/authAPIRespository";
+import AuthAPIRepository from "@repo/infrastructures/src/repositories/authAPIRepository";
 import AuthService from "@repo/usecase/src/authService";
 import Link from "next/link";
 
 const authService = new AuthService({
-  authRepository: new AuthAPIRespository(),
+  authRepository: new AuthAPIRepository(),
 });
 
 export default function KakaoLogo() {

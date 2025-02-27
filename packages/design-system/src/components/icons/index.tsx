@@ -32,7 +32,7 @@ export default function Icon({
       fill={'none'}
       width={size}
       height={size}
-      viewBox={`0 0 ${size} ${size}`}
+      viewBox={viewBox ? viewBox : '0 0 24 24'}
       style={{ ...style, flexShrink: 0 }}
       {...props}
     >

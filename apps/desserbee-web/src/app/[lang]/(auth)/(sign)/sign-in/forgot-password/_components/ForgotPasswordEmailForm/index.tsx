@@ -9,11 +9,11 @@ import { validateEmail } from "@repo/utility/src/regex";
 import { EmailAuthSessionKey, VerifyEmailPurpose } from "@repo/usecase/src/authService";
 import AuthService from "@repo/usecase/src/authService";
 import { HTTPError } from "@repo/api/src/error";
-import AuthAPIRespository from "@repo/infrastructures/src/repositories/authAPIRespository";
+import AuthAPIRepository from "@repo/infrastructures/src/repositories/authAPIRepository";
 import { Button } from "@repo/ui/components/button";
 
 const authService = new AuthService({
-  authRepository: new AuthAPIRespository(),
+  authRepository: new AuthAPIRepository(),
 });
 
 export function ForgotPasswordEmailForm({ onNextStep }: ForgotPasswordStepProps) {
@@ -41,7 +41,7 @@ export function ForgotPasswordEmailForm({ onNextStep }: ForgotPasswordStepProps)
         email: message,
         purpose: VerifyEmailPurpose.RESET_PASSWORD,
       });
-      
+
       updateEmail(message);
       onNextStep(ForgotPasswordStep.AuthCode);
       authService.saveEmailAuthSession(EmailAuthSessionKey.RESET_PASSWORD, {

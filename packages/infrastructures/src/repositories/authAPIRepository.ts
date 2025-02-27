@@ -1,10 +1,10 @@
 import { isServer } from '@repo/api';
 import fetch from '@repo/api/src/fetch';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { AuthRepository, JWTTokens, OAuthSignInData, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, SignUpData, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
+import type { AuthRepository, JWTTokens, OAuthSignInData, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, SignOutData, SignUpData, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
 import APIRepository from './apiRepository';
 
-export default class AuthAPIRespository extends APIRepository implements AuthRepository {
+export default class AuthAPIRepository extends APIRepository implements AuthRepository {
   async socialSignIn({ data }: BaseRequestData<OAuthSignInData>): Promise<unknown> {
     if (!data) {
       throw new Error('data is not exist');
@@ -103,8 +103,15 @@ export default class AuthAPIRespository extends APIRepository implements AuthRep
     return response;
   }
 
-  async signOut(): Promise<void> {
+  async signOut({ data }: BaseRequestData<SignOutData>): Promise<void> {
+    if (!data) {
+      throw new Error('data is not exist');
+    }
+
     const response = await fetch<void, void>({
+      headers: {
+        authorization: `${data.authorization}`,
+      },
       method: 'POST',
       url: `${this.endpoint}/auth/logout`,
     });

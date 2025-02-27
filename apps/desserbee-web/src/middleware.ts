@@ -4,7 +4,7 @@ import Negotiator from 'negotiator';
 import { SupportISO639Language } from '@repo/entity/src/i18n';
 import { decodeJWT, isExpiredJWT } from '@repo/utility/src/jwt';
 import AuthService from '@repo/usecase/src/authService';
-import AuthAPIRespository from '@repo/infrastructures/src/repositories/authAPIRespository';
+import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
 
 const savedTokens: { [key: string]: string } = {};
 
@@ -124,7 +124,7 @@ async function getToken(request: NextRequest): Promise<string | null> {
   let newAccessToken: string | null = accessToken;
 
   const authService = new AuthService({
-    authRepository: new AuthAPIRespository(),
+    authRepository: new AuthAPIRepository(),
   });
 
   if (isAccessTokenExpired) {
