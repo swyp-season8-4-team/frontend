@@ -569,4 +569,26 @@ export default class StoreAPIRepository
 
     return response;
   }
+
+  async getStoresInBounds({
+    data,
+  }: BaseRequestData<{
+    swLat: number;
+    swLng: number;
+    neLat: number;
+    neLng: number;
+  }>): Promise<NearByStoreData[]> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { swLat, swLng, neLat, neLng } = data;
+
+    const response = await fetch<void, NearByStoreData[]>({
+      method: 'GET',
+      url: `${this.endpoint}/stores/bounds?swLat=${swLat}&swLng=${swLng}&neLat=${neLat}&neLng=${neLng}`,
+    });
+
+    return response;
+  }
 }

@@ -16,6 +16,15 @@ export default class GeolocationController {
     );
   }
 
+  private formatCoordinates(latitude: number, longitude: number) {
+    // latitude: decimal(10,8) -> 총 10자리, 소수점 8자리
+    // longitude: decimal(11,8) -> 총 11자리, 소수점 8자리
+    return {
+      latitude: Number(latitude.toFixed(8)),
+      longitude: Number(longitude.toFixed(8)),
+    };
+  }
+
   getCurrentPosition(): Promise<MapPosition> {
     console.log('[GeolocationController] 위치 정보 요청 시작');
     return new Promise((resolve, reject) => {
@@ -33,11 +42,13 @@ export default class GeolocationController {
             accuracy: pos.coords.accuracy,
             timestamp: new Date(pos.timestamp).toISOString(),
           });
-
-          // const latitude = 37.55498563; //TODO: 가짜 위치
-          // const longitude = 126.90483844;
-          const latitude = pos.coords.latitude;
-          const longitude = pos.coords.longitude;
+          //TODO: 가짜 위치
+          const latitude = 37.55498563;
+          const longitude = 126.90483844;
+          // const { latitude, longitude } = this.formatCoordinates(
+          //   pos.coords.latitude,
+          //   pos.coords.longitude,
+          // );
 
           const position = this.applyFilters(
             { latitude, longitude },
@@ -79,21 +90,24 @@ export default class GeolocationController {
       if (navigator.geolocation) {
         this.watchId = navigator.geolocation.watchPosition(
           (pos) => {
-            const latitude = pos.coords.latitude;
-            const longitude = pos.coords.longitude;
-            const position = this.applyFilters(
-              { latitude, longitude },
-              pos.coords.accuracy,
-            );
+            // const { latitude, longitude } = this.formatCoordinates(
+            //   pos.coords.latitude,
+            //   pos.coords.longitude,
+            // );
+
+            // const position = this.applyFilters(
+            //   { latitude, longitude },
+            //   pos.coords.accuracy,
+            // );
 
             // //TODO: 가짜 위치
-            // const latitude = 37.55498563;
-            // const longitude = 126.90483844;
+            const latitude = 37.55498563;
+            const longitude = 126.90483844;
 
-            // const position = {
-            //   latitude,
-            //   longitude,
-            // };
+            const position = {
+              latitude,
+              longitude,
+            };
 
             onSuccess(position);
             resolve(position);

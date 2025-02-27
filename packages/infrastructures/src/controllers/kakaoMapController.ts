@@ -156,4 +156,63 @@ export default class KakaoMapController implements MapController {
       throw error;
     }
   }
+
+  getBounds(): {
+    sw: MapPosition;
+    ne: MapPosition;
+  } {
+    if (!this.map) {
+      throw new Error('Map is not initialized');
+    }
+
+    const bounds = this.map.getBounds();
+    const sw = bounds.getSouthWest();
+    const ne = bounds.getNorthEast();
+
+    return {
+      sw: {
+        latitude: sw.getLat(),
+        longitude: sw.getLng(),
+      },
+      ne: {
+        latitude: ne.getLat(),
+        longitude: ne.getLng(),
+      },
+    };
+  }
+
+  getVisibleArea(): {
+    center: MapPosition;
+    level: number;
+  } {
+    if (!this.map) {
+      throw new Error('Map is not initialized');
+    }
+
+    const map = this.map;
+    const center = map.getCenter();
+    const level = map.getLevel();
+
+    return {
+      center: {
+        latitude: center.latitude,
+        longitude: center.longitude,
+      },
+      level: level,
+    };
+  }
+
+  setBounds(positions: MapPosition[]): void {
+    if (!this.map) {
+      throw new Error('Map is not initialized');
+    }
+
+    const bounds = new kakao.maps.LatLngBounds();
+
+    positions.forEach((pos) => {
+      bounds.extend(new kakao.maps.LatLng(pos.latitude, pos.longitude));
+    });
+
+    this.map.setBounds(bounds);
+  }
 }
