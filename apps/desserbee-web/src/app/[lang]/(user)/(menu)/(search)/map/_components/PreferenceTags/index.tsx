@@ -10,10 +10,11 @@ import { useTag } from '../../../_hooks/useTag';
 import { useContext, useState } from 'react';
 import { MyPreferNotSignInModal } from '../../_modals/MyPreferNotSignInModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
+import type { PreferenceData } from '@repo/entity/src/store';
 
 interface PreferenceTagsProps {
-  categories: string[];
-  userPreferences: string[];
+  categories: PreferenceData[];
+  userPreferences: number[];
 }
 
 export function PreferenceTags({
@@ -45,9 +46,9 @@ export function PreferenceTags({
     }
   };
 
-  const handleTagClick = (category: string) => {
+  const handleTagClick = (categoryId: number) => {
     if (isUserSignIn) {
-      updateSelectedTag(category);
+      updateSelectedTag(categoryId);
     } else {
       push('modal', {
         component: <MyPreferNotSignInModal onClose={closeModal} />,
@@ -82,19 +83,20 @@ export function PreferenceTags({
           </div>
           {categories.map((category) => (
             <CarouselItem
-              key={category}
+              key={category.id}
               className={`pl-2 basis-1/${categories.length} text-nowrap`}
             >
               <div className="px-1 py-1">
                 <Tag
-                  onClick={() => handleTagClick(category)}
+                  onClick={() => handleTagClick(category.id)}
                   className={cn(
                     // 'text-3 md:text-lg font-medium py-[6px] md:py-2 md:px-3',
                     'text-3  font-medium py-[6px]',
-                    selectedCategories.has(category) && 'bg-primary text-white',
+                    selectedCategories.has(category.id) &&
+                      'bg-primary text-white',
                   )}
                 >
-                  {category}
+                  {category.preferenceName}
                 </Tag>
               </div>
             </CarouselItem>

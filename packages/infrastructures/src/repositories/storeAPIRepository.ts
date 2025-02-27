@@ -33,6 +33,7 @@ import type {
   MenuRequests,
   ParentSavedListResponse,
   ParentSavedListRequest,
+  PreferenceData,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -41,6 +42,15 @@ export default class StoreAPIRepository
   extends APIRepository
   implements StoreRepository
 {
+  //preference
+  async getAllPreference(): Promise<PreferenceData[]> {
+    const response = await fetch<void, PreferenceData[]>({
+      method: 'GET',
+      url: `${this.endpoint}/preferences`,
+    });
+
+    return response;
+  }
   // store
   async getNearbyStores({
     data,

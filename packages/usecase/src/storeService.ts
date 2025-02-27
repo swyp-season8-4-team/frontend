@@ -33,6 +33,22 @@ export default class StoreService {
     this.storeRepository = storeRepository ?? null;
   }
 
+  async getAllPreference() {
+    try {
+      if (!this.storeRepository) {
+        throw new Error('storeRepository is not set');
+      }
+
+      const result = await this.storeRepository.getAllPreference();
+      console.log(`선호도 전체 저장 목록 조회 완료 `);
+
+      return result;
+    } catch (error) {
+      console.error(`전체 저장 목록 오류 발생 `, error);
+      throw error;
+    }
+  }
+
   async getNearbyStores({
     latitude,
     longitude,

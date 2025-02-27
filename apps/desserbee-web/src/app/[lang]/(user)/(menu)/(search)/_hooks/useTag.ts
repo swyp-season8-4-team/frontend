@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
 export const useTag = () => {
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
+  const [selectedCategories, setSelectedCategories] = useState<Set<number>>(
     new Set(),
   );
   const [isMyPreferSelected, setIsMyPreferSelected] = useState(false);
 
-  const updateSelectedTag = (category: string) => {
+  const updateSelectedTag = (category: number) => {
     setSelectedCategories((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(category)) {
@@ -19,7 +19,7 @@ export const useTag = () => {
     setIsMyPreferSelected(false);
   };
 
-  const handleMyPreferenceTagClick = (userPreferences: string[]) => {
+  const handleMyPreferenceTagClick = (userPreferences: number[]) => {
     setSelectedCategories(() => {
       const newSet = new Set([...userPreferences]);
       return newSet;

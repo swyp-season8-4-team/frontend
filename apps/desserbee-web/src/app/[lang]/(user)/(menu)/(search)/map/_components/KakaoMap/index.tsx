@@ -32,6 +32,7 @@ import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPI
 import { KAKAO_MAP_API_URL } from '../../_consts/map';
 import {
   type NearByStoreData,
+  type PreferenceData,
   type SavedListData,
 } from '@repo/entity/src/store';
 
@@ -39,11 +40,10 @@ import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
 import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService';
-import { nearBystores } from '../../_consts/marker';
 
 interface KakaoMapProps {
-  userPreferences: string[];
-  preferenceCategories: string[];
+  userPreferences: number[];
+  preferenceCategories: PreferenceData[];
   totalSavedList: SavedListData[];
 }
 
