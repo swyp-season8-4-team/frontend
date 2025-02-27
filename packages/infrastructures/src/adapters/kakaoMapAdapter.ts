@@ -160,4 +160,11 @@ export class KakaoMapAdapter implements ExternalMap {
   relayout(): void {
     this.relayout();
   }
+
+  addDebounceListener(callback: () => void) {
+    window.kakao.maps.event.addListener(this.map, 'dragend', () => callback());
+    window.kakao.maps.event.addListener(this.map, 'zoom_changed', () =>
+      callback(),
+    );
+  }
 }
