@@ -39,6 +39,8 @@ import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
 import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService';
+import { ReFetchStoreBtn } from '../ReFetchStoreBtn';
+import { calculateDistance } from '../../_utils/distance';
 
 interface KakaoMapProps {
   userPreferences: number[];
@@ -70,6 +72,7 @@ export function KakaoMap({
     storeService: null,
   });
 
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [currentPosition, setCurrentPosition] = useState<MapPosition>({
     latitude: 0,
     longitude: 0,
@@ -82,6 +85,12 @@ export function KakaoMap({
   const [isInitialized, setIsInitialized] = useState(false);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
+  const [mapCenter, setMapCenter] = useState<MapPosition>({
+    latitude: 0,
+    longitude: 0,
+  });
+
+  const [isFetchRequired, setIsFetchRequired] = useState(false);
 
   const FETCH_RADIUS_M = 5000;
   const REFETCH_THRESHOLD_M = 5000;
@@ -105,6 +114,7 @@ export function KakaoMap({
     });
   }, [closeModal, push]);
 
+  // 각 마커 클릭 - 바텀시트 열리고, 클릭한 마커 storeId 업데이트
   const handleStoreMarkerClick = useCallback(
     (storeId: string) => {
       router.replace(`?storeId=${storeId}&bottomsheet=true`, {
@@ -114,38 +124,64 @@ export function KakaoMap({
     [router],
   );
 
-  const calculateDistance = useCallback(
-    (pos1: MapPosition, pos2: MapPosition): number => {
-      const R = 6371;
-      const dLat = ((pos2.latitude - pos1.latitude) * Math.PI) / 180;
-      const dLon = ((pos2.longitude - pos1.longitude) * Math.PI) / 180;
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos((pos1.latitude * Math.PI) / 180) *
-          Math.cos((pos2.latitude * Math.PI) / 180) *
-          Math.sin(dLon / 2) *
-          Math.sin(dLon / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      return R * c;
-    },
-    [],
-  );
+  // 제일 먼저 서비스 초기화
+  const initializeServices = () => {
+    console.log('initializeServices: 서비스 초기화 시작');
 
-  const handleMoveToCurrentPosition = useCallback(() => {
-    if (servicesRef.current.mapService && isMapLoaded) {
-      servicesRef.current.mapService.setMapCenter(currentPosition);
+    const mapService = new MapService({
+      mapController: new KakaoMapController(),
+    });
+    console.log('initializeServices: MapService 초기화 완료 ✅');
+
+    const geoService = new GeolocationService({
+      geolocationController: new GeolocationController(
+        new KalmanLocationFilter(),
+        new MovingAverageFilter(3),
+      ),
+    });
+    console.log('initializeServices: GeolocationService 초기화 완료 ✅');
+
+    const storeService = new StoreService({
+      storeRepository: new StoreAPIReopository(),
+    });
+    console.log('initializeServices: StoreService 초기화 완료 ✅');
+
+    return { mapService, geoService, storeService };
+  };
+
+  // 거리 계산해서 가게 업데이트 필요 판단
+  const determineFetch = (
+    lastFetchPosition: MapPosition,
+    currentMapPosition: MapPosition,
+  ) => {
+    const distanceFromLastFetch = calculateDistance(
+      lastFetchPosition,
+      currentMapPosition,
+    );
+
+    console.log(
+      'determineFetch: 마지막 데이터 요청 위치와의 거리 📏:',
+      distanceFromLastFetch,
+      'km',
+    );
+
+    if (
+      lastFetchPosition.latitude === 0 ||
+      distanceFromLastFetch > REFETCH_THRESHOLD_M
+    ) {
+      console.log(
+        'determineFetch: 재요청 할 때 됨, (임계값 초과), 주변 가게 정보 업데이트 시작 ✅',
+      );
+      setIsFetchRequired(true);
+    } else {
+      console.log(
+        'determineFetch: 재요청 임계값 이내, 아직 새로운 가게 재요청 안함 ⌛',
+      );
+      setIsFetchRequired(false);
     }
-  }, [isMapLoaded, currentPosition]);
+  };
 
-  const mapPanelProps = useMemo(
-    () => ({
-      moveToCurrentPosition: handleMoveToCurrentPosition,
-    }),
-    [handleMoveToCurrentPosition],
-  );
-
-  // 지도 로드 후
-  // 1. 현재 위치 기반으로 일정 거리 내의 새로운 가게 불러오기
+  // 지금 지도에서 위치한 근처의 가게들 fetch
   const fetchNearbyStores = useCallback(
     async (position: MapPosition) => {
       try {
@@ -189,12 +225,12 @@ export function KakaoMap({
     [retryCount],
   );
 
-  // 2. 새로운 위치 저장 + 새로운 위치에 따른 새로운 가게들 정보 담은 클러스터 마커 추가
   const updateLastFetchPosition = useCallback((position: MapPosition) => {
     console.log('updateLastFetchPosition: 마지막 fetch 위치 저장 ✅');
     setLastFetchPosition(position);
   }, []);
 
+  // 지도 중심, 반경내 상점들 받아서 마커 및 클러스터 마커 추가
   const updateNewClusterMarkers = useCallback(
     async (position: MapPosition, stores: NearByStoreData[]) => {
       if (!areServicesInitialized(servicesRef.current)) {
@@ -233,86 +269,51 @@ export function KakaoMap({
     [servicesRef, handleStoreMarkerClick, updateLastFetchPosition],
   );
 
-  // 3. tracking 중 지속적으로 실행되는 메서드
-  const onPositionSuccess = useCallback(
+  // 실시간 마커 한개 ! 업데이트 (geo)
+  const updateCurrentMarker = useCallback(
     async (position: MapPosition) => {
       try {
         if (!areServicesInitialized(servicesRef.current)) {
           console.log(
-            'onPositionSuccess: 서비스들이 초기화되지 않음, 위치 업데이트 중지 🛑',
+            'updateCurrentMarker: 서비스들이 초기화되지 않음, 위치 업데이트 중지 🛑',
           );
           return;
         }
 
         console.log(
-          'onPositionSuccess: 트래킹 시작, 위치 업데이트 콜백 실행',
+          'updateCurrentMarker: 트래킹 시작, 위치 업데이트 콜백 실행',
           position,
         );
 
         const now = Date.now();
         if (now - lastUpdateTimeRef.current < POSITION_UPDATE_INTERVAL) {
-          console.log('onPositionSuccess: 업데이트 간격이 너무 짧음, 스킵 🛑');
+          console.log(
+            'updateCurrentMarker: 업데이트 간격이 너무 짧음, 스킵 🛑',
+          );
           return;
         }
 
         if (isLoadingRef.current) {
-          console.log('onPositionSuccess: 이전 업데이트가 진행 중, 스킵 🛑');
+          console.log('updateCurrentMarker: 이전 업데이트가 진행 중, 스킵 🛑');
           return;
         }
 
         lastUpdateTimeRef.current = now;
-        console.log('onPositionSuccess: 위치 업데이트 시작 🚩');
+        console.log('updateCurrentMarker: 위치 업데이트 시작 🚩');
 
-        console.log('onPositionSuccess: 현재 위치 마커 제거 시작 🗑️');
+        console.log('updateCurrentMarker: 현재 위치 마커 제거 시작 🗑️');
         await servicesRef.current.mapService?.removeCurrentPositionMarker();
 
-        console.log('onPositionSuccess: 새로운 현재 위치 마커 추가 📍');
+        console.log('updateCurrentMarker: 새로운 현재 위치 마커 추가 📍');
         await servicesRef.current.mapService?.addCurrentPositionMaker(
           position,
           userMarkerImage.src,
         );
         setCurrentPosition(position);
-        console.log('onPositionSuccess: 새로운 현재 위치 저장 🧍‍♂️');
-
-        const distanceFromLastFetch = calculateDistance(
-          lastFetchPosition,
-          position,
-        );
-        console.log(
-          'onPositionSuccess: 마지막 데이터 요청 위치와의 거리 📏:',
-          distanceFromLastFetch,
-          'km',
-        );
-
-        if (
-          lastFetchPosition.latitude === 0 ||
-          distanceFromLastFetch > REFETCH_THRESHOLD_M
-        ) {
-          console.log(
-            'onPositionSuccess: 재요청 할 때 됨, (임계값 초과), 주변 가게 정보 업데이트 시작 ✅',
-          );
-
-          //TODO: 가짜 데이터
-          // const stores = nearBystores;
-          const nearByStores =
-            await servicesRef.current.storeService!.getNearbyStores({
-              latitude: position.latitude,
-              longitude: position.longitude,
-              radius: FETCH_RADIUS_M,
-            });
-
-          await updateNewClusterMarkers(position, nearByStores);
-          console.log(
-            'onPositionSuccess: 주변 가게 정보 업데이트 완료, 클러스터 마커들도 새로 추가 📍',
-          );
-        } else {
-          console.log(
-            'onPositionSuccess: 재요청 임계값 이내, 아직 새로운 가게 재요청 안함 ⌛',
-          );
-        }
+        console.log('updateCurrentMarker: 새로운 현재 위치 저장 🧍‍♂️');
       } catch (error) {
         console.error(
-          'onPositionSuccess: 위치 마커 업데이트 중 오류 발생 ⚠️:',
+          'updateCurrentMarker: 위치 마커 업데이트 중 오류 발생 ⚠️:',
           error,
         );
         if (
@@ -320,24 +321,19 @@ export function KakaoMap({
           error.message === 'PERMISSION_DENIED'
         ) {
           console.log(
-            'onPositionSuccess: 위치 권한 거부됨, 권한 요청 모달 표시 🪧',
+            'updateCurrentMarker: 위치 권한 거부됨, 권한 요청 모달 표시 🪧',
           );
           openPermissionModal();
         } else {
-          console.error('onPositionSuccess: 위치 권한 외 오류 발생', error);
+          console.error('updateCurrentMarker: 위치 권한 외 오류 발생', error);
         }
         return;
       }
     },
-    [
-      calculateDistance,
-      lastFetchPosition,
-      updateNewClusterMarkers,
-      openPermissionModal,
-    ],
+    [openPermissionModal],
   );
 
-  const handleCurrentPositionGet = async (
+  const handleInitialGeoPositonFetch = async (
     initializedServices: {
       geoService: GeolocationService;
     },
@@ -346,32 +342,35 @@ export function KakaoMap({
     const permissionStatus = await navigator.permissions.query({
       name: 'geolocation',
     });
-    console.log('handleCurrentPositionGet: 위치 권한 확인');
+    console.log('handleInitialGeoPositonFetch: 위치 권한 확인');
 
     if (permissionStatus.state === 'denied') {
-      console.log('handleCurrentPositionGet: 위치 권한 거부됨');
+      console.log('handleInitialGeoPositonFetch: 위치 권한 거부됨');
       openPermissionModal();
       return null;
     }
 
-    console.log('handleCurrentPositionGet: 현재 위치 정보 요청 시작 🏃');
+    console.log('handleInitialGeoPositonFetch: 현재 위치 정보 요청 시작 🏃');
     const result = await initializedServices.geoService.getCurrentPosition();
 
     if ('errorMessage' in result) {
-      console.log('handleCurrentPositionGet: 오류 발생 ⚠️:', {
+      console.log('handleInitialGeoPositonFetch: 오류 발생 ⚠️:', {
         message: result.errorMessage,
         type: result.errorType,
       });
-      console.log('handleCurrentPositionGet: 현재 위치 권한 상태 다시 확인:', {
-        state: permissionStatus.state,
-        errorType: result.errorType,
-      });
+      console.log(
+        'handleInitialGeoPositonFetch: 현재 위치 권한 상태 다시 확인:',
+        {
+          state: permissionStatus.state,
+          errorType: result.errorType,
+        },
+      );
 
       if (result.errorType === 'POSITION_UNAVAILABLE') {
-        console.log('handleCurrentPositionGet: GPS 사용 불가');
+        console.log('handleInitialGeoPositonFetch: GPS 사용 불가');
         setError('GPS를 활성화하고 다시 시도해주세요.');
       } else if (result.errorType === 'TIMEOUT') {
-        console.log('handleCurrentPositionGet: 위치 정보 요청 시간 초과');
+        console.log('handleInitialGeoPositonFetch: 위치 정보 요청 시간 초과');
         setError('위치 정보를 가져오는데 시간이 너무 오래 걸립니다.');
       } else {
         setError('위치 정보를 가져오는데 실패했습니다.');
@@ -379,47 +378,23 @@ export function KakaoMap({
       return null;
     }
 
-    console.log('handleCurrentPositionGet: 현재 위치 정보 획득 성공 🚩:', {
+    console.log('handleInitialGeoPositonFetch: 현재 위치 정보 획득 성공 🚩:', {
       latitude: result.latitude,
       longitude: result.longitude,
     });
 
     setCurrentPosition(result);
-    console.log('handleCurrentPositionGet: 현재 위치 저장 🚩');
+    console.log('handleInitialGeoPositonFetch: 현재 위치 저장 🚩');
 
     return result;
   };
 
-  const getMapCenter = async (initializedServices: {
-    mapService: MapService;
-  }) => {
-    return initializedServices.mapService.getMapCenter();
-  };
-
-  // 0. 서비스 시작
-  const initializeServices = () => {
-    console.log('initializeServices: 서비스 초기화 시작');
-
-    const mapService = new MapService({
-      mapController: new KakaoMapController(),
-    });
-    console.log('initializeServices: MapService 초기화 완료 ✅');
-
-    const geoService = new GeolocationService({
-      geolocationController: new GeolocationController(
-        new KalmanLocationFilter(),
-        new MovingAverageFilter(3),
-      ),
-    });
-    console.log('initializeServices: GeolocationService 초기화 완료 ✅');
-
-    const storeService = new StoreService({
-      storeRepository: new StoreAPIReopository(),
-    });
-    console.log('initializeServices: StoreService 초기화 완료 ✅');
-
-    return { mapService, geoService, storeService };
-  };
+  const handleMapCenterChange = useCallback(() => {
+    if (servicesRef.current.mapService) {
+      const center = servicesRef.current.mapService.getMapCenter();
+      setMapCenter(center);
+    }
+  }, []);
 
   const loadMap = async (initializedServices: {
     mapService: MapService;
@@ -434,7 +409,8 @@ export function KakaoMap({
     }
 
     try {
-      const result = await handleCurrentPositionGet(
+      // 첫 위치는 현재 위치
+      const result = await handleInitialGeoPositonFetch(
         initializedServices,
         openPermissionModal,
       );
@@ -451,6 +427,12 @@ export function KakaoMap({
         mapRef.current,
         result,
       );
+
+      console.log('loadMap: 지도 중심 추적 시작');
+      initializedServices.mapService.addCenterChangedListener(
+        handleMapCenterChange,
+      );
+
       console.log('loadMap: 지도 초기화 완료 🗺️');
 
       console.log('loadMap: 현재 위치 마커 추가 시작');
@@ -460,24 +442,26 @@ export function KakaoMap({
       );
       console.log('loadMap: 현재 위치 마커 추가 완료 📍');
 
+      initializedServices.geoService.startWatchingPosition(
+        updateCurrentMarker,
+        {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
+        },
+      );
+      console.log('loadMap: 실시간 위치 추적 시작');
+
       await initializedServices.mapService.setMapCenter(result);
       console.log('loadMap: 불러온 위치로 지도 중심 위치 변경');
 
       console.log('loadMap: 주변 가게 마커 추가 시작');
-
       await initializedServices.mapService.addMarkersWithClustering(
         nearByStores,
         storeMarkerImage.src,
         handleStoreMarkerClick,
       );
       console.log('loadMap: 주변 가게 마커 추가 완료 📍');
-
-      console.log('loadMap: 실시간 위치 추적 시작');
-      initializedServices.geoService.startWatchingPosition(onPositionSuccess, {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0,
-      });
     } catch (err) {
       console.error('loadMap: 지도 초기화 중 오류 발생 ⚠️:', err);
       if (err instanceof GeolocationPermissionError) {
@@ -490,6 +474,21 @@ export function KakaoMap({
     }
   };
 
+  // 현재 실시간 유저 위치로 이동
+  const handleMoveToCurrentPosition = useCallback(() => {
+    if (servicesRef.current.mapService && isMapLoaded) {
+      servicesRef.current.mapService.setMapCenter(currentPosition);
+    }
+  }, [isMapLoaded, currentPosition]);
+
+  // 버튼에 연동
+  const mapPanelProps = useMemo(
+    () => ({
+      moveToCurrentPosition: handleMoveToCurrentPosition,
+    }),
+    [handleMoveToCurrentPosition],
+  );
+
   useEffect(() => {
     return () => {
       if (servicesRef.current.geoService && servicesRef.current.mapService) {
@@ -499,8 +498,9 @@ export function KakaoMap({
     };
   }, [servicesRef]);
 
-  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
-
+  const handleRefetchBtnClick = () => {
+    setIsFetchRequired(true);
+  };
   return (
     <div>
       <Script
@@ -574,6 +574,7 @@ export function KakaoMap({
           categories={preferenceCategories}
         />
         <MapPanel {...mapPanelProps} />
+        <ReFetchStoreBtn refetchStore={handleRefetchBtnClick} />
       </div>
     </div>
   );
