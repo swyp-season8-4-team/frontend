@@ -491,12 +491,16 @@ export function KakaoMap({
 
   useEffect(() => {
     return () => {
-      if (servicesRef.current.geoService && servicesRef.current.mapService) {
+      if (
+        servicesRef.current.geoService &&
+        servicesRef.current.mapService &&
+        isInitialized
+      ) {
         servicesRef.current.geoService.stopWatchingPosition();
         servicesRef.current.mapService.removeCurrentPositionMarker();
       }
     };
-  }, [servicesRef]);
+  }, [servicesRef, isInitialized]);
 
   const handleRefetchBtnClick = () => {
     setIsFetchRequired(true);
