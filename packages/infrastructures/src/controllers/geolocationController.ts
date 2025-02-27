@@ -34,10 +34,10 @@ export default class GeolocationController {
             timestamp: new Date(pos.timestamp).toISOString(),
           });
 
-          const latitude = 37.55498563;
-          const longitude = 126.90483844;
-          // const latitude = pos.coords.latitude;
-          // const longitude = pos.coords.longitude;
+          // const latitude = 37.55498563; //TODO: 가짜 위치
+          // const longitude = 126.90483844;
+          const latitude = pos.coords.latitude;
+          const longitude = pos.coords.longitude;
 
           const position = this.applyFilters(
             { latitude, longitude },
@@ -79,20 +79,21 @@ export default class GeolocationController {
       if (navigator.geolocation) {
         this.watchId = navigator.geolocation.watchPosition(
           (pos) => {
-            // const latitude = pos.coords.latitude;
-            // const longitude = pos.coords.longitude;
-            // const position = this.applyFilters(
-            //   { latitude, longitude },
-            //   pos.coords.accuracy,
-            // );
+            const latitude = pos.coords.latitude;
+            const longitude = pos.coords.longitude;
+            const position = this.applyFilters(
+              { latitude, longitude },
+              pos.coords.accuracy,
+            );
 
-            const latitude = 37.55498563;
-            const longitude = 126.90483844;
+            // //TODO: 가짜 위치
+            // const latitude = 37.55498563;
+            // const longitude = 126.90483844;
 
-            const position = {
-              latitude,
-              longitude,
-            };
+            // const position = {
+            //   latitude,
+            //   longitude,
+            // };
 
             onSuccess(position);
             resolve(position);

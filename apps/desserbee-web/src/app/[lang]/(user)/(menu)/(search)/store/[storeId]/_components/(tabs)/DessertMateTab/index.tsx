@@ -17,11 +17,19 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
 
   const displayedMates = mate.slice(0, 3);
 
+  if (mate.length === 0) {
+    return (
+      <div className="w-full text-[8px] md:text-base text-center">
+        아직 등록된 디저트 메이트 게시글이 없어요.
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="font-semibold text-[12px] mb-3">디저트 메이트</div>
       <div className="flex flex-col gap-y-[5px] md:gap-y-3">
-        {mate.map(
+        {displayedMates.map(
           (
             { mateCategory, thumbnail, title, content, nickname, recruitYn },
             index,

@@ -1,6 +1,9 @@
 'use client';
 
-import type { StoreDetailInfoData } from '@repo/entity/src/store';
+import type {
+  ParentSavedListResponse,
+  StoreDetailInfoData,
+} from '@repo/entity/src/store';
 import { StoreFeatureIconList } from '../../../../../map/@bottomSheet/_components/StoreFeatureIconList';
 import { StoreInfo } from '../../../../../map/@bottomSheet/_components/StoreInfo';
 import { HexagonGrid } from '@repo/design-system/components/HexagonGrid';
@@ -9,7 +12,14 @@ import IconFlower from '@repo/design-system/components/icons/IconFlower';
 import { useContext } from 'react';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { CouponIsNotReadyModal } from '../../../../../map/_modals/CouponIsNotReadyModal';
+import StoreService from '@repo/usecase/src/storeService';
+import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
+import { cn } from '@repo/ui/lib/utils';
+import { getIconColor } from '../../../../../map/_utils/iconColor';
 
+interface DetailInfoContainerProps extends StoreDetailInfoData {
+  parentlistInfo?: ParentSavedListResponse;
+}
 export function DetailInfoContainer({
   name,
   animalYn,
@@ -28,7 +38,15 @@ export function DetailInfoContainer({
   holidays,
   notice,
   topPreferences,
-}: StoreDetailInfoData) {
+  parentlistInfo,
+  saved,
+}: DetailInfoContainerProps) {
+  const storeService = new StoreService({
+    storeRepository: new StoreAPIRepository(),
+  });
+
+  const listColorId = parentlistInfo?.iconColorId;
+
   const storeFeatureIconListProps = {
     animalYn,
     tumblerYn,
@@ -56,10 +74,12 @@ export function DetailInfoContainer({
     pop('modal');
   };
 
-  const handleBtnClick = () => {
+  const handleBtnClick = async () => {
     push('modal', {
       component: <CouponIsNotReadyModal onClose={closeModal} />,
     });
+
+    await storeService.updateCouponCount();
   };
 
   return (
@@ -82,27 +102,34 @@ export function DetailInfoContainer({
             ))}
           </span>
         </div>
-        <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm">
-          <div className="w-4 md:w-[37.71px] h-4 md:h-[37.71px]">
-            <IconFlower className="w-full h-full text-primary" />
+        {saved && (
+          <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm">
+            <div className="w-4 md:w-[37.71px] h-4 md:h-[37.71px]">
+              <IconFlower
+                className={cn(
+                  listColorId && getIconColor(listColorId),
+                  'w-full h-full',
+                )}
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <div className="relative">
-        <div className="flex items-center border border-[#9F9F9F] rounded-[10px] w-full md:h-12 overflow-hidden">
-          <div className="bg-primary w-[7px] md:w-4 md:h-full"></div>
+        <button
+          onClick={async () => handleBtnClick()}
+          className="text-start flex items-center border border-[#9F9F9F] rounded-[10px] w-full md:h-12 overflow-hidden"
+        >
+          <div className="bg-primary min-w-[10px] md:w-4 md:h-full "></div>
           <div className="md:px-[10px] md:py-3 w-[calc(100%-95px)] md:w-[calc(100%-103px)] overflow-hidden text-[8px] md:text-[18px] md:text-nowrap">
             할인 / 이벤트 확인하기
           </div>
-          <button
-            onClick={handleBtnClick}
-            className="flex justify-center items-center border-[#9F9F9F] border-l-[1px] border-dashed w-[87px] h-full"
-          >
+          <div className="flex justify-center items-center border-[#9F9F9F] border-l-[1px] border-dashed w-[87px] h-full">
             <div className="w-3 md:w-8 h-3 md:h-8">
               <IconDownload className="w-full h-full text-[#393939]" />
             </div>
-          </button>
-        </div>
+          </div>
+        </button>
         <div className="-top-[10px] right-[80px] z-50 absolute bg-white border-[#9F9F9F] border-l-[1px] rounded-full w-4 h-4 -rotate-90"></div>
         <div className="right-[80px] -bottom-[10px] z-50 absolute bg-white border-[#9F9F9F] border-l-[1px] rounded-full w-4 h-4 rotate-90"></div>
       </div>

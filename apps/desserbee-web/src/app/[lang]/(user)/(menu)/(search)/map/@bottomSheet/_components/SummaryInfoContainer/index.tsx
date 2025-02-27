@@ -74,7 +74,7 @@ export function SummaryInfoContainer({
             <div className="flex justify-center items-center mr-[0.57px] w-[10px] md:w-[18.08px]">
               <IconDetail className="w-full h-full" />
             </div>
-            <div className="text-[10px] md:text-lg">자세히 보기</div>
+            <div className="text-[8px] md:text-lg">자세히 보기</div>
           </div>
         </button>
       </div>

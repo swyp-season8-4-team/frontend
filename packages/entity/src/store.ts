@@ -45,18 +45,6 @@ export interface OperatingHoursItem {
   lastOrderTime: string;
   isClosed: boolean;
 }
-// openingTime: {
-//   hour: number;
-//   minute: number;
-// };
-// closingTime: {
-//   hour: number;
-//   minute: number;
-// };
-// lastOrderTime: {
-//   hour: number;
-//   minute: number;
-// };
 
 export interface HolidaysItem {
   date: string;
@@ -415,7 +403,7 @@ export interface SavedListData {
 }
 
 // 상세정보에서 사용
-export interface StoreInSavedListRequest {
+export interface ParentSavedListRequest {
   listId: number;
 }
 
@@ -436,13 +424,10 @@ export interface StoreInfoData {
   userPreference: string[];
 }
 
-export interface StoreInSavedListResponse {
+export interface ParentSavedListResponse {
   listId: number;
-  userUuid: string;
   listName: string;
   iconColorId: number;
-  storeCount: number;
-  storeData: StoreInfoData[];
 }
 
 export interface StoresInSavedListRequest {
@@ -620,10 +605,10 @@ export interface StoreRepository {
   }: BaseRequestData<DeleteStoreInSavedListRequest>): Promise<void>;
 
   // 상세정보에서 사용
-  getStoreInSavedList({
+  getParentSavedList({
     authorization,
     data,
-  }: BaseRequestData<StoreInSavedListRequest>): Promise<StoreInSavedListResponse>;
+  }: BaseRequestData<ParentSavedListRequest>): Promise<ParentSavedListResponse>;
 
   getStoresInSavedList({
     authorization,
@@ -658,5 +643,5 @@ export interface StoreRepository {
   getMenuList({ data }: BaseRequestData<GetMenuListRequest>): Promise<Menu[]>;
 
   // coupon count
-  updateCouponCount({ data }: BaseRequestData<void>): Promise<void>; // TODO: api 아직
+  updateCouponCount(): Promise<void>; // TODO: api 아직
 }
