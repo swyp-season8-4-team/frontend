@@ -1,16 +1,16 @@
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { AuthRepository, JWTTokens, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
+import type { AuthRepository, JWTTokens, OAuthSignInData, OAuthSignInResponse, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
 import { headers } from 'next/headers';
 
 export default class AuthNextAppRouteRepository implements AuthRepository {
+  socialSignIn(data: BaseRequestData<OAuthSignInData>): Promise<OAuthSignInResponse> {
+    throw new Error('Method not implemented.');
+  }
   async getAuthorization(): Promise<string | null> {
     return (await headers()).get('authorization');
   }
   
   refreshAccessToken(): Promise<JWTTokens> {
-    throw new Error('Method not implemented.');
-  }
-  socialSignIn(): Promise<JWTTokens> {
     throw new Error('Method not implemented.');
   }
   signIn(data: BaseRequestData<SignInData>): Promise<SignInResponse> {

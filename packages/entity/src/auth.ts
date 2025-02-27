@@ -51,8 +51,16 @@ export interface SignUpData extends Omit<SignInData, 'keepLoggedIn'> {
 
 export interface OAuthSignInData {
   provider: string;
-  // code: string;
+  code: string;
 }
+
+export interface OAuthSignInResponse {
+  accessToken: string;
+  userUuid: string;
+  email: string;
+  nickname: string;
+}
+
 
 export interface VerifyEmailRequestData {
   email: string;
@@ -83,7 +91,7 @@ export interface ResetPasswordResponse {
 }
 
 export interface AuthRepository {
-  socialSignIn(data: BaseRequestData<OAuthSignInData>): Promise<unknown>; // 소셜 로그인
+  socialSignIn(data: BaseRequestData<OAuthSignInData>): Promise<OAuthSignInResponse>; // 소셜 로그인
   signIn(data: BaseRequestData<SignInData>): Promise<SignInResponse>; // 일반 로그인
   signUp(data: BaseRequestData<unknown>): Promise<unknown>; // 회원가입
   signOut(data: BaseRequestData<SignOutData>): Promise<void>;

@@ -1,20 +1,19 @@
 import { isServer } from '@repo/api';
 import fetch from '@repo/api/src/fetch';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { AuthRepository, JWTTokens, OAuthSignInData, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, SignOutData, SignUpData, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
+import type { AuthRepository, JWTTokens, OAuthSignInData, OAuthSignInResponse, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, SignOutData, SignUpData, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
 import APIRepository from './apiRepository';
 
 export default class AuthAPIRepository extends APIRepository implements AuthRepository {
-  async socialSignIn({ data }: BaseRequestData<OAuthSignInData>): Promise<unknown> {
+  async socialSignIn({ data }: BaseRequestData<OAuthSignInData>): Promise<OAuthSignInResponse> {
     if (!data) {
       throw new Error('data is not exist');
     }
 
-    const { provider } = data;
-
-    const response = await fetch<OAuthSignInData, unknown>({
-      method: 'GET',
-      url: `${this.endpoint}/oauth2/authorization?provider=${provider}`,
+    const response = await fetch<OAuthSignInData, OAuthSignInResponse>({
+      data,
+      method: 'POST',
+      url: `${this.endpoint}/oauth2/code`,
     });
 
     return response;
