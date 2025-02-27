@@ -244,7 +244,6 @@ export default class StoreAPIRepository
 
   // saved list
   async createSavedList({
-    authorization,
     data,
   }: BaseRequestData<CreateSavedListRequest>): Promise<CreateSavedListResponse> {
     if (!data) {
@@ -259,15 +258,15 @@ export default class StoreAPIRepository
       { listName: string; iconColorId: number },
       CreateSavedListResponse
     >({
-      ...(authorization && {
-        headers: {
-          Authorization: authorization,
-        },
-      }),
       data: { listName, iconColorId },
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // Content-Type 헤더 추가
+      },
       url,
     });
+
+    console.log(response);
 
     return response;
   }

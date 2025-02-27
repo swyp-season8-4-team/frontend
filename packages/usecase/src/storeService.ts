@@ -580,19 +580,18 @@ export default class StoreService {
   }
 
   async createSavedList(
-    params: CreateSavedListRequest & { authorization: string },
+    params: CreateSavedListRequest,
   ): Promise<CreateSavedListResponse> {
     try {
       console.log(`저장 목록 생성 시작 - 사용자 ID: ${params.userUuid}`);
+      console.log('Params:', params);
 
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
 
-      const { authorization, ...rest } = params;
       const response = await this.storeRepository.createSavedList({
-        authorization,
-        data: rest,
+        data: params,
       });
       console.log(`저장 목록 생성 완료 - 사용자 ID: ${params.userUuid}`);
 

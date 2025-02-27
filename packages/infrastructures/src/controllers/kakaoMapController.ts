@@ -146,6 +146,26 @@ export default class KakaoMapController implements MapController {
     }
   }
 
+  getMapBound() {
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      const bounds = this.map.getBounds();
+      const sw = bounds.getSouthWest();
+      const ne = bounds.getNorthEast();
+
+      console.log('지도 경계를 성공적으로 가져왔습니다.');
+      return {
+        sw: { latitude: sw.getLat(), longitude: sw.getLng() },
+        ne: { latitude: ne.getLat(), longitude: ne.getLng() },
+      };
+    } catch (error) {
+      console.error('지도 경계를 가져오는 중 오류가 발생했습니다:', error);
+      throw error;
+    }
+  }
+
   relayout(): void {
     try {
       if (!this.map) {

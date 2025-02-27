@@ -12,6 +12,9 @@ import { CreateListModal } from '../../../_modals/CreateListModal';
 import type { SavedListData } from '@repo/entity/src/store';
 import { useRouter } from 'next/navigation';
 import { NavigationPathGroup } from '@repo/entity/src/navigation';
+import StoreService from '@repo/usecase/src/storeService';
+import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
+import { UserContext } from '@/contexts/UserContext';
 
 interface SideBarContainerProps {
   showSidebar: boolean;
@@ -23,21 +26,32 @@ export function SideBarContainer({
   totalSavedList,
 }: SideBarContainerProps) {
   const router = useRouter();
-
   const modalRef = useRef<HTMLDivElement>(null);
-
   const [selectedListId, setSelectedListId] = useState<number | null>(null);
-
   const { push, pop } = useContext(PortalContext);
+
+  const { user } = useContext(UserContext);
+
+  const storeService = new StoreService({
+    storeRepository: new StoreAPIRepository(),
+  });
 
   const handleSideBarClose = () => {
     const currentPath = window.location.pathname;
     router.push(currentPath);
   };
 
-  const handleCreateListComplete = (listName: string, colorId: number) => {
-    // TODO: API를 통해 새 리스트 생성 로직 구현
+  const handleCreateListComplete = async (
+    listName: string,
+    colorId: number,
+  ) => {
     console.log(listName, colorId);
+
+    const result = await storeService.createSavedList({
+      userUuid: user?.id!,
+      listName: listName,
+      iconColorId: colorId,
+    });
   };
 
   const handleCreateListBtnClick = () => {
@@ -49,9 +63,9 @@ export function SideBarContainer({
             router.push('?sidebar=true'); // 모달 닫을 때 사이드바 다시 열기
           }}
           onComplete={(listName: string, colorId: number) => {
-            pop('modal');
+            // pop('modal');
             handleCreateListComplete(listName, colorId);
-            router.push('?sidebar=true'); // 완료 후 사이드바 다시 열기
+            // router.push('?sidebar=true'); // 완료 후 사이드바 다시 열기
           }}
         />
       ),
@@ -59,7 +73,7 @@ export function SideBarContainer({
   };
 
   const handleListClick = (listId: number) => {
-    router.push(`${NavigationPathGroup.Map + '?listId=' + listId}`); // TODO: UUID로 보내달라고 하기, listName, IconColorId도 보내달라고 하기
+    router.push(`${NavigationPathGroup.Map + '?listId=' + listId}`);
   };
 
   const handleDotsClick = (listId: number, e: React.MouseEvent) => {

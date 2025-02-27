@@ -393,8 +393,11 @@ export function KakaoMap({
     if (servicesRef.current.mapService) {
       const center = servicesRef.current.mapService.getMapCenter();
       setMapCenter(center);
+
+      // 거리 기반으로 fetch 필요성 판단
+      determineFetch(lastFetchPosition, center);
     }
-  }, []);
+  }, [lastFetchPosition]);
 
   const loadMap = async (initializedServices: {
     mapService: MapService;
@@ -505,6 +508,17 @@ export function KakaoMap({
   const handleRefetchBtnClick = () => {
     setIsFetchRequired(true);
   };
+
+  useEffect(() => {
+    const fetchAndUpdate = async () => {
+      const stores = await fetchNearbyStores(mapCenter);
+      if (stores) {
+        await updateNewClusterMarkers(mapCenter, stores);
+      }
+    };
+    fetchAndUpdate();
+  }, [isFetchRequired, fetchNearbyStores, mapCenter, updateNewClusterMarkers]);
+
   return (
     <div>
       <Script
