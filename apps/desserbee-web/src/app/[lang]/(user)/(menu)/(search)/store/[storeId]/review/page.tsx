@@ -17,14 +17,14 @@ export default async function OneLineReviewPage() {
   }
 
   return (
-    <div className="min-w-[100vw] md:min-w-[768px]">
+    <div className="min-w-[100vw] md:min-w-[768px] pb-10">
       <DetailPageHeader />
       <div className="px-base">
         <OneLineReviewHeader
           averageRating={reviewPageData.averageRating}
           totalReviewCount={reviewPageData.totalReviewCount}
         />
-        <OneLineReviewWrite />
+        <OneLineReviewWrite storeUuid={reviewPageData.storeUuid} />
         <div className="flex flex-col gap-1 md:gap-3">
           {reviewPageData.storeReviews.map((storeReview: OneLineReview) => (
             <OneLineReviewItem

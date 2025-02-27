@@ -4,7 +4,11 @@ import IconPicutre from '@repo/design-system/components/icons/IconPicture';
 import IconHalfStar from '@repo/design-system/components/icons/IconHalfStar';
 import Image from 'next/image';
 
-export function OneLineReviewWrite() {
+interface OneLineReviewWriteProps {
+  storeUuid: string;
+}
+
+export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [reviewText, setReviewText] = useState('');
   const [rating, setRating] = useState(0);
@@ -24,6 +28,34 @@ export function OneLineReviewWrite() {
     const text = e.target.value;
     if (text.length <= 50) {
       setReviewText(text);
+    }
+  };
+
+  const handleSubmit = async () => {
+    const reviewData = {
+      userId: 1, // 실제 사용자 ID로 변경
+      content: reviewText,
+      rating: rating,
+      images: previewImage ? [previewImage] : [], // 이미지가 있을 경우 추가
+    };
+
+    try {
+      const response = await fetch(`/api/stores/${storeUuid}/reviews`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(reviewData),
+      });
+
+      if (!response.ok) {
+        throw new Error('리뷰 전송에 실패했습니다.');
+      }
+
+      const responseData = await response.json();
+      console.log('리뷰 전송 성공:', responseData);
+    } catch (error) {
+      console.error('리뷰 전송 오류:', error);
     }
   };
 
