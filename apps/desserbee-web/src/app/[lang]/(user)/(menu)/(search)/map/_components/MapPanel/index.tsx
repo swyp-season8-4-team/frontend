@@ -1,9 +1,10 @@
 import IconFlowerOutline from '@repo/design-system/components/icons/IconFlowerOutline';
 import IconTarget from '@repo/design-system/components/icons/IconTarget';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { SaveListNotSignInModal } from '../../_modals/SaveListNotSignInModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
+import { UserContext } from '@/contexts/UserContext';
 
 interface MapPanelProps {
   moveToCurrentPosition: () => void;
@@ -14,14 +15,14 @@ export function MapPanel({ moveToCurrentPosition }: MapPanelProps) {
 
   const { push, pop } = useContext(PortalContext);
 
-  const [isUserSignIn] = useState(true); // TODO: 후에 인증 구현되면 수정
+  const { user } = useContext(UserContext);
 
   const closeModal = () => {
     pop('modal');
   };
 
   const handleOpenSideBarBtnClick = () => {
-    if (isUserSignIn) {
+    if (user) {
       router.push(`/map?sidebar=true`);
     } else {
       push('modal', {
@@ -34,7 +35,7 @@ export function MapPanel({ moveToCurrentPosition }: MapPanelProps) {
       <div className="bottom-[28.05px] left-4 z-10 absolute flex flex-col gap-2 w-[47px] aspect-square">
         <button
           onClick={() => {
-            if (isUserSignIn) {
+            if (user) {
               router.push(`/map?sidebar=true`); // 사이드바 열기 위해
             } else {
               handleOpenSideBarBtnClick();

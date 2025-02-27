@@ -7,10 +7,11 @@ import {
 import { Tag } from '@repo/design-system/components/Tag';
 import { cn } from '@repo/ui/lib/utils';
 import { useTag } from '../../../_hooks/useTag';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { MyPreferNotSignInModal } from '../../_modals/MyPreferNotSignInModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import type { PreferenceData } from '@repo/entity/src/store';
+import { UserContext } from '@/contexts/UserContext';
 
 interface PreferenceTagsProps {
   categories: PreferenceData[];
@@ -30,14 +31,14 @@ export function PreferenceTags({
 
   const { push, pop } = useContext(PortalContext);
 
-  const [isUserSignIn] = useState(true); // TODO: 후에 인증 구현되면 수정
+  const { user } = useContext(UserContext);
 
   const closeModal = () => {
     pop('modal');
   };
 
   const handleMyPreferenceBtnClick = () => {
-    if (isUserSignIn) {
+    if (user) {
       handleMyPreferenceTagClick(userPreferences);
     } else {
       push('modal', {
@@ -47,7 +48,7 @@ export function PreferenceTags({
   };
 
   const handleTagClick = (categoryId: number) => {
-    if (isUserSignIn) {
+    if (user) {
       updateSelectedTag(categoryId);
     } else {
       push('modal', {

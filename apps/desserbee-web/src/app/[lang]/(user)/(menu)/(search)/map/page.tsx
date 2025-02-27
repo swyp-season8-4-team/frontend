@@ -1,14 +1,12 @@
 import { KakaoMap } from './_components/KakaoMap';
 import { BannerCarousel } from './_components/BannerCarousel';
 
-import { CATEGORIES, USER_PREFERENCES } from './_consts/tag';
+import { USER_PREFERENCES } from './_consts/tag';
 
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import AuthService from '@repo/usecase/src/authService';
 import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
-import { redirect } from 'next/navigation';
-import { NavigationPathname } from '@repo/entity/src/navigation';
 import { cookies } from 'next/headers';
 import type { SavedListData } from '@repo/entity/src/store';
 
