@@ -111,7 +111,7 @@ export default function SignUpTermsOfServiceForm() {
         <div className="space-y-4">
           <label className="flex items-center justify-between w-full cursor-pointer">
             <div>
-              <Link href="/terms/privacy" className="underline">이용약관</Link> 및 <Link href="/terms/privacy" className="underline">개인정보처리방침</Link> (필수)
+              <Link href={NavigationPathname.TermsOfService} className="underline">이용약관</Link> 및 <Link href={NavigationPathname.PrivacyPolicy} className="underline">개인정보처리방침</Link> (필수)
             </div>
             <div className="relative">
               <input
@@ -133,7 +133,7 @@ export default function SignUpTermsOfServiceForm() {
 
           <label className="flex items-center justify-between w-full cursor-pointer">
             <div>
-              <Link href="/terms/location" className="underline">위치기반서비스</Link> 이용약관 (필수)
+              <Link href={NavigationPathname.LocationBasedFeatures} className="underline">위치기반서비스</Link> 이용약관 (필수)
             </div>
             <div className="relative">
               <input

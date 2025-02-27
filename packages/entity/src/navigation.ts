@@ -29,4 +29,6 @@ export enum NavigationPathname {
   Store = '/store',
 
   PrivacyPolicy = '/privacy-policy',
+  TermsOfService = '/terms-of-service',
+  LocationBasedFeatures = '/terms-of-service/location-based-features',
 }
