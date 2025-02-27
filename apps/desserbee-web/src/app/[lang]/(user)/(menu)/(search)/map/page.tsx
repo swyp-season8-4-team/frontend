@@ -34,7 +34,7 @@ export default async function MapPage() {
 
   const authorization = await authService.getAuthorization();
 
-  if (!authorization) redirect(NavigationPathname.SignIn);
+  // if (!authorization) redirect(NavigationPathname.SignIn);
 
   let totalSavedList = [] as SavedListData[];
 
