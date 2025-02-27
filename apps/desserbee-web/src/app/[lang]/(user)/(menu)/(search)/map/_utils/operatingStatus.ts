@@ -43,16 +43,6 @@ export function getOperationStatus(
   const openTimeMinutes = openHour * 60 + openMinute;
   const closeTimeMinutes = closeHour * 60 + closeMinute;
 
-  console.log({
-    currentDay,
-    currentHour,
-    currentMinute,
-    currentTimeMinutes,
-    openTimeMinutes,
-    closeTimeMinutes,
-    todaySchedule,
-  });
-
   if (currentTimeMinutes < openTimeMinutes) {
     return {
       status: 'BEFORE_OPEN',

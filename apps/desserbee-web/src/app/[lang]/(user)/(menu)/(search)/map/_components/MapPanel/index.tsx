@@ -21,8 +21,9 @@ export function MapPanel({ moveToCurrentPosition }: MapPanelProps) {
     pop('modal');
   };
 
+  //TODO: 수정
   const handleOpenSideBarBtnClick = () => {
-    if (user) {
+    if (!user) {
       router.push(`/map?sidebar=true`);
     } else {
       push('modal', {
@@ -35,7 +36,7 @@ export function MapPanel({ moveToCurrentPosition }: MapPanelProps) {
       <div className="bottom-[28.05px] left-4 z-10 absolute flex flex-col gap-2 w-[47px] aspect-square">
         <button
           onClick={() => {
-            if (user) {
+            if (!user) {
               router.push(`/map?sidebar=true`); // 사이드바 열기 위해
             } else {
               handleOpenSideBarBtnClick();

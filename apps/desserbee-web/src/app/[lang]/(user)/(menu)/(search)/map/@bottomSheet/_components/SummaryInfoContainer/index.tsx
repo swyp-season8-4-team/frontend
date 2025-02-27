@@ -58,13 +58,15 @@ export function SummaryInfoContainer({
 
   return (
     <div className="flex flex-col w-full">
-      <div className="flex justify-between mb-[5.78px] md:mb-[9px]">
+      <div className="flex justify-between mb-[2px] md:mb-[9px]">
         <div className="flex items-center">
-          <StoreFeatureIconList {...storeFeatureIconListProps} />
           <div className="mx-[3px] md:mx-2 w-[9px] md:w-[21px]">
             <IconStar className="w-full h-full text-[#FFB700]" />
           </div>
-          <span className="text-[8px] md:text-xl">{averageRating}</span>
+          <span className="text-[8px] md:text-xl mr-1 md:mr-2">
+            {averageRating}
+          </span>
+          <StoreFeatureIconList {...storeFeatureIconListProps} />
         </div>
         <button
           onClick={handleGoDetailBtnClick}
@@ -78,7 +80,7 @@ export function SummaryInfoContainer({
           </div>
         </button>
       </div>
-      <div className="flex md:flex-row flex-col items-start md:items-center mb-[5.78px] md:mb-[15px]">
+      <div className="flex md:flex-row flex-col items-start md:items-center mb-[2px] md:mb-[15px]">
         <span className="mr-[4.44px] md:mr-[10.37px] font-semibold md:text-t28 text-xs">
           {name}
         </span>
