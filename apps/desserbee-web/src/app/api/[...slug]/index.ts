@@ -30,18 +30,18 @@ export async function httpHandler(request: Request): Promise<Response> {
     requestInit.body = await request.text();
   }
 
-  // console.info(
-  //   `Proxy request information url: ${endpoint}, requestInfo: ${JSON.stringify(
-  //     requestInit,
-  //   )}\n`,
-  // );
+  console.info(
+    `Proxy request information url: ${endpoint}, requestInfo: ${JSON.stringify(
+      requestInit,
+    )}\n`,
+  );
 
   const response = await fetch(endpoint, requestInit);
   const responseText = await response.text();
 
-  // console.info(
-  //   `Proxy response status: ${response.status}, data: ${responseText}\n`,
-  // );
+  console.info(
+    `Proxy response status: ${response.status}, data: ${responseText}\n`,
+  );
 
   if (responseText === '') {
     return NextResponse.json({}, { status: response.status });
