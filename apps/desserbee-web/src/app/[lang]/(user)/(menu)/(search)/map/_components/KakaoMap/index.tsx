@@ -85,8 +85,8 @@ export function KakaoMap({
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
 
-  const FETCH_RADIUS_KM = 3;
-  const REFETCH_THRESHOLD_KM = 2;
+  const FETCH_RADIUS_KM = 100;
+  const REFETCH_THRESHOLD_KM = 100;
   const POSITION_UPDATE_INTERVAL = 3000;
   const lastUpdateTimeRef = useRef(0);
   const isLoadingRef = useRef(false);
