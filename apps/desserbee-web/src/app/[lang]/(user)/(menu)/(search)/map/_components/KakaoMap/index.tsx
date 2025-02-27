@@ -85,8 +85,8 @@ export function KakaoMap({
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
 
-  const FETCH_RADIUS_KM = 100;
-  const REFETCH_THRESHOLD_KM = 100;
+  const FETCH_RADIUS_M = 10000;
+  const REFETCH_THRESHOLD_M = 10000;
   const POSITION_UPDATE_INTERVAL = 3000;
   const lastUpdateTimeRef = useRef(0);
   const isLoadingRef = useRef(false);
@@ -162,7 +162,7 @@ export function KakaoMap({
           await servicesRef.current.storeService!.getNearbyStores({
             latitude: position.latitude,
             longitude: position.longitude,
-            radius: FETCH_RADIUS_KM,
+            radius: FETCH_RADIUS_M,
           });
 
         setNearByStores(nearByStores);
@@ -288,7 +288,7 @@ export function KakaoMap({
 
         if (
           lastFetchPosition.latitude === 0 ||
-          distanceFromLastFetch > REFETCH_THRESHOLD_KM
+          distanceFromLastFetch > REFETCH_THRESHOLD_M
         ) {
           console.log(
             'onPositionSuccess: 재요청 할 때 됨, (임계값 초과), 주변 가게 정보 업데이트 시작 ✅',
@@ -300,7 +300,7 @@ export function KakaoMap({
             await servicesRef.current.storeService!.getNearbyStores({
               latitude: position.latitude,
               longitude: position.longitude,
-              radius: FETCH_RADIUS_KM,
+              radius: FETCH_RADIUS_M,
             });
 
           await updateNewClusterMarkers(position, nearByStores);
