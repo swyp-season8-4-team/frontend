@@ -13,6 +13,7 @@ import { initServerMSW } from '@/mocks';
 import { MockProvider } from '@/mocks/MockProvider';
 import { PortalProvider } from '@repo/ui/contexts/PortalContext';
 import { fontVariables } from '../fonts';
+import { MobileScreenProvider } from './_contexts/MobileScreenProvider';
 
 const metadataService = new MetadataService();
 
@@ -37,7 +38,7 @@ export async function generateStaticParams() {
 
 interface Props extends WithChildren, WithParams {}
 
-export default async function RootLayout({
+export default async function LangLayout({
   children,
   params,
 }: Readonly<Props>) {
@@ -52,11 +53,13 @@ export default async function RootLayout({
   return (
     <html lang={lang} className={fontCofig.variable}>
       <body className={fontCofig.className}>
-        <Wrapper>
-          <PortalProvider>
-            {children}
-          </PortalProvider>
-        </Wrapper>
+        <MobileScreenProvider>
+          <Wrapper>
+            <PortalProvider>
+              {children}
+            </PortalProvider>
+          </Wrapper>
+        </MobileScreenProvider>
       </body>
     </html>
   );
