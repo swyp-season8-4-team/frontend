@@ -4,12 +4,12 @@ import { Button } from "@repo/ui/components/button";
 import { useCallback, useContext, useState } from "react";
 import { ForgotPasswordContext } from "../../_contexts/ForgotPasswordContext";
 import AuthService from "@repo/usecase/src/authService";
-import AuthAPIRespository from "@repo/infrastructures/src/repositories/authAPIRespository";
+import AuthAPIRepository from "@repo/infrastructures/src/repositories/authAPIRepository";
 import { useRouter } from "next/navigation";
 import { NavigationPathname } from "@repo/entity/src/navigation";
 
 const authService = new AuthService({
-  authRepository: new AuthAPIRespository(),
+  authRepository: new AuthAPIRepository(),
 });
 
 export function ForgotPasswordInputForm() {

@@ -119,9 +119,17 @@ export default class AuthService {
       throw new Error('authRepository is not set');
     }
 
-    console.log('verificationToken', verificationToken);
-
     const response = await this.authRepository.signUp({ data, authorization: verificationToken });
+
+    return response;
+  }
+
+  async signOut(authorization: string): Promise<void> {
+    if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const response = await this.authRepository.signOut({ data: { authorization } });
 
     return response;
   }

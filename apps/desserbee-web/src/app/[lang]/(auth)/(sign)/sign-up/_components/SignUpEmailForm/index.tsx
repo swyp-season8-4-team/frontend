@@ -1,7 +1,7 @@
 'use client';
 
 import { HTTPError } from '@repo/api/src/error';
-import AuthAPIRespository from '@repo/infrastructures/src/repositories/authAPIRespository';
+import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
 import SessionStorageRepository from '@repo/infrastructures/src/repositories/SessionStorageRepository';
 import { Button } from '@repo/ui/components/button';
 import AuthService, { EmailAuthSessionKey, SignUpStep, VerifyEmailPurpose } from '@repo/usecase/src/authService';
@@ -10,7 +10,7 @@ import { useCallback, useContext, useState } from 'react';
 import { SignUpContext } from '../../_contexts/SignUpContext';
 
 const authService = new AuthService({
-  authRepository: new AuthAPIRespository(),
+  authRepository: new AuthAPIRepository(),
   storageRepository: new SessionStorageRepository(),
 });
 

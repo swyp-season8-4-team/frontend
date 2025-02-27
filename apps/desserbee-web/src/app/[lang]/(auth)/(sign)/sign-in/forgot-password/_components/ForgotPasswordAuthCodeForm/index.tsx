@@ -5,12 +5,12 @@ import { ForgotPasswordStep, type ForgotPasswordStepProps } from "../../_types";
 import { ForgotPasswordContext } from "../../_contexts/ForgotPasswordContext";
 import { Button } from "@repo/ui/components/button";
 import AuthService from "@repo/usecase/src/authService";
-import AuthAPIRespository from "@repo/infrastructures/src/repositories/authAPIRespository";
+import AuthAPIRepository from "@repo/infrastructures/src/repositories/authAPIRepository";
 import { VerifyEmailPurpose } from "@repo/usecase/src/authService";
 import { verifyTokenAction } from "@/actions/verfiyTokenAction";
 
 const authService = new AuthService({
-  authRepository: new AuthAPIRespository(),
+  authRepository: new AuthAPIRepository(),
 });
 
 export function ForgotPasswordAuthCodeForm({ onNextStep }: ForgotPasswordStepProps) {
