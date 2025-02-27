@@ -17,6 +17,7 @@ export interface MapController {
     container: HTMLDivElement,
     position: MapPosition,
   ): Promise<ExternalMap>;
+  addCenterChangedListener(callback: () => void): void;
   createMarkersWithClusterer(
     storeMapData: NearByStoreData[],
     markerImageSrc: string,

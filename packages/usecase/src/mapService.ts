@@ -64,6 +64,13 @@ export default class MapService {
     this.mapController.setMapCenter(position);
   }
 
+  addCenterChangedListener(callback: () => void) {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+    return this.mapController.addCenterChangedListener(callback);
+  }
+
   getMapCenter() {
     if (!this.mapController) {
       throw new Error('mapController is not set');

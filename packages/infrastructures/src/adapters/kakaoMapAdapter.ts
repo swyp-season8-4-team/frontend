@@ -51,6 +51,12 @@ export class KakaoMapAdapter implements ExternalMap {
     this.map.setBounds(bounds);
   }
 
+  addCenterChangedListener(callback: () => void) {
+    window.kakao.maps.event.addListener(this.map, 'bounds_changed', () =>
+      callback(),
+    );
+  }
+
   createMarkersWithClusterer(
     storeMapData: NearByStoreData[],
     markerImageSrc: string,
