@@ -67,10 +67,10 @@ export async function httpHandler(request: Request): Promise<Response> {
       'set-cookie',
       `userUuid=${jsonData.userUuid}; Path=/; HttpOnly; Secure; SameSite=Strict`,
     );
-
-    return NextResponse.json(jsonData, {
-      status: response.status,
-      headers,
-    });
   }
+
+  return NextResponse.json(jsonData, {
+    status: response.status,
+    headers,
+  });
 }
