@@ -32,7 +32,6 @@ export function StoreInfo({
   const [isOperationHourOpen, setIsOperationHourOpen] = useState(false);
   const { status, message } = getOperationStatus(operatingHours);
 
-  console.log(operatingHours);
   return (
     <div className="flex flex-col w-full text-[8px] md:text-lg leading-[15px]">
       <div className="flex items-center gap-[6px]">

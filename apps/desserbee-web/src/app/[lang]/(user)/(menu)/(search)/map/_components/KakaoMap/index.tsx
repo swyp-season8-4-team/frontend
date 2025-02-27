@@ -295,15 +295,15 @@ export function KakaoMap({
           );
 
           //TODO: 가짜 데이터
-          const stores = nearBystores;
-          // const nearByStores =
-          //   await servicesRef.current.storeService!.getNearbyStores({
-          //     latitude: position.latitude,
-          //     longitude: position.longitude,
-          //     radius: FETCH_RADIUS_KM,
-          //   });
+          // const stores = nearBystores;
+          const nearByStores =
+            await servicesRef.current.storeService!.getNearbyStores({
+              latitude: position.latitude,
+              longitude: position.longitude,
+              radius: FETCH_RADIUS_KM,
+            });
 
-          await updateNewClusterMarkers(position, stores);
+          await updateNewClusterMarkers(position, nearByStores);
           console.log(
             'onPositionSuccess: 주변 가게 정보 업데이트 완료, 클러스터 마커들도 새로 추가 📍',
           );
