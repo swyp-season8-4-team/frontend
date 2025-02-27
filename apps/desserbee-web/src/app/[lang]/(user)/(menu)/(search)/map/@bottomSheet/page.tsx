@@ -27,7 +27,7 @@ export default async function BottomSheetPage({
     return null;
   }
 
-  const storeSummary = await storeService.getStoreSummary(storeId); //TODO 서버에 가게 모두 등록되면 수정
+  const storeSummary = await storeService.getStoreSummary(storeId);
   return (
     <BottomSheetContainer
       showBottomSheet={bottomsheet}

@@ -137,7 +137,7 @@ export function KakaoMap({
     if (servicesRef.current.mapService && isMapLoaded) {
       servicesRef.current.mapService.setMapCenter(currentPosition);
     }
-  }, [isMapLoaded]);
+  }, [isMapLoaded, currentPosition]);
 
   const mapPanelProps = useMemo(
     () => ({
@@ -326,7 +326,7 @@ export function KakaoMap({
           );
           openPermissionModal();
         } else {
-          console.error('onPositionSuccess: 알 수 없는 오류 발생');
+          console.error('onPositionSuccess: 위치 권한 외 오류 발생', error);
         }
         return;
       }
