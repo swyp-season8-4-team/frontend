@@ -46,10 +46,13 @@ export function MenuPictureCarouselModal({
     <CustomModal
       isCloseBtnShow={false}
       onClose={onClose}
-      className="top-[50%] p-[21.49px] md:p-[46px] rounded-[6.91px] md:rounded-base w-[80%] aspect-[250/193]"
+      className="top-[50%] p-4 md:p-4 rounded-[6.91px] md:rounded-base w-[80%] aspect-[250/193]"
     >
-      <div className="grid grid-rows-[auto_1fr] h-full">
-        <Carousel setApi={setApi} className="relative w-full h-full">
+      <div className="h-full">
+        <Carousel
+          setApi={setApi}
+          className="flex flex-col justify-center relative w-full h-full"
+        >
           <div className="flex items-end font-semibold text-[8px] sm:text-base md:text-xl">
             <div>메뉴 &nbsp;</div>
             <div className="text-[#898989]">{menus.length}</div>
@@ -57,13 +60,10 @@ export function MenuPictureCarouselModal({
           <CarouselContent className="h-full">
             {Array.from({ length: totalPages }).map((_, pageIndex) => (
               <CarouselItem key={pageIndex} className="w-full">
-                <div className="place-items-center gap-1 md:gap-[14px] grid grid-cols-4 h-full">
+                <div className="grid grid-cols-4 h-full gap-1 md:gap-4 ">
                   {getPageImages(pageIndex).map((menu, menuIndex) => (
-                    <div
-                      key={`${pageIndex}-${menuIndex}`}
-                      className="gap-1 grid grid-rows-[1fr_0.5fr] w-full h-full"
-                    >
-                      <div className="relative bg-[#D2D2D2] rounded-[5px] md:rounded-xl max-w-1/3 aspect-square overflow-hidden">
+                    <div key={`${pageIndex}-${menuIndex}`} className="">
+                      <div className="relative bg-[#D2D2D2] rounded-[5px] md:rounded-xl max-h-[90px] md:max-h-[133px] aspect-square overflow-hidden">
                         {menu.images ? (
                           <Image
                             src={menu.images[0]}
@@ -75,7 +75,7 @@ export function MenuPictureCarouselModal({
                           ''
                         )}
                       </div>
-                      <div className="leading-[40%] sm:leading-[130%]">
+                      <div className="leading-none">
                         <div className="text-[6px] sm:text-[16px]">
                           {menu.name}
                         </div>
@@ -92,7 +92,7 @@ export function MenuPictureCarouselModal({
               </CarouselItem>
             ))}
           </CarouselContent>
-          <div className="top-1/2 left-[-19px] md:left-[-50px] z-modal absolute -translate-y-1/2">
+          <div className="top-1/2 left-[-19px] md:left-[-90px] z-modal absolute -translate-y-1/2">
             <div
               onClick={() => api?.scrollPrev()}
               className="w-6 md:w-14 h-7 md:h-14 cursor-pointer"
@@ -100,7 +100,7 @@ export function MenuPictureCarouselModal({
               <IconDirection className="w-full h-full text-[#9F9F9F] rotate-90 transfrom" />
             </div>
           </div>
-          <div className="top-1/2 right-[-19px] md:right-[-50px] z-modal absolute -translate-y-1/2">
+          <div className="top-1/2 right-[-19px] md:right-[-90px] z-modal absolute -translate-y-1/2">
             <div
               onClick={() => api?.scrollNext()}
               className="w-6 md:w-14 h-7 md:h-14 cursor-pointer"
