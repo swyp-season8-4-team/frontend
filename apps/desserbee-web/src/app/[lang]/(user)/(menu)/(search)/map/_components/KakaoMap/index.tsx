@@ -33,7 +33,6 @@ import { KAKAO_MAP_API_URL } from '../../_consts/map';
 import {
   type NearByStoreData,
   type PreferenceData,
-  type SavedListData,
 } from '@repo/entity/src/store';
 
 import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';
@@ -44,7 +43,6 @@ import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService
 interface KakaoMapProps {
   userPreferences: number[];
   preferenceCategories: PreferenceData[];
-  totalSavedList: SavedListData[];
 }
 
 // 서비스가 모두 초기화되었는지 확인하는 헬퍼 함수

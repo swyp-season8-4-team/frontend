@@ -43,12 +43,12 @@ export default class GeolocationController {
             timestamp: new Date(pos.timestamp).toISOString(),
           });
           //TODO: 가짜 위치
-          const latitude = 37.55498563;
-          const longitude = 126.90483844;
-          // const { latitude, longitude } = this.formatCoordinates(
-          //   pos.coords.latitude,
-          //   pos.coords.longitude,
-          // );
+          // const latitude = 37.55498563;
+          // const longitude = 126.90483844;
+          const { latitude, longitude } = this.formatCoordinates(
+            pos.coords.latitude,
+            pos.coords.longitude,
+          );
 
           const position = this.applyFilters(
             { latitude, longitude },
@@ -90,24 +90,24 @@ export default class GeolocationController {
       if (navigator.geolocation) {
         this.watchId = navigator.geolocation.watchPosition(
           (pos) => {
-            // const { latitude, longitude } = this.formatCoordinates(
-            //   pos.coords.latitude,
-            //   pos.coords.longitude,
-            // );
+            const { latitude, longitude } = this.formatCoordinates(
+              pos.coords.latitude,
+              pos.coords.longitude,
+            );
 
-            // const position = this.applyFilters(
-            //   { latitude, longitude },
-            //   pos.coords.accuracy,
-            // );
+            const position = this.applyFilters(
+              { latitude, longitude },
+              pos.coords.accuracy,
+            );
 
-            // //TODO: 가짜 위치
-            const latitude = 37.55498563;
-            const longitude = 126.90483844;
+            // // //TODO: 가짜 위치
+            // const latitude = 37.55498563;
+            // const longitude = 126.90483844;
 
-            const position = {
-              latitude,
-              longitude,
-            };
+            // const position = {
+            //   latitude,
+            //   longitude,
+            // };
 
             onSuccess(position);
             resolve(position);
