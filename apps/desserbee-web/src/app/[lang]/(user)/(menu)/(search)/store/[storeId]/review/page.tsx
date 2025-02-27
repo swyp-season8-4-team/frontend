@@ -17,7 +17,7 @@ export default async function OneLineReviewPage() {
   }
 
   return (
-    <div>
+    <div className="min-w-[100vw] md:min-w-[768px]">
       <DetailPageHeader />
       <div className="px-base">
         <OneLineReviewHeader
