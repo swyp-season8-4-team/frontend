@@ -125,13 +125,13 @@ export default {
         },
         'slide-up': {
           '0%': {
-            transform: 'translateY(100%)',
+            transform: 'translateX(-50%) translateY(100%)',
           },
           '70%': {
-            transform: 'translateY(-5%)',
+            transform: 'translateX(-50%) translateY(0)',
           },
           '100%': {
-            transform: 'translateY(0)',
+            transform: 'translateX(-50%) translateY(0)',
           },
         },
       },

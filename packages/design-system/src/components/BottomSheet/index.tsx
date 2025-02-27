@@ -57,12 +57,12 @@ export function BottomSheet({
           <div
             ref={bottomSheetRef}
             className={cn(
-              'left-1/2 -inset-0 translate-x-1/2 bottom-0 z-bottomSheet fixed  select-none ',
-              'bg-white px-base pt-[19px] pb-4 rounded-t-base max-w-[768px]',
-              'animate-slide-up transition-transform',
+              'bottom-0 z-bottomSheet fixed select-none',
+              'bg-white px-base pt-[19px] pb-4 rounded-t-base max-w-[768px] w-full',
+              'animate-slide-up',
               isDragging
                 ? 'transition-none'
-                : 'transition-transform duration-500',
+                : 'transition-transform duration-500 ease-out',
               className,
             )}
             onClick={(e) => e.stopPropagation()}
