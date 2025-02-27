@@ -337,6 +337,65 @@ export function KakaoMap({
     ],
   );
 
+  const handleCurrentPositionGet = async (
+    initializedServices: {
+      geoService: GeolocationService;
+    },
+    openPermissionModal: () => void,
+  ) => {
+    const permissionStatus = await navigator.permissions.query({
+      name: 'geolocation',
+    });
+    console.log('handleCurrentPositionGet: 위치 권한 확인');
+
+    if (permissionStatus.state === 'denied') {
+      console.log('handleCurrentPositionGet: 위치 권한 거부됨');
+      openPermissionModal();
+      return null;
+    }
+
+    console.log('handleCurrentPositionGet: 현재 위치 정보 요청 시작 🏃');
+    const result = await initializedServices.geoService.getCurrentPosition();
+
+    if ('errorMessage' in result) {
+      console.log('handleCurrentPositionGet: 오류 발생 ⚠️:', {
+        message: result.errorMessage,
+        type: result.errorType,
+      });
+      console.log('handleCurrentPositionGet: 현재 위치 권한 상태 다시 확인:', {
+        state: permissionStatus.state,
+        errorType: result.errorType,
+      });
+
+      if (result.errorType === 'POSITION_UNAVAILABLE') {
+        console.log('handleCurrentPositionGet: GPS 사용 불가');
+        setError('GPS를 활성화하고 다시 시도해주세요.');
+      } else if (result.errorType === 'TIMEOUT') {
+        console.log('handleCurrentPositionGet: 위치 정보 요청 시간 초과');
+        setError('위치 정보를 가져오는데 시간이 너무 오래 걸립니다.');
+      } else {
+        setError('위치 정보를 가져오는데 실패했습니다.');
+      }
+      return null;
+    }
+
+    console.log('handleCurrentPositionGet: 현재 위치 정보 획득 성공 🚩:', {
+      latitude: result.latitude,
+      longitude: result.longitude,
+    });
+
+    setCurrentPosition(result);
+    console.log('handleCurrentPositionGet: 현재 위치 저장 🚩');
+
+    return result;
+  };
+
+  const getMapCenter = async (initializedServices: {
+    mapService: MapService;
+  }) => {
+    return initializedServices.mapService.getMapCenter();
+  };
+
   // 0. 서비스 시작
   const initializeServices = () => {
     console.log('initializeServices: 서비스 초기화 시작');
@@ -375,54 +434,17 @@ export function KakaoMap({
     }
 
     try {
-      const permissionStatus = await navigator.permissions.query({
-        name: 'geolocation',
-      });
-      console.log('loadMap - geoService.getCurrentPosition(): 위치 권한 확인');
-
-      if (permissionStatus.state === 'denied') {
-        console.log('loadMap: 위치 권한 거부됨');
-        openPermissionModal();
-        return;
-      }
-
-      console.log(
-        'loadMap - geoService.getCurrentPosition(): 현재 위치 정보 요청 시작 🏃',
+      const result = await handleCurrentPositionGet(
+        initializedServices,
+        openPermissionModal,
       );
-      const result = await initializedServices.geoService.getCurrentPosition();
 
-      if ('errorMessage' in result) {
-        console.log(
-          'loadMap - geoService.getCurrentPosition(): 오류 발생 ⚠️:',
-          {
-            message: result.errorMessage,
-            type: result.errorType,
-          },
+      if (!result) {
+        console.error(
+          '현재 위치 로딩에 문제가 생겼습니다.⚠️ 지도 로드 중지 🛑',
         );
-        console.log('loadMap: 현재 위치 권한 상태 다시 확인:', {
-          state: permissionStatus.state,
-          errorType: result.errorType,
-        });
-
-        if (result.errorType === 'POSITION_UNAVAILABLE') {
-          console.log('loadMap: GPS 사용 불가');
-          setError('GPS를 활성화하고 다시 시도해주세요.');
-        } else if (result.errorType === 'TIMEOUT') {
-          console.log('loadMap: 위치 정보 요청 시간 초과');
-          setError('위치 정보를 가져오는데 시간이 너무 오래 걸립니다.');
-        } else {
-          setError('위치 정보를 가져오는데 실패했습니다.');
-        }
         return;
       }
-
-      console.log('loadMap: 현재 위치 정보 획득 성공 🚩:', {
-        latitude: result.latitude,
-        longitude: result.longitude,
-      });
-
-      setCurrentPosition(result);
-      console.log('loadMap: 현재 위치 저장 🚩');
 
       console.log('loadMap: 지도 초기화 시작');
       await initializedServices.mapService.initializeMap(
