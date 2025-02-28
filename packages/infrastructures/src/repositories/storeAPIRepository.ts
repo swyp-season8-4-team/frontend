@@ -33,6 +33,7 @@ import type {
   MenuRequests,
   ParentSavedListResponse,
   ParentSavedListRequest,
+  PreferenceData,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -41,6 +42,15 @@ export default class StoreAPIRepository
   extends APIRepository
   implements StoreRepository
 {
+  //preference
+  async getAllPreference(): Promise<PreferenceData[]> {
+    const response = await fetch<void, PreferenceData[]>({
+      method: 'GET',
+      url: `${this.endpoint}/preferences`,
+    });
+
+    return response;
+  }
   // store
   async getNearbyStores({
     data,
@@ -234,7 +244,6 @@ export default class StoreAPIRepository
 
   // saved list
   async createSavedList({
-    authorization,
     data,
   }: BaseRequestData<CreateSavedListRequest>): Promise<CreateSavedListResponse> {
     if (!data) {
@@ -243,18 +252,9 @@ export default class StoreAPIRepository
 
     const { userUuid, listName, iconColorId } = data || {};
 
-    const url = `${this.endpoint}/user-store/${userUuid}/lists`;
+    const url = `${this.endpoint}/user-store/${userUuid}/lists?userUuid=${userUuid}&listName=${listName}&iconColorId=${iconColorId}`;
 
-    const response = await fetch<
-      { listName: string; iconColorId: number },
-      CreateSavedListResponse
-    >({
-      ...(authorization && {
-        headers: {
-          Authorization: authorization,
-        },
-      }),
-      data: { listName, iconColorId },
+    const response = await fetch<void, CreateSavedListResponse>({
       method: 'POST',
       url,
     });
@@ -565,6 +565,28 @@ export default class StoreAPIRepository
     const response = await fetch<void, void>({
       method: 'POST',
       url,
+    });
+
+    return response;
+  }
+
+  async getStoresInBounds({
+    data,
+  }: BaseRequestData<{
+    swLat: number;
+    swLng: number;
+    neLat: number;
+    neLng: number;
+  }>): Promise<NearByStoreData[]> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { swLat, swLng, neLat, neLng } = data;
+
+    const response = await fetch<void, NearByStoreData[]>({
+      method: 'GET',
+      url: `${this.endpoint}/stores/bounds?swLat=${swLat}&swLng=${swLng}&neLat=${neLat}&neLng=${neLng}`,
     });
 
     return response;

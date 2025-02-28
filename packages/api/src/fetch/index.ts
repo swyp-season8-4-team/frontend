@@ -7,6 +7,8 @@ const TIMEOUT = 30 * 1000;
 const baseFetch = async <Q, R>(
   originalRequestData: RequestData<Q>,
 ): Promise<R> => {
+  // console.log('----------------');
+  // console.log(originalRequestData);
   const requestData = { ...originalRequestData };
   const headers = modifyDefaultHeaders(requestData.headers, isServer);
 
@@ -27,15 +29,15 @@ const baseFetch = async <Q, R>(
     serializedQueries ? `?${serializedQueries}` : ''
   }`;
 
-   // FormData가 있으면 body에 FormData를 사용하고, 아니면 JSON 문자열 사용
-   let body;
-   if (formData) {
-     // FormData를 사용할 경우 Content-Type 헤더를 삭제 (브라우저가 자동으로 설정)
-     delete headers['Content-Type'];
-     body = formData;
-   } else {
-     body = requestData.data ? JSON.stringify(requestData.data) : undefined;
-   }
+  // FormData가 있으면 body에 FormData를 사용하고, 아니면 JSON 문자열 사용
+  let body;
+  if (formData) {
+    // FormData를 사용할 경우 Content-Type 헤더를 삭제 (브라우저가 자동으로 설정)
+    delete headers['Content-Type'];
+    body = formData;
+  } else {
+    body = requestData.data ? JSON.stringify(requestData.data) : undefined;
+  }
 
   const requestInfo: RequestInit = {
     body,

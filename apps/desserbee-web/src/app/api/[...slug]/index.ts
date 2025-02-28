@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 
 export async function httpHandler(request: Request): Promise<Response> {
-
   const endpoint = request.url.replace(
     'http://localhost:3000',
     process.env.NEXT_PUBLIC_SERVICE_API_URL ?? '',
@@ -19,9 +18,9 @@ export async function httpHandler(request: Request): Promise<Response> {
       ...(request.headers.has('cookie')
         ? { cookie: request.headers.get('cookie') as string }
         : {}),
-      ...request.headers.get('authorization') && {
+      ...(request.headers.get('authorization') && {
         Authorization: request.headers.get('authorization') as string,
-      },
+      }),
     },
     method: request.method,
   };
@@ -62,6 +61,14 @@ export async function httpHandler(request: Request): Promise<Response> {
 
   // Check if the response is JSON
   const jsonData = JSON.parse(responseText);
+
+  if (endpoint.endsWith('/auth/login') && response.ok && jsonData.userUuid) {
+    headers.append(
+      'set-cookie',
+      `userUuid=${jsonData.userUuid}; Path=/; HttpOnly; Secure; SameSite=Strict`,
+    );
+  }
+
   return NextResponse.json(jsonData, {
     status: response.status,
     headers,

@@ -80,6 +80,7 @@ export function DetailContainer({
 
   return (
     <>
+    
       <DetailPageHeader />
       <div className="px-base">
         <StorePictureList {...storePicureListProps} />

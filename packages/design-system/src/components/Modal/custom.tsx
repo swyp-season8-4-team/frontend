@@ -21,7 +21,7 @@ export function CustomModal({
       />
       <div
         className={cn(
-          'top-[40%] left-1/2 fixed bg-white border border-[#6F6F6F] rounded-[10px] text-nowrap -translate-x-1/2 -translate-y-1/2 transform animate-fadeIn',
+          'top-[40%] left-1/2 fixed bg-white border border-[#6F6F6F] rounded-[10px] -translate-x-1/2 -translate-y-1/2 transform animate-fadeIn',
           className,
         )}
       >

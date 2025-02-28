@@ -536,7 +536,16 @@ export interface GetMenuListRequest {
   storeUuid: string;
 }
 
+export interface PreferenceData {
+  id: number;
+  preferenceName: string;
+  preferenceDesc: string;
+}
+
 export interface StoreRepository {
+  // preference
+  getAllPreference(): Promise<PreferenceData[]>;
+
   // store
   getNearbyStores(
     data: BaseRequestData<NearByStoreRequest>,
@@ -643,5 +652,5 @@ export interface StoreRepository {
   getMenuList({ data }: BaseRequestData<GetMenuListRequest>): Promise<Menu[]>;
 
   // coupon count
-  updateCouponCount(): Promise<void>; // TODO: api 아직
+  updateCouponCount(): Promise<void>;
 }

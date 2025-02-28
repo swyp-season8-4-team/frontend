@@ -38,9 +38,6 @@ export default class GeolocationService {
       if (permissionStatus.state === 'denied') {
         throw new GeolocationPermissionError('PERMISSION_DENIED');
       }
-      if (permissionStatus.state === 'prompt') {
-        throw new GeolocationPermissionError('PERMISSION_PROMPT');
-      }
 
       const position = await this.geolocationController.getCurrentPosition();
       return position;

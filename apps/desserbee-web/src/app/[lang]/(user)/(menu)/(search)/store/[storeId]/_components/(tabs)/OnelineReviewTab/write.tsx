@@ -1,13 +1,28 @@
 'use client';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import IconPicutre from '@repo/design-system/components/icons/IconPicture';
 import IconHalfStar from '@repo/design-system/components/icons/IconHalfStar';
 import Image from 'next/image';
+import ReviewService from '@repo/usecase/src/reviewService';
+import ReviewAPIRepository from '@repo/infrastructures/src/repositories/reviewAPIRepository';
+import { UserContext } from '@/contexts/UserContext';
 
-export function OneLineReviewWrite() {
+interface OneLineReviewWriteProps {
+  storeUuid: string;
+}
+
+export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
+  const { user } = useContext(UserContext);
+
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [reviewText, setReviewText] = useState('');
   const [rating, setRating] = useState(0);
+  const [reviewImage, setReviewImage] = useState<File | null>();
+  const [imageName, setImageName] = useState<string | null>(null);
+
+  const reviewService = new ReviewService({
+    reviewRepository: new ReviewAPIRepository(),
+  });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -17,6 +32,8 @@ export function OneLineReviewWrite() {
         setPreviewImage(reader.result as string);
       };
       reader.readAsDataURL(file);
+      setReviewImage(file);
+      setImageName(file.name);
     }
   };
 
@@ -25,6 +42,19 @@ export function OneLineReviewWrite() {
     if (text.length <= 50) {
       setReviewText(text);
     }
+  };
+
+  const handleSubmit = async () => {
+    const data = {
+      storeUuid: storeUuid,
+      request: {
+        userId: user?.id as string,
+        content: reviewText,
+        rating: rating,
+      },
+      images: [imageName!],
+    };
+    await reviewService.createStoreOnlineReviews(data);
   };
 
   return (
@@ -111,6 +141,7 @@ export function OneLineReviewWrite() {
         </div>
         <div className="w-full flex justify-end">
           <button
+            onClick={handleSubmit}
             className="text-[6.79px] md:text-base mt-[6px] md:mt-4 text-white text-center px-[4.24px]  md:p-[10px]  rounded-[42.23px] bg-[#898989]"
             type="button"
           >

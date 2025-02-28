@@ -7,4 +7,5 @@ export interface GeolocationController {
     options?: PositionOptions,
   ): Promise<MapPosition>;
   stopWatching(): Promise<void>;
+  
 }

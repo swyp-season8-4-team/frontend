@@ -34,6 +34,10 @@ export default class KakaoMapController implements MapController {
     }
   }
 
+  addCenterChangedListener(callback: () => void) {
+    this.map?.addCenterChangedListener(callback);
+  }
+
   createMarkersWithClusterer(
     storeMapData: NearByStoreData[],
     markerImageSrc: string,
@@ -123,9 +127,7 @@ export default class KakaoMapController implements MapController {
         throw new Error('Map is not initialized');
       }
       this.map.setCenter(position);
-      console.log('지도 중심이 성공적으로 이동되었습니다.');
     } catch (error) {
-      console.error('지도 중심 이동 중 오류가 발생했습니다:', error);
       throw error;
     }
   }
@@ -136,10 +138,29 @@ export default class KakaoMapController implements MapController {
         throw new Error('Map is not initialized');
       }
       const center = this.map.getCenter();
-      console.log('지도 중심 좌표를 성공적으로 가져왔습니다.');
       return center;
     } catch (error) {
       console.error('지도 중심 좌표를 가져오는 중 오류가 발생했습니다:', error);
+      throw error;
+    }
+  }
+
+  getMapBound() {
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      const bounds = this.map.getBounds();
+      const sw = bounds.getSouthWest();
+      const ne = bounds.getNorthEast();
+
+      console.log('지도 경계를 성공적으로 가져왔습니다.');
+      return {
+        sw: { latitude: sw.getLat(), longitude: sw.getLng() },
+        ne: { latitude: ne.getLat(), longitude: ne.getLng() },
+      };
+    } catch (error) {
+      console.error('지도 경계를 가져오는 중 오류가 발생했습니다:', error);
       throw error;
     }
   }
@@ -156,4 +177,63 @@ export default class KakaoMapController implements MapController {
       throw error;
     }
   }
+
+  // getBounds(): {
+  //   sw: MapPosition;
+  //   ne: MapPosition;
+  // } {
+  //   if (!this.map) {
+  //     throw new Error('Map is not initialized');
+  //   }
+
+  //   const bounds = this.map.getBounds();
+  //   const sw = bounds.getSouthWest();
+  //   const ne = bounds.getNorthEast();
+
+  //   return {
+  //     sw: {
+  //       latitude: sw.getLat(),
+  //       longitude: sw.getLng(),
+  //     },
+  //     ne: {
+  //       latitude: ne.getLat(),
+  //       longitude: ne.getLng(),
+  //     },
+  //   };
+  // }
+
+  // getVisibleArea(): {
+  //   center: MapPosition;
+  //   level: number;
+  // } {
+  //   if (!this.map) {
+  //     throw new Error('Map is not initialized');
+  //   }
+
+  //   const map = this.map;
+  //   const center = map.getCenter();
+  //   const level = map.getLevel();
+
+  //   return {
+  //     center: {
+  //       latitude: center.latitude,
+  //       longitude: center.longitude,
+  //     },
+  //     level: level,
+  //   };
+  // }
+
+  // setBounds(positions: MapPosition[]): void {
+  //   if (!this.map) {
+  //     throw new Error('Map is not initialized');
+  //   }
+
+  //   const bounds = new kakao.maps.LatLngBounds();
+
+  //   positions.forEach((pos) => {
+  //     bounds.extend(new kakao.maps.LatLng(pos.latitude, pos.longitude));
+  //   });
+
+  //   this.map.setBounds(bounds);
+  // }
 }

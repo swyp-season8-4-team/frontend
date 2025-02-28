@@ -17,7 +17,7 @@ export class KakaoMapAdapter implements ExternalMap {
   constructor(private readonly map: kakao.maps.Map) {}
 
   setCenter(position: MapPosition): void {
-    this.map.setCenter(
+    this.map.panTo(
       new kakao.maps.LatLng(position.latitude, position.longitude),
     );
   }
@@ -41,6 +41,20 @@ export class KakaoMapAdapter implements ExternalMap {
   // 내부 구현체 접근을 위한 메서드
   getNativeMap(): kakao.maps.Map {
     return this.map;
+  }
+
+  getBounds() {
+    return this.map.getBounds();
+  }
+
+  setBounds(bounds: kakao.maps.LatLngBounds) {
+    this.map.setBounds(bounds);
+  }
+
+  addCenterChangedListener(callback: () => void) {
+    window.kakao.maps.event.addListener(this.map, 'bounds_changed', () =>
+      callback(),
+    );
   }
 
   createMarkersWithClusterer(
@@ -145,5 +159,12 @@ export class KakaoMapAdapter implements ExternalMap {
 
   relayout(): void {
     this.relayout();
+  }
+
+  addDebounceListener(callback: () => void) {
+    window.kakao.maps.event.addListener(this.map, 'dragend', () => callback());
+    window.kakao.maps.event.addListener(this.map, 'zoom_changed', () =>
+      callback(),
+    );
   }
 }

@@ -2,7 +2,9 @@ import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import { DetailContainer } from './_components/(detail)/DetailContainer';
 import AuthService from '@repo/usecase/src/authService';
-import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
+import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
+import NotFound from '@/app/[lang]/[...not-found]/page';
+import { storeDetail } from '../../map/_consts/marker';
 
 interface StoreDetailPageProps {
   params: Promise<{
@@ -20,33 +22,34 @@ export default async function StoreDetailPage({
   });
 
   const authService = new AuthService({
-    authRepository: new AuthAPIRepository(),
+    authRepository: new AuthNextAppRouteRepository(),
   });
 
   if (!storeId) {
-    return null;
+    return <NotFound />;
   }
 
-  const storeDetail = await storeService.getStoreDetail(storeId);
+  // const storeDetail = await storeService.getStoreDetail(storeId);
+  const storeDetails = storeDetail;
 
-  // const authorization = await authService.getAuthorization();
+  const authorization = await authService.getAuthorization();
 
   if (storeDetail.savedListId) {
-    // const parentListInfo = await storeService.getParentSavedList({
-    //   listId: storeDetail.savedListId,
-    //   authorization: authorization || null, //TODO: 로그인일시, 비로그인일시 둘다 접근 가능 BUT 로그인일 때만 리스트 어느리스트에 저장된지 확인위해..
-    // });
+    const parentListInfo = await storeService.getParentSavedList({
+      listId: storeDetail.savedListId,
+      authorization: authorization || null,
+    });
 
-    const parentListInfo = {
-      listId: 121,
-      listName: '맛집!@',
-      iconColorId: 3,
-    };
+    // const parentListInfo = {
+    //   listId: 121,
+    //   listName: '맛집!@',
+    //   iconColorId: 3,
+    // };
 
     return (
       <DetailContainer
-        storeDetail={storeDetail}
-        parentlistInfo={parentListInfo}
+        storeDetail={storeDetails}
+        parentlistInfo={parentListInfo} // 담은 가게임을 보여줄때
       />
     );
   } else {
