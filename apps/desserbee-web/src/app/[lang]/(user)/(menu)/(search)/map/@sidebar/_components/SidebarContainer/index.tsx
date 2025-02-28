@@ -106,14 +106,9 @@ export function SideBarContainer({
 
   const handleDeleteList = async (listId: number) => {
     try {
-      // TODO: API를 통해 리스트 삭제 요청
-      // const response = await fetch(`/api/lists/${listId}`, {
-      //   method: 'DELETE',
-      // });
-
       console.log('삭제된 리스트:', listId);
 
-      // 삭제 후 사이드바를 새로고침하여 업데이트된 리스트 표시
+      await storeService.deleteSavedList({ listId: listId, authorization: '' });
       setSelectedListId(null); // 삭제 메뉴 닫기
       router.refresh(); // 서버 컴포넌트 리프레시
     } catch (error) {

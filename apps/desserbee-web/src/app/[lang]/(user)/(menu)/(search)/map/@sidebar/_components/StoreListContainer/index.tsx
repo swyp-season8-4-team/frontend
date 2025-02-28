@@ -53,7 +53,7 @@ export function StoreListContainer({
     <SideBar
       {...{
         className:
-          'fixed top-[100px] w-1/2 right-4 h-[calc(100dvh-287px)] py-[8.92px] px-[8.5px] overflow-x-hidden',
+          'absolute top-[100px] md:top-[135px] md:w-[370px] right-4 h-[calc(100dvh-287px)] cursor-pointer',
         isSideBarOpen: showStoreList,
         handleSideBarClose: handleListClose,
         isCloseBtnShow: false,
