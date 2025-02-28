@@ -35,16 +35,16 @@ export default async function StoreDetailPage({
   const authorization = await authService.getAuthorization();
 
   if (storeDetail.savedListId) {
-    // const parentListInfo = await storeService.getParentSavedList({
-    //   listId: storeDetail.savedListId,
-    //   authorization: authorization || null,
-    // });
+    const parentListInfo = await storeService.getParentSavedList({
+      listId: storeDetail.savedListId,
+      authorization: authorization || null,
+    });
 
-    const parentListInfo = {
-      listId: 121,
-      listName: '맛집!@',
-      iconColorId: 3,
-    };
+    // const parentListInfo = {
+    //   listId: 121,
+    //   listName: '맛집!@',
+    //   iconColorId: 3,
+    // };
 
     return (
       <DetailContainer

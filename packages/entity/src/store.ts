@@ -230,6 +230,7 @@ export interface StoreDetailInfoData
     content: string;
     nickname: string;
     recruitYn: boolean;
+    saved: boolean;
   }[];
 
   saved: SavedList['saved'];
