@@ -80,9 +80,8 @@ export function DetailContainer({
 
   return (
     <>
-    
       <DetailPageHeader />
-      <div className="px-base">
+      <div className="px-base bg-white">
         <StorePictureList {...storePicureListProps} />
         <DetailInfoContainer {...detailInfoContainerProps} />
         <TabContainer {...tabContainerProps} />
