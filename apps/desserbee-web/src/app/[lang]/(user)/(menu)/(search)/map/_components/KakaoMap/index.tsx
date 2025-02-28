@@ -91,9 +91,9 @@ export function KakaoMap({
   });
 
   const [isFetchRequired, setIsFetchRequired] = useState(false);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
-  const FETCH_RADIUS_M = 5000;
-  const REFETCH_THRESHOLD_M = 5000;
+  const FETCH_RADIUS_M = 3000;
   const POSITION_UPDATE_INTERVAL = 3000;
   const lastUpdateTimeRef = useRef(0);
   const isLoadingRef = useRef(false);
@@ -150,36 +150,36 @@ export function KakaoMap({
   };
 
   // 거리 계산해서 가게 업데이트 필요 판단
-  const determineFetch = (
-    lastFetchPosition: MapPosition,
-    currentMapPosition: MapPosition,
-  ) => {
-    const distanceFromLastFetch = calculateDistance(
-      lastFetchPosition,
-      currentMapPosition,
-    );
+  // const determineFetch = (
+  //   lastFetchPosition: MapPosition,
+  //   currentMapPosition: MapPosition,
+  // ) => {
+  //   const distanceFromLastFetch = calculateDistance(
+  //     lastFetchPosition,
+  //     currentMapPosition,
+  //   );
 
-    console.log(
-      'determineFetch: 마지막 데이터 요청 위치와의 거리 📏:',
-      distanceFromLastFetch,
-      'km',
-    );
+  //   console.log(
+  //     'determineFetch: 마지막 데이터 요청 위치와의 거리 📏:',
+  //     distanceFromLastFetch,
+  //     'km',
+  //   );
 
-    if (
-      lastFetchPosition.latitude === 0 ||
-      distanceFromLastFetch > REFETCH_THRESHOLD_M
-    ) {
-      console.log(
-        'determineFetch: 재요청 할 때 됨, (임계값 초과), 주변 가게 정보 업데이트 시작 ✅',
-      );
-      setIsFetchRequired(true);
-    } else {
-      console.log(
-        'determineFetch: 재요청 임계값 이내, 아직 새로운 가게 재요청 안함 ⌛',
-      );
-      setIsFetchRequired(false);
-    }
-  };
+  //   if (
+  //     lastFetchPosition.latitude === 0 ||
+  //     distanceFromLastFetch > REFETCH_THRESHOLD_M
+  //   ) {
+  //     console.log(
+  //       'determineFetch: 재요청 할 때 됨, (임계값 초과), 주변 가게 정보 업데이트 시작 ✅',
+  //     );
+  //     setIsFetchRequired(true);
+  //   } else {
+  //     console.log(
+  //       'determineFetch: 재요청 임계값 이내, 아직 새로운 가게 재요청 안함 ⌛',
+  //     );
+  //     setIsFetchRequired(false);
+  //   }
+  // };
 
   // 지금 지도에서 위치한 근처의 가게들 fetch
   const fetchNearbyStores = useCallback(
@@ -400,7 +400,7 @@ export function KakaoMap({
       // 거리 기반으로 fetch 필요성 판단
       // determineFetch(lastFetchPosition, center);
     }
-  }, [lastFetchPosition]);
+  }, []);
 
   const loadMap = async (initializedServices: {
     mapService: MapService;
@@ -458,8 +458,12 @@ export function KakaoMap({
       );
       console.log('loadMap: 실시간 위치 추적 시작');
 
-      await initializedServices.mapService.setMapCenter(result);
-      console.log('loadMap: 불러온 위치로 지도 중심 위치 변경');
+      // 첫 로드 시에만 지도 중심 위치 변경
+      if (isFirstLoad) {
+        await initializedServices.mapService.setMapCenter(result);
+        console.log('loadMap: 불러온 위치로 지도 중심 위치 변경');
+        setIsFirstLoad(false); // 첫 로드 이후로는 실행되지 않도록 설정
+      }
 
       console.log('loadMap: 주변 가게 마커 추가 시작');
       await initializedServices.mapService.addMarkersWithClustering(
@@ -512,11 +516,17 @@ export function KakaoMap({
     setIsFetchRequired(true);
   };
 
+  const mapCenterRef = useRef(mapCenter);
+
+  useEffect(() => {
+    mapCenterRef.current = mapCenter;
+  }, [mapCenter]);
+
   useEffect(() => {
     const fetchAndUpdate = async () => {
-      const stores = await fetchNearbyStores(mapCenter);
+      const stores = await fetchNearbyStores(mapCenterRef.current);
       if (stores) {
-        await updateNewClusterMarkers(mapCenter, stores);
+        await updateNewClusterMarkers(mapCenterRef.current, stores);
         setIsFetchRequired(false);
       }
     };
