@@ -106,6 +106,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     updateSelectedTag,
     handleMyPreferenceTagClick,
     selectedPreferenceTags,
+    clearSelectedCategories,
   } = useTag();
 
   const closeModal = useCallback(() => {
@@ -600,6 +601,17 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     ],
   );
 
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 3000);
+
+      // 컴포넌트가 언마운트되거나 error가 변경될 때 타이머 정리
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
   return (
     <div>
       <Script
@@ -671,7 +683,10 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         )}
         <PreferenceTags {...preferenceTagsProps} />
         <MapPanel {...mapPanelProps} />
-        <ReFetchStoreBtn refetchStore={handleRefetchBtnClick} />
+        <ReFetchStoreBtn
+          clearSelectedCategories={clearSelectedCategories}
+          refetchStore={handleRefetchBtnClick}
+        />
       </div>
     </div>
   );
