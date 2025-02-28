@@ -40,6 +40,7 @@ import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
 import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService';
 import { ReFetchStoreBtn } from '../ReFetchStoreBtn';
+import { calculateDistance } from '../../_utils/distance';
 
 interface KakaoMapProps {
   userPreferences: number[];
@@ -90,8 +91,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   const FETCH_RADIUS_M = 4000;
-  const POSITION_UPDATE_INTERVAL = 3000;
-  const lastUpdateTimeRef = useRef(0);
   const isLoadingRef = useRef(false);
 
   const [retryCount, setRetryCount] = useState(0);
@@ -145,39 +144,39 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     return { mapService, geoService, storeService };
   };
 
-  // 거리 계산해서 가게 업데이트 필요 판단
-  // const determineFetch = (
-  //   lastFetchPosition: MapPosition,
-  //   currentMapPosition: MapPosition,
-  // ) => {
-  //   const distanceFromLastFetch = calculateDistance(
-  //     lastFetchPosition,
-  //     currentMapPosition,
-  //   );
+  const calculateFetchRadius = useCallback(() => {
+    if (!servicesRef.current.mapService) {
+      return 4000; // 기본값
+    }
 
-  //   console.log(
-  //     'determineFetch: 마지막 데이터 요청 위치와의 거리 📏:',
-  //     distanceFromLastFetch,
-  //     'km',
-  //   );
+    const bounds = servicesRef.current.mapService.getMapBound();
+    const center = servicesRef.current.mapService.getMapCenter();
 
-  //   if (
-  //     lastFetchPosition.latitude === 0 ||
-  //     distanceFromLastFetch > REFETCH_THRESHOLD_M
-  //   ) {
-  //     console.log(
-  //       'determineFetch: 재요청 할 때 됨, (임계값 초과), 주변 가게 정보 업데이트 시작 ✅',
-  //     );
-  //     setIsFetchRequired(true);
-  //   } else {
-  //     console.log(
-  //       'determineFetch: 재요청 임계값 이내, 아직 새로운 가게 재요청 안함 ⌛',
-  //     );
-  //     setIsFetchRequired(false);
-  //   }
-  // };
+    // 각 경계 지점까지의 거리 계산
+    const distances = [
+      calculateDistance(center, bounds.ne),
+      calculateDistance(center, bounds.sw),
+      calculateDistance(center, {
+        latitude: bounds.ne.latitude,
+        longitude: bounds.sw.longitude,
+      }), // nw
+      calculateDistance(center, {
+        latitude: bounds.sw.latitude,
+        longitude: bounds.ne.longitude,
+      }), // se
+    ];
 
-  // 지금 지도에서 위치한 근처의 가게들 fetch
+    // 최대 거리 선택
+    const maxDistance = Math.max(...distances);
+
+    console.log(
+      'calculateFetchRadius: 계산된 최대 반지름 📏:',
+      maxDistance,
+      'm',
+    );
+    return maxDistance * 1000;
+  }, []);
+
   const fetchNearbyStores = useCallback(
     async (position: MapPosition) => {
       try {
@@ -188,11 +187,13 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           return null;
         }
 
+        const fetchRadius = calculateFetchRadius();
+
         const nearByStores =
           await servicesRef.current.storeService!.getNearbyStores({
             latitude: position.latitude,
             longitude: position.longitude,
-            radius: FETCH_RADIUS_M,
+            radius: fetchRadius,
           });
 
         setNearByStores(nearByStores);
@@ -218,7 +219,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         return null;
       }
     },
-    [retryCount],
+    [retryCount, calculateFetchRadius],
   );
 
   const updateLastFetchPosition = useCallback((position: MapPosition) => {
@@ -269,9 +270,15 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     [servicesRef, handleStoreMarkerClick, updateLastFetchPosition],
   );
 
-  // 실시간 마커 한개 ! 업데이트 (geo)
+  const [hasUpdatedPosition, setHasUpdatedPosition] = useState(false);
+
   const updateCurrentMarker = useCallback(
     async (position: MapPosition) => {
+      if (hasUpdatedPosition) {
+        console.log('updateCurrentMarker: 이미 위치 업데이트 완료, 스킵 🛑');
+        return;
+      }
+
       try {
         if (!areServicesInitialized(servicesRef.current)) {
           console.log(
@@ -285,22 +292,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           position,
         );
 
-        const now = Date.now();
-        if (now - lastUpdateTimeRef.current < POSITION_UPDATE_INTERVAL) {
-          console.log(
-            'updateCurrentMarker: 업데이트 간격이 너무 짧음, 스킵 🛑',
-          );
-          return;
-        }
-
-        if (isLoadingRef.current) {
-          console.log('updateCurrentMarker: 이전 업데이트가 진행 중, 스킵 🛑');
-          return;
-        }
-
-        lastUpdateTimeRef.current = now;
-        console.log('updateCurrentMarker: 위치 업데이트 시작 🚩');
-
         console.log('updateCurrentMarker: 현재 위치 마커 제거 시작 🗑️');
         await servicesRef.current.mapService?.removeCurrentPositionMarker();
 
@@ -311,6 +302,8 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         );
         setCurrentPosition(position);
         console.log('updateCurrentMarker: 새로운 현재 위치 저장 🧍‍♂️');
+
+        setHasUpdatedPosition(true); // 위치 업데이트 완료 상태 설정
       } catch (error) {
         console.error(
           'updateCurrentMarker: 위치 마커 업데이트 중 오류 발생 ⚠️:',
@@ -330,7 +323,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         return;
       }
     },
-    [openPermissionModal],
+    [hasUpdatedPosition, openPermissionModal],
   );
 
   const handleInitialGeoPositonFetch = async (
@@ -535,7 +528,8 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     <div>
       <Script
         type="text/javascript"
-        strategy="afterInteractive"
+        // strategy="afterInteractive"
+        strategy="lazyOnload"
         async
         src={KAKAO_MAP_API_URL}
         onLoad={() => setIsScriptLoaded(true)}
@@ -595,7 +589,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         className="relative bg-[#E8E8E8] mb-[9px] rounded-base w-full h-[calc(100dvh-295px)] overflow-x-hidden"
       >
         {error && (
-          <div className="top-4 left-1/2 z-50 absolute bg-red-100 px-4 py-2 border border-red-400 rounded text-red-700 -translate-x-1/2 transform">
+          <div className="top-1/3  left-1/2 z-20 absolute bg-red-100 px-4 py-2 border border-red-400 rounded text-red-700 -translate-x-1/2 transform">
             {error}
           </div>
         )}

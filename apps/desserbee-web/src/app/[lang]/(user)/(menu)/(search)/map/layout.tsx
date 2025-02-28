@@ -15,11 +15,9 @@ export default async function MapLayout({
   if (!authorization) {
     return (
       <div className="w-full flex justify-center">
-        <div className="max-w-[768px]">
-          {bottomSheet}
-          {sidebar}
-          {children}
-        </div>
+        {bottomSheet}
+        {sidebar}
+        {children}
       </div>
     );
   }
