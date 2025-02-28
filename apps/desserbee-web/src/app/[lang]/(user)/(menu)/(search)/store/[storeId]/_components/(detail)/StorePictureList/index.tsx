@@ -38,7 +38,7 @@ export function StorePictureList({
             key={image}
             className="relative w-full aspect-[77/69] overflow-hidden"
           >
-            <div className="z-10 absolute flex justify-center items-center opacity-100 w-full h-full text-[6vw] text-black cursor-pointer">
+            <div className="z-10 absolute flex justify-center items-center opacity-100 w-full h-full text-[4vw] text-black cursor-pointer">
               +
             </div>
             <Image

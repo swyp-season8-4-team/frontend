@@ -14,10 +14,12 @@ export default async function MapLayout({
   const authorization = headerList.get('authorization');
   if (!authorization) {
     return (
-      <div>
-        {bottomSheet}
-        {sidebar}
-        {children}
+      <div className="w-full flex justify-center">
+        <div className="max-w-[768px]">
+          {bottomSheet}
+          {sidebar}
+          {children}
+        </div>
       </div>
     );
   }

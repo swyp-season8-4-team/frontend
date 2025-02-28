@@ -123,12 +123,14 @@ export function StoreInfo({
           )}
         </div>
       </div>
-      <div className="flex items-center gap-[6px]">
-        <div className="flex-shrink-0 w-[6.83px] md:w-4">
-          <IconPhone className="w-full h-full text-[#BABABA]" />
+      {phone && (
+        <div className="flex items-center gap-[6px]">
+          <div className="flex-shrink-0 w-[6.83px] md:w-4">
+            <IconPhone className="w-full h-full text-[#BABABA]" />
+          </div>
+          <span>{phone}</span>
         </div>
-        <span>{phone}</span>
-      </div>
+      )}
       {description && (
         <div className="flex items-center gap-[6px]">
           <div className="flex-shrink-0 w-[6.83px] md:w-4">
@@ -137,14 +139,16 @@ export function StoreInfo({
           <span>{description}</span>
         </div>
       )}
-      <div className="flex items-center gap-[6px]">
-        <div className="w-[6.83px] md:w-4">
-          <IconBaseball className="w-full h-full text-[#BABABA]" />
+      {storeLink && (
+        <div className="flex items-center gap-[6px]">
+          <div className="w-[6.83px] md:w-4">
+            <IconBaseball className="w-full h-full text-[#BABABA]" />
+          </div>
+          <a className="underline break-all" href={storeLink}>
+            {storeLink}
+          </a>
         </div>
-        <a className="underline break-all" href={storeLink}>
-          {storeLink}
-        </a>
-      </div>
+      )}
     </div>
   );
 }
