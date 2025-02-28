@@ -40,7 +40,6 @@ import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
 import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService';
 import { ReFetchStoreBtn } from '../ReFetchStoreBtn';
-import { calculateDistance } from '../../_utils/distance';
 
 interface KakaoMapProps {
   userPreferences: number[];
@@ -56,10 +55,7 @@ const areServicesInitialized = (services: {
   return services.mapService && services.geoService && services.storeService;
 };
 
-export function KakaoMap({
-  userPreferences,
-  preferenceCategories,
-}: KakaoMapProps) {
+export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const router = useRouter();
   const mapRef = useRef<HTMLDivElement>(null);
   const servicesRef = useRef<{
@@ -258,6 +254,7 @@ export function KakaoMap({
           updateLastFetchPosition(position);
         } else {
           console.log('updateNewClusterMarkers: 주변 가게 정보 없음 🍃');
+          setError('주변 가게가 없습니다');
         }
       } catch (error) {
         console.error(
@@ -532,6 +529,7 @@ export function KakaoMap({
     };
     fetchAndUpdate();
   }, [isFetchRequired, fetchNearbyStores, updateNewClusterMarkers]);
+  const userPreferences = [1, 2, 3, 5];
 
   return (
     <div>
@@ -602,8 +600,14 @@ export function KakaoMap({
           </div>
         )}
         <PreferenceTags
-          userPreferences={userPreferences}
           categories={preferenceCategories}
+          preferenceTagIds={userPreferences}
+          isMyPreferSelected={false}
+          selectedCategories={new Set<number>()}
+          handleMyPreferenceTagClick={() => {}}
+          updateSelectedTag={(categories) => {}}
+          TriggerMyPreferStoreFetch={() => {}}
+          TriggerOtherPreferStoreFetch={() => {}}
         />
         <MapPanel {...mapPanelProps} />
         <ReFetchStoreBtn refetchStore={handleRefetchBtnClick} />
