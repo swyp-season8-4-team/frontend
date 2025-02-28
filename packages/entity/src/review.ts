@@ -24,7 +24,7 @@ export interface OnelineReviewRequests {
 export interface CreateOnelineReviewRequestFormData {
   storeUuid: string;
   request: OnelineReviewRequests;
-  images?: File;
+  images?: string[];
 }
 
 export interface CreateOnelineReviewResponse {
@@ -43,9 +43,11 @@ export interface StoreOnelineReivewRequest {
 export interface StoreOnelineReivewData {
   reviewUuid: string;
   storeId: number;
+  nickname: string;
+  profileImage: string;
   content: string;
   rating: number;
-  createdAt?: string;
+  createdAt: string;
   images: string[];
 }
 

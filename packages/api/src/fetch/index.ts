@@ -7,6 +7,8 @@ const TIMEOUT = 30 * 1000;
 const baseFetch = async <Q, R>(
   originalRequestData: RequestData<Q>,
 ): Promise<R> => {
+  // console.log('----------------');
+  // console.log(originalRequestData);
   const requestData = { ...originalRequestData };
   const headers = modifyDefaultHeaders(requestData.headers, isServer);
 

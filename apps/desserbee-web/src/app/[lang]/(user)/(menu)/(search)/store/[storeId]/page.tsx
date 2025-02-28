@@ -49,7 +49,7 @@ export default async function StoreDetailPage({
     return (
       <DetailContainer
         storeDetail={storeDetails}
-        parentlistInfo={parentListInfo}
+        parentlistInfo={parentListInfo} // 담은 가게임을 보여줄때
       />
     );
   } else {

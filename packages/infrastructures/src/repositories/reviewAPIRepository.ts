@@ -44,7 +44,7 @@ export default class ReviewAPIRepository
     const url = `${this.endpoint}/stores/${storeUuid}/reviews`;
 
     const response = await fetch<
-      { request: OnelineReviewRequests; images?: File },
+      { request: OnelineReviewRequests; images?: string[] },
       CreateOnelineReviewResponse[]
     >({
       data: { request, images },

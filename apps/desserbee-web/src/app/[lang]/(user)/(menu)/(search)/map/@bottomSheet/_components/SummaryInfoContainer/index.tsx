@@ -11,6 +11,9 @@ import IconDetail from '@repo/design-system/components/icons/IconDetail';
 import { useContext } from 'react';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { BeforeDetailJoinNowModal } from '../../../_modals/BeforeDetailJoinNowModal';
+import { UserContext } from '@/contexts/UserContext';
+import { useRouter } from 'next/navigation';
+import { NavigationPathGroup } from '@repo/entity/src/navigation';
 
 export function SummaryInfoContainer({
   storeUuid,
@@ -27,6 +30,9 @@ export function SummaryInfoContainer({
   description,
   holidays,
 }: StoreSummaryProps) {
+  const { user } = useContext(UserContext);
+  const router = useRouter();
+
   const storeFeatureIconListProps = {
     animalYn,
     tumblerYn,
@@ -49,11 +55,18 @@ export function SummaryInfoContainer({
   };
 
   const handleGoDetailBtnClick = () => {
-    push('modal', {
-      component: (
-        <BeforeDetailJoinNowModal storeUuid={storeUuid} onClose={closeModal} />
-      ),
-    });
+    if (user) {
+      router.push(`${NavigationPathGroup.Store + storeUuid}`);
+    } else {
+      push('modal', {
+        component: (
+          <BeforeDetailJoinNowModal
+            storeUuid={storeUuid}
+            onClose={closeModal}
+          />
+        ),
+      });
+    }
   };
 
   return (
