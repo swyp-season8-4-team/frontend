@@ -1,8 +1,6 @@
 import { KakaoMap } from './_components/KakaoMap';
 import { BannerCarousel } from './_components/BannerCarousel';
 
-import { USER_PREFERENCES } from './_consts/tag';
-
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 
@@ -16,14 +14,11 @@ export default async function MapPage() {
     storeRepository: new StoreAPIReopository(),
   });
 
-  const userPreferences = USER_PREFERENCES; //TODO
-
   const preferenceCategories = await storeService.getAllPreference();
 
   // if (!authorization) redirect(NavigationPathname.SignIn);
 
   const kakaoMapProps = {
-    userPreferences,
     preferenceCategories,
   };
 

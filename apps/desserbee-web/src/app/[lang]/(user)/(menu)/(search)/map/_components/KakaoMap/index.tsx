@@ -42,9 +42,9 @@ import { useRouter } from 'next/navigation';
 import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService';
 import { ReFetchStoreBtn } from '../ReFetchStoreBtn';
 import { calculateDistance } from '../../_utils/distance';
+import { useTag } from '../../../_hooks/useTag';
 
 interface KakaoMapProps {
-  userPreferences: number[];
   preferenceCategories: PreferenceData[];
 }
 
@@ -75,7 +75,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     latitude: 0,
     longitude: 0,
   });
-  const [lastFetchPosition, setLastFetchPosition] = useState<MapPosition>({
+  const [, setLastFetchPosition] = useState<MapPosition>({
     latitude: 0,
     longitude: 0,
   });
@@ -91,7 +91,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const [isFetchRequired, setIsFetchRequired] = useState(false);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
-  const FETCH_RADIUS_M = 4000;
+  // const FETCH_RADIUS_M = 4000; // 최대 거리 고정
   const isLoadingRef = useRef(false);
 
   const [retryCount, setRetryCount] = useState(0);
@@ -99,6 +99,14 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const RETRY_DELAY = 3000;
 
   const { push, pop } = useContext(PortalContext);
+
+  const {
+    selectedCategories,
+    isMyPreferSelected,
+    updateSelectedTag,
+    handleMyPreferenceTagClick,
+    selectedPreferenceTags,
+  } = useTag();
 
   const closeModal = useCallback(() => {
     pop('modal');
@@ -179,7 +187,11 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   }, []);
 
   const fetchNearbyStores = useCallback(
-    async (position: MapPosition) => {
+    async (
+      position: MapPosition,
+      preferenceTagIds?: number[],
+      searchKeyword?: string,
+    ) => {
       try {
         if (!servicesRef.current.storeService) {
           console.log(
@@ -195,6 +207,8 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
             latitude: position.latitude,
             longitude: position.longitude,
             radius: fetchRadius,
+            preferenceTagIds,
+            searchKeyword,
           });
 
         setNearByStores(nearByStores);
@@ -208,7 +222,10 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         console.error('다시 시도합니다 :' + 'retry(' + retryCount + ')');
         if (retryCount < MAX_RETRY) {
           setRetryCount((prev) => prev + 1);
-          setTimeout(() => fetchNearbyStores(position), RETRY_DELAY);
+          setTimeout(
+            () => fetchNearbyStores(position, preferenceTagIds, searchKeyword),
+            RETRY_DELAY,
+          );
         } else {
           setError(
             '가게 정보를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.',
@@ -513,6 +530,48 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     mapCenterRef.current = mapCenter;
   }, [mapCenter]);
 
+  const previousSelectedTagsRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    if (
+      JSON.stringify(previousSelectedTagsRef.current) !==
+      JSON.stringify(selectedPreferenceTags)
+    ) {
+      const fetchAndUpdate = async () => {
+        const stores = await fetchNearbyStores(
+          mapCenterRef.current,
+          selectedPreferenceTags,
+        );
+        if (stores) {
+          await updateNewClusterMarkers(mapCenterRef.current, stores);
+          setIsFetchRequired(false);
+        }
+      };
+      fetchAndUpdate();
+      previousSelectedTagsRef.current = selectedPreferenceTags;
+    }
+  }, [selectedPreferenceTags, fetchNearbyStores, updateNewClusterMarkers]);
+
+  useEffect(() => {
+    if (
+      JSON.stringify(previousSelectedTagsRef.current) !==
+      JSON.stringify(selectedPreferenceTags)
+    ) {
+      const fetchAndUpdate = async () => {
+        const stores = await fetchNearbyStores(
+          mapCenterRef.current,
+          selectedPreferenceTags,
+        );
+        if (stores) {
+          await updateNewClusterMarkers(mapCenterRef.current, stores);
+          setIsFetchRequired(false);
+        }
+      };
+      fetchAndUpdate();
+      previousSelectedTagsRef.current = selectedPreferenceTags;
+    }
+  }, [selectedPreferenceTags, fetchNearbyStores, updateNewClusterMarkers]);
+
   useEffect(() => {
     const fetchAndUpdate = async () => {
       const stores = await fetchNearbyStores(mapCenterRef.current);
@@ -524,45 +583,20 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     fetchAndUpdate();
   }, [isFetchRequired, fetchNearbyStores, updateNewClusterMarkers]);
 
-  const userPreferences = [1, 2, 3, 5];
-
-  const [selectedCategories, setSelectedCategories] = useState<Set<number>>(
-    new Set<number>(),
-  );
-
-  const handleMyPreferenceTagClick = useCallback(() => {
-    // ... handle logic ...
-  }, []);
-
-  const updateSelectedTag = useCallback((category: number) => {
-    setSelectedCategories((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(category)) {
-        newSet.delete(category);
-      } else {
-        newSet.add(category);
-      }
-      return newSet;
-    });
-  }, []);
-
   const preferenceTagsProps = useMemo(
     () => ({
       categories: preferenceCategories,
-      preferenceTagIds: userPreferences,
-      isMyPreferSelected: false,
-      selectedCategories,
+      isMyPreferSelected,
       handleMyPreferenceTagClick,
       updateSelectedTag,
-      TriggerMyPreferStoreFetch: () => {},
-      TriggerOtherPreferStoreFetch: () => {},
+      selectedCategories,
     }),
     [
       preferenceCategories,
-      userPreferences,
-      selectedCategories,
       handleMyPreferenceTagClick,
+      isMyPreferSelected,
       updateSelectedTag,
+      selectedCategories,
     ],
   );
 

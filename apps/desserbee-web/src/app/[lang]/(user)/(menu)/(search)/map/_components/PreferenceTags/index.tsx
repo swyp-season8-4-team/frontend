@@ -14,24 +14,18 @@ import { UserContext } from '@/contexts/UserContext';
 
 interface PreferenceTagsProps {
   categories: PreferenceData[];
-  preferenceTagIds: number[];
   isMyPreferSelected: boolean;
   selectedCategories: Set<number>;
   handleMyPreferenceTagClick: (userPreferences: number[]) => void;
   updateSelectedTag: (category: number) => void;
-  TriggerMyPreferStoreFetch: () => void;
-  TriggerOtherPreferStoreFetch: () => void;
 }
 
 export function PreferenceTags({
   categories,
-  preferenceTagIds,
   isMyPreferSelected,
+  updateSelectedTag,
   selectedCategories,
   handleMyPreferenceTagClick,
-  updateSelectedTag,
-  TriggerMyPreferStoreFetch,
-  TriggerOtherPreferStoreFetch,
 }: PreferenceTagsProps) {
   const { push, pop } = useContext(PortalContext);
 
@@ -44,8 +38,7 @@ export function PreferenceTags({
   const handleMyPreferenceBtnClick = () => {
     console.log('My Preference Button Clicked');
     if (user) {
-      TriggerMyPreferStoreFetch();
-      handleMyPreferenceTagClick(preferenceTagIds);
+      handleMyPreferenceTagClick(user.preferences);
     } else {
       push('modal', {
         component: <MyPreferNotSignInModal onClose={closeModal} />,
@@ -57,7 +50,6 @@ export function PreferenceTags({
     console.log('Tag Clicked:', categoryId);
     if (user) {
       updateSelectedTag(categoryId);
-      TriggerOtherPreferStoreFetch();
     } else {
       push('modal', {
         component: <MyPreferNotSignInModal onClose={closeModal} />,

@@ -32,5 +32,6 @@ export const useTag = () => {
     isMyPreferSelected,
     updateSelectedTag,
     handleMyPreferenceTagClick,
+    selectedPreferenceTags: Array.from(selectedCategories),
   };
 };
