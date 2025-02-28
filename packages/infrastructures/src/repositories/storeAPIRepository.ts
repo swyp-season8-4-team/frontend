@@ -59,11 +59,22 @@ export default class StoreAPIRepository
       throw Error('data required');
     }
 
-    const { latitude, longitude, radius } = data || {};
+    const { latitude, longitude, radius, preferenceTagIds, searchKeyword } =
+      data || {};
+
+    let url = `${this.endpoint}/stores/map?latitude=${latitude}&longitude=${longitude}&radius=${radius}`;
+
+    if (preferenceTagIds && preferenceTagIds.length > 0) {
+      url += `&preferenceTagIds=${preferenceTagIds.join(',')}`;
+    }
+
+    if (searchKeyword) {
+      url += `&searchKeyword=${searchKeyword}`;
+    }
 
     const response = await fetch<void, NearByStoreData[]>({
       method: 'GET',
-      url: `${this.endpoint}/stores/map?latitude=${latitude}&longitude=${longitude}&radius=${radius}`,
+      url,
     });
 
     return response;
@@ -78,13 +89,13 @@ export default class StoreAPIRepository
     }
 
     const { latitude, longitude, radius } = data || {};
-
+    // 헤더에 자연스럽게 붙는지 확인
     const response = await fetch<void, NearByStoreData[]>({
-      ...(authorization && {
-        headers: {
-          Authorization: authorization,
-        },
-      }),
+      // ...(authorization && {
+      //   headers: {
+      //     Authorization: authorization,
+      //   },
+      // }),
       method: 'GET',
       url: `${this.endpoint}/stores/map/my-preferences?latitude=${latitude}&longitude=${longitude}&radius=${radius}`,
     });

@@ -6,7 +6,6 @@ import {
 
 import { Tag } from '@repo/design-system/components/Tag';
 import { cn } from '@repo/ui/lib/utils';
-import { useTag } from '../../../_hooks/useTag';
 import { useContext } from 'react';
 import { MyPreferNotSignInModal } from '../../_modals/MyPreferNotSignInModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
@@ -15,20 +14,25 @@ import { UserContext } from '@/contexts/UserContext';
 
 interface PreferenceTagsProps {
   categories: PreferenceData[];
-  userPreferences: number[];
+  preferenceTagIds: number[];
+  isMyPreferSelected: boolean;
+  selectedCategories: Set<number>;
+  handleMyPreferenceTagClick: (userPreferences: number[]) => void;
+  updateSelectedTag: (category: number) => void;
+  TriggerMyPreferStoreFetch: () => void;
+  TriggerOtherPreferStoreFetch: () => void;
 }
 
 export function PreferenceTags({
   categories,
-  userPreferences,
+  preferenceTagIds,
+  isMyPreferSelected,
+  selectedCategories,
+  handleMyPreferenceTagClick,
+  updateSelectedTag,
+  TriggerMyPreferStoreFetch,
+  TriggerOtherPreferStoreFetch,
 }: PreferenceTagsProps) {
-  const {
-    isMyPreferSelected,
-    selectedCategories,
-    handleMyPreferenceTagClick,
-    updateSelectedTag,
-  } = useTag();
-
   const { push, pop } = useContext(PortalContext);
 
   const { user } = useContext(UserContext);
@@ -38,8 +42,10 @@ export function PreferenceTags({
   };
 
   const handleMyPreferenceBtnClick = () => {
+    console.log('My Preference Button Clicked');
     if (user) {
-      handleMyPreferenceTagClick(userPreferences);
+      TriggerMyPreferStoreFetch();
+      handleMyPreferenceTagClick(preferenceTagIds);
     } else {
       push('modal', {
         component: <MyPreferNotSignInModal onClose={closeModal} />,
@@ -48,8 +54,10 @@ export function PreferenceTags({
   };
 
   const handleTagClick = (categoryId: number) => {
+    console.log('Tag Clicked:', categoryId);
     if (user) {
       updateSelectedTag(categoryId);
+      TriggerOtherPreferStoreFetch();
     } else {
       push('modal', {
         component: <MyPreferNotSignInModal onClose={closeModal} />,
