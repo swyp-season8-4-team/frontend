@@ -100,7 +100,6 @@ export default class KakaoMapController implements MapController {
         throw new Error('Map is not initialized');
       }
       this.map.createCurrentPositionMarker(position, markerImageSrc);
-      this.map.setCenter(position);
       console.log('현재 위치 마커가 성공적으로 생성되었습니다.');
     } catch (error) {
       console.error('현재 위치 마커 생성 중 오류가 발생했습니다:', error);

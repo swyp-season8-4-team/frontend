@@ -9,6 +9,7 @@ import {
   useState,
   useMemo,
 } from 'react';
+import React from 'react';
 
 import storeMarkerImage from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/icon-marker.svg';
 import userMarkerImage from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/icon-current-marker.svg';
@@ -522,23 +523,64 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     };
     fetchAndUpdate();
   }, [isFetchRequired, fetchNearbyStores, updateNewClusterMarkers]);
+
   const userPreferences = [1, 2, 3, 5];
+
+  const [selectedCategories, setSelectedCategories] = useState<Set<number>>(
+    new Set<number>(),
+  );
+
+  const handleMyPreferenceTagClick = useCallback(() => {
+    // ... handle logic ...
+  }, []);
+
+  const updateSelectedTag = useCallback((category: number) => {
+    setSelectedCategories((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(category)) {
+        newSet.delete(category);
+      } else {
+        newSet.add(category);
+      }
+      return newSet;
+    });
+  }, []);
+
+  const preferenceTagsProps = useMemo(
+    () => ({
+      categories: preferenceCategories,
+      preferenceTagIds: userPreferences,
+      isMyPreferSelected: false,
+      selectedCategories,
+      handleMyPreferenceTagClick,
+      updateSelectedTag,
+      TriggerMyPreferStoreFetch: () => {},
+      TriggerOtherPreferStoreFetch: () => {},
+    }),
+    [
+      preferenceCategories,
+      userPreferences,
+      selectedCategories,
+      handleMyPreferenceTagClick,
+      updateSelectedTag,
+    ],
+  );
 
   return (
     <div>
       <Script
         type="text/javascript"
-        // strategy="afterInteractive"
-        strategy="lazyOnload"
+        strategy="afterInteractive"
+        // strategy="lazyOnload"
         async
         src={KAKAO_MAP_API_URL}
         onLoad={() => setIsScriptLoaded(true)}
         onReady={() => {
           if (!isScriptLoaded) {
-            console.log('카카오맵 스크립트 최초 로드');
+            console.log('(0) 카카오맵 스크립트 최초 로드');
             window.kakao.maps.load(async () => {
               console.log(
-                '-----------------services 체크 시작-------------------',
+                '-----------------(1) services 체크 시작-------------------',
               );
               if (isInitialized) {
                 console.log('이미 초기화된 상태, 초기화 스킵');
@@ -562,7 +604,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
                   '-----------------services 체크 완료-------------------',
                 );
                 console.log(
-                  '-----------------load map 시작-------------------',
+                  '-----------------(2) load map 시작-------------------',
                 );
                 await loadMap(initializedServices);
                 console.log(
@@ -593,19 +635,12 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
             {error}
           </div>
         )}
-        <PreferenceTags
-          categories={preferenceCategories}
-          preferenceTagIds={userPreferences}
-          isMyPreferSelected={false}
-          selectedCategories={new Set<number>()}
-          handleMyPreferenceTagClick={() => {}}
-          updateSelectedTag={(categories) => {}}
-          TriggerMyPreferStoreFetch={() => {}}
-          TriggerOtherPreferStoreFetch={() => {}}
-        />
+        <PreferenceTags {...preferenceTagsProps} />
         <MapPanel {...mapPanelProps} />
         <ReFetchStoreBtn refetchStore={handleRefetchBtnClick} />
       </div>
     </div>
   );
 }
+
+export default React.memo(KakaoMap);
