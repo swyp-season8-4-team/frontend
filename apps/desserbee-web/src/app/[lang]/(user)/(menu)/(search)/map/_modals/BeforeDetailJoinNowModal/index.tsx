@@ -22,7 +22,7 @@ export function BeforeDetailJoinNowModal({
   return (
     <CustomModal onClose={onClose}>
       <div>
-        <div className="flex flex-col justify-center items-center px-3 md:px-[23px] pt-[60px] md:pt-20 pb-[18px] md:pb-[30px] md:w-[357px]">
+        <div className="text-nowrap flex flex-col justify-center items-center px-3 md:px-[23px] pt-[60px] md:pt-20 pb-[18px] md:pb-[30px] md:w-[357px]">
           <div className="flex flex-col justify-center items-center md:mb-[35px] w-full h-full">
             <div className="md:text-[26px] text-lg leading-none">
               이 가게, 내 취향이랑 잘 맞을까?
