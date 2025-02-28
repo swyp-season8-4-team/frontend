@@ -11,7 +11,7 @@ export function CommunityIsNotReadyModal({
   return (
     <CustomModal
       onClose={onClose}
-      className="flex justify-center items-center my-[50px] w-[214px] md:w-[308px] aspect-square"
+      className="text-nowrap flex justify-center items-center my-[50px] w-[214px] md:w-[308px] aspect-square"
     >
       <div className="flex flex-col items-center">
         <div className="w-[62px] md:w-[94px] md:">

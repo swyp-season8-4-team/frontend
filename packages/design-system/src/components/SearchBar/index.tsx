@@ -1,5 +1,5 @@
-import { IconSize } from '../icons';
 import IconSearch from '../icons/IconSearch';
+import { debounce } from '../../../../utility/src/debounce';
 
 interface SearchBarProps {
   searchTerm: string;
@@ -14,8 +14,18 @@ export function SearchBar({
   onChange,
   onSearch,
 }: SearchBarProps) {
+  const debouncedSetSearchTerm = (value: string) => {
+    debounce({
+      key: 'searchBarInput',
+      wait: 300,
+      callback: () => onChange(value),
+    });
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
+    const value = e.target.value;
+    onChange(value);
+    debouncedSetSearchTerm(value);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -35,7 +45,6 @@ export function SearchBar({
       <input
         type="text"
         value={searchTerm}
-        // className="shadow-[2px_2px_5px_0px_rgba(0,0,0,0.1)] my-[9px] md:mt-[18px] md:mb-[14px] py-[9.17px] md:py-[22px] pr-[20px] pl-[42.32px] md:pl-[53px] rounded-[60px] w-full md:text-[22px] text-sm"
         className="shadow-[2px_2px_5px_0px_rgba(0,0,0,0.1)] my-[9px] py-[9.17px] pr-[20px] pl-[42.32px] rounded-[60px] w-full md:text-[15px] text-sm"
         placeholder={placeHolder}
         onChange={handleChange}

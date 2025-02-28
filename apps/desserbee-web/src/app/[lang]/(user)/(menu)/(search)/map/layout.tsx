@@ -14,7 +14,7 @@ export default async function MapLayout({
   const authorization = headerList.get('authorization');
   if (!authorization) {
     return (
-      <div>
+      <div className="w-full flex justify-center">
         {bottomSheet}
         {sidebar}
         {children}

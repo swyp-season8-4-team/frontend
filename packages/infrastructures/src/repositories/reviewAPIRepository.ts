@@ -47,6 +47,9 @@ export default class ReviewAPIRepository
       { request: OnelineReviewRequests; images?: string[] },
       CreateOnelineReviewResponse[]
     >({
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
       data: { request, images },
       method: 'POST',
       url: url,

@@ -2,9 +2,18 @@ import type { StoreDetailInfoData } from '@repo/entity/src/store';
 import IconBookmark from '@repo/design-system/components/icons/IconBookmark';
 import Image from 'next/image';
 import { cn } from '@repo/ui/lib/utils';
+import { useContext, useOptimistic } from 'react';
+import { startTransition } from 'react';
+import MateService from '@repo/usecase/src/mateService';
+import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
+import { UserContext } from '@/contexts/UserContext';
+import { redirect } from 'next/navigation';
+import { NavigationPathname } from '@repo/entity/src/navigation';
+
 interface DessertMateTabProps {
   mate: StoreDetailInfoData['mate']; // 자체가 배열로 타입 지정
 }
+
 export function DessertMateTab({ mate }: DessertMateTabProps) {
   // mate: {
   //   mateUuid: string;
@@ -14,8 +23,42 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
   //   content: string;
   //   nickname: string;
   //   recruitYn: boolean;
+  // saved:boolean
 
+  const mateService = new MateService({
+    mateRepository: new MateAPIRepository(),
+  });
+
+  const { user } = useContext(UserContext);
   const displayedMates = mate.slice(0, 3);
+
+  const [optimisticState, addOptimistic] = useOptimistic(
+    displayedMates,
+    (state, index) => {
+      const newState = [...state];
+      newState[index as number].saved = !newState[index as number].saved;
+      return newState;
+    },
+  );
+
+  const handleToggleSaved = (uuid: string, index: number) => {
+    startTransition(async () => {
+      if (!user) {
+        redirect('/sign-in');
+      } else {
+        addOptimistic(index);
+        await mateService.save({ id: uuid, userId: user.id });
+      }
+    });
+  };
+
+  const handleGoCommunityMateBtnClick = () => {
+    if (!user) {
+      redirect('/sign-in');
+    } else {
+      redirect(`${NavigationPathname.CommunityDessertMate}`);
+    }
+  };
 
   if (mate.length === 0) {
     return (
@@ -29,15 +72,25 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
     <div>
       <div className="font-semibold text-[12px] mb-3">디저트 메이트</div>
       <div className="flex flex-col gap-y-[5px] md:gap-y-3">
-        {displayedMates.map(
+        {optimisticState.map(
           (
-            { mateCategory, thumbnail, title, content, nickname, recruitYn },
+            {
+              mateCategory,
+              thumbnail,
+              title,
+              content,
+              nickname,
+              recruitYn,
+              saved,
+              mateUuid,
+            },
             index,
           ) => (
             <div className="bg-[#F6F6F6] rounded-[4.02px] p-[13px]" key={index}>
               <div className="flex justify-between items-center">
                 <div className="text-[10px] px-1 md:px-2 md:py-1 md:text-[14px] h-fit border rounded-[40.24px] md:rounded-[60px] border-[#6F6F6F] text-[#6F6F6F]">
-                  <div className="text-[10px] md:text-[14px]">
+                  {/* <div className="text-[10px] md:text-[14px]"> */}
+                  <div className="text-[8px] md:text-[12px]">
                     {mateCategory}
                   </div>
                 </div>
@@ -46,11 +99,17 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
                     {recruitYn ? '모집중' : '마감'}
                   </div>
                   <div className="border-[#714115] rounded-full aspect-square border">
-                    <div className="w-[10.46px] h-[10.46px] md:w-[26px] md:h-[26px] flex justify-center items-center">
+                    <button
+                      className="w-[10.46px] h-[10.46px] md:w-[26px] md:h-[26px] flex justify-center items-center"
+                      onClick={() => handleToggleSaved(mateUuid, index)}
+                    >
                       <IconBookmark
-                        className={cn('md:w-4 md:h-4 w-2 h-2 text-[#AA6120]')}
+                        className={cn(
+                          saved ? 'text-[#AA6120]' : 'text-page',
+                          'md:w-4 md:h-4 w-2 h-2 ',
+                        )}
                       />
-                    </div>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -79,6 +138,11 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
             </div>
           ),
         )}
+      </div>
+      <div className="flex justify-end w-full py-3">
+        <button onClick={handleGoCommunityMateBtnClick}>
+          디저트 메이트 찾으러 가기
+        </button>
       </div>
     </div>
   );

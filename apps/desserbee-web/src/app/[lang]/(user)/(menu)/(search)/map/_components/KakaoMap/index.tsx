@@ -9,6 +9,7 @@ import {
   useState,
   useMemo,
 } from 'react';
+import React from 'react';
 
 import storeMarkerImage from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/icon-marker.svg';
 import userMarkerImage from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/icon-current-marker.svg';
@@ -37,13 +38,13 @@ import {
 
 import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService';
 import { ReFetchStoreBtn } from '../ReFetchStoreBtn';
 import { calculateDistance } from '../../_utils/distance';
+import { useTag } from '../../../_hooks/useTag';
 
 interface KakaoMapProps {
-  userPreferences: number[];
   preferenceCategories: PreferenceData[];
 }
 
@@ -56,10 +57,7 @@ const areServicesInitialized = (services: {
   return services.mapService && services.geoService && services.storeService;
 };
 
-export function KakaoMap({
-  userPreferences,
-  preferenceCategories,
-}: KakaoMapProps) {
+export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const router = useRouter();
   const mapRef = useRef<HTMLDivElement>(null);
   const servicesRef = useRef<{
@@ -77,7 +75,7 @@ export function KakaoMap({
     latitude: 0,
     longitude: 0,
   });
-  const [lastFetchPosition, setLastFetchPosition] = useState<MapPosition>({
+  const [, setLastFetchPosition] = useState<MapPosition>({
     latitude: 0,
     longitude: 0,
   });
@@ -93,9 +91,7 @@ export function KakaoMap({
   const [isFetchRequired, setIsFetchRequired] = useState(false);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
-  const FETCH_RADIUS_M = 4000;
-  const POSITION_UPDATE_INTERVAL = 3000;
-  const lastUpdateTimeRef = useRef(0);
+  // const FETCH_RADIUS_M = 4000; // 최대 거리 고정
   const isLoadingRef = useRef(false);
 
   const [retryCount, setRetryCount] = useState(0);
@@ -103,6 +99,18 @@ export function KakaoMap({
   const RETRY_DELAY = 3000;
 
   const { push, pop } = useContext(PortalContext);
+
+  // const searchParam = useSearchParams(); //TODO
+  // const keyword = searchParam.get('query');
+
+  const {
+    selectedCategories,
+    isMyPreferSelected,
+    updateSelectedTag,
+    handleMyPreferenceTagClick,
+    selectedPreferenceTags,
+    clearSelectedCategories,
+  } = useTag();
 
   const closeModal = useCallback(() => {
     pop('modal');
@@ -149,41 +157,45 @@ export function KakaoMap({
     return { mapService, geoService, storeService };
   };
 
-  // 거리 계산해서 가게 업데이트 필요 판단
-  // const determineFetch = (
-  //   lastFetchPosition: MapPosition,
-  //   currentMapPosition: MapPosition,
-  // ) => {
-  //   const distanceFromLastFetch = calculateDistance(
-  //     lastFetchPosition,
-  //     currentMapPosition,
-  //   );
+  const calculateFetchRadius = useCallback(() => {
+    if (!servicesRef.current.mapService) {
+      return 4000; // 기본값
+    }
 
-  //   console.log(
-  //     'determineFetch: 마지막 데이터 요청 위치와의 거리 📏:',
-  //     distanceFromLastFetch,
-  //     'km',
-  //   );
+    const bounds = servicesRef.current.mapService.getMapBound();
+    const center = servicesRef.current.mapService.getMapCenter();
 
-  //   if (
-  //     lastFetchPosition.latitude === 0 ||
-  //     distanceFromLastFetch > REFETCH_THRESHOLD_M
-  //   ) {
-  //     console.log(
-  //       'determineFetch: 재요청 할 때 됨, (임계값 초과), 주변 가게 정보 업데이트 시작 ✅',
-  //     );
-  //     setIsFetchRequired(true);
-  //   } else {
-  //     console.log(
-  //       'determineFetch: 재요청 임계값 이내, 아직 새로운 가게 재요청 안함 ⌛',
-  //     );
-  //     setIsFetchRequired(false);
-  //   }
-  // };
+    // 각 경계 지점까지의 거리 계산
+    const distances = [
+      calculateDistance(center, bounds.ne),
+      calculateDistance(center, bounds.sw),
+      calculateDistance(center, {
+        latitude: bounds.ne.latitude,
+        longitude: bounds.sw.longitude,
+      }), // nw
+      calculateDistance(center, {
+        latitude: bounds.sw.latitude,
+        longitude: bounds.ne.longitude,
+      }), // se
+    ];
 
-  // 지금 지도에서 위치한 근처의 가게들 fetch
+    // 최대 거리 선택
+    const maxDistance = Math.max(...distances);
+
+    console.log(
+      'calculateFetchRadius: 계산된 최대 반지름 📏:',
+      maxDistance,
+      'm',
+    );
+    return maxDistance * 1000;
+  }, []);
+
   const fetchNearbyStores = useCallback(
-    async (position: MapPosition) => {
+    async (
+      position: MapPosition,
+      preferenceTagIds?: number[],
+      searchKeyword?: string,
+    ) => {
       try {
         if (!servicesRef.current.storeService) {
           console.log(
@@ -192,11 +204,15 @@ export function KakaoMap({
           return null;
         }
 
+        const fetchRadius = calculateFetchRadius();
+
         const nearByStores =
           await servicesRef.current.storeService!.getNearbyStores({
             latitude: position.latitude,
             longitude: position.longitude,
-            radius: FETCH_RADIUS_M,
+            radius: fetchRadius,
+            preferenceTagIds,
+            searchKeyword,
           });
 
         setNearByStores(nearByStores);
@@ -210,7 +226,10 @@ export function KakaoMap({
         console.error('다시 시도합니다 :' + 'retry(' + retryCount + ')');
         if (retryCount < MAX_RETRY) {
           setRetryCount((prev) => prev + 1);
-          setTimeout(() => fetchNearbyStores(position), RETRY_DELAY);
+          setTimeout(
+            () => fetchNearbyStores(position, preferenceTagIds, searchKeyword),
+            RETRY_DELAY,
+          );
         } else {
           setError(
             '가게 정보를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.',
@@ -222,7 +241,7 @@ export function KakaoMap({
         return null;
       }
     },
-    [retryCount],
+    [retryCount, calculateFetchRadius],
   );
 
   const updateLastFetchPosition = useCallback((position: MapPosition) => {
@@ -258,6 +277,7 @@ export function KakaoMap({
           updateLastFetchPosition(position);
         } else {
           console.log('updateNewClusterMarkers: 주변 가게 정보 없음 🍃');
+          setError('주변 가게가 없습니다');
         }
       } catch (error) {
         console.error(
@@ -272,9 +292,15 @@ export function KakaoMap({
     [servicesRef, handleStoreMarkerClick, updateLastFetchPosition],
   );
 
-  // 실시간 마커 한개 ! 업데이트 (geo)
+  const [hasUpdatedPosition, setHasUpdatedPosition] = useState(false);
+
   const updateCurrentMarker = useCallback(
     async (position: MapPosition) => {
+      if (hasUpdatedPosition) {
+        console.log('updateCurrentMarker: 이미 위치 업데이트 완료, 스킵 🛑');
+        return;
+      }
+
       try {
         if (!areServicesInitialized(servicesRef.current)) {
           console.log(
@@ -288,22 +314,6 @@ export function KakaoMap({
           position,
         );
 
-        const now = Date.now();
-        if (now - lastUpdateTimeRef.current < POSITION_UPDATE_INTERVAL) {
-          console.log(
-            'updateCurrentMarker: 업데이트 간격이 너무 짧음, 스킵 🛑',
-          );
-          return;
-        }
-
-        if (isLoadingRef.current) {
-          console.log('updateCurrentMarker: 이전 업데이트가 진행 중, 스킵 🛑');
-          return;
-        }
-
-        lastUpdateTimeRef.current = now;
-        console.log('updateCurrentMarker: 위치 업데이트 시작 🚩');
-
         console.log('updateCurrentMarker: 현재 위치 마커 제거 시작 🗑️');
         await servicesRef.current.mapService?.removeCurrentPositionMarker();
 
@@ -314,6 +324,8 @@ export function KakaoMap({
         );
         setCurrentPosition(position);
         console.log('updateCurrentMarker: 새로운 현재 위치 저장 🧍‍♂️');
+
+        setHasUpdatedPosition(true); // 위치 업데이트 완료 상태 설정
       } catch (error) {
         console.error(
           'updateCurrentMarker: 위치 마커 업데이트 중 오류 발생 ⚠️:',
@@ -333,7 +345,7 @@ export function KakaoMap({
         return;
       }
     },
-    [openPermissionModal],
+    [hasUpdatedPosition, openPermissionModal],
   );
 
   const handleInitialGeoPositonFetch = async (
@@ -522,6 +534,56 @@ export function KakaoMap({
     mapCenterRef.current = mapCenter;
   }, [mapCenter]);
 
+  // 태그, 검색 포함 필터링
+  const previousSelectedTagsRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    if (
+      JSON.stringify(previousSelectedTagsRef.current) !==
+      JSON.stringify(selectedPreferenceTags)
+    ) {
+      const fetchAndUpdate = async () => {
+        const stores = await fetchNearbyStores(
+          mapCenterRef.current,
+          selectedPreferenceTags,
+          // keyword as string,
+        );
+        if (stores) {
+          await updateNewClusterMarkers(mapCenterRef.current, stores);
+          setIsFetchRequired(false);
+        }
+      };
+      fetchAndUpdate();
+      previousSelectedTagsRef.current = selectedPreferenceTags;
+    }
+  }, [
+    selectedPreferenceTags,
+    // keyword,
+    fetchNearbyStores,
+    updateNewClusterMarkers,
+  ]);
+
+  // 전체 검색
+  useEffect(() => {
+    if (
+      JSON.stringify(previousSelectedTagsRef.current) !==
+      JSON.stringify(selectedPreferenceTags)
+    ) {
+      const fetchAndUpdate = async () => {
+        const stores = await fetchNearbyStores(
+          mapCenterRef.current,
+          selectedPreferenceTags,
+        );
+        if (stores) {
+          await updateNewClusterMarkers(mapCenterRef.current, stores);
+          setIsFetchRequired(false);
+        }
+      };
+      fetchAndUpdate();
+      previousSelectedTagsRef.current = selectedPreferenceTags;
+    }
+  }, [selectedPreferenceTags, fetchNearbyStores, updateNewClusterMarkers]);
+
   useEffect(() => {
     const fetchAndUpdate = async () => {
       const stores = await fetchNearbyStores(mapCenterRef.current);
@@ -533,20 +595,49 @@ export function KakaoMap({
     fetchAndUpdate();
   }, [isFetchRequired, fetchNearbyStores, updateNewClusterMarkers]);
 
+  const preferenceTagsProps = useMemo(
+    () => ({
+      categories: preferenceCategories,
+      isMyPreferSelected,
+      handleMyPreferenceTagClick,
+      updateSelectedTag,
+      selectedCategories,
+    }),
+    [
+      preferenceCategories,
+      handleMyPreferenceTagClick,
+      isMyPreferSelected,
+      updateSelectedTag,
+      selectedCategories,
+    ],
+  );
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 3000);
+
+      // 컴포넌트가 언마운트되거나 error가 변경될 때 타이머 정리
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
   return (
     <div>
       <Script
         type="text/javascript"
         strategy="afterInteractive"
+        // strategy="lazyOnload"
         async
         src={KAKAO_MAP_API_URL}
         onLoad={() => setIsScriptLoaded(true)}
         onReady={() => {
           if (!isScriptLoaded) {
-            console.log('카카오맵 스크립트 최초 로드');
+            console.log('(0) 카카오맵 스크립트 최초 로드');
             window.kakao.maps.load(async () => {
               console.log(
-                '-----------------services 체크 시작-------------------',
+                '-----------------(1) services 체크 시작-------------------',
               );
               if (isInitialized) {
                 console.log('이미 초기화된 상태, 초기화 스킵');
@@ -570,7 +661,7 @@ export function KakaoMap({
                   '-----------------services 체크 완료-------------------',
                 );
                 console.log(
-                  '-----------------load map 시작-------------------',
+                  '-----------------(2) load map 시작-------------------',
                 );
                 await loadMap(initializedServices);
                 console.log(
@@ -597,17 +688,19 @@ export function KakaoMap({
         className="relative bg-[#E8E8E8] mb-[9px] rounded-base w-full h-[calc(100dvh-295px)] overflow-x-hidden"
       >
         {error && (
-          <div className="top-4 left-1/2 z-50 absolute bg-red-100 px-4 py-2 border border-red-400 rounded text-red-700 -translate-x-1/2 transform">
+          <div className="top-1/3  left-1/2 z-20 absolute bg-red-100 px-4 py-2 border border-red-400 rounded text-red-700 -translate-x-1/2 transform">
             {error}
           </div>
         )}
-        <PreferenceTags
-          userPreferences={userPreferences}
-          categories={preferenceCategories}
-        />
+        <PreferenceTags {...preferenceTagsProps} />
         <MapPanel {...mapPanelProps} />
-        <ReFetchStoreBtn refetchStore={handleRefetchBtnClick} />
+        <ReFetchStoreBtn
+          clearSelectedCategories={clearSelectedCategories}
+          refetchStore={handleRefetchBtnClick}
+        />
       </div>
     </div>
   );
 }
+
+export default React.memo(KakaoMap);

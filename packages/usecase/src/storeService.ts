@@ -53,6 +53,55 @@ export default class StoreService {
     latitude,
     longitude,
     radius,
+    preferenceTagIds,
+    searchKeyword,
+  }: {
+    latitude: number;
+    longitude: number;
+    radius: number;
+    preferenceTagIds?: number[];
+    searchKeyword?: string;
+  }): Promise<NearByStoreData[]> {
+    try {
+      if (!this.storeRepository) {
+        throw new Error('storeRepository is not set');
+      }
+
+      console.log(
+        `주변 매장 검색 시작 - 위도: ${latitude}, 경도: ${longitude}, 반경: ${radius}m`,
+      );
+
+      if (preferenceTagIds) {
+        console.log(`필터: ${preferenceTagIds}`);
+      }
+
+      if (searchKeyword) {
+        console.log(`키워드: ${searchKeyword}`);
+      }
+      const requestData = {
+        data: {
+          latitude,
+          longitude,
+          radius,
+          preferenceTagIds,
+          searchKeyword,
+        },
+      };
+
+      const response = await this.storeRepository.getNearbyStores(requestData);
+      console.log(`주변 매장 ${response.length}개를 성공적으로 조회했습니다.`);
+
+      return response;
+    } catch (error) {
+      console.error('주변 매장 검색 중 오류가 발생했습니다:', error);
+      throw error;
+    }
+  }
+
+  async getMyPreferNearByStores({
+    latitude,
+    longitude,
+    radius,
   }: {
     latitude: number;
     longitude: number;
@@ -75,7 +124,8 @@ export default class StoreService {
         },
       };
 
-      const response = await this.storeRepository.getNearbyStores(requestData);
+      const response =
+        await this.storeRepository.getNearbyPreferStores(requestData);
       console.log(`주변 매장 ${response.length}개를 성공적으로 조회했습니다.`);
 
       return response;

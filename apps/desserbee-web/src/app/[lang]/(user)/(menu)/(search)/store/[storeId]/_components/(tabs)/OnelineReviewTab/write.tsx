@@ -6,6 +6,7 @@ import Image from 'next/image';
 import ReviewService from '@repo/usecase/src/reviewService';
 import ReviewAPIRepository from '@repo/infrastructures/src/repositories/reviewAPIRepository';
 import { UserContext } from '@/contexts/UserContext';
+import { cn } from '@repo/ui/lib/utils';
 
 interface OneLineReviewWriteProps {
   storeUuid: string;
@@ -17,7 +18,7 @@ export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [reviewText, setReviewText] = useState('');
   const [rating, setRating] = useState(0);
-  const [reviewImage, setReviewImage] = useState<File | null>();
+  const [, setReviewImage] = useState<File | null>();
   const [imageName, setImageName] = useState<string | null>(null);
 
   const reviewService = new ReviewService({
@@ -48,37 +49,38 @@ export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
     const data = {
       storeUuid: storeUuid,
       request: {
-        userId: user?.id as string,
+        userUuid: user?.id as string,
         content: reviewText,
         rating: rating,
       },
       images: [imageName!],
     };
-    await reviewService.createStoreOnlineReviews(data);
+    const result = await reviewService.createStoreOnlineReviews(data);
+    console.log(result);
   };
 
   return (
-    <div className="flex flex-col w-full pb-[15.73px] md:pb-[27px]">
-      <div className="flex items-center gap-[10px] md:gap-[7px] w-full justify-start">
-        <div className="text-[8px] md:text-lg font-semibold">
+    <div className="flex flex-col pb-[15.73px] md:pb-[27px] w-full">
+      <div className="flex justify-start items-center gap-[10px] md:gap-[7px] w-full">
+        <div className="font-semibold text-[8px] md:text-lg">
           이 장소에 대해 만족하셨나요?
         </div>
         <div className="flex items-center gap-1">
           {[1, 2, 3, 4, 5].map((star) => (
             <div
               key={star}
-              className="relative w-[15px] h-[15px] md:w-[30px] md:h-[30px]"
+              className="relative w-[15px] md:w-[30px] h-[15px] md:h-[30px]"
             >
               <button
-                className="w-1/2 h-full absolute left-0 z-10"
+                className="left-0 z-10 absolute w-1/2 h-full"
                 onClick={() => setRating(star - 0.5)}
               />
               <button
-                className="w-1/2 h-full absolute right-0 z-10"
+                className="right-0 z-10 absolute w-1/2 h-full"
                 onClick={() => setRating(star)}
               />
               <IconHalfStar
-                className="w-[15px] h-[15px] md:w-[30px] md:h-[30px]"
+                className="w-[15px] md:w-[30px] h-[15px] md:h-[30px]"
                 filled={
                   rating >= star
                     ? 'full'
@@ -89,26 +91,31 @@ export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
               />
             </div>
           ))}
-          <span className="text-[8px] md:text-base ml-1">{rating}</span>
+          <span className="ml-1 text-[8px] md:text-base">{rating}</span>
         </div>
       </div>
       <form method="post" encType="multipart/form-data">
         <label htmlFor="reviewImage">
-          <div className="bg-[#E8E8E8] rounded-[3px] md:rounded-[7.4px] py-[19px] md:py-[23px] my-2 md:my-[18px] w-full h-full aspect-[736/142] min-h-[75px] flex justify-center items-center overflow-hidden">
+          <div
+            className={cn(
+              previewImage ? 'bg-transparent' : 'bg-[#E8E8E8]',
+              'flex justify-center items-center  my-2 md:my-[18px] py-[19px] md:py-[23px] rounded-[3px] md:rounded-[7.4px] w-full h-full min-h-[75px] aspect-[736/400] overflow-hidden',
+            )}
+          >
             {previewImage ? (
               <Image
                 src={previewImage}
                 alt="미리보기"
                 width={150}
                 height={150}
-                className="w-full object-contain"
+                className="w-fit object-cover"
               />
             ) : (
-              <div className="flex flex-col gap-y-[5px] md:gap-y-[12.33px] items-center">
-                <div className="w-[23px] h-[23px] md:w-[56.72px] md:h-[56.72px] aspect-square text-[#545454]">
+              <div className="flex flex-col items-center gap-y-[5px] md:gap-y-[12.33px]">
+                <div className="w-[23px] md:w-[56.72px] h-[23px] md:h-[56.72px] aspect-square text-[#545454]">
                   <IconPicutre className="w-full h-full" />
                 </div>
-                <div className="text-[8px] md:text-[18px] text-[#393939]">
+                <div className="text-[#393939] text-[8px] md:text-[18px]">
                   가게의 사진을 추가해주세요.
                 </div>
               </div>
@@ -123,26 +130,26 @@ export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
           onChange={handleImageChange}
           className="hidden"
         />
-        <div className="text-[8px] md:text-lg font-semibold">
+        <div className="font-semibold text-[8px] md:text-lg">
           어떤 점이 좋았나요?
         </div>
         <div className="relative h-fit">
           <input
-            className=" w-full border border-[#9F9F9F] text-[8px] md:text-lg rounded-[4.24px] md:rounded-[10px] px-[6px] py-[10px]"
+            className="px-[6px] py-[10px] border border-[#9F9F9F] rounded-[4.24px] md:rounded-[10px] w-full text-[8px] md:text-lg"
             name="review"
             placeholder="50자 이내로 작성해주세요."
             maxLength={50}
             value={reviewText}
             onChange={handleReviewChange}
           />
-          <span className="absolute right-2 bottom-0 text-[6px] md:text-sm text-gray-500">
+          <span className="right-2 bottom-0 absolute text-[6px] text-gray-500 md:text-sm">
             {reviewText.length}/50
           </span>
         </div>
-        <div className="w-full flex justify-end">
+        <div className="flex justify-end w-full">
           <button
             onClick={handleSubmit}
-            className="text-[6.79px] md:text-base mt-[6px] md:mt-4 text-white text-center px-[4.24px]  md:p-[10px]  rounded-[42.23px] bg-[#898989]"
+            className="bg-[#898989] mt-[6px] md:mt-4 md:p-[10px] px-[4.24px] rounded-[42.23px] text-[6.79px] text-white md:text-base text-center"
             type="button"
           >
             등록하기

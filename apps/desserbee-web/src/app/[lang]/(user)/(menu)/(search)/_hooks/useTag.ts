@@ -27,10 +27,17 @@ export const useTag = () => {
     setIsMyPreferSelected(true);
   };
 
+  const clearSelectedCategories = () => {
+    setIsMyPreferSelected(false);
+    setSelectedCategories(new Set());
+  };
+
   return {
     selectedCategories,
     isMyPreferSelected,
     updateSelectedTag,
     handleMyPreferenceTagClick,
+    clearSelectedCategories,
+    selectedPreferenceTags: Array.from(selectedCategories),
   };
 };

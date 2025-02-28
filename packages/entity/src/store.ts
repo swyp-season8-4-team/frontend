@@ -81,6 +81,8 @@ export interface NearByStoreRequest {
   latitude: number;
   longitude: number;
   radius: number;
+  preferenceTagIds?: number[];
+  searchKeyword?: string;
 }
 
 export interface NearbyFilteredStoresRequest {
@@ -228,6 +230,7 @@ export interface StoreDetailInfoData
     content: string;
     nickname: string;
     recruitYn: boolean;
+    saved: boolean;
   }[];
 
   saved: SavedList['saved'];
@@ -556,7 +559,6 @@ export interface StoreRepository {
   ): Promise<NearByStoreData[]>;
 
   getNearbyPreferStores({
-    authorization,
     data,
   }: BaseRequestData<NearByStoreRequest>): Promise<NearByStoreData[]>;
 

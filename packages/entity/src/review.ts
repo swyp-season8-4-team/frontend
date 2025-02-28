@@ -17,7 +17,7 @@ export interface ReviewTag {
 }
 
 export interface OnelineReviewRequests {
-  userId: string;
+  userUuid: string;
   content: string;
   rating: number;
 }

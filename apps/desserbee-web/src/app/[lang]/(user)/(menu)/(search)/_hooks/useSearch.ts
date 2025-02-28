@@ -1,9 +1,10 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { SEARCH_CONFIG } from '../_consts/search';
 import { NavigationPathname } from '@repo/entity/src/navigation';
+import { debounce } from '@repo/utility/src/debounce';
 
 interface SearchConfig {
   placeHolder: string;
@@ -13,6 +14,8 @@ interface SearchConfig {
 export function useSearch() {
   const pathname = usePathname();
   const [searchTerm, setSearchTerm] = useState('');
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const normalizedPath = pathname.split('/', 3)[2];
   const path = `/${normalizedPath}`;
@@ -48,8 +51,24 @@ export function useSearch() {
 
   const { placeHolder, onSearch } = getSearchConfig();
 
-  const onChange = (value: string) => {
-    setSearchTerm(value);
+  const onChange = (query: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (query) {
+      params.set('query', query);
+    } else {
+      params.delete('query');
+    }
+
+    // 디바운스를 사용하여 URL 변경 빈도 줄이기
+    debounce({
+      key: 'urlChange',
+      wait: 300, // 원하는 대기 시간 설정
+      callback: () => {
+        router.replace(`${pathname}?${params.toString()}`);
+      },
+    });
+
+    setSearchTerm(query);
   };
 
   return {
