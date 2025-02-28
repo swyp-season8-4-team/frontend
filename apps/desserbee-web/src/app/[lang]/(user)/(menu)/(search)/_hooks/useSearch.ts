@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { SEARCH_CONFIG } from '../_consts/search';
 import { NavigationPathname } from '@repo/entity/src/navigation';
@@ -13,6 +13,8 @@ interface SearchConfig {
 export function useSearch() {
   const pathname = usePathname();
   const [searchTerm, setSearchTerm] = useState('');
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const normalizedPath = pathname.split('/', 3)[2];
   const path = `/${normalizedPath}`;
@@ -48,8 +50,15 @@ export function useSearch() {
 
   const { placeHolder, onSearch } = getSearchConfig();
 
-  const onChange = (value: string) => {
-    setSearchTerm(value);
+  const onChange = (query: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (query) {
+      params.set('query', query);
+    } else {
+      params.delete('query');
+    }
+    router.replace(`${pathname}?${params.toString()}`);
+    setSearchTerm(query);
   };
 
   return {
