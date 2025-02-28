@@ -38,7 +38,7 @@ import {
 
 import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService';
 import { ReFetchStoreBtn } from '../ReFetchStoreBtn';
 import { calculateDistance } from '../../_utils/distance';
@@ -99,6 +99,9 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const RETRY_DELAY = 3000;
 
   const { push, pop } = useContext(PortalContext);
+
+  // const searchParam = useSearchParams(); //TODO
+  // const keyword = searchParam.get('query');
 
   const {
     selectedCategories,
@@ -531,6 +534,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     mapCenterRef.current = mapCenter;
   }, [mapCenter]);
 
+  // 태그, 검색 포함 필터링
   const previousSelectedTagsRef = useRef<number[]>([]);
 
   useEffect(() => {
@@ -542,6 +546,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         const stores = await fetchNearbyStores(
           mapCenterRef.current,
           selectedPreferenceTags,
+          // keyword as string,
         );
         if (stores) {
           await updateNewClusterMarkers(mapCenterRef.current, stores);
@@ -551,8 +556,14 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       fetchAndUpdate();
       previousSelectedTagsRef.current = selectedPreferenceTags;
     }
-  }, [selectedPreferenceTags, fetchNearbyStores, updateNewClusterMarkers]);
+  }, [
+    selectedPreferenceTags,
+    // keyword,
+    fetchNearbyStores,
+    updateNewClusterMarkers,
+  ]);
 
+  // 전체 검색
   useEffect(() => {
     if (
       JSON.stringify(previousSelectedTagsRef.current) !==

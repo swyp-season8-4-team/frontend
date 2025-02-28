@@ -4,6 +4,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { SEARCH_CONFIG } from '../_consts/search';
 import { NavigationPathname } from '@repo/entity/src/navigation';
+import { debounce } from '@repo/utility/src/debounce';
 
 interface SearchConfig {
   placeHolder: string;
@@ -57,7 +58,16 @@ export function useSearch() {
     } else {
       params.delete('query');
     }
-    router.replace(`${pathname}?${params.toString()}`);
+
+    // 디바운스를 사용하여 URL 변경 빈도 줄이기
+    debounce({
+      key: 'urlChange',
+      wait: 300, // 원하는 대기 시간 설정
+      callback: () => {
+        router.replace(`${pathname}?${params.toString()}`);
+      },
+    });
+
     setSearchTerm(query);
   };
 
