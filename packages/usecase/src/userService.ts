@@ -80,7 +80,7 @@ export default class UserService {
     return response;
   }
 
-  async uploadProfileImage(image: File): Promise<unknown> {
+  async uploadProfileImage(image: File): Promise<User> {
     if (!this.userRepository) {
       throw new Error('userRepository is not set');
     }

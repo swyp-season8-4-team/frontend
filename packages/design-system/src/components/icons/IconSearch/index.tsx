@@ -7,6 +7,7 @@ export default function IconSearch({ size = IconSize.m, ...props }: SVGProps) {
         cx="8.51613"
         cy="8.51613"
         r="7.35484"
+        fill="transparent"
         stroke="currentColor"
         strokeWidth="2.32258"
       />

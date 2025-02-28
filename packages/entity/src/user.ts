@@ -64,5 +64,5 @@ export interface UserRepository {
   updateMe(data: BaseRequestData<User>): Promise<User>;
   getTarget(data: BaseRequestData<{ id: string }>): Promise<TargetUser>;
   validateNickname(data: BaseRequestData<NicknameValidationRequestData>): Promise<NicknameValidationResponse>;
-  uploadProfileImage(data: BaseRequestData<{ image: File }>): Promise<unknown>;
+  uploadProfileImage(data: BaseRequestData<{ image: File }>): Promise<User>;
 }
