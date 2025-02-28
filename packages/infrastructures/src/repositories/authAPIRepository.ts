@@ -67,9 +67,6 @@ export default class AuthAPIRepository extends APIRepository implements AuthRepo
       method: 'POST',
       url: `${this.endpoint}/auth/login`,
     });
-
-    console.log(response);
-
     return response;
   }
 

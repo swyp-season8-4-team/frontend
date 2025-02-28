@@ -112,6 +112,7 @@ export interface MateFireRequest {
 export interface MateListRequest {
   from: number;
   to: number;
+  keyword?: string;
 }
 
 export interface MateListResponse {

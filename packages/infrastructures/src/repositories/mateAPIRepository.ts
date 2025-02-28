@@ -95,7 +95,7 @@ export default class MateAPIRepository
 
     const response = await fetch<void, RawMate[]>({
       method: 'GET',
-      url: `${this.endpoint}/mates/${id}/apply`,
+      url: `${this.endpoint}/mates/${id}/pending`,
     });
 
     return response.map((mate) => this.mateConverter.convertRawToMate(mate));

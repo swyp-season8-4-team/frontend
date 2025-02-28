@@ -113,7 +113,7 @@ export default class UserAPIRepository extends APIRepository implements UserRepo
     return response;
   }
 
-  async uploadProfileImage({ authorization, data }: BaseRequestData<{ image: File; }>): Promise<unknown> {
+  async uploadProfileImage({ authorization, data }: BaseRequestData<{ image: File; }>): Promise<User> {
     if (!data || !data.image) {
       throw new Error('Image file is required');
     }
@@ -124,7 +124,7 @@ export default class UserAPIRepository extends APIRepository implements UserRepo
     const formData = new FormData();
     formData.append('image', data.image);
   
-    const response = await fetch<void, { imageUrl: string }>({
+    const response = await fetch<void, RawUser>({
       ...(authorization && {
         headers: {
           Authorization: authorization,
@@ -135,6 +135,6 @@ export default class UserAPIRepository extends APIRepository implements UserRepo
       formData,
     });
   
-    return response;
+    return this.userConverter.convertRawToUser(response);
   }
 }

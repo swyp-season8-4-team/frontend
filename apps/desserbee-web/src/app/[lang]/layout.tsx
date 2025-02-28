@@ -20,9 +20,7 @@ const metadataService = new MetadataService();
 export const metadata: Metadata = {
   title: metadataService.title,
   description: metadataService.description,
-  other: {
-    'permissions-policy': metadataService.permissionsPolicy,
-  },
+  other: metadataService.other,
 };
 
 if (process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true') {

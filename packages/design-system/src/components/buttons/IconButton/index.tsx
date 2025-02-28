@@ -3,7 +3,7 @@
 import { cloneElement, useMemo } from 'react';
 import type { WithRef } from '@repo/ui';
 import { type Iconable, IconSize } from '../../icons';
-import Button, { type ButtonProps } from '../Button';import { ButtonSize } from '..';
+import Button, { type ButtonProps } from '../Button';
 
 interface Props
   extends Omit<ButtonProps, 'children' | 'size'>,
@@ -22,33 +22,46 @@ export default function IconButton({
 }: Props) {
   const buttonClasses = useMemo(() => {
     const baseClasses = 'flex items-center justify-center flex-shrink-0 rounded-full bg-none';
-    const sizeClasses = size === IconSize.xs 
-      ? 'w-3 h-3 scale-[2.5]' 
-      : 'w-5 h-5 scale-[2]';
-    const hoverClasses = 'hover:bg-[#f8f9fb] hover:not:disabled:opacity-100';
+    
+    // 사이즈별 클래스 매핑 개선
+    let sizeClasses = '';
+    if (size === IconSize.xs) {
+      sizeClasses = 'w-6 h-6 p-1';
+    } else if (size === IconSize.s) {
+      sizeClasses = 'w-8 h-8 p-1.5';
+    } else if (size === IconSize.m) {
+      sizeClasses = 'w-10 h-10 p-2';
+    } else if (size === IconSize.l) {
+      sizeClasses = 'w-12 h-12 p-2.5';
+    } else if (typeof size === 'number') {
+      // 커스텀 사이즈 지원
+      sizeClasses = `w-[${size}px] h-[${size}px]`;
+    }
+    
+    const hoverClasses = 'hover:bg-gray-200 hover:not:disabled:opacity-100';
     
     return `${baseClasses} ${sizeClasses} ${hoverClasses} ${className || ''}`;
   }, [className, size]);
-
-  const iconClasses = useMemo(() => {
-    return size === IconSize.xs 
-      ? 'scale-[0.4] fill-current transition-colors duration-200' 
-      : 'scale-[0.5] fill-current transition-colors duration-200';
-  }, [size]);
 
   const defaultIconSize = useMemo(() => {
     if (iconSize) {
       return iconSize;
     }
 
-    return size === IconSize.xs ? IconSize.xs : IconSize.m;
+    // 버튼 사이즈에 따른 아이콘 사이즈 매핑
+    if (size === IconSize.xs) return IconSize.xs;
+    if (size === IconSize.s) return IconSize.s;
+    if (size === IconSize.m) return IconSize.m;
+    if (size === IconSize.l) return IconSize.l;
+    
+    return IconSize.m; // 기본값
   }, [iconSize, size]);
 
   return (
     <Button className={buttonClasses} {...props}>
       {cloneElement(children, { 
         size: defaultIconSize,
-        className: iconClasses 
+        className: 'fill-current transition-colors duration-200' 
       })}
     </Button>
   );

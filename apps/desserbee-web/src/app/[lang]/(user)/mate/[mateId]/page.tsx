@@ -41,14 +41,14 @@ export default async function MateDetailPage({ params }: WithParams) {
   }
 
   const { mateCategory, mateImage, title, content, place, nickname, updatedAt } = mate;
-
+  console.log(updatedAt);
   return (
     <MateDetailProvider mate={mate}>
       <main className="flex flex-col h-full px-4 gap-4 bg-[#f6f6f6]">
         <section className="border rounded-[10px] bg-[#ffffff] px-2 py-2">
           <div className="flex items-center justify-between px-4 py-2">
             <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-[#9F9F9F] text-[12px] font-semibold leading-normal tracking-[-0.24px]" >
+              <div className="flex items-center gap-2 text-[#9F9F9F] text-[10px] font-semibold tracking-[-0.3px]" >
                 <span className="">{mateCategory}</span>
                 <span className="">{'>'}</span>
               </div>
