@@ -93,7 +93,7 @@ export function KakaoMap({
   const [isFetchRequired, setIsFetchRequired] = useState(false);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
-  const FETCH_RADIUS_M = 3000;
+  const FETCH_RADIUS_M = 4000;
   const POSITION_UPDATE_INTERVAL = 3000;
   const lastUpdateTimeRef = useRef(0);
   const isLoadingRef = useRef(false);
