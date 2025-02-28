@@ -32,7 +32,7 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
   };
 
   if (isReviewing) {
-    return <OneLineReviewWrite />;
+    return <OneLineReviewWrite storeUuid={storeId} />;
   }
   return (
     <div className="pb-[15.73px] md:pb-[27px]">
