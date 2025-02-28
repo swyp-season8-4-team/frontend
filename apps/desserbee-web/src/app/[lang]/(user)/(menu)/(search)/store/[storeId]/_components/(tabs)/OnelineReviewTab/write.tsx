@@ -18,7 +18,7 @@ export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
   const [reviewText, setReviewText] = useState('');
   const [rating, setRating] = useState(0);
   const [reviewImage, setReviewImage] = useState<File | null>();
-  const [_, setImageName] = useState<string | null>(null);
+  const [, setImageName] = useState<string | null>(null);
 
   const reviewService = new ReviewService({
     reviewRepository: new ReviewAPIRepository(),
