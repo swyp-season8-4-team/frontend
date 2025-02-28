@@ -138,7 +138,6 @@ export default class KakaoMapController implements MapController {
         throw new Error('Map is not initialized');
       }
       const center = this.map.getCenter();
-      console.log('지도 중심 좌표를 성공적으로 가져왔습니다.');
       return center;
     } catch (error) {
       console.error('지도 중심 좌표를 가져오는 중 오류가 발생했습니다:', error);

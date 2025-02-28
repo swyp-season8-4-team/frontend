@@ -52,8 +52,9 @@ export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
         content: reviewText,
         rating: rating,
       },
-      images: reviewImage || undefined,
+      images: reviewImage!,
     };
+    console.log(reviewImage);
     await reviewService.createStoreOnlineReviews(data);
   };
 

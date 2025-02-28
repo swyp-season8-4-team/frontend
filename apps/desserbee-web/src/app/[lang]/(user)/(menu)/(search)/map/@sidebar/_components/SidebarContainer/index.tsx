@@ -47,7 +47,7 @@ export function SideBarContainer({
   ) => {
     console.log(listName, colorId);
 
-    const result = await storeService.createSavedList({
+    await storeService.createSavedList({
       userUuid: user?.id!,
       listName: listName,
       iconColorId: colorId,
@@ -63,9 +63,9 @@ export function SideBarContainer({
             router.push('?sidebar=true'); // 모달 닫을 때 사이드바 다시 열기
           }}
           onComplete={(listName: string, colorId: number) => {
-            // pop('modal');
+            pop('modal');
             handleCreateListComplete(listName, colorId);
-            // router.push('?sidebar=true'); // 완료 후 사이드바 다시 열기
+            router.push('?sidebar=true'); // 완료 후 사이드바 다시 열기
           }}
         />
       ),

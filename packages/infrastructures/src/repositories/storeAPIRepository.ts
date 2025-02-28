@@ -252,21 +252,12 @@ export default class StoreAPIRepository
 
     const { userUuid, listName, iconColorId } = data || {};
 
-    const url = `${this.endpoint}/user-store/${userUuid}/lists`;
+    const url = `${this.endpoint}/user-store/${userUuid}/lists?userUuid=${userUuid}&listName=${listName}&iconColorId=${iconColorId}`;
 
-    const response = await fetch<
-      { listName: string; iconColorId: number },
-      CreateSavedListResponse
-    >({
-      data: { listName, iconColorId },
+    const response = await fetch<void, CreateSavedListResponse>({
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json', // Content-Type 헤더 추가
-      },
       url,
     });
-
-    console.log(response);
 
     return response;
   }

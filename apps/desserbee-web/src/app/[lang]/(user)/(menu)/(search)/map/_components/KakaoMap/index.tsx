@@ -242,6 +242,9 @@ export function KakaoMap({
       try {
         isLoadingRef.current = true;
 
+        console.log('updateCurrentMarker: 이전 마커 모두두 제거 시작 🗑️');
+        await servicesRef.current.mapService?.clearAllMarkers();
+
         if (stores.length !== 0) {
           console.log(
             'updateNewClusterMarkers: 주변 가게 있음 🏪, 새로운 가게 마커 추가 시작  ',
@@ -395,7 +398,7 @@ export function KakaoMap({
       setMapCenter(center);
 
       // 거리 기반으로 fetch 필요성 판단
-      determineFetch(lastFetchPosition, center);
+      // determineFetch(lastFetchPosition, center);
     }
   }, [lastFetchPosition]);
 
@@ -514,10 +517,11 @@ export function KakaoMap({
       const stores = await fetchNearbyStores(mapCenter);
       if (stores) {
         await updateNewClusterMarkers(mapCenter, stores);
+        setIsFetchRequired(false);
       }
     };
     fetchAndUpdate();
-  }, [isFetchRequired, fetchNearbyStores, mapCenter, updateNewClusterMarkers]);
+  }, [isFetchRequired, fetchNearbyStores, updateNewClusterMarkers]);
 
   return (
     <div>

@@ -37,7 +37,7 @@ export default async function StoreDetailPage({
   if (storeDetail.savedListId) {
     const parentListInfo = await storeService.getParentSavedList({
       listId: storeDetail.savedListId,
-      authorization: authorization || null, //TODO: 로그인일시, 비로그인일시 둘다 접근 가능 BUT 로그인일 때만 리스트 어느리스트에 저장된지 확인위해..
+      authorization: authorization || null,
     });
 
     // const parentListInfo = {
