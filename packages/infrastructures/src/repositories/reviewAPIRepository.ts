@@ -14,7 +14,7 @@ export default class ReviewAPIRepository
   extends APIRepository
   implements ReviewRepository
 {
-  async getStoreReviews({
+  async getStoreOnelineReviews({
     data,
   }: BaseRequestData<StoreOnelineReivewRequest>): Promise<
     StoreOnelineReivewData[]
@@ -33,7 +33,9 @@ export default class ReviewAPIRepository
 
   async createOnelineReview({
     data,
-  }: BaseRequestData<CreateOnelineReviewRequestFormData>): Promise<CreateOnelineReviewResponse> {
+  }: BaseRequestData<CreateOnelineReviewRequestFormData>): Promise<
+    CreateOnelineReviewResponse[]
+  > {
     if (!data) {
       throw Error('data required');
     }
@@ -43,7 +45,7 @@ export default class ReviewAPIRepository
 
     const response = await fetch<
       { request: OnelineReviewRequests; images?: File },
-      CreateOnelineReviewResponse
+      CreateOnelineReviewResponse[]
     >({
       data: { request, images },
       method: 'POST',

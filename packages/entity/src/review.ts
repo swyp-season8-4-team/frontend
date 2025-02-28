@@ -17,7 +17,7 @@ export interface ReviewTag {
 }
 
 export interface OnelineReviewRequests {
-  userId: number;
+  userId: string;
   content: string;
   rating: number;
 }
@@ -50,11 +50,13 @@ export interface StoreOnelineReivewData {
 }
 
 export interface ReviewRepository {
-  getStoreReviews(
+  getStoreOnelineReviews(
     data: BaseRequestData<StoreOnelineReivewRequest>,
   ): Promise<StoreOnelineReivewData[]>;
 
   createOnelineReview({
     data,
-  }: BaseRequestData<CreateOnelineReviewRequestFormData>): Promise<CreateOnelineReviewResponse>;
+  }: BaseRequestData<CreateOnelineReviewRequestFormData>): Promise<
+    CreateOnelineReviewResponse[]
+  >;
 }

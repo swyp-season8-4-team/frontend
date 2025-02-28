@@ -4,6 +4,8 @@ import { DetailPageHeader } from '../_components/Header';
 import { OneLineReviewWrite } from '../_components/(tabs)/OnelineReviewTab/write';
 import { OneLineReviewItem } from '../_components/(tabs)/OnelineReviewTab/item';
 import type { OneLineReview } from '@repo/entity/src/review';
+import ReviewService from '@repo/usecase/src/reviewService';
+import ReviewAPIReopository from '@repo/infrastructures/src/repositories/reviewAPIRepository';
 
 export default async function OneLineReviewPage() {
   const cookieStore = await cookies();
@@ -11,6 +13,12 @@ export default async function OneLineReviewPage() {
   const reviewPageData = reviewPageDataStr
     ? JSON.parse(reviewPageDataStr)
     : null;
+
+  // const reviewService = new ReviewService({
+  //   reviewRepository: new ReviewAPIReopository(),
+  // });
+
+  // const reviewPageData = await reviewService.getStoreOnlineReviews({storeUuid: });
 
   if (!reviewPageData) {
     return <div>리뷰 데이터를 찾을 수 없습니다.</div>;

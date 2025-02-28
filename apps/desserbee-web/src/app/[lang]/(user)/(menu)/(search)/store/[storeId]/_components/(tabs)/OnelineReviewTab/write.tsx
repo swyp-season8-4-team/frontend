@@ -1,17 +1,28 @@
 'use client';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import IconPicutre from '@repo/design-system/components/icons/IconPicture';
 import IconHalfStar from '@repo/design-system/components/icons/IconHalfStar';
 import Image from 'next/image';
+import ReviewService from '@repo/usecase/src/reviewService';
+import ReviewAPIRepository from '@repo/infrastructures/src/repositories/reviewAPIRepository';
+import { UserContext } from '@/contexts/UserContext';
 
 interface OneLineReviewWriteProps {
   storeUuid: string;
 }
 
 export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
+  const { user } = useContext(UserContext);
+
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [reviewText, setReviewText] = useState('');
   const [rating, setRating] = useState(0);
+  const [reviewImage, setReviewImage] = useState<File | null>();
+  const [_, setImageName] = useState<string | null>(null);
+
+  const reviewService = new ReviewService({
+    reviewRepository: new ReviewAPIRepository(),
+  });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -21,6 +32,8 @@ export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
         setPreviewImage(reader.result as string);
       };
       reader.readAsDataURL(file);
+      setReviewImage(file);
+      setImageName(file.name);
     }
   };
 
@@ -32,31 +45,16 @@ export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
   };
 
   const handleSubmit = async () => {
-    const reviewData = {
-      userId: 1, // 실제 사용자 ID로 변경
-      content: reviewText,
-      rating: rating,
-      images: previewImage ? [previewImage] : [], // 이미지가 있을 경우 추가
+    const data = {
+      storeUuid: storeUuid,
+      request: {
+        userId: user?.id as string,
+        content: reviewText,
+        rating: rating,
+      },
+      images: reviewImage || undefined,
     };
-
-    try {
-      const response = await fetch(`/api/stores/${storeUuid}/reviews`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(reviewData),
-      });
-
-      if (!response.ok) {
-        throw new Error('리뷰 전송에 실패했습니다.');
-      }
-
-      const responseData = await response.json();
-      console.log('리뷰 전송 성공:', responseData);
-    } catch (error) {
-      console.error('리뷰 전송 오류:', error);
-    }
+    await reviewService.createStoreOnlineReviews(data);
   };
 
   return (
@@ -143,6 +141,7 @@ export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
         </div>
         <div className="w-full flex justify-end">
           <button
+            onClick={handleSubmit}
             className="text-[6.79px] md:text-base mt-[6px] md:mt-4 text-white text-center px-[4.24px]  md:p-[10px]  rounded-[42.23px] bg-[#898989]"
             type="button"
           >
