@@ -28,6 +28,7 @@ export const useTag = () => {
   };
 
   const clearSelectedCategories = () => {
+    setIsMyPreferSelected(false);
     setSelectedCategories(new Set());
   };
 
