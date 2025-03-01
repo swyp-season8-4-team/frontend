@@ -1,8 +1,7 @@
 import MateAPIRepository from "@repo/infrastructures/src/repositories/mateAPIRepository";
 import MateService from "@repo/usecase/src/mateService";
-import MateComment from "../MateComment";
-import MateCommentFilteredMenus from "../MateCommentFilterMenus";
 import { MateReplyProvider } from "../../_contexts/MateReplyContext";
+import MateComment from "../MateComment";
 
 const mateService = new MateService({
   mateRepository: new MateAPIRepository(), 
@@ -22,13 +21,10 @@ export default async function MateCommentListSection({ mateId }: Props) {
   if (replyList.length === 0) {
     return null;
   }
-
-  console.info(replyList);
   
   return (
-    <section className="border rounded-[10px] bg-white px-2 py-2">
+    <section className="flex flex-col border rounded-[10px] bg-white px-4 py-2 gap-2">
       <MateReplyProvider initialReplyList={replyList} initialIsLast={isLast} initialCounts={replyList.length}>
-        {/* <MateCommentFilteredMenus /> */}
         {replyList.map((reply) => (
           <MateComment key={reply.mateReplyId} mateReply={reply} />
         ))}

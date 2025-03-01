@@ -3,9 +3,11 @@ import type { Gender } from "./user";
 
 export type MateCategory = '친목도모' | '사진맛집' | '카공모임' | '건강맛집' | '빵지순례' | '카페투어';
 
+export type MateApplyStatus = 'PENDING' | 'NONE' | 'APPROVED' | 'REJECTED' | 'BANNED';
+
 // FIXME: Raw Data 파일 분리
 export interface RawMate {
-  applyStatus: string;
+  applyStatus: MateApplyStatus;
   mateUuid: string;
   storeId?: string;
   userUuid: string;
@@ -84,6 +86,10 @@ export interface MateCreateRequest {
   content: string;
   recruit: boolean;
   mateCategoryId: string;
+}
+
+export interface RawMateApplyRequest {
+  userUuid: string;
 }
 
 export interface MateApplyRequest {
@@ -215,6 +221,7 @@ export interface MateWriteRequest {
 
 export interface MateRepository {
   applyMate(data: BaseRequestData<MateApplyRequest>): Promise<unknown>; // 모임 참여
+  cancelApplyMate(data: BaseRequestData<MateApplyRequest>): Promise<unknown>; // 모임 참여 취소
   leave(data: BaseRequestData<MateLeaveRequest>): Promise<unknown>; // 모임 탈퇴
   acceptMyTeamMember(data: BaseRequestData<MateAcceptRequest>): Promise<unknown>; // 팀 멤버 수락
   rejectMyTeamMember(data: BaseRequestData<MateRejectRequest>): Promise<unknown>; // 팀 멤버 거절
@@ -234,5 +241,5 @@ export interface MateRepository {
   getReply(data: BaseRequestData<MateReplyUpdateRequest>): Promise<MateReply>; // 모임 댓글 조회
   getReplyList(data: BaseRequestData<GetMateReplyListRequest>): Promise<GetMateReplyListResponse>; // 모임 댓글 목록 조회
   getSavedMateList(data: BaseRequestData<MateListRequest>): Promise<Mate[]>; // 저장한 모임 목록 조회
-  write(data: BaseRequestData<MateWriteRequest>): Promise<Mate>; // 모임 생성(글쓰기)
+  write(data: BaseRequestData<MateWriteRequest>): Promise<Mate>; // 모임 생성 및 수정(글쓰기)
 }

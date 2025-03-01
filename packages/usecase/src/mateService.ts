@@ -1,9 +1,15 @@
-import type { GetMateReplyListRequest, GetMateReplyListResponse, Mate, MateAcceptRequest, MateAllListResponse, MateApplyRequest, MateCreateRequest, MateListRequest, MateRejectRequest, MateReplyRequest, MateRepository, MateRequest, MateSaveRequest, MateUpdateRequest, MateWriteRequest } from "@repo/entity/src/mate";
+import type { AuthRepository } from "@repo/entity/src/auth";
+import type { GetMateReplyListRequest, GetMateReplyListResponse, Mate, MateAcceptRequest, MateAllListResponse, MateApplyRequest, MateCreateRequest, MateFireRequest, MateListRequest, MateRejectRequest, MateReplyRequest, MateRepository, MateRequest, MateSaveRequest, MateUpdateRequest, MateWriteRequest } from "@repo/entity/src/mate";
 
 export default class MateService {
+  private readonly authRepository: AuthRepository | null;
   private readonly mateRepository: MateRepository | null;
   
-  constructor({ mateRepository }: { mateRepository: MateRepository }) {
+  constructor(
+    { authRepository, mateRepository }:
+    { authRepository?: AuthRepository, mateRepository?: MateRepository }
+  ) {
+    this.authRepository = authRepository ?? null;
     this.mateRepository = mateRepository ?? null;
   }
 
@@ -13,6 +19,26 @@ export default class MateService {
     }
 
     const response = await this.mateRepository.applyMate({ data });
+
+    return response;
+  }
+
+  async cancelApplyMate(data: MateApplyRequest) {
+    if (!this.mateRepository) {
+      throw new Error('mateRepository is not set');
+    }
+
+    const response = await this.mateRepository.cancelApplyMate({ data });
+
+    return response;
+  }
+
+  async fireMyTeamMember(data: MateFireRequest): Promise<unknown> {
+    if (!this.mateRepository) {
+      throw new Error('mateRepository is not set');
+    }
+
+    const response = await this.mateRepository.fireMyTeamMember({ data });
 
     return response;
   }
@@ -32,7 +58,8 @@ export default class MateService {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.getDetails({ data});
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.mateRepository.getDetails({ data, authorization });
 
     return response;
   }
@@ -52,7 +79,8 @@ export default class MateService {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.getWaitList({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.mateRepository.getWaitList({ data, authorization });
 
     return response;
   }
@@ -117,12 +145,12 @@ export default class MateService {
     return response;
   }
 
-  async write(data: MateWriteRequest): Promise<Mate> {
+  async write(data: MateWriteRequest, isNew: boolean): Promise<Mate> {
     if (!this.mateRepository) {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.write({ data });
+    const response = await this.mateRepository.write({ data, method: 'POST' });
 
     return response;
   }

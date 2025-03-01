@@ -10,6 +10,7 @@ import { MateDetailProvider } from "./_contexts/MateDetailContext";
 import MateCommentListSection from "./_components/MateCommentListSection";
 
 const mateService = new MateService({
+  
   mateRepository: new MateAPIRepository(), 
 })
 
@@ -38,19 +39,19 @@ export default async function MateDetailPage({ params }: WithParams) {
   console.info(mate);
 
   return (
-    <MateDetailProvider mate={mate}>
-      <main className="flex flex-col h-[calc(100dvh - 52px)] px-4 gap-4 bg-[#f6f6f6]">
+    <main className="flex flex-col h-[calc(100dvh - 52px)] px-4 gap-4 bg-[#f6f6f6]">
+      <MateDetailProvider mate={mate}>
         <MatePostSection mate={mate} replyCount={waitList.length} />
         
         <MyMateDetailSection mate={mate}>
-          {/* 댓글 섹션 */}
           <div className="px-4">
             <CurrentApplyList waitList={waitList} />
           </div>
         </MyMateDetailSection>
-        <MateCommentListSection mateId={mateId} />
-        <CommentForm />
-      </main>
-    </MateDetailProvider>
+      </MateDetailProvider>
+      
+      <MateCommentListSection mateId={mateId} />
+      {mate.applyStatus === 'APPROVED' && <CommentForm />}
+    </main>
   );
 }

@@ -2,14 +2,14 @@
 
 import { useContext, useMemo, useRef, useState } from 'react';
 // import { ChevronLeft } from 'lucide-react';
-import IconChevronDown from '@repo/design-system/components/icons/IconChevronDown';
-import { useRouter } from 'next/navigation';
-import MateService from '@repo/usecase/src/mateService';
-import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
 import { UserContext } from '@/contexts/UserContext';
-import type { MateCategory } from '@repo/entity/src/mate';
+import IconChevronDown from '@repo/design-system/components/icons/IconChevronDown';
+import type { Mate, MateCategory } from '@repo/entity/src/mate';
+import { NavigationPathGroup } from '@repo/entity/src/navigation';
 import MateConverter from '@repo/infrastructures/src/mappers/mateConverter';
-import { NavigationPathGroup, NavigationPathname } from '@repo/entity/src/navigation';
+import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
+import MateService from '@repo/usecase/src/mateService';
+import { useRouter } from 'next/navigation';
 
 const CATEGORIES: MateCategory[] = ['친목도모', '사진맛집', '카공모임', '건강맛집', '빵지순례', '카페투어'];
 
@@ -18,18 +18,22 @@ const mateService = new MateService({
   mateRepository: new MateAPIRepository(),
 })
 
-export default function MateWriteForm() {
+interface Props {
+  initialMate?: Mate;
+}
+
+export default function MateWriteForm({ initialMate }: Props) {
   const router = useRouter();
 
   const { user } = useContext(UserContext);
 
-  const [title, setTitle] = useState('');
-  const [space, setSpace] = useState('');
-  const [content, setContent] = useState('');
+  const [title, setTitle] = useState(initialMate?.title ?? '');
+  const [space, setSpace] = useState(initialMate?.place?.placeName ?? '');
+  const [content, setContent] = useState(initialMate?.content ?? '');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<MateCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<MateCategory | null>(initialMate?.mateCategory ?? null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
-  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(initialMate?.mateImage ?? null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -86,7 +90,8 @@ export default function MateWriteForm() {
         latitude: null,
         longitude: null,
       },
-    })
+      ...(uploadFile && { imageFile: uploadFile }),
+    }, !initialMate)
     
     router.replace(`${NavigationPathGroup.MateDetail}${id}`);
   };

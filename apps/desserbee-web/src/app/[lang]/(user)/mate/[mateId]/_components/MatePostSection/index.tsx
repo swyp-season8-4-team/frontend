@@ -1,13 +1,12 @@
 import DefaultMaleAvatar from '@/assets/images/image-default-male-profile.png';
 import type { Mate } from "@repo/entity/src/mate";
-import { NavigationPathname } from "@repo/entity/src/navigation";
 import MateAPIRepository from "@repo/infrastructures/src/repositories/mateAPIRepository";
 import MateService from "@repo/usecase/src/mateService";
 import { formatDate } from "@repo/utility/src/date";
 import Image from "next/image";
-import Link from "next/link";
 import MateApplyState from "../MateApplyState";
 import MateDetailSeeMoreButton from '../MateDetailSeeMoreButton';
+import MatePostActions from '../MatePostActions';
 
 const mateService = new MateService({
   mateRepository: new MateAPIRepository(), 
@@ -31,15 +30,15 @@ export default async function MatePostSection({ mate, replyCount }: Props) {
 
   return (
     <section className="border rounded-[10px] bg-[#ffffff] px-2 py-2">
-      <div className="flex items-center justify-between px-4 py-2">
+      <div className="flex items-center justify-between px-4 py-2 gap-6">
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 text-[#9F9F9F] text-[10px] font-semibold tracking-[-0.3px]" >
+          <div className="flex items-center gap-2 text-[#9F9F9F] text-[14px] font-semibold tracking-[-0.3px]" >
             <span className="">{mateCategory}</span>
             <span className="">{'>'}</span>
           </div>
-          <span className="text-[#393939] text-[10px] font-semibold leading-normal tracking-[-0.3px]">{title}</span>
+          <span className="text-[#393939] text-[14px] font-semibold leading-normal tracking-[-0.3px]">{title}</span>
         </div>
-        <MateApplyState />
+        <MateApplyState myTeamMembers={myTeamMembers}/>
       </div>
 
       {/* 게시글 내용 */}
@@ -65,33 +64,32 @@ export default async function MatePostSection({ mate, replyCount }: Props) {
           </div>
         </div>
 
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <p className="mb-2">장소: {place?.placeName}</p>
           <Link href={`${NavigationPathname.Map}?latitude=${place?.latitude}&longitude=${place?.longitude}`}>이 가게 위치 보러가기</Link>
-        </div>
+        </div> */}
         
         <div className="text-gray-700 mb-6">
           <p className="text-[#393939] text-[12px] leading-normal tracking-[-0.27px]">{content}</p>
         </div>
 
         {/* 이미지 */}
-        <div className="mb-4">
-          <Image
-            src={!!mateImage ? mateImage : '/default-post-image.png'}
-            alt="post image"
-            width={800}
-            height={400}
-            className="w-full rounded-lg"
-          />
-        </div>
+        {!!mateImage && (
+          <div className="mb-4">
+            <Image
+              src={mateImage}
+              alt="post image"
+              width={800}
+              height={400}
+              className="w-full rounded-lg"
+            />
+          </div>
+        )}
 
         {/* 액션 버튼 */}
-        <div className="flex gap-4 items-start">
-          <span className="py-2 text-gray-700 rounded-md">수정하기</span>
-          <span className="py-2 text-gray-700 rounded-md">삭제하기</span>
-        </div>
+        <MatePostActions mate={mate}/>
 
-        <div className="flex items-center gap-2 py-4">
+        {/* <div className="flex items-center gap-2 py-4">
           <div className="w-8 h-8 rounded-full overflow-hidden">
             <Image
               src={!!profileImage ? profileImage : DefaultMaleAvatar}
@@ -108,7 +106,7 @@ export default async function MatePostSection({ mate, replyCount }: Props) {
             <span>{nickname}님의 게시물 더보기</span>
             <span className="text-gray-400">›</span>
           </Link>
-        </div>
+        </div> */}
       </div>
     </section>
   )

@@ -13,7 +13,7 @@ interface HeaderProp extends WithChildren, WithClassName {
 export function Header({ title, fontClass, children, backButton, searchIcon }: HeaderProp) {
   return (
     <header className="top-0 sticky">
-      <div className="flex justify-between items-center bg-primary px-[18px] py-[21px] pt-[13px] pb-3 w-full text-[22px]">
+      <div className="flex justify-between items-center bg-primary px-[16px] py-[21px] pt-[13px] pb-3 w-full text-[22px]">
         <div className="flex items-center gap-[2px]">
           {backButton}
           <div className="flex justify-center items-center w-[27px] h-[26.61px]">
