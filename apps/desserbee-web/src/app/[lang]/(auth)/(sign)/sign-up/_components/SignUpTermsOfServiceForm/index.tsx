@@ -17,17 +17,18 @@ export default function SignUpTermsOfServiceForm() {
   const [agreements, setAgreements] = useState({
     all: false,
     terms: false,
-    privacy: false,
     location: false,
     marketing: false,
   });
+
+  // 필수 약관 동의 여부 확인
+  const isRequiredAgreementsChecked = agreements.terms && agreements.location;
 
   const handleAllCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { checked } = e.target;
     setAgreements({
       all: checked,
       terms: checked,
-      privacy: checked,
       location: checked,
       marketing: checked,
     });
@@ -54,7 +55,7 @@ export default function SignUpTermsOfServiceForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (agreements.terms && agreements.privacy && agreements.location && gender) {
+    if (isRequiredAgreementsChecked && gender) {
       try {
         setIsLoading(true);
 
@@ -111,7 +112,22 @@ export default function SignUpTermsOfServiceForm() {
         <div className="space-y-4">
           <label className="flex items-center justify-between w-full cursor-pointer">
             <div>
-              <Link href={NavigationPathname.TermsOfService} className="underline">이용약관</Link> 및 <Link href={NavigationPathname.PrivacyPolicy} className="underline">개인정보처리방침</Link> (필수)
+              <Link 
+                href={NavigationPathname.TermsOfService} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="underline"
+              >
+                이용약관
+              </Link> 및 
+              <Link 
+                href={NavigationPathname.PrivacyPolicy} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="underline"
+              >
+                개인정보처리방침
+              </Link> (필수)
             </div>
             <div className="relative">
               <input
@@ -133,7 +149,14 @@ export default function SignUpTermsOfServiceForm() {
 
           <label className="flex items-center justify-between w-full cursor-pointer">
             <div>
-              <Link href={NavigationPathname.LocationBasedFeatures} className="underline">위치기반서비스</Link> 이용약관 (필수)
+              <Link 
+                href={NavigationPathname.LocationBasedFeatures} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="underline"
+              >
+                위치기반서비스
+              </Link> 이용약관 (필수)
             </div>
             <div className="relative">
               <input
@@ -155,7 +178,14 @@ export default function SignUpTermsOfServiceForm() {
 
           <label className="flex items-center justify-between w-full cursor-pointer">
             <div>
-              <Link href="/terms/marketing" className="underline">마케팅 활용</Link> 동의 (선택)
+              <Link 
+                href="/terms/marketing" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="underline"
+              >
+                마케팅 활용
+              </Link> 동의 (선택)
             </div>
             <div className="relative">
               <input
@@ -180,11 +210,11 @@ export default function SignUpTermsOfServiceForm() {
         <Button
           type="submit"
           className={`mt-8 py-4 rounded-[100px] ${
-            agreements.terms && agreements.privacy && agreements.location
+            isRequiredAgreementsChecked
               ? 'bg-[#F5B01C] text-white'
               : 'bg-gray-200 text-gray-500'
           }`}
-          disabled={!agreements.terms || !agreements.privacy || !agreements.location}
+          disabled={!isRequiredAgreementsChecked}
           isLoading={isLoading}
         >
           회원가입 완료

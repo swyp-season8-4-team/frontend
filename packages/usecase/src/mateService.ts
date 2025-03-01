@@ -1,4 +1,4 @@
-import type { MateAcceptRequest, MateAllListResponse, MateApplyRequest, MateCreateRequest, MateListRequest, MateRejectRequest, MateRepository, MateRequest, MateSaveRequest, MateUpdateRequest } from "@repo/entity/src/mate";
+import type { Mate, MateAcceptRequest, MateAllListResponse, MateApplyRequest, MateCreateRequest, MateListRequest, MateRejectRequest, MateRepository, MateRequest, MateSaveRequest, MateUpdateRequest, MateWriteRequest } from "@repo/entity/src/mate";
 
 export default class MateService {
   private readonly mateRepository: MateRepository | null;
@@ -113,6 +113,16 @@ export default class MateService {
     }
     
     const response = await this.mateRepository.rejectMyTeamMember({ data });
+
+    return response;
+  }
+
+  async write(data: MateWriteRequest): Promise<Mate> {
+    if (!this.mateRepository) {
+      throw new Error('mateRepository is not set');
+    }
+
+    const response = await this.mateRepository.write({ data });
 
     return response;
   }

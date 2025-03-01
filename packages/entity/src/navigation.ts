@@ -3,11 +3,12 @@ export enum NavigationLanguageGroup {
 }
 
 export enum NavigationPathGroup {
-  OAuthCallback = '/sign-in/oauth/callback/',
+  OAuthCallback = '/oauth/callback/',
   SignIn = '/sign-in/',
   Map = '/map/',
   Store = '/store/',
   Preference = '/preference/',
+  MateDetail = '/mate/',
 }
 
 export enum NavigationPathname {
@@ -19,6 +20,7 @@ export enum NavigationPathname {
   CommunityDessertMate = '/community/dessert/mate',
   CommunityDessertReview = '/community/dessert/review',
   MateWrite = '/mate/write',
+  
   
   My = '/my',
   MySetting = '/my/setting',

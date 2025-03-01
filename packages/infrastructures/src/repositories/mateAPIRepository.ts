@@ -18,11 +18,13 @@ import type {
   MateRequest,
   MateSaveRequest,
   MateUpdateRequest,
+  MateWriteRequest,
   RawMate,
   RawMateAcceptRequest,
   RawMateRejectRequest,
   RawMateReply,
   RawMateReplyRequest,
+  RawMateWriteReuqest,
 } from '@repo/entity/src/mate';
 import fetch from '@repo/api/src/fetch';
 import APIRepository from './apiRepository';
@@ -363,5 +365,31 @@ export default class MateAPIRepository
     });
     
     return response.map((mate) => this.mateConverter.convertRawToMate(mate));
+  }
+
+  async write({ data }: BaseRequestData<MateWriteRequest>): Promise<Mate> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+
+    const { imageFile, ...rest } = data;
+
+    const formData = new FormData();
+
+    if (!!imageFile) {
+      formData.append('image', imageFile);
+    }
+
+    const response = await fetch<RawMateWriteReuqest, RawMate>({
+      data: this.mateConverter.convertMateWriteToRaw(rest),
+      method: 'POST',
+      url: `${this.endpoint}/mates`,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      formData
+    });
+
+    return this.mateConverter.convertRawToMate(response);
   }
 }

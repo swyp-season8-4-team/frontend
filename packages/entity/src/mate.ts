@@ -1,6 +1,6 @@
 import type { BaseRequestData } from "./appMetadata";
 
-export type MateCategory = '친목도모' | '인생사진' | '카공모임' | '건강맛집' | '빵지순례' | '카공모임 ';
+export type MateCategory = '친목도모' | '사진맛집' | '카공모임' | '건강맛집' | '빵지순례' | '카페투어';
 
 // FIXME: Raw Data 파일 분리
 export interface RawMate {
@@ -168,6 +168,37 @@ export interface MateReplyUpdateRequest extends MateReplyRequest {
   replyId: string;
 }
 
+export interface RawMateWriteReuqest {
+  userUuid: string;
+  title: string;
+  content: string;
+  recruitYn: boolean;
+  mateCategoryId: number;
+  place: {
+    placeName: string;
+    address: string | null;
+    latitude: number | null;
+    longitude: number | null;
+  };
+}
+
+export interface MateWriteRequest {
+  userId: string;
+  title: string;
+  content: string;
+  recruit: boolean;
+  mateCategoryId: number;
+  place: {
+    placeName: string;
+    address: string | null;
+    latitude: number | null;
+    longitude: number | null;
+  };
+  imageFile?: File;
+}
+
+
+
 export interface MateRepository {
   applyMate(data: BaseRequestData<MateApplyRequest>): Promise<unknown>; // 모임 참여
   leave(data: BaseRequestData<MateLeaveRequest>): Promise<unknown>; // 모임 탈퇴
@@ -189,4 +220,5 @@ export interface MateRepository {
   getReply(data: BaseRequestData<MateReplyUpdateRequest>): Promise<MateReply>; // 모임 댓글 조회
   getReplyList(data: BaseRequestData<GetMateReplyListRequest>): Promise<MateReply[]>; // 모임 댓글 목록 조회
   getSavedMateList(data: BaseRequestData<MateListRequest>): Promise<Mate[]>; // 저장한 모임 목록 조회
+  write(data: BaseRequestData<MateWriteRequest>): Promise<Mate>; // 모임 생성(글쓰기)
 }

@@ -1,25 +1,34 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useContext, useMemo, useRef, useState } from 'react';
 // import { ChevronLeft } from 'lucide-react';
 import IconChevronDown from '@repo/design-system/components/icons/IconChevronDown';
 import { useRouter } from 'next/navigation';
 import MateService from '@repo/usecase/src/mateService';
 import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
+import { UserContext } from '@/contexts/UserContext';
+import type { MateCategory } from '@repo/entity/src/mate';
+import MateConverter from '@repo/infrastructures/src/mappers/mateConverter';
+import { NavigationPathGroup, NavigationPathname } from '@repo/entity/src/navigation';
 
-const CATEGORIES = ['친목도모', '사진맛집', '카공모임', '건강맛집', '빵지순례', '카페투어'];
+const CATEGORIES: MateCategory[] = ['친목도모', '사진맛집', '카공모임', '건강맛집', '빵지순례', '카페투어'];
 
+const mateConverter = new MateConverter();
 const mateService = new MateService({
   mateRepository: new MateAPIRepository(),
 })
 
 export default function MateWriteForm() {
   const router = useRouter();
+
+  const { user } = useContext(UserContext);
+
   const [title, setTitle] = useState('');
   const [space, setSpace] = useState('');
   const [content, setContent] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<MateCategory | null>(null);
+  const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -27,15 +36,14 @@ export default function MateWriteForm() {
   // 모든 필수 필드가 채워졌는지 확인
   const isFormValid = useMemo(() => {
     return (
-      selectedCategory !== null && 
-      selectedCategory !== '주제' && 
+      selectedCategory !== null &&
       title.trim() !== '' && 
       space.trim() !== '' && 
       content.trim() !== ''
     );
   }, [selectedCategory, title, space, content]);
 
-  const handleCategorySelect = (category: string) => {
+  const handleCategorySelect = (category: MateCategory) => {
     setSelectedCategory(category);
     setIsDropdownOpen(false);
   };
@@ -55,21 +63,38 @@ export default function MateWriteForm() {
     // 새 이미지가 선택되었으면 URL 생성
     if (file) {
       const imageUrl = URL.createObjectURL(file);
+      setUploadFile(file);
       setUploadedImage(imageUrl);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: 폼 제출 로직 구현
+    if (!user) {
+      return;
+    }
+
+    const { id } = await mateService.write({
+      userId: user?.id,
+      title,
+      content,
+      recruit: true,
+      mateCategoryId: mateConverter.convertMateCategoryToId(selectedCategory),
+      place: {
+        placeName: space,
+        address: null,
+        latitude: null,
+        longitude: null,
+      },
+    })
     
-    
-    // router.replace(NavigationPathname.CommunityDessertMate);
+    router.replace(`${NavigationPathGroup.MateDetail}${id}`);
   };
 
   const handleRemoveImage = () => {
     if (uploadedImage) {
       URL.revokeObjectURL(uploadedImage);
+      setUploadFile(null);
       setUploadedImage(null);
       
       // 파일 입력 초기화
