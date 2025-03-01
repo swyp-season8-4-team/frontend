@@ -23,6 +23,7 @@ import type {
   RawGetMateReplyListResponse,
   RawMate,
   RawMateAcceptRequest,
+  RawMateApplyRequest,
   RawMateRejectRequest,
   RawMateReply,
   RawMateReplyRequest,
@@ -45,12 +46,29 @@ export default class MateAPIRepository
 
     const { mateId, userId } = data;
 
-    const response = await fetch<MateApplyRequest, unknown>({
+    const response = await fetch<RawMateApplyRequest, unknown>({
       data: {
-        mateId,
-        userId,
+        userUuid: userId,
       },
       method: 'POST',
+      url: `${this.endpoint}/mates/${mateId}/apply`,
+    });
+
+    return response;
+  }
+
+  async cancelApplyMate({ data }: BaseRequestData<MateApplyRequest>): Promise<unknown> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+    
+    const { mateId, userId } = data;
+
+    const response = await fetch<RawMateApplyRequest, unknown>({
+      data: {
+        userUuid: userId,
+      },
+      method: 'DELETE',
       url: `${this.endpoint}/mates/${mateId}/apply`,
     });
 
@@ -90,7 +108,7 @@ export default class MateAPIRepository
     return response.map((mate) => this.mateConverter.convertRawToMate(mate));
   }
 
-  async getWaitList({ data }: BaseRequestData<MateRequest>): Promise<Mate[]> {
+  async getWaitList({ data, authorization }: BaseRequestData<MateRequest>): Promise<Mate[]> {
     if (!data) {
       throw new Error('data is required');
     }
@@ -98,6 +116,11 @@ export default class MateAPIRepository
     const { id } = data;
 
     const response = await fetch<void, RawMate[]>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'GET',
       url: `${this.endpoint}/mates/${id}/pending`,
     });
@@ -184,12 +207,17 @@ export default class MateAPIRepository
     };
   }
 
-  async getDetails({ data }: BaseRequestData<MateRequest>): Promise<Mate> {
+  async getDetails({ data, authorization }: BaseRequestData<MateRequest>): Promise<Mate> {
     if (!data) {
       throw new Error('data is required');
     }
 
     const response = await fetch<MateRequest, RawMate>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'GET',
       url: `${this.endpoint}/mates/${data.id}`,
     });
@@ -372,9 +400,13 @@ export default class MateAPIRepository
     return response.map((mate) => this.mateConverter.convertRawToMate(mate));
   }
 
-  async write({ data }: BaseRequestData<MateWriteRequest>): Promise<Mate> {
+  async write({ data, method }: BaseRequestData<MateWriteRequest>): Promise<Mate> {
     if (!data) {
       throw new Error('data is required');
+    }
+
+    if (!method) {
+      throw new Error('method is required');
     }
 
     const { imageFile, ...rest } = data;
@@ -394,20 +426,18 @@ export default class MateAPIRepository
     // JSON 데이터를 문자열로 변환하여 FormData에 추가
     formData.append('request', new Blob([JSON.stringify(requestData)], { type: 'application/json' }));
 
-    if (!!imageFile) {
+    if (!!imageFile) { 
       formData.append('mateImage', imageFile);
     }
 
     const response = await fetch<RawMateWriteReuqest, RawMate>({
-      method: 'POST',
+      method,
       url: `${this.endpoint}/mates`,
       headers: {
         'Content-Type': 'multipart/form-data',
       },
       formData
     });
-
-    console.log(response);
 
     return this.mateConverter.convertRawToMate(response);
   }

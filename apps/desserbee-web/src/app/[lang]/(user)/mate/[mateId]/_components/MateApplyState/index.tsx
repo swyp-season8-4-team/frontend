@@ -1,12 +1,18 @@
 'use client';
 
 import { UserContext } from "@/contexts/UserContext";
+import type { Mate } from "@repo/entity/src/mate";
 import { useContext } from "react";
 import MateApplyButton from "../MateApplyButton";
+
 import { MateDetailContext } from "../../_contexts/MateDetailContext";
+import MateApplyStateCurrentMemberListButton from "./MateApplyStateCurrentMemberListButton";
 
+interface Props {
+  myTeamMembers: Mate[];
+}
 
-export default function MateApplyState() {
+export default function MateApplyState({ myTeamMembers }: Props) {
   const { user } = useContext(UserContext);
   const { mate } = useContext(MateDetailContext);
 
@@ -21,6 +27,6 @@ export default function MateApplyState() {
   }
 
   return (
-    <span className="px-4 py-1 text-sm text-center text-white bg-[#F5B01C] rounded-full">참여 인원</span>
-  );
+    <MateApplyStateCurrentMemberListButton myTeamMembers={myTeamMembers} />
+  )
 }

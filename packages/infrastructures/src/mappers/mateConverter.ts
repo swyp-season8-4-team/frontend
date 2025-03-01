@@ -9,7 +9,7 @@ export default class MateConverter {
       title: rawMate.title,
       content: rawMate.content,
       nickname: rawMate.nickname,
-      mateImage: rawMate.mateImage.length > 0 ? rawMate.mateImage[0] : '',
+      ...(rawMate.mateImage && { mateImage: rawMate.mateImage.length > 0 ? rawMate.mateImage[0] : '' }),
       mateCategory: rawMate.mateCategory,
       place: rawMate.place,
       profileImage: rawMate.profileImage.length > 0 ? rawMate.profileImage[0] : '',

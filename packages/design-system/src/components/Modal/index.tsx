@@ -36,10 +36,12 @@ export default function Modal({ visible, buttons, title, onClose }: Props) {
             <IconX />
           </IconButton>
         </div>
-        <span className="text-[#393939] text-center font-pretendard text-[26px] font-normal leading-[130%] tracking-[-0.78px]">
+        <span className="text-[#393939] text-center text-[16px] font-normal leading-[130%] tracking-[-0.48px]">
           {title}
         </span>
-        {buttons}
+        <div className="flex flex-col gap-2 text-white text-[14px] font-semibold leading-[120%] tracking-[-0.42px]">
+          {buttons}
+        </div>
       </div>
     </ModalContainer>
   );

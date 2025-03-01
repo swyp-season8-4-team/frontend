@@ -23,7 +23,10 @@ export default async function CommunityMatePage({ searchParams }: WithSearchPara
           <div className="flex justify-between relative mb-6">
             <CommunityMateTitle />
             <div className="flex gap-2">
-              <Link className="px-[10.641px] py-[5.32px] rounded-[53.204px] bg-[#898989] text-sm whitespace-nowrap flex justify-center items-center gap-[10.641px] w-[43px] h-[19px] flex-shrink-0 text-[9.577px] text-white font-semibold leading-[130%] tracking-[-0.287px]" href={NavigationPathname.MateWrite}>
+              <Link 
+                className="px-3 py-1.5 rounded-[53.204px] bg-[#898989] whitespace-nowrap flex justify-center items-center w-[60px] h-[26px] flex-shrink-0 text-[12px] text-white font-semibold leading-[130%] tracking-[-0.287px]" 
+                href={NavigationPathname.MateWrite}
+              >
                 글쓰기
               </Link>
               <SeeMoreIconButton />

@@ -26,7 +26,7 @@ export default function CommentForm() {
     if (!user) {
       return;
     }
-    
+
     if (!comment.trim()) {
       return;
     }
@@ -38,7 +38,9 @@ export default function CommentForm() {
         userId: user?.id,
         content: comment,
       });
+
       await revalidatePathAction(RouteGroup.MateDetail, 'page');
+      
       setComment('');
     } catch (error) {
       console.error('댓글 등록 실패:', error);
