@@ -20,17 +20,6 @@ export default async function signOutAction() {
 
   const cookieList = await cookies();
 
-  const domain =
-    process.env.NEXT_PUBLIC_APP_ENV !== 'local'
-      ? process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN
-      : '';
-
-  cookieList.set('accessToken', '', {
-    domain,
-    maxAge: -1,
-  });
-  cookieList.set('refreshToken', '', {
-    domain,
-    maxAge: -1,
-  });
+  cookieList.delete('accessToken');
+  cookieList.delete('refreshToken');
 }
