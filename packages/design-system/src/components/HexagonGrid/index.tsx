@@ -51,10 +51,10 @@ function Hexagon({ className, content, imgSrc }: HexagonProps) {
 
 export function HexagonGrid({
   contents,
-  ownerPickImages,
+  storeImages,
 }: {
   contents: string[];
-  ownerPickImages?: string[];
+  storeImages?: string[];
 }) {
   const hexagonConfig: HexagonConfig[] = [
     { type: 'text', position: 'top-[10%] left-0' },
@@ -73,8 +73,8 @@ export function HexagonGrid({
           className={config.position}
           content={config.type === 'text' ? contents[index] : undefined}
           imgSrc={
-            config.type === 'image' && ownerPickImages
-              ? ownerPickImages[index - 3]
+            config.type === 'image' && storeImages
+              ? storeImages[index - 3]
               : undefined
           }
         />

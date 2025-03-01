@@ -1,15 +1,17 @@
 import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 import Image from 'next/image';
 
-type StorePreviewPicListProps = Pick<StoreSummaryInfoData, 'storeImages'>;
+type StorePreviewPicListProps = Pick<StoreSummaryInfoData, 'ownerPickImages'>;
 
-export function StorePreviewPicList({ storeImages }: StorePreviewPicListProps) {
-  if (!storeImages) return;
+export function StorePreviewPicList({
+  ownerPickImages,
+}: StorePreviewPicListProps) {
+  if (!ownerPickImages) return;
 
   return (
     <div className="flex gap-[9.4px] md:gap-[22px]">
-      {storeImages.map((image) => (
-        <div key={image} className="w-full aspect-[165/161]">
+      {ownerPickImages.map((image) => (
+        <div key={image} className="w-full aspect-square">
           <Image
             className="w-full h-full object-cover"
             src={image}
@@ -18,9 +20,6 @@ export function StorePreviewPicList({ storeImages }: StorePreviewPicListProps) {
             height={162}
           />
         </div>
-      ))}
-      {Array.from({ length: 4 - storeImages.length }, (_, i) => (
-        <div key={i} className="w-full aspect-[165/161]" />
       ))}
     </div>
   );
