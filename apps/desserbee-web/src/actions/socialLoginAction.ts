@@ -19,7 +19,9 @@ interface ActionData {
 }
 
 export default async function socialLoginAction({ code, provider, next }: ActionData) {
-  const { accessToken } = await authService.socialSignIn({ code, provider });
+  const response = await authService.socialSignIn({ code, provider });
+  console.log(response);
+  const { accessToken } = response;
 
   const cookieList = await cookies();
 
@@ -29,5 +31,5 @@ export default async function socialLoginAction({ code, provider, next }: Action
     sameSite: 'lax',
   });
 
-  redirect(next ?? NavigationPathname.Map);
+  redirect(NavigationPathname.Map);
 }

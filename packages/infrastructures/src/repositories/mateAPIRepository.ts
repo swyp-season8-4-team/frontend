@@ -376,12 +376,20 @@ export default class MateAPIRepository
 
     const formData = new FormData();
 
+    formData.append('title', data.title);
+    formData.append('content', data.content);
+    formData.append('userUuid', data.userId);
+    formData.append('recruitYn', data.recruit.toString());
+    formData.append('mateCategoryId', data.mateCategoryId.toString());
+    formData.append('place', JSON.stringify(data.place));
+
     if (!!imageFile) {
       formData.append('image', imageFile);
     }
 
+    console.log(formData);
+
     const response = await fetch<RawMateWriteReuqest, RawMate>({
-      data: this.mateConverter.convertMateWriteToRaw(rest),
       method: 'POST',
       url: `${this.endpoint}/mates`,
       headers: {
@@ -389,6 +397,8 @@ export default class MateAPIRepository
       },
       formData
     });
+
+    console.log(response);
 
     return this.mateConverter.convertRawToMate(response);
   }

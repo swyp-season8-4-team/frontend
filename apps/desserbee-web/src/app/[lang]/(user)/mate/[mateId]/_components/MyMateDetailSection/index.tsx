@@ -12,9 +12,10 @@ interface Props extends WithChildren {
 export default function MyMateDetailSection({ children, mate }: Props) {
   const { user } = useContext(UserContext);
 
-  // if (user?.id !== mate.userId) {
-  //   return null;
-  // }
+  // 남의 게시물일때
+  if (user?.id !== mate.userId) {
+    return null;
+  }
 
   return (
     <section className="border rounded-[10px] bg-white px-2 py-2">
