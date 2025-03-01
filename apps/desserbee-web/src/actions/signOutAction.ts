@@ -12,11 +12,11 @@ const authService = new AuthService({
 export default async function signOutAction() {
   const headerList = await headers();
   const authorization = headerList.get('authorization');
-
+  console.log('authorization', authorization);
   // 서버에 로그아웃 요청 시도 (토큰이 없어도 쿠키는 삭제해야 함)
   if (authorization) {
     try {
-      await authService.signOut(authorization);
+      // await authService.signOut(authorization);
     } catch (error) {
       console.error('Error during sign out:', error);
       // 서버 로그아웃 실패해도 계속 진행 (쿠키는 삭제해야 함)
