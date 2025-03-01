@@ -59,8 +59,6 @@ export function BottomSheetContainer({
     ownerPickImages: storeSummary.ownerPickImages,
   };
 
-  console.log(storeSummary);
-
   const hexaGridProps = {
     contents: storeSummary.topPreferences,
     storeImages: storeSummary.storeImages,

@@ -1,8 +1,6 @@
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import { DetailContainer } from './_components/(detail)/DetailContainer';
-import AuthService from '@repo/usecase/src/authService';
-import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 import NotFound from '@/app/[lang]/[...not-found]/page';
 // import { storeDetail } from '../../map/_consts/marker';
 
