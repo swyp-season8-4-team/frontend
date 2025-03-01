@@ -150,7 +150,7 @@ export default function SignUpTermsOfServiceForm() {
           <label className="flex items-center justify-between w-full cursor-pointer">
             <div>
               <Link 
-                href={NavigationPathname.LocationBasedFeatures} 
+                href={NavigationPathname.LocationBasedFeaturesTermsOfService} 
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="underline"
@@ -179,7 +179,7 @@ export default function SignUpTermsOfServiceForm() {
           <label className="flex items-center justify-between w-full cursor-pointer">
             <div>
               <Link 
-                href="/terms/marketing" 
+                href={NavigationPathname.MarketingTermsOfService}
                 target="_blank" 
                 rel="noopener noreferrer" 
                 className="underline"
