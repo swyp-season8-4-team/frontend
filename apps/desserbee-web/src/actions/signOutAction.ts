@@ -31,13 +31,13 @@ export default async function signOutAction() {
     secure: isProd,
     sameSite: 'lax',
     domain,
-    maxAge: -1,
+    maxAge: 0,
   });
   cookieList.set('refreshToken', '', {
     httpOnly: true,
     secure: isProd,
     sameSite: 'strict',
     domain,
-    maxAge: -1,
+    maxAge: 0,
   });
 }
