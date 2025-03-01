@@ -3,8 +3,6 @@ import {
   type AuthRepository,
   type JWTTokens,
   type OAuthSignInData,
-  type OAuthSignInResponse,
-  type RawOAuthSignInResponse,
   type ResetPasswordData,
   type ResetPasswordResponse,
   type SignInData,
@@ -13,7 +11,7 @@ import {
   type VerifyEmailData,
   type VerifyEmailRequestData,
   type VerifyEmailRequestResponse,
-  type VerifyEmailResponse,
+  type VerifyEmailResponse
 } from '@repo/entity/src/auth';
 import { NavigationLanguageGroup, NavigationPathGroup } from '@repo/entity/src/navigation';
 import { type StorageRepository } from '@repo/entity/src/storage';
@@ -96,7 +94,7 @@ export default class AuthService {
     return response;
   }
 
-  async socialSignIn(data: OAuthSignInData): Promise<OAuthSignInResponse> {
+  async socialSignIn(data: OAuthSignInData): Promise<SignInResponse> {
     if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }

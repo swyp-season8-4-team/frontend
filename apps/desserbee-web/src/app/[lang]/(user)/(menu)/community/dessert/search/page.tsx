@@ -5,7 +5,7 @@ import { Suspense } from "react";
 
 export default function SearchPage() {
   return (
-    <main className="max-w-screen-md mx-auto h-[calc(100dvh-174.5px)] overflow-hidden flex flex-col">
+    <main className="max-w-screen-md mx-auto h-[calc(100dvh-65px)] overflow-hidden flex flex-col">
       {/* 검색 헤더 */}
       <div className="flex items-center p-4 gap-3">
         <BackButton />

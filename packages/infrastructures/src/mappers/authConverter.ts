@@ -1,7 +1,7 @@
-import type { OAuthSignInResponse, RawOAuthSignInResponse } from "@repo/entity/src/auth";
+import type { SignInResponse, RawSignInResponse } from "@repo/entity/src/auth";
 
 export default class AuthConverter {
-  convertRawOAuthSignInResponse(raw: RawOAuthSignInResponse): OAuthSignInResponse {
+  convertRawSignInResponse(raw: RawSignInResponse): SignInResponse {
     return {
       accessToken: raw.accessToken,
       refreshToken: raw.refreshToken,

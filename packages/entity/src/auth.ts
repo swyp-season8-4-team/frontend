@@ -22,11 +22,19 @@ export interface JWTTokens {
   refreshToken: string;
 }
 
-export interface SignInResponse extends JWTTokens {
+export interface RawSignInResponse extends JWTTokens {
   userUuid: string;
   email: string;
   nickname: string;
-  isPreferencesSet: boolean;
+  preferenceSet: boolean;
+  tokenType: string;
+  expiresIn: number;
+  profileImageUrl: string;
+}
+
+export interface SignInResponse extends Omit<RawSignInResponse, 'userUuid' | 'preferenceSet'> {
+  userId: string;
+  isPreferenceSet: boolean;
 }
 
 export interface SignInData {
@@ -52,23 +60,6 @@ export interface SignUpData extends Omit<SignInData, 'keepLoggedIn'> {
 export interface OAuthSignInData {
   provider: string;
   code: string;
-}
-
-export interface RawOAuthSignInResponse {
-  accessToken: string;
-  refreshToken: string;
-  tokenType: string;
-  expiresIn: number; // 엑세스토큰 만료시간
-  userUuid: string;
-  email: string;
-  nickname: string;
-  profileImageUrl: string;
-  preferenceSet: boolean;
-}
-
-export interface OAuthSignInResponse extends Omit<RawOAuthSignInResponse, 'userUuid' | 'preferenceSet'> {
-  userId: string;
-  isPreferenceSet: boolean;
 }
 
 export interface VerifyEmailRequestData {
@@ -100,7 +91,7 @@ export interface ResetPasswordResponse {
 }
 
 export interface AuthRepository {
-  socialSignIn(data: BaseRequestData<OAuthSignInData>): Promise<OAuthSignInResponse>; // 소셜 로그인
+  socialSignIn(data: BaseRequestData<OAuthSignInData>): Promise<SignInResponse>; // 소셜 로그인
   signIn(data: BaseRequestData<SignInData>): Promise<SignInResponse>; // 일반 로그인
   signUp(data: BaseRequestData<unknown>): Promise<unknown>; // 회원가입
   signOut(data: BaseRequestData<SignOutData>): Promise<void>;
