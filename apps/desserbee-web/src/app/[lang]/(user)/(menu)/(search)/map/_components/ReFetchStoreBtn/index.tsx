@@ -21,7 +21,7 @@ export function ReFetchStoreBtn({
           <IconRetry className="w-full h-full text-[#3374ff] text-xs md:text-lg" />
         </div>
         <div className="text-[#3374ff] text-nowrap semi-bold text-xs md:text-lg">
-          현재 위치 전체 가게 불러오기
+          현 위치에서 새로고침
         </div>
       </div>
     </button>
