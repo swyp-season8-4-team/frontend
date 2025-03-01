@@ -58,7 +58,7 @@ export function BottomSheet({
             ref={bottomSheetRef}
             className={cn(
               'bottom-0 z-bottomSheet fixed select-none',
-              'bg-white px-base pt-[19px] pb-4 rounded-t-base max-w-[768px] w-full',
+              'bg-white px-base pt-[10px] pb-4 rounded-t-base max-w-[768px] w-full',
               'animate-slide-up',
               isDragging
                 ? 'transition-none'
