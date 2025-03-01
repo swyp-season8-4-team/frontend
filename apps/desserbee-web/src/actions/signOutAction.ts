@@ -27,10 +27,10 @@ export default async function signOutAction() {
 
   cookieList.set('accessToken', '', {
     domain,
-    maxAge: -1,
+    maxAge: 0,
   });
   cookieList.set('refreshToken', '', {
     domain,
-    maxAge: -1,
+    maxAge: 0,
   });
 }

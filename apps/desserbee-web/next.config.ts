@@ -1,7 +1,11 @@
 import type { NextConfig } from 'next';
 
-const { NEXT_PUBLIC_USE_API_MOCKING, NEXT_PUBLIC_SERVICE_API_URL } =
+const { NEXT_PUBLIC_USE_API_MOCKING, NEXT_PUBLIC_SERVICE_API_URL, NEXT_PUBLIC_APP_COOKIE_DOMAIN } =
   process.env;
+
+console.info(
+  `env: NEXT_PUBLIC_APP_COOKIE_DOMAIN = ${NEXT_PUBLIC_APP_COOKIE_DOMAIN}`
+);
 
 const NextFunctionConfig = async (phase: any) => {
   console.info(`phase = ${phase}`);

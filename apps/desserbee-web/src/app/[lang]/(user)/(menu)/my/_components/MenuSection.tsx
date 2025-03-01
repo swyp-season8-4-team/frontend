@@ -1,6 +1,5 @@
 'use client';
 
-import signOutAction from '@/actions/signOutAction';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import MyMenuPanel from './MyMenuPanel';
 
@@ -11,9 +10,6 @@ interface MenuItem {
 }
 
 export default function MenuSection() {
-  const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    await signOutAction();
-  };
   
   const menuItems: MenuItem[] = [
     {
@@ -22,8 +18,7 @@ export default function MenuSection() {
     },
     {
       label: '로그아웃',
-      href: NavigationPathname.SignIn,
-      onClick: handleLogout,
+      href: NavigationPathname.SignOut,
     },
   ];
   
