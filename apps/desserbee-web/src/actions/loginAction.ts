@@ -26,16 +26,19 @@ export async function loginAction(formData: FormData): Promise<SignInResponse | 
       keepLoggedIn: false,
     });
 
+    const { accessToken, refreshToken, expiresIn } = response;
+
     const cookieList = await cookies();
     
     // 토큰 저장
-    cookieList.set('accessToken', response.accessToken, {
+    cookieList.set('accessToken', accessToken, {
       httpOnly: true,
       secure: isProd,
       sameSite: 'lax',
+      maxAge: expiresIn,
     });
 
-    cookieList.set('refreshToken', response.refreshToken, {
+    cookieList.set('refreshToken', refreshToken, {
       httpOnly: true,
       secure: isProd,
       sameSite: 'strict',
@@ -45,6 +48,5 @@ export async function loginAction(formData: FormData): Promise<SignInResponse | 
   } catch (error) {
     console.error(error);
     return null;
-    // TODO: error handling
   }
 }

@@ -21,7 +21,7 @@ interface ActionData {
 export default async function socialLoginAction({ code, provider, next }: ActionData) {
   const response = await authService.socialSignIn({ code, provider });
 
-  const { accessToken, refreshToken, userId, isPreferenceSet } = response;
+  const { accessToken, refreshToken, userId, isPreferenceSet, expiresIn } = response;
 
   const cookieList = await cookies();
 
@@ -29,6 +29,7 @@ export default async function socialLoginAction({ code, provider, next }: Action
     httpOnly: true,
     secure: isProd,
     sameSite: 'lax',
+    maxAge: expiresIn,
   });
 
   cookieList.set('refreshToken', refreshToken, {
