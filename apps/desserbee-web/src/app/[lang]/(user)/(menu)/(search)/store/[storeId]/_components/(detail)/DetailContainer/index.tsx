@@ -30,7 +30,7 @@ export function DetailContainer({
   };
 
   const storePicureListProps = {
-    storeImages: storeDetail.storeImages,
+    ownerPickImages: storeDetail.ownerPickImages,
     menuImages: getAllMenuImages(storeDetail.menus),
   };
 

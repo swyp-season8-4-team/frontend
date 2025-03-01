@@ -17,11 +17,14 @@ import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIR
 import { cn } from '@repo/ui/lib/utils';
 import { getIconColor } from '../../../../../map/_utils/iconColor';
 import IconFlowerOutline from '@repo/design-system/components/icons/IconFlowerOutline';
+import { UserContext } from '@/contexts/UserContext';
+import { useRouter } from 'next/navigation';
 
 interface DetailInfoContainerProps extends StoreDetailInfoData {
   parentlistInfo?: ParentSavedListResponse;
 }
 export function DetailInfoContainer({
+  storeUuid,
   name,
   animalYn,
   tumblerYn,
@@ -65,9 +68,13 @@ export function DetailInfoContainer({
 
   const hexagonGridProps = {
     contents: topPreferences,
-    previewImages: storeImages,
+    storeImages,
     ownerPickImages,
   };
+
+  const router = useRouter();
+
+  const { user } = useContext(UserContext);
 
   const { push, pop } = useContext(PortalContext);
 
@@ -82,7 +89,27 @@ export function DetailInfoContainer({
 
     await storeService.updateCouponCount();
   };
-  // const handleListsForSave
+
+  // const handleListsForSave = async () => {
+  //   // if (!parentlistInfo?.listId) return;
+
+  //   const result = await storeService.addStoreInSavedList({
+  //     listId: parentlistInfo?.listId,
+  //     storeUuid: storeUuid,
+  //     userPreferences: user?.preferences as number[],
+  //   });
+
+  //   console.log(result);
+  //   // if (result) {
+  //   //   router.refresh();
+  //   // }
+  // };
+
+  const handleAddListBottomSheetOpen = () => {
+    push('modal', {
+      component: <CouponIsNotReadyModal onClose={closeModal} />,
+    });
+  };
 
   return (
     <div>
@@ -116,7 +143,7 @@ export function DetailInfoContainer({
             </div>
           </div>
         ) : (
-          <button>
+          <button onClick={() => handleAddListBottomSheetOpen()}>
             <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm">
               <div className="w-4 md:w-[37.71px] h-4 md:h-[37.71px]">
                 <IconFlowerOutline

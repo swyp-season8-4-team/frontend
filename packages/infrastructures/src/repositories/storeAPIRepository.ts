@@ -343,12 +343,6 @@ export default class StoreAPIRepository
       typeof userPreferences,
       AddStoreInSavedListResponse
     >({
-      ...(authorization && {
-        headers: {
-          Authorization: authorization,
-          'Content-Type': 'application/json',
-        },
-      }),
       data: userPreferences,
       method: 'POST',
       url,

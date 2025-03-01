@@ -92,10 +92,12 @@ export function StoreInfo({
                               <span>&nbsp;-&nbsp;</span>
                               <span>{closingTime}</span>
                             </div>
-                            <div>
-                              <span>{lastOrderTime}&nbsp;</span>
-                              <span>라스트 오더</span>
-                            </div>
+                            {lastOrderTime && (
+                              <div>
+                                <span>{lastOrderTime}&nbsp;</span>
+                                <span>라스트 오더</span>
+                              </div>
+                            )}
                           </div>
                         ) : (
                           <div className="font-semibold">정기 휴무</div>

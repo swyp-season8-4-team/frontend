@@ -705,7 +705,7 @@ export default class StoreService {
   }
 
   async addStoreInSavedList(
-    params: AddStoreInSavedListRequest & { authorization: string },
+    params: AddStoreInSavedListRequest,
   ): Promise<AddStoreInSavedListResponse> {
     try {
       console.log(
@@ -715,9 +715,8 @@ export default class StoreService {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
-      const { authorization, ...rest } = params;
+      const { ...rest } = params;
       const response = await this.storeRepository.addStoreInSavedList({
-        authorization,
         data: rest,
       });
       console.log(

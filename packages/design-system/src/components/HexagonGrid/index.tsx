@@ -26,7 +26,7 @@ function Hexagon({ className, content, imgSrc }: HexagonProps) {
       )}
     >
       {content && (
-        <div className="absolute inset-0 flex-col justify-center items-center px-1 font-bold text-[10px] text-white md:text-[16.8px] text-center leading-none p">
+        <div className="absolute inset-0 flex-col justify-center items-center px-1 font-bold text-[10px] text-white md:text-[16.8px] text-center leading-none ">
           <div className="flex flex-col justify-center items-center h-full">
             {content.split(' ').map((word, index) => (
               <span key={index} className="block w-full">
@@ -38,10 +38,10 @@ function Hexagon({ className, content, imgSrc }: HexagonProps) {
       )}
 
       {imgSrc && (
-        <div className="absolute inset-0 w-full h-full">
+        <div className="absolute inset-0 w-full h-full overflow-hidden">
           <img
             src={imgSrc}
-            className="[clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)] w-full h-full aspect-square"
+            className="[clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)] w-full h-full object-cover"
           />
         </div>
       )}

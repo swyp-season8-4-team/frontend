@@ -10,9 +10,13 @@ import { cn } from '@repo/ui/lib/utils';
 
 interface OneLineReviewWriteProps {
   storeUuid: string;
+  handleBackToReviewBtnClick?: () => void;
 }
 
-export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
+export function OneLineReviewWrite({
+  storeUuid,
+  handleBackToReviewBtnClick,
+}: OneLineReviewWriteProps) {
   const { user } = useContext(UserContext);
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -61,37 +65,45 @@ export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
 
   return (
     <div className="flex flex-col pb-[15.73px] md:pb-[27px] w-full">
-      <div className="flex justify-start items-center gap-[10px] md:gap-[7px] w-full">
-        <div className="font-semibold text-[8px] md:text-lg">
-          이 장소에 대해 만족하셨나요?
+      <div className="flex justify-between items-center w-full">
+        <div className="flex justify-start items-center gap-[10px] md:gap-[7px] w-full">
+          <div className="font-semibold text-[8px] md:text-lg">
+            이 장소에 대해 만족하셨나요?
+          </div>
+          <div className="flex items-center gap-1">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <div
+                key={star}
+                className="relative w-[15px] md:w-[30px] h-[15px] md:h-[30px]"
+              >
+                <button
+                  className="left-0 z-10 absolute w-1/2 h-full"
+                  onClick={() => setRating(star - 0.5)}
+                />
+                <button
+                  className="right-0 z-10 absolute w-1/2 h-full"
+                  onClick={() => setRating(star)}
+                />
+                <IconHalfStar
+                  className="w-[15px] md:w-[30px] h-[15px] md:h-[30px]"
+                  filled={
+                    rating >= star
+                      ? 'full'
+                      : rating === star - 0.5
+                        ? 'left'
+                        : 'none'
+                  }
+                />
+              </div>
+            ))}
+            <span className="ml-1 text-[8px] md:text-base">{rating}</span>
+          </div>
         </div>
-        <div className="flex items-center gap-1">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <div
-              key={star}
-              className="relative w-[15px] md:w-[30px] h-[15px] md:h-[30px]"
-            >
-              <button
-                className="left-0 z-10 absolute w-1/2 h-full"
-                onClick={() => setRating(star - 0.5)}
-              />
-              <button
-                className="right-0 z-10 absolute w-1/2 h-full"
-                onClick={() => setRating(star)}
-              />
-              <IconHalfStar
-                className="w-[15px] md:w-[30px] h-[15px] md:h-[30px]"
-                filled={
-                  rating >= star
-                    ? 'full'
-                    : rating === star - 0.5
-                      ? 'left'
-                      : 'none'
-                }
-              />
-            </div>
-          ))}
-          <span className="ml-1 text-[8px] md:text-base">{rating}</span>
+        <div
+          onClick={handleBackToReviewBtnClick}
+          className="text-[6px] md:text-base text-nowrap"
+        >
+          리뷰 다시 보러가기
         </div>
       </div>
       <form method="post" encType="multipart/form-data">

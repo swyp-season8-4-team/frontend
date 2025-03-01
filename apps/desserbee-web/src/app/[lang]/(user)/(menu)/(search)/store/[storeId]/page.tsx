@@ -33,12 +33,6 @@ export default async function StoreDetailPage({
       listId: storeDetail.savedListId,
     });
 
-    // const parentListInfo = {
-    //   listId: 121,
-    //   listName: '맛집!@',
-    //   iconColorId: 3,
-    // };
-
     return (
       <DetailContainer
         storeDetail={storeDetails}

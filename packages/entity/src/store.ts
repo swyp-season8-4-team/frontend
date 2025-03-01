@@ -479,7 +479,7 @@ export interface EditSavedListResponse {
 export interface AddStoreInSavedListRequest {
   listId: number;
   storeUuid: string;
-  userPreferences: string[];
+  userPreferences: number[];
 }
 
 export interface AddStoreInSavedListResponse {
@@ -606,7 +606,6 @@ export interface StoreRepository {
   }: BaseRequestData<DeleteSavedListRequest>): Promise<void>;
 
   addStoreInSavedList({
-    authorization,
     data,
   }: BaseRequestData<AddStoreInSavedListRequest>): Promise<AddStoreInSavedListResponse>;
 
