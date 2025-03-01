@@ -1,3 +1,7 @@
 export default async function CommunityDessertReviewPage() {
-  return null;
+  return (
+    <main>
+      
+    </main>
+  )
 }

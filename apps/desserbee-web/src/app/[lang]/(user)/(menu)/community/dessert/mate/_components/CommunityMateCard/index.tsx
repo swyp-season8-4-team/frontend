@@ -1,11 +1,11 @@
+import defaultImage from "@/assets/svg/image-default-mate.svg";
 import Chip from "@repo/design-system/components/Chip";
 import type { Mate } from "@repo/entity/src/mate";
 import { cn } from "@repo/ui/lib/utils";
 import Image from 'next/image';
 import Link from "next/link";
-import { Fragment } from "react";
-import defaultImage from "@/assets/svg/image-default-mate.svg";
 import CommunityMateCardHeartButton from "../CommunityMateCardHeartButton";
+
 interface Props {
   mate: Mate;
 }
@@ -41,7 +41,7 @@ export default function CommunityMateCard({ mate }: Props) {
             <span className="text-gray-500 text-sm">{nickname}</span>
             {recruit && <Link href={`/mate/${mate.id}`}>
               <Chip
-                className={cn("gap-[6.05px] rounded-[75.63px] px-[12.101px] py-[4.538px] text-white",recruit ? "bg-[#FFB700]" : "bg-[#545454]")}
+                className={cn("gap-[6.05px] border-none rounded-[75.63px] px-[12.101px] py-[4.538px] text-white",recruit ? "bg-[#FFB700]" : "bg-[#545454]")}
                 text={'참여하기'}
               />
             </Link>}

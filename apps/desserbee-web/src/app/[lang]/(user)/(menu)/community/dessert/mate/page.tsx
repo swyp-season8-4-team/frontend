@@ -29,7 +29,7 @@ export default async function CommunityMatePage({ searchParams }: WithSearchPara
               >
                 글쓰기
               </Link>
-              <SeeMoreIconButton />
+              {/* <SeeMoreIconButton /> */}
             </div>
           </div>
 
