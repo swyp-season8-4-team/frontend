@@ -376,18 +376,22 @@ export default class MateAPIRepository
 
     const formData = new FormData();
 
-    formData.append('title', data.title);
-    formData.append('content', data.content);
-    formData.append('userUuid', data.userId);
-    formData.append('recruitYn', data.recruit.toString());
-    formData.append('mateCategoryId', data.mateCategoryId.toString());
-    formData.append('place', JSON.stringify(data.place));
+    // request 필드에 JSON 데이터 추가
+    const requestData = {
+      userUuid: rest.userId,
+      title: rest.title,
+      content: rest.content,
+      recruitYn: rest.recruit,
+      mateCategoryId: rest.mateCategoryId,
+      place: rest.place
+    };
+    
+    // JSON 데이터를 문자열로 변환하여 FormData에 추가
+    formData.append('request', new Blob([JSON.stringify(requestData)], { type: 'application/json' }));
 
     if (!!imageFile) {
-      formData.append('image', imageFile);
+      formData.append('mateImage', imageFile);
     }
-
-    console.log(formData);
 
     const response = await fetch<RawMateWriteReuqest, RawMate>({
       method: 'POST',

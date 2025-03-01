@@ -4,6 +4,7 @@ import {
   type JWTTokens,
   type OAuthSignInData,
   type OAuthSignInResponse,
+  type RawOAuthSignInResponse,
   type ResetPasswordData,
   type ResetPasswordResponse,
   type SignInData,

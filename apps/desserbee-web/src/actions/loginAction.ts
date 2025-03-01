@@ -35,6 +35,12 @@ export async function loginAction(formData: FormData): Promise<SignInResponse | 
       sameSite: 'lax',
     });
 
+    cookieList.set('refreshToken', response.refreshToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: 'strict',
+    });
+
     return response;
   } catch (error) {
     console.error(error);

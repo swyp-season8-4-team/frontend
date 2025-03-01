@@ -4,15 +4,18 @@ import { Button } from "@repo/ui/components/button";
 
 interface LoginButtonsProps {
   isLoading?: boolean;
+  isFormValid?: boolean;
 }
 
-export default function LoginButtons({ isLoading = false }: LoginButtonsProps) {
+export default function LoginButtons({ isLoading = false, isFormValid = false }: LoginButtonsProps) {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 mt-4">
       <Button
         type="submit"
-        className="w-full py-[15px] py-3 bg-[#FDB813] text-white rounded-[100px] font-medium text-center font-bold leading-[130%] tracking-[-0.334px]"
-        disabled={isLoading}
+        className={`w-full py-[15px] py-3 rounded-[100px] font-medium text-center font-bold leading-[130%] tracking-[-0.334px] ${
+          isFormValid ? 'bg-[#FDB813] text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+        }`}
+        disabled={isLoading || !isFormValid}
       >
         {isLoading ? (
           <div className="flex items-center justify-center">
@@ -26,10 +29,12 @@ export default function LoginButtons({ isLoading = false }: LoginButtonsProps) {
           "로그인"
         )}
       </Button>
-      <Button
+      {/* <Button
         type="button"
-        className="w-full py-[15px] py-3 bg-[#DE8332] text-white rounded-[100px] font-medium text-center font-bold leading-[130%] tracking-[-0.334px]"
-        disabled={isLoading}
+        className={`w-full py-[15px] py-3 rounded-[100px] font-medium text-center font-bold leading-[130%] tracking-[-0.334px] ${
+          isFormValid ? 'bg-[#DE8332] text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+        }`}
+        disabled={isLoading || !isFormValid}
       >
         {isLoading ? (
           <div className="flex items-center justify-center">
@@ -42,7 +47,7 @@ export default function LoginButtons({ isLoading = false }: LoginButtonsProps) {
         ) : (
           "사장님 로그인"
         )}
-      </Button>
+      </Button> */}
     </div>
   );
 } 

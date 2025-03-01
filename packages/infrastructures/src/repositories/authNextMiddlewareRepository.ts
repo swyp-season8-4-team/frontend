@@ -1,8 +1,11 @@
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { AuthRepository, JWTTokens, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
+import type { AuthRepository, JWTTokens, OAuthSignInData, OAuthSignInResponse, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
 
 export default class AuthNextMiddlewareRepository implements AuthRepository {
   constructor(private readonly headers: Headers) {}
+  socialSignIn(data: BaseRequestData<OAuthSignInData>): Promise<OAuthSignInResponse> {
+    throw new Error('Method not implemented.');
+  }
 
   async getAuthorization(): Promise<string | null> {
     return this.headers.get('authorization') ?? null;
@@ -12,9 +15,6 @@ export default class AuthNextMiddlewareRepository implements AuthRepository {
     throw new Error('Method not implemented.');
   }
   verifyEmail(data: BaseRequestData<VerifyEmailData>): Promise<VerifyEmailResponse> {
-    throw new Error('Method not implemented.');
-  }
-  socialSignIn(): Promise<JWTTokens> {
     throw new Error('Method not implemented.');
   }
   refreshAccessToken(): Promise<JWTTokens> {
