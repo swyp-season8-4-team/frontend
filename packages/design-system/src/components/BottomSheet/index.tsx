@@ -38,7 +38,7 @@ export function BottomSheet({
 
   const handleTouchEnd = () => {
     setIsDragging(false);
-    const threshold = 150; // 드래그 임계값 증가
+    const threshold = 100; // 드래그 임계값 증가
 
     if (offsetY > threshold) {
       onClose();
