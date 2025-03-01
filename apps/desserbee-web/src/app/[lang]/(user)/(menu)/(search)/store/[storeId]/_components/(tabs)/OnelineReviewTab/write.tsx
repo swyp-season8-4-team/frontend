@@ -7,6 +7,7 @@ import ReviewService from '@repo/usecase/src/reviewService';
 import ReviewAPIRepository from '@repo/infrastructures/src/repositories/reviewAPIRepository';
 import { UserContext } from '@/contexts/UserContext';
 import { cn } from '@repo/ui/lib/utils';
+import { redirect } from 'next/navigation';
 
 interface OneLineReviewWriteProps {
   storeUuid: string;
@@ -60,7 +61,7 @@ export function OneLineReviewWrite({
       images: [reviewImage!],
     };
     const result = await reviewService.createStoreOnlineReviews(data);
-    console.log(result);
+    redirect('/');
   };
 
   return (
