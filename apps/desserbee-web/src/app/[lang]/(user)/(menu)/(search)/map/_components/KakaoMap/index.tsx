@@ -91,7 +91,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const [isFetchRequired, setIsFetchRequired] = useState(false);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
-  // const FETCH_RADIUS_M = 4000; // 최대 거리 고정
   const isLoadingRef = useRef(false);
 
   const [retryCount, setRetryCount] = useState(0);
@@ -408,9 +407,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     if (servicesRef.current.mapService) {
       const center = servicesRef.current.mapService.getMapCenter();
       setMapCenter(center);
-
-      // 거리 기반으로 fetch 필요성 판단
-      // determineFetch(lastFetchPosition, center);
     }
   }, []);
 
@@ -511,18 +507,33 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     [handleMoveToCurrentPosition],
   );
 
+  // 컴포넌트 언마운트 시 모든 자원 해제
   useEffect(() => {
     return () => {
-      if (
-        servicesRef.current.geoService &&
-        servicesRef.current.mapService &&
-        isInitialized
-      ) {
-        servicesRef.current.geoService.stopWatchingPosition();
-        servicesRef.current.mapService.removeCurrentPositionMarker();
+      // 조건부 검사 없이 항상 시도
+      try {
+        if (servicesRef.current.geoService) {
+          servicesRef.current.geoService.stopWatchingPosition();
+        }
+
+        if (servicesRef.current.mapService) {
+          // 모든 리소스 정리
+          servicesRef.current.mapService.clearAllMarkers();
+          servicesRef.current.mapService.removeCurrentPositionMarker();
+
+          // 이벤트 리스너 정리 - 추가된 부분
+          if (isInitialized) {
+            // 이 메서드를 MapService에 추가해야 함
+            servicesRef.current.mapService.removeAllEventListeners();
+          }
+        }
+
+        console.log('모든 지도 리소스가 정리되었습니다.');
+      } catch (error) {
+        console.error('지도 리소스 정리 중 오류:', error);
       }
     };
-  }, [servicesRef, isInitialized]);
+  }, []);
 
   const handleRefetchBtnClick = () => {
     setIsFetchRequired(true);
@@ -618,71 +629,50 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         setError(null);
       }, 3000);
 
-      // 컴포넌트가 언마운트되거나 error가 변경될 때 타이머 정리
       return () => {
-        servicesRef.current.geoService?.stopWatchingPosition();
-        servicesRef.current.mapService?.clearAllMarkers();
         clearTimeout(timer);
       };
     }
   }, [error]);
+
+  // 카카오맵 초기화 로직 분리 및 단순화
+  useEffect(() => {
+    if (isScriptLoaded && !isInitialized && mapRef.current) {
+      console.log('카카오맵 초기화 시작');
+      window.kakao.maps.load(() => {
+        try {
+          // 서비스 초기화
+          const initializedServices = initializeServices();
+          servicesRef.current = initializedServices;
+
+          // 지도 로드
+          loadMap(initializedServices)
+            .then(() => {
+              setIsMapLoaded(true);
+              setIsInitialized(true);
+            })
+            .catch((err) => {
+              console.error('지도 로드 실패:', err);
+              setError('지도 초기화에 실패했습니다.');
+            });
+        } catch (error) {
+          console.error('서비스 초기화 실패:', error);
+          setError('지도 초기화 중 오류가 발생했습니다.');
+        }
+      });
+    }
+  }, [isScriptLoaded, isInitialized]);
 
   return (
     <div>
       <Script
         type="text/javascript"
         strategy="afterInteractive"
-        // strategy="lazyOnload"
         async
         src={KAKAO_MAP_API_URL}
-        onLoad={() => setIsScriptLoaded(true)}
         onReady={() => {
           if (!isScriptLoaded) {
-            console.log('(0) 카카오맵 스크립트 최초 로드');
-            window.kakao.maps.load(async () => {
-              console.log(
-                '-----------------(1) services 체크 시작-------------------',
-              );
-              if (isInitialized) {
-                console.log('이미 초기화된 상태, 초기화 스킵');
-                return;
-              }
-              try {
-                console.log('서비스 초기화 시작');
-                const initializedServices = initializeServices();
-                console.log('서비스 객체 생성 완료 ☑️', initializedServices);
-
-                if (!areServicesInitialized(initializedServices)) {
-                  console.error('서비스 초기화 검증 실패 ⚠️');
-                  throw new Error('서비스 초기화 실패 ⚠️');
-                }
-
-                // useRef를 사용하여 서비스 인스턴스 저장
-                servicesRef.current = initializedServices;
-                setIsMapLoaded(true);
-                console.log('지도 로딩 시작 전 서비스 상태 설정 완료');
-                console.log(
-                  '-----------------services 체크 완료-------------------',
-                );
-                console.log(
-                  '-----------------(2) load map 시작-------------------',
-                );
-                await loadMap(initializedServices);
-                console.log(
-                  '-----------------load map 완료-------------------',
-                );
-              } catch (error) {
-                console.error('서비스 초기화 및 지도 로드 중 오류:', error);
-                setError(
-                  '지도 로드에 실패했습니다. 잠시 후 다시 시도해주세요.',
-                );
-              } finally {
-                setIsInitialized(true);
-                console.log(
-                  '-----------------카카오맵 스크립트 onReady 이벤트 종료-------------------',
-                );
-              }
-            });
+            // 여기서 초기화 로직 실행
             setIsScriptLoaded(true);
           }
         }}

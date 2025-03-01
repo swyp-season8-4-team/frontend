@@ -33,4 +33,5 @@ export interface MapController {
   setMapCenter(position: MapPosition): void;
   getMapCenter(): MapPosition;
   relayout(): void;
+  removeAllEventListeners(): void;
 }

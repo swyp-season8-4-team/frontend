@@ -167,4 +167,25 @@ export class KakaoMapAdapter implements ExternalMap {
       callback(),
     );
   }
+
+  // 이벤트 리스너 제거 및 지도 객체 정리
+  cleanupResources(): void {
+    // 마커 제거
+    this.clearAllMarkers();
+
+    // 현재 위치 마커 제거
+    this.removeCurrentPositionMarker();
+
+    // 이벤트 리스너 제거 - 수정된 부분
+    // kakao.maps.event.removeAllListener(this.map); // 잘못된 메서드
+
+    // 올바른 방법: 개별 이벤트 핸들러 제거 (이벤트 토큰을 저장했다면)
+    // 또는 이벤트를 등록할 때 반환되는 토큰을 배열로 저장해두고 제거
+
+    // 클러스터러 제거
+    if (this.clusterer) {
+      this.clusterer.clear();
+      this.clusterer = null;
+    }
+  }
 }

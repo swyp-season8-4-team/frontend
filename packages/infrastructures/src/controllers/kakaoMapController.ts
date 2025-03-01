@@ -13,6 +13,15 @@ interface CustomMarker extends kakao.maps.Marker {
 
 export default class KakaoMapController implements MapController {
   private map: KakaoMapAdapter | null = null;
+  private centerChangedHandler:
+    | ((event: kakao.maps.event.EventTarget) => void)
+    | null = null;
+  private dragEndHandler:
+    | ((event: kakao.maps.event.EventTarget) => void)
+    | null = null;
+  private zoomChangedHandler:
+    | ((event: kakao.maps.event.EventTarget) => void)
+    | null = null;
 
   async createMap(container: HTMLDivElement, position: MapPosition) {
     try {
@@ -35,7 +44,16 @@ export default class KakaoMapController implements MapController {
   }
 
   addCenterChangedListener(callback: () => void) {
-    this.map?.addCenterChangedListener(callback);
+    if (!this.map) {
+      throw new Error('Map is not initialized');
+    }
+
+    this.centerChangedHandler = () => callback();
+    kakao.maps.event.addListener(
+      this.map.getNativeMap(),
+      'bounds_changed',
+      this.centerChangedHandler,
+    );
   }
 
   createMarkersWithClusterer(
@@ -177,62 +195,43 @@ export default class KakaoMapController implements MapController {
     }
   }
 
-  // getBounds(): {
-  //   sw: MapPosition;
-  //   ne: MapPosition;
-  // } {
-  //   if (!this.map) {
-  //     throw new Error('Map is not initialized');
-  //   }
+  removeAllEventListeners(): void {
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
 
-  //   const bounds = this.map.getBounds();
-  //   const sw = bounds.getSouthWest();
-  //   const ne = bounds.getNorthEast();
+      if (this.centerChangedHandler) {
+        kakao.maps.event.removeListener(
+          this.map.getNativeMap(),
+          'bounds_changed',
+          this.centerChangedHandler,
+        );
+        this.centerChangedHandler = null;
+      }
 
-  //   return {
-  //     sw: {
-  //       latitude: sw.getLat(),
-  //       longitude: sw.getLng(),
-  //     },
-  //     ne: {
-  //       latitude: ne.getLat(),
-  //       longitude: ne.getLng(),
-  //     },
-  //   };
-  // }
+      if (this.dragEndHandler) {
+        kakao.maps.event.removeListener(
+          this.map.getNativeMap(),
+          'dragend',
+          this.dragEndHandler,
+        );
+        this.dragEndHandler = null;
+      }
 
-  // getVisibleArea(): {
-  //   center: MapPosition;
-  //   level: number;
-  // } {
-  //   if (!this.map) {
-  //     throw new Error('Map is not initialized');
-  //   }
+      if (this.zoomChangedHandler) {
+        kakao.maps.event.removeListener(
+          this.map.getNativeMap(),
+          'zoom_changed',
+          this.zoomChangedHandler,
+        );
+        this.zoomChangedHandler = null;
+      }
 
-  //   const map = this.map;
-  //   const center = map.getCenter();
-  //   const level = map.getLevel();
-
-  //   return {
-  //     center: {
-  //       latitude: center.latitude,
-  //       longitude: center.longitude,
-  //     },
-  //     level: level,
-  //   };
-  // }
-
-  // setBounds(positions: MapPosition[]): void {
-  //   if (!this.map) {
-  //     throw new Error('Map is not initialized');
-  //   }
-
-  //   const bounds = new kakao.maps.LatLngBounds();
-
-  //   positions.forEach((pos) => {
-  //     bounds.extend(new kakao.maps.LatLng(pos.latitude, pos.longitude));
-  //   });
-
-  //   this.map.setBounds(bounds);
-  // }
+      console.log('모든 지도 이벤트 리스너가 제거되었습니다.');
+    } catch (error) {
+      console.error('이벤트 리스너 제거 중 오류가 발생했습니다:', error);
+      throw error;
+    }
+  }
 }
