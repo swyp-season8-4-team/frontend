@@ -1,3 +1,7 @@
+export enum RouteGroup {
+  MateDetail = '[lang]/(user)/mate/[mateId]',
+}
+
 export enum NavigationLanguageGroup {
   ko = '/ko',
 }

@@ -27,6 +27,8 @@ const defaultState: State = {
     recruit: false,
     createdAt: '',
     updatedAt: '',
+    gender: 'MALE',
+    applyStatus: 'PENDING',
   },
 };
 

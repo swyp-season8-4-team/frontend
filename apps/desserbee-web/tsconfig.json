@@ -18,6 +18,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src/components/KakaoMap.ts"
-  ],
+, "../../packages/design-system/src/components/DropDown/index.tsx"  ],
   "exclude": ["node_modules"]
 }

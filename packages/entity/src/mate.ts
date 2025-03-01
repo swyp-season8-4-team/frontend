@@ -1,9 +1,11 @@
 import type { BaseRequestData } from "./appMetadata";
+import type { Gender } from "./user";
 
 export type MateCategory = '친목도모' | '사진맛집' | '카공모임' | '건강맛집' | '빵지순례' | '카페투어';
 
 // FIXME: Raw Data 파일 분리
 export interface RawMate {
+  applyStatus: string;
   mateUuid: string;
   storeId?: string;
   userUuid: string;
@@ -21,6 +23,7 @@ export interface RawMate {
     latitude: number | null;
     longitude: number | null;
   };
+  gender: Gender;
   createdAt: string;
   updatedAt: string;
 }
@@ -48,14 +51,15 @@ export interface RawMateReply {
   content: string;
   nickname: string;
   profileImage: string[];
+  gender: Gender;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface MateReply {
+export interface MateReply extends Omit<RawMateReply, 'mateUuid' | 'userUuid' | 'profileImage'> {
   mateId: string;
   userId: string;
   mateReplyId: string;
-  content: string;
-  nickname: string;
   profileImage: string;
 }
 
@@ -63,6 +67,16 @@ export interface GetMateReplyListRequest {
   id: string;
   from: number;
   to: number;
+}
+
+export interface RawGetMateReplyListResponse {
+  mates: RawMateReply[];
+  isLast: boolean;
+}
+
+export interface GetMateReplyListResponse {
+  replyList: MateReply[];
+  isLast: boolean;
 }
 
 export interface MateCreateRequest {
@@ -218,7 +232,7 @@ export interface MateRepository {
   deleteReply(data: BaseRequestData<Omit<MateReplyUpdateRequest, 'content'>>): Promise<unknown>; // 모임 댓글 삭제
   editReply(data: BaseRequestData<MateReplyUpdateRequest>): Promise<unknown>; // 모임 댓글 수정
   getReply(data: BaseRequestData<MateReplyUpdateRequest>): Promise<MateReply>; // 모임 댓글 조회
-  getReplyList(data: BaseRequestData<GetMateReplyListRequest>): Promise<MateReply[]>; // 모임 댓글 목록 조회
+  getReplyList(data: BaseRequestData<GetMateReplyListRequest>): Promise<GetMateReplyListResponse>; // 모임 댓글 목록 조회
   getSavedMateList(data: BaseRequestData<MateListRequest>): Promise<Mate[]>; // 저장한 모임 목록 조회
   write(data: BaseRequestData<MateWriteRequest>): Promise<Mate>; // 모임 생성(글쓰기)
 }

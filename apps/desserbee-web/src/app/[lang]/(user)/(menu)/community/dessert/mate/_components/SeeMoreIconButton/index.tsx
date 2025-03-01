@@ -1,10 +1,11 @@
 'use client';
 
 import IconButton from "@repo/design-system/components/buttons/IconButton";
+import Dropdown from "@repo/design-system/components/DropDown";
 import { IconSize } from "@repo/design-system/components/icons";
 import IconEllipsisVertical from "@repo/design-system/components/icons/IconElllipsisVertical";
-import { useCallback, useState } from "react";
-import Dropdown from "./Dropdown";
+import { useCallback, useState } from "react";;
+
 type FilterOption = 'all' | 'recruiting';
 
 export default function SeeMoreIconButton() {
