@@ -6,7 +6,7 @@ import IconPin from '@repo/design-system/components/icons/IconPin';
 import IconPlus from '@repo/design-system/components/icons/IconPlus';
 import IconTrashCan from '@repo/design-system/components/icons/IconTrashCan';
 import { cn } from '@repo/ui/lib/utils';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { CreateListModal } from '../../../_modals/CreateListModal';
 import type { SavedListData } from '@repo/entity/src/store';
@@ -18,20 +18,16 @@ import { UserContext } from '@/contexts/UserContext';
 
 interface SideBarContainerProps {
   showSidebar: boolean;
-  totalSavedList: SavedListData[];
 }
 
-export function SideBarContainer({
-  showSidebar,
-  totalSavedList,
-}: SideBarContainerProps) {
+export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
   const router = useRouter();
   const modalRef = useRef<HTMLDivElement>(null);
   const [selectedListId, setSelectedListId] = useState<number | null>(null);
   const { push, pop } = useContext(PortalContext);
-
   const { user } = useContext(UserContext);
 
+  const [totalSavedList, setTotalSavedList] = useState<SavedListData[]>([]);
   const storeService = new StoreService({
     storeRepository: new StoreAPIRepository(),
   });
@@ -115,6 +111,15 @@ export function SideBarContainer({
       console.error('리스트 삭제 실패:', error);
     }
   };
+
+  const handleTotalSavedList = useCallback(async () => {
+    const lists = await storeService.getSavedListAll(user.id);
+    setTotalSavedList(lists);
+  }, [storeService, user]);
+
+  useEffect(() => {
+    handleTotalSavedList();
+  }, [handleTotalSavedList]);
 
   return (
     <SideBar

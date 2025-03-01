@@ -2,37 +2,47 @@
 import { cn } from '@repo/ui/lib/utils';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useMemo, useCallback, useEffect, useState } from 'react';
 
 import { SideBar } from '@repo/design-system/components/SideBar';
-import type { StoresInSavedListData } from '@repo/entity/src/store';
 
 import IconFlower from '@repo/design-system/components/icons/IconFlower';
 import IconLocation from '@repo/design-system/components/icons/IconLocation';
 import IconWriting from '@repo/design-system/components/icons/IconWriting';
-import { useState } from 'react';
 import IconCheck from '@repo/design-system/components/icons/IconCheck';
 import { getIconColor } from '../../../_utils/iconColor';
+import StoreService from '@repo/usecase/src/storeService';
+import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
+import {
+  type StoresInSavedListData,
+  type ParentSavedListResponse,
+} from '@repo/entity/src/store';
 
-interface StoresInSavedList {
-  listName: string;
-  iconColorId: number;
-  storeData: StoresInSavedListData[];
-}
-
-interface StoreListContainer {
+interface StoreListContainerProps {
+  listId: number;
   showStoreList: boolean;
-  storesInSavedList: StoresInSavedList;
 }
 
 export function StoreListContainer({
+  listId,
   showStoreList,
-  storesInSavedList,
-}: StoreListContainer) {
+}: StoreListContainerProps) {
   const router = useRouter();
 
   const [isEditing, setIsEditing] = useState(false);
   const [selectedStoreUuId, setSelectedStoreUuId] = useState<string | null>(
     null,
+  );
+  const [parentListInfo, setParentListInfo] =
+    useState<ParentSavedListResponse>();
+  const [storeData, setStoreData] = useState<StoresInSavedListData[]>([]);
+
+  const storeService = useMemo(
+    () =>
+      new StoreService({
+        storeRepository: new StoreAPIRepository(),
+      }),
+    [],
   );
 
   const handleListClose = () => {
@@ -49,6 +59,23 @@ export function StoreListContainer({
     setSelectedStoreUuId(storeUuId);
   };
 
+  const handleStoresInSavedListFetch = useCallback(async () => {
+    const parentList = await storeService.getParentSavedList({
+      listId: Number(listId),
+    });
+    setParentListInfo(parentList);
+
+    const stores = await storeService.getStoresInSavedList({
+      listId: Number(listId),
+    });
+    setStoreData(stores);
+  }, [listId, storeService]);
+
+  useEffect(() => {
+    handleStoresInSavedListFetch();
+  }, [handleStoresInSavedListFetch]);
+
+  if (!parentListInfo) return;
   return (
     <SideBar
       {...{
@@ -65,13 +92,13 @@ export function StoreListContainer({
             <div className="border-[#D5D5D5] border-[0.5px] rounded-sm w-[11.93px] md:w-[28.07px] aspect-square">
               <IconFlower
                 className={cn(
-                  getIconColor(storesInSavedList.iconColorId),
+                  getIconColor(parentListInfo.iconColorId),
 
                   'w-full h-full',
                 )}
               />
             </div>
-            <span className="font-semibold">{storesInSavedList.listName}</span>
+            <span className="font-semibold">{parentListInfo.listName}</span>
           </div>
           <div className="flex gap-[5.09px]">
             <div className="w-[11.93px] md:w-[37.5px] aspect-square"></div>
@@ -80,7 +107,7 @@ export function StoreListContainer({
                 <div className="w-[5.09px] md:w-[11.97px] h-[5.09px] md:h-[11.97px]">
                   <IconLocation className="w-full h-full" />
                 </div>
-                <span>{storesInSavedList.storeData.length}개</span>
+                <span>{storeData.length}개</span>
               </div>
               <button
                 onClick={handleEditBtnClick}
@@ -98,7 +125,7 @@ export function StoreListContainer({
           </div>
         </div>
         <div className="[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] overflow-y-auto [scrollbar-width:none]">
-          {storesInSavedList.storeData.map((store, index) => (
+          {storeData.map((store, index) => (
             <div
               onClick={() => handleStoreSelectBtnClick(store.storeUuid)}
               key={store.storeName}
@@ -156,6 +183,7 @@ export function StoreListContainer({
                     </div>
                   ))}
                 </div>
+                z
               </div>
             </div>
           ))}
