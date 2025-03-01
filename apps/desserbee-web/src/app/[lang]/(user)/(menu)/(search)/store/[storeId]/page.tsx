@@ -21,10 +21,6 @@ export default async function StoreDetailPage({
     storeRepository: new StoreAPIReopository(),
   });
 
-  const authService = new AuthService({
-    authRepository: new AuthNextAppRouteRepository(),
-  });
-
   if (!storeId) {
     return <NotFound />;
   }
@@ -32,12 +28,9 @@ export default async function StoreDetailPage({
   const storeDetail = await storeService.getStoreDetail(storeId);
   const storeDetails = storeDetail;
 
-  const authorization = await authService.getAuthorization();
-
   if (storeDetail.savedListId) {
     const parentListInfo = await storeService.getParentSavedList({
       listId: storeDetail.savedListId,
-      authorization: authorization || null,
     });
 
     // const parentListInfo = {
