@@ -59,7 +59,7 @@ export function MenuPictureCarouselModal({
       setCurrent(api.selectedScrollSnap());
     });
   }, [api]);
-
+  if (!menus) return <div>메뉴가 존재하지 않습니다.</div>;
   return (
     <CustomModal
       isCloseBtnShow={false}
@@ -82,7 +82,7 @@ export function MenuPictureCarouselModal({
                   {getPageImages(pageIndex).map((menu, menuIndex) => (
                     <div key={`${pageIndex}-${menuIndex}`} className="">
                       <div className="relative bg-[#D2D2D2] rounded-[5px] md:rounded-xl md:max-h-[133px] aspect-square overflow-hidden">
-                        {menu.images.length !== 0 ? (
+                        {menu.images && menu.images.length > 0 ? (
                           <Image
                             src={menu.images[0]}
                             alt={`메뉴 사진 ${pageIndex * imagesPerPage + menuIndex + 1}`}
