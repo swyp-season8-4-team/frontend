@@ -1,25 +1,40 @@
 import { isServer } from '@repo/api';
 import fetch from '@repo/api/src/fetch';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { AuthRepository, JWTTokens, OAuthSignInData, OAuthSignInResponse, RawOAuthSignInResponse, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, SignOutData, SignUpData, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
+import type {
+  AuthRepository,
+  JWTTokens,
+  OAuthSignInData,
+  RawSignInResponse,
+  ResetPasswordData,
+  ResetPasswordResponse,
+  SignInData,
+  SignInResponse,
+  SignOutData,
+  SignUpData,
+  VerifyEmailData,
+  VerifyEmailRequestData,
+  VerifyEmailRequestResponse,
+  VerifyEmailResponse
+} from '@repo/entity/src/auth';
 import APIRepository from './apiRepository';
 import AuthConverter from '../mappers/authConverter';
 
 export default class AuthAPIRepository extends APIRepository implements AuthRepository {
   private readonly authConverter = new AuthConverter();
 
-  async socialSignIn({ data }: BaseRequestData<OAuthSignInData>): Promise<OAuthSignInResponse> {
+  async socialSignIn({ data }: BaseRequestData<OAuthSignInData>): Promise<SignInResponse> {
     if (!data) {
       throw new Error('data is not exist');
     }
 
-    const response = await fetch<OAuthSignInData, RawOAuthSignInResponse>({
+    const response = await fetch<OAuthSignInData, RawSignInResponse>({
       data,
       method: 'POST',
       url: `${this.endpoint}/auth/oauth2/callback`,
     });
 
-    return this.authConverter.convertRawOAuthSignInResponse(response);
+    return this.authConverter.convertRawSignInResponse(response);
   }
 
   async resetPassword({ data }: BaseRequestData<ResetPasswordData>): Promise<ResetPasswordResponse> {
@@ -61,7 +76,7 @@ export default class AuthAPIRepository extends APIRepository implements AuthRepo
 
     const { email, password, keepLoggedIn } = data;
 
-    const response = await fetch<SignInData, any>({
+    const response = await fetch<SignInData, RawSignInResponse>({
       data: {
         email,
         password,
@@ -70,7 +85,8 @@ export default class AuthAPIRepository extends APIRepository implements AuthRepo
       method: 'POST',
       url: `${this.endpoint}/auth/login`,
     });
-    return response;
+
+    return this.authConverter.convertRawSignInResponse(response);
   }
 
   async signUp({ data, authorization }: BaseRequestData<SignUpData>): Promise<unknown> {

@@ -1,9 +1,9 @@
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { AuthRepository, JWTTokens, OAuthSignInData, OAuthSignInResponse, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
+import type { AuthRepository, JWTTokens, OAuthSignInData, SignInResponse, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
 
 export default class AuthNextMiddlewareRepository implements AuthRepository {
   constructor(private readonly headers: Headers) {}
-  socialSignIn(data: BaseRequestData<OAuthSignInData>): Promise<OAuthSignInResponse> {
+  socialSignIn(data: BaseRequestData<OAuthSignInData>): Promise<SignInResponse> {
     throw new Error('Method not implemented.');
   }
 

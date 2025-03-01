@@ -81,8 +81,8 @@ export default function LoginForm({ className, children, defaultEmail = '' }: Lo
         return;
       }
 
-      const pathname = !response.isPreferencesSet
-        ? `${NavigationLanguageGroup.ko}${NavigationPathGroup.Preference}${response.userUuid}`
+      const pathname = !response.isPreferenceSet
+        ? `${NavigationLanguageGroup.ko}${NavigationPathGroup.Preference}${response.userId}`
         : `${NavigationLanguageGroup.ko}${NavigationPathname.Map}`;
       router.replace(pathname);
     } catch (error) {
