@@ -19,9 +19,6 @@ export function StorePreviewPicList({ storeImages }: StorePreviewPicListProps) {
           />
         </div>
       ))}
-      {Array.from({ length: 4 - storeImages.length }, (_, i) => (
-        <div key={i} className="w-full aspect-[165/161]" />
-      ))}
     </div>
   );
 }
