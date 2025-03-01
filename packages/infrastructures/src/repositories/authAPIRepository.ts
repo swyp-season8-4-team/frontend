@@ -13,7 +13,7 @@ export default class AuthAPIRepository extends APIRepository implements AuthRepo
     const response = await fetch<OAuthSignInData, OAuthSignInResponse>({
       data,
       method: 'POST',
-      url: `${this.endpoint}/oauth2/code`,
+      url: `${this.endpoint}/auth/oauth2/callback`,
     });
 
     return response;

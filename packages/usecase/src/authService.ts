@@ -68,7 +68,7 @@ export default class AuthService {
   getServerSideUrl(provider: OAuthSocialProvider, state?: string) {
     switch (provider) {
       case OAuthSocialProvider.KAKAO:
-        return `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}&redirect_uri=${this.getRedirectUri(provider)}&state=${state}&response_type=code`;
+        return `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_SOCIAL_LOGIN_REST_API_KEY}&redirect_uri=${this.getRedirectUri(provider)}&state=${state}&response_type=code`;
         // return `${process.env.NEXT_PUBLIC_SERVICE_API_URL}/api/oauth2/authorization?provider=${provider}`;
       default:
         throw new Error('Invalid provider');

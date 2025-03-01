@@ -5,10 +5,13 @@ import CommunityMateSection from "./_components/CommunityMateSection";
 import CommunityMateTitle from "./_components/CommunityMateTitle";
 import SeeMoreIconButton from "./_components/SeeMoreIconButton";
 import CommunityMateFixedTopArea from "./_components/CommunityMateFixedTopArea";
+import type { WithSearchParams } from "@/app";
 
 export const dynamic = 'force-dynamic';
 
-export default async function CommunityMatePage() {
+export default async function CommunityMatePage({ searchParams }: WithSearchParams) {
+
+  const { q } = await searchParams; 
   
   const categories = ['친목도모', '인생샷찍', '카공모임', '건강맛집', '빵지순례', '카페투어'];
 
@@ -34,7 +37,7 @@ export default async function CommunityMatePage() {
 
       {/* 게시글 목록 - 스크롤 영역 */}
       <div className="flex-1 overflow-y-auto relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
-        <CommunityMateSection />
+        <CommunityMateSection q={q ?? null} />
         <div className="sticky left-0 bottom-0 w-full h-[100px] bg-gradient-to-b from-[#F9FAFC]/0 to-[#F9FAFC] to-[84.75%]" />
       </div>
     </main>

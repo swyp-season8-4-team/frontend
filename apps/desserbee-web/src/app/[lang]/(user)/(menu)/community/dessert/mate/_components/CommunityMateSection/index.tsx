@@ -7,8 +7,16 @@ const mateService = new MateService({
   mateRepository: new MateAPIRepository(),
 })
 
-export default async function CommunityMateSection() {
-  const { mates, isLast } = await mateService.getMateList({ from: 0, to: 9 });
+interface Props {
+  q: string | string[] | null;
+}
+
+export default async function CommunityMateSection({ q }: Props) {
+  if (Array.isArray(q)) {
+    throw new Error('q is not array');
+  }
+  
+  const { mates, isLast } = await mateService.getMateList({ from: 0, to: 9, ...(q && { keyword: q }) });
 
   return (
     <CommunityMateProvider initialIsLast={isLast} initialMates={mates}>

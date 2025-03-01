@@ -1,4 +1,4 @@
-import type { Mate, MateReply, RawMate, RawMateReply } from "@repo/entity/src/mate";
+import type { Mate, MateReply, MateWriteRequest, RawMateReply, RawMateWriteReuqest, MateCategory, RawMate } from "@repo/entity/src/mate";
 
 export default class MateConverter {
   convertRawToMate(rawMate: RawMate): Mate {
@@ -29,5 +29,40 @@ export default class MateConverter {
       nickname: raw.nickname,
       profileImage: raw.profileImage.length > 0 ? raw.profileImage[0] : '',
     };
+  }
+
+  convertMateWriteToRaw(mateWrite: MateWriteRequest): RawMateWriteReuqest {
+    return {
+      userUuid: mateWrite.userId,
+      title: mateWrite.title,
+      content: mateWrite.content,
+      recruitYn: mateWrite.recruit,
+      mateCategoryId: mateWrite.mateCategoryId,
+      place: {
+        placeName: mateWrite.place.placeName,
+        address: mateWrite.place.address,
+        latitude: mateWrite.place.latitude,
+        longitude: mateWrite.place.longitude,
+      },
+    };
+  }
+
+  convertMateCategoryToId(mateCategory: MateCategory | null): number {
+    switch (mateCategory) {
+      case '친목도모':
+        return 1;
+      case '사진맛집':
+        return 2;
+      case '카공모임':
+        return 3;
+      case '건강맛집':
+        return 4;
+      case '빵지순례':
+        return 5;
+      case '카페투어':
+        return 6;
+      default:
+        return 0;
+    }
   }
 }
