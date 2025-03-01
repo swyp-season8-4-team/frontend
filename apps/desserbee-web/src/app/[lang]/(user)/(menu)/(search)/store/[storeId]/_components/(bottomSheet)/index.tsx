@@ -32,7 +32,6 @@ export function SaveStoreBottomSheetContainer({
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const modalRef = useRef<HTMLDivElement>(null);
   const { push, pop } = useContext(PortalContext);
 
   const [selectedListId, setSelectedListId] = useState<number | null>(null);
