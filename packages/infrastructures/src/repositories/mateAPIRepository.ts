@@ -1,6 +1,7 @@
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import type {
   GetMateReplyListRequest,
+  GetMateReplyListResponse,
   Mate,
   MateAcceptRequest,
   MateAllListResponse,
@@ -19,6 +20,7 @@ import type {
   MateSaveRequest,
   MateUpdateRequest,
   MateWriteRequest,
+  RawGetMateReplyListResponse,
   RawMate,
   RawMateAcceptRequest,
   RawMateRejectRequest,
@@ -258,14 +260,14 @@ export default class MateAPIRepository
     return response;
   }
 
-  async createReply({ data }: BaseRequestData<MateReplyRequest>): Promise<unknown> {
+  async createReply({ data }: BaseRequestData<MateReplyRequest>): Promise<MateReply> {
     if (!data) {
       throw new Error('data is required');
     }
 
     const { id, userId, content } = data;
 
-    const response = await fetch<RawMateReplyRequest, unknown>({
+    const response = await fetch<RawMateReplyRequest, RawMateReply>({
       data: {
         userUuid: userId,
         content,
@@ -274,7 +276,7 @@ export default class MateAPIRepository
       url: `${this.endpoint}/mates/${id}/reply`,
     });
 
-    return response;
+    return this.mateConverter.convertRawToMateReply(response);
   }
 
   async deleteReply({ data }: BaseRequestData<Omit<MateReplyUpdateRequest, 'content'>>): Promise<unknown> {
@@ -329,14 +331,14 @@ export default class MateAPIRepository
     return this.mateConverter.convertRawToMateReply(response);
   }
 
-  async getReplyList({ data }: BaseRequestData<GetMateReplyListRequest>): Promise<MateReply[]> {
+  async getReplyList({ data }: BaseRequestData<GetMateReplyListRequest>): Promise<GetMateReplyListResponse> {
     if (!data) {
       throw new Error('data is required');
     }
 
     const { id, from, to } = data;
 
-    const response = await fetch<GetMateReplyListRequest, RawMateReply[]>({
+    const response = await fetch<GetMateReplyListRequest, RawGetMateReplyListResponse>({
       method: 'GET',
       url: `${this.endpoint}/mates/${id}/reply`,
       query: {
@@ -345,7 +347,10 @@ export default class MateAPIRepository
       },
     });
 
-    return response.map((reply) => this.mateConverter.convertRawToMateReply(reply));
+    return {
+      replyList: response.mates.map((reply) => this.mateConverter.convertRawToMateReply(reply)),
+      isLast: response.isLast,
+    }
   }
 
   async getSavedMateList({ data }: BaseRequestData<MateListRequest>): Promise<Mate[]> {

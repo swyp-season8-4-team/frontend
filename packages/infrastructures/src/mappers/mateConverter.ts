@@ -13,8 +13,10 @@ export default class MateConverter {
       mateCategory: rawMate.mateCategory,
       place: rawMate.place,
       profileImage: rawMate.profileImage.length > 0 ? rawMate.profileImage[0] : '',
+      applyStatus: rawMate.applyStatus,
       ...(rawMate.appliedYn && { applied: rawMate.appliedYn }),
       ...(rawMate.storeId && { storeId: rawMate.storeId }),
+      gender: rawMate.gender,
       createdAt: rawMate.createdAt,
       updatedAt: rawMate.updatedAt,
     };
@@ -28,6 +30,9 @@ export default class MateConverter {
       content: raw.content,
       nickname: raw.nickname,
       profileImage: raw.profileImage.length > 0 ? raw.profileImage[0] : '',
+      gender: raw.gender,
+      createdAt: raw.createdAt,
+      updatedAt: raw.updatedAt,
     };
   }
 
