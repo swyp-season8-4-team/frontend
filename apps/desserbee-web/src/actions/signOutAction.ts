@@ -1,5 +1,6 @@
 'use server';
 
+import { isProd } from '@/utils/env';
 import AuthService from "@repo/usecase/src/authService";
 import AuthAPIRepository from "@repo/infrastructures/src/repositories/authAPIRepository";
 import { cookies, headers } from "next/headers";
@@ -26,10 +27,16 @@ export default async function signOutAction() {
       : '';
 
   cookieList.set('accessToken', '', {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: 'lax',
     domain,
     maxAge: -1,
   });
   cookieList.set('refreshToken', '', {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: 'strict',
     domain,
     maxAge: -1,
   });
