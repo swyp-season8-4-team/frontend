@@ -777,7 +777,7 @@ export const nearBystores = [
   },
 ];
 
-export const storeSummary = {
+export const storeSummarya = {
   storeId: 1234,
   storeUuid: 'a7e9b5c3-8d21-4f67-90e5-12ab3456789c',
   name: '카페 아로마',

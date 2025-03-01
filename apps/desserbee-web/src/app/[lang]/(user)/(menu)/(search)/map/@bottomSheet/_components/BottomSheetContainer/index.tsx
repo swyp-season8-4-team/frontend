@@ -7,6 +7,7 @@ import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 import { StorePreviewPicList } from '../StorePreviewPicList';
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { storeSummarya } from '../../../_consts/marker';
 
 interface BottomSheetContainerProps {
   showBottomSheet: boolean;
@@ -61,10 +62,10 @@ export function BottomSheetContainer({
 
   const hexaGridProps = {
     contents: storeSummary.topPreferences,
-    ownerPickImages: storeSummary.ownerPickImages,
+    storeImages: storeSummary.storeImages,
   };
   const storePreviewPicListProps = {
-    storeImages: storeSummary.storeImages,
+    ownerPickImages: storeSummary.ownerPickImages,
   };
 
   return (
