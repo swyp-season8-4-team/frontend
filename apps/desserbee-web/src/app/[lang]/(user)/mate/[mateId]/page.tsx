@@ -9,7 +9,7 @@ import MyMateDetailSection from "./_components/MyMateDetailSection";
 import { MateDetailContext, MateDetailProvider } from "./_contexts/MateDetailContext";
 import Link from "next/link";
 import { NavigationPathname } from "@repo/entity/src/navigation";
-
+import { formatDate } from "@repo/utility/src/date";
 const mateService = new MateService({
   mateRepository: new MateAPIRepository(), 
 })
@@ -41,7 +41,7 @@ export default async function MateDetailPage({ params }: WithParams) {
   }
 
   const { mateCategory, mateImage, title, content, place, nickname, updatedAt } = mate;
-  console.log(updatedAt);
+  
   return (
     <MateDetailProvider mate={mate}>
       <main className="flex flex-col h-full px-4 gap-4 bg-[#f6f6f6]">
@@ -70,7 +70,7 @@ export default async function MateDetailPage({ params }: WithParams) {
                 />
                 <div className="flex flex-col gap-1">
                   <span className="text-[#393939] text-[12px] leading-normal tracking-[-0.24px]">{nickname}</span>
-                  <span className="text-[#9f9f9f] text-[12px] leading-normal tracking-[-0.24px]">2025.01.28 14:36</span>
+                  <span className="text-[#9f9f9f] text-[12px] leading-normal tracking-[-0.24px]">{formatDate(updatedAt)}</span>
                 </div>
               </div>
               <div className="flex items-center gap-2 whitespace-nowrap">
@@ -104,6 +104,25 @@ export default async function MateDetailPage({ params }: WithParams) {
             <div className="flex gap-4 items-start">
               <span className="py-2 text-gray-700 rounded-md">수정하기</span>
               <span className="py-2 text-gray-700 rounded-md">삭제하기</span>
+            </div>
+
+            <div className="flex items-center gap-2 py-4">
+              <div className="w-8 h-8 rounded-full overflow-hidden">
+                <Image
+                  src={!!mateImage ? mateImage : '/default-avatar.png'}
+                  alt="profile"
+                  width={32}
+                  height={32}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <Link 
+                href={``} 
+                className="flex items-center gap-2 w-full text-[#393939] text-[14px]"
+              >
+                <span>{nickname}님의 게시물 더보기</span>
+                <span className="text-gray-400">›</span>
+              </Link>
             </div>
           </div>
         </section>

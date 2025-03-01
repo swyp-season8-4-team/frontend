@@ -2,7 +2,7 @@
 
 import { isProd } from '@/utils/env';
 import type { OAuthSocialProvider } from '@repo/entity/src/auth';
-import { NavigationPathname } from '@repo/entity/src/navigation';
+import { NavigationPathGroup, NavigationLanguageGroup, NavigationPathname } from '@repo/entity/src/navigation';
 import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
 import AuthService from '@repo/usecase/src/authService';
 import { cookies } from 'next/headers';
@@ -19,7 +19,9 @@ interface ActionData {
 }
 
 export default async function socialLoginAction({ code, provider, next }: ActionData) {
-  const { accessToken } = await authService.socialSignIn({ code, provider });
+  const response = await authService.socialSignIn({ code, provider });
+
+  const { accessToken, refreshToken, userId, isPreferenceSet } = response;
 
   const cookieList = await cookies();
 
@@ -29,5 +31,15 @@ export default async function socialLoginAction({ code, provider, next }: Action
     sameSite: 'lax',
   });
 
-  redirect(next ?? NavigationPathname.Map);
+  cookieList.set('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: 'strict',
+  });
+
+  if (!isPreferenceSet) {
+    redirect(`${NavigationLanguageGroup.ko}${NavigationPathGroup.Preference}${userId}`);
+  }
+
+  redirect(NavigationPathname.Map);
 }

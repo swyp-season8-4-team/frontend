@@ -1,22 +1,25 @@
 import { isServer } from '@repo/api';
 import fetch from '@repo/api/src/fetch';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type { AuthRepository, JWTTokens, OAuthSignInData, OAuthSignInResponse, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, SignOutData, SignUpData, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
+import type { AuthRepository, JWTTokens, OAuthSignInData, OAuthSignInResponse, RawOAuthSignInResponse, ResetPasswordData, ResetPasswordResponse, SignInData, SignInResponse, SignOutData, SignUpData, VerifyEmailData, VerifyEmailRequestData, VerifyEmailRequestResponse, VerifyEmailResponse } from '@repo/entity/src/auth';
 import APIRepository from './apiRepository';
+import AuthConverter from '../mappers/authConverter';
 
 export default class AuthAPIRepository extends APIRepository implements AuthRepository {
+  private readonly authConverter = new AuthConverter();
+
   async socialSignIn({ data }: BaseRequestData<OAuthSignInData>): Promise<OAuthSignInResponse> {
     if (!data) {
       throw new Error('data is not exist');
     }
 
-    const response = await fetch<OAuthSignInData, OAuthSignInResponse>({
+    const response = await fetch<OAuthSignInData, RawOAuthSignInResponse>({
       data,
       method: 'POST',
       url: `${this.endpoint}/auth/oauth2/callback`,
     });
 
-    return response;
+    return this.authConverter.convertRawOAuthSignInResponse(response);
   }
 
   async resetPassword({ data }: BaseRequestData<ResetPasswordData>): Promise<ResetPasswordResponse> {

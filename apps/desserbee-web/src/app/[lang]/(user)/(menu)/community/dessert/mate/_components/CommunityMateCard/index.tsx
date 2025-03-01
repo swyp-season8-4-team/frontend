@@ -4,7 +4,7 @@ import { cn } from "@repo/ui/lib/utils";
 import Image from 'next/image';
 import Link from "next/link";
 import { Fragment } from "react";
-import defaultImage from "../../_assets/images/image-default-mate.png";
+import defaultImage from "../../_assets/images/image-default-mate.svg";
 import CommunityMateCardHeartButton from "../CommunityMateCardHeartButton";
 interface Props {
   mate: Mate;

@@ -17,6 +17,7 @@ export default function OAuthCallbackLoader({ code, next, provider }: Props) {
     (async () => {
       try {
         await socialLoginAction({ code, provider, next });
+        
       } catch (error) {
         if (error instanceof HTTPError) {
           console.error(error);

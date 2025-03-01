@@ -396,6 +396,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/node':
+        specifier: ^20
+        version: 20.17.6
       vite-tsconfig-paths:
         specifier: ^4.3.2
         version: 4.3.2(typescript@5.5.4)(vite@6.0.11(@types/node@20.17.6)(jiti@1.21.7)(terser@5.37.0)(yaml@2.7.0))

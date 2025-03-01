@@ -54,13 +54,22 @@ export interface OAuthSignInData {
   code: string;
 }
 
-export interface OAuthSignInResponse {
+export interface RawOAuthSignInResponse {
   accessToken: string;
+  refreshToken: string;
+  tokenType: string;
+  expiresIn: number; // 엑세스토큰 만료시간
   userUuid: string;
   email: string;
   nickname: string;
+  profileImageUrl: string;
+  preferenceSet: boolean;
 }
 
+export interface OAuthSignInResponse extends Omit<RawOAuthSignInResponse, 'userUuid' | 'preferenceSet'> {
+  userId: string;
+  isPreferenceSet: boolean;
+}
 
 export interface VerifyEmailRequestData {
   email: string;

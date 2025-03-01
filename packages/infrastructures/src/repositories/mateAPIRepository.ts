@@ -376,12 +376,24 @@ export default class MateAPIRepository
 
     const formData = new FormData();
 
+    // request 필드에 JSON 데이터 추가
+    const requestData = {
+      userUuid: rest.userId,
+      title: rest.title,
+      content: rest.content,
+      recruitYn: rest.recruit,
+      mateCategoryId: rest.mateCategoryId,
+      place: rest.place
+    };
+    
+    // JSON 데이터를 문자열로 변환하여 FormData에 추가
+    formData.append('request', new Blob([JSON.stringify(requestData)], { type: 'application/json' }));
+
     if (!!imageFile) {
-      formData.append('image', imageFile);
+      formData.append('mateImage', imageFile);
     }
 
     const response = await fetch<RawMateWriteReuqest, RawMate>({
-      data: this.mateConverter.convertMateWriteToRaw(rest),
       method: 'POST',
       url: `${this.endpoint}/mates`,
       headers: {
@@ -389,6 +401,8 @@ export default class MateAPIRepository
       },
       formData
     });
+
+    console.log(response);
 
     return this.mateConverter.convertRawToMate(response);
   }

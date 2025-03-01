@@ -4,7 +4,9 @@ import { loginAction } from "@/actions/loginAction";
 import { NavigationLanguageGroup, NavigationPathGroup, NavigationPathname } from "@repo/entity/src/navigation";
 import type { WithChildren, WithClassName } from "@repo/ui/index";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import LoginButtons from "./LoginButtons";
+import Link from "next/link";
 
 interface LoginFormProps extends WithChildren, WithClassName {
   defaultEmail?: string;
@@ -17,6 +19,14 @@ export default function LoginForm({ className, children, defaultEmail = '' }: Lo
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  // 폼 유효성 상태 업데이트
+  useEffect(() => {
+    // 이메일과 비밀번호가 모두 입력되었는지 확인
+    const isValid = email.trim() !== '' && password.trim() !== '';
+    setIsFormValid(isValid);
+  }, [email, password]);
 
   const validateEmail = (email: string) => {
     if (!email) {
@@ -38,6 +48,13 @@ export default function LoginForm({ className, children, defaultEmail = '' }: Lo
       setPasswordError('잘못된 비밀 번호에요. 비밀번호 찾기를 해주세요.');
       return false;
     }
+    
+    // 비밀번호 길이 검증 (최소 8자 이상)
+    if (password.length < 8) {
+      setPasswordError('비밀번호는 최소 8자 이상이어야 합니다.');
+      return false;
+    }
+    
     setPasswordError('');
     return true;
   };
@@ -105,7 +122,19 @@ export default function LoginForm({ className, children, defaultEmail = '' }: Lo
         </div>
       </div>
       
-      {children}
+      <div className="flex items-center justify-between mt-4">
+        <label className="flex items-center">
+          <input type="radio" name="containLogin" className="w-4 h-4 rounded-full border-gray-300" />
+          <span className="ml-2 text-[10px] text-gray-600">로그인 유지</span>
+        </label>
+        <div className="flex items-center gap-2">
+          <Link href={NavigationPathname.SignUp} className="text-b-400 text-[10px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font">일반 회원가입</Link>
+          {/* <Link href={NavigationPathname.SignUp} className="text-b-400 text-[10px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font">사장님 회원가입</Link> */}
+          <Link href={NavigationPathname.ForgotPassword} className="text-b-400 text-[10px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font">비밀번호 찾기</Link>
+        </div>
+      </div>
+      
+      <LoginButtons isLoading={isLoading} isFormValid={isFormValid} />
     </form>
   )
 }
