@@ -22,8 +22,7 @@ export default function MenuSection() {
     },
     {
       label: '로그아웃',
-      href: NavigationPathname.SignIn,
-      onClick: handleLogout,
+      href: NavigationPathname.SignOut,
     },
   ];
   

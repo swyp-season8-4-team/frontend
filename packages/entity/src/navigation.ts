@@ -18,6 +18,7 @@ export enum NavigationPathGroup {
 export enum NavigationPathname {
   SignIn = '/sign-in',
   SignUp = '/sign-up',
+  SignOut = '/sign-out',
   Map = '/map',
   ForgotPassword = '/sign-in/forgot-password',
   Community = '/community',
