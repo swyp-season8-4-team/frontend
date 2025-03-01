@@ -703,7 +703,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           refetchStore={handleRefetchBtnClick}
         />
       </div>
-      m
     </div>
   );
 }

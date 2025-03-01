@@ -107,86 +107,96 @@ export function StoreListContainer({
                 <div className="w-[5.09px] md:w-[11.97px] h-[5.09px] md:h-[11.97px]">
                   <IconLocation className="w-full h-full" />
                 </div>
-                <span>{storeData.length}개</span>
+                <span>{storeData.length ? storeData.length : 0}개</span>
               </div>
-              <button
-                onClick={handleEditBtnClick}
-                className={cn(
-                  isEditing ? 'bg-primary' : 'bg-[#9F9F9F] ',
-                  'flex justify-center items-center px-[3.62px] md:px-[13px] md:py-[6px] rounded-[42.5px] text-[8px] md:text-base',
-                )}
-              >
-                <div className="w-[7.65px] md:w-[18px] h-[7.65px] md:h-[18px]">
-                  <IconWriting className="w-full h-full text-white" />
-                </div>
-                <div className="text-white">편집하기</div>
-              </button>
+              {storeData.length
+                ? storeData.length > 0 && (
+                    <button
+                      onClick={handleEditBtnClick}
+                      className={cn(
+                        isEditing ? 'bg-primary' : 'bg-[#9F9F9F] ',
+                        'flex justify-center items-center px-[3.62px] md:px-[13px] md:py-[6px] rounded-[42.5px] text-[8px] md:text-base',
+                      )}
+                    >
+                      <div className="w-[7.65px] md:w-[18px] h-[7.65px] md:h-[18px]">
+                        <IconWriting className="w-full h-full text-white" />
+                      </div>
+                      <div className="text-white">편집하기</div>
+                    </button>
+                  )
+                : ''}
             </div>
           </div>
         </div>
         <div className="[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] overflow-y-auto [scrollbar-width:none]">
-          {storeData.map((store, index) => (
-            <div
-              onClick={() => handleStoreSelectBtnClick(store.storeUuid)}
-              key={store.storeName}
-              className={cn(
-                'relative px-[9.73px] py-[5.52px] md:py-[22.96px] md:px-[49px]',
-                index !== 0 && 'border-t-[#BABABA] border-t-[0.5px] ',
-              )}
-            >
-              {isEditing && (
-                <button
-                  className={cn(
-                    selectedStoreUuId === store.storeUuid
-                      ? 'bg-[#DE8332]'
-                      : 'bg-[#E8E8E8]',
-                    'left-0 md:left-4 absolute flex justify-center items-center  rounded-full w-[9px] md:w-[21px] h-[9px] md:h-[21px] aspect-square',
-                  )}
-                >
-                  <div className="w-1 md:w-[11px] h-1 md:h-[11px]">
-                    <IconCheck
-                      className={cn(
-                        selectedStoreUuId === store.storeUuid
-                          ? 'text-white'
-                          : 'text-[#9F9F9F]',
-                        'w-full h-full',
-                      )}
-                    />
-                  </div>
-                </button>
-              )}
-              <div className="font-semibold text-[8px] md:text-[18px] leading-tight">
-                {store.storeName}
-              </div>
-              <div className="md:mb-[17.2px] text-[8px] md:text-base leading-tight">
-                {store.storeAddress}
-              </div>
-              <div>
-                <div className="flex gap-[1.91px] md:gap-[4.49px]">
-                  {store.imageUrls.map((image, index) => (
-                    <div
-                      key={image}
-                      className={cn(
-                        index === 0 && 'rounded-l-sm md:rounded-l-lg',
-                        index === store.imageUrls.length - 1 &&
-                          'rounded-r-sm md:rounded-r-lg',
-                        'w-[43.24px] md:w-[101.73px] aspect-square overflow-hidden bg-slate-300',
-                      )}
-                    >
-                      <Image
-                        src={image}
-                        alt={image}
-                        width={70}
-                        height={70}
-                        className="w-full h-full object-cover"
+          {Array.isArray(storeData) ? (
+            storeData.map((store, index) => (
+              <div
+                onClick={() => handleStoreSelectBtnClick(store.storeUuid)}
+                key={store.storeName}
+                className={cn(
+                  'relative px-[9.73px] py-[5.52px] md:py-[22.96px] md:px-[49px]',
+                  index !== 0 && 'border-t-[#BABABA] border-t-[0.5px] ',
+                )}
+              >
+                {isEditing && (
+                  <button
+                    className={cn(
+                      selectedStoreUuId === store.storeUuid
+                        ? 'bg-[#DE8332]'
+                        : 'bg-[#E8E8E8]',
+                      'left-0 md:left-4 absolute flex justify-center items-center  rounded-full w-[9px] md:w-[21px] h-[9px] md:h-[21px] aspect-square',
+                    )}
+                  >
+                    <div className="w-1 md:w-[11px] h-1 md:h-[11px]">
+                      <IconCheck
+                        className={cn(
+                          selectedStoreUuId === store.storeUuid
+                            ? 'text-white'
+                            : 'text-[#9F9F9F]',
+                          'w-full h-full',
+                        )}
                       />
                     </div>
-                  ))}
+                  </button>
+                )}
+                <div className="font-semibold text-[8px] md:text-[18px] leading-tight">
+                  {store.storeName}
                 </div>
-                z
+                <div className="md:mb-[17.2px] text-[8px] md:text-base leading-tight">
+                  {store.storeAddress}
+                </div>
+                <div>
+                  <div className="flex gap-[1.91px] md:gap-[4.49px]">
+                    {store.imageUrls.map((image, index) => (
+                      <div
+                        key={image}
+                        className={cn(
+                          index === 0 && 'rounded-l-sm md:rounded-l-lg',
+                          index === store.imageUrls.length - 1 &&
+                            'rounded-r-sm md:rounded-r-lg',
+                          'w-[43.24px] md:w-[101.73px] aspect-square overflow-hidden bg-slate-300',
+                        )}
+                      >
+                        <Image
+                          src={image}
+                          alt={image}
+                          width={70}
+                          height={70}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  z
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="text-[10px] w-full h-full flex justify-center items-center p-5 md:p-10">
+              아직 담은 가게가 없습니다.
             </div>
-          ))}
+          )}
         </div>
         {isEditing && (
           <div className="right-0 bottom-0 left-0 absolute flex justify-center items-center bg-white py-[6px] md:py-[12.02px] w-full">

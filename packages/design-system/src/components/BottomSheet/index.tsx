@@ -38,7 +38,7 @@ export function BottomSheet({
 
   const handleTouchEnd = () => {
     setIsDragging(false);
-    const threshold = 150; // 드래그 임계값 증가
+    const threshold = 100; // 드래그 임계값 증가
 
     if (offsetY > threshold) {
       onClose();
@@ -58,7 +58,7 @@ export function BottomSheet({
             ref={bottomSheetRef}
             className={cn(
               'bottom-0 z-bottomSheet fixed select-none',
-              'bg-white px-base pt-[19px] pb-4 rounded-t-base max-w-[768px] w-full',
+              'bg-white px-base pt-[10px] pb-4 rounded-t-base max-w-[768px] w-full',
               'animate-slide-up',
               isDragging
                 ? 'transition-none'

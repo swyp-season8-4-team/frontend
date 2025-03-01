@@ -16,6 +16,7 @@ import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import { cn } from '@repo/ui/lib/utils';
 import { getIconColor } from '../../../../../map/_utils/iconColor';
+import IconFlowerOutline from '@repo/design-system/components/icons/IconFlowerOutline';
 
 interface DetailInfoContainerProps extends StoreDetailInfoData {
   parentlistInfo?: ParentSavedListResponse;
@@ -81,6 +82,7 @@ export function DetailInfoContainer({
 
     await storeService.updateCouponCount();
   };
+  // const handleListsForSave
 
   return (
     <div>
@@ -102,7 +104,7 @@ export function DetailInfoContainer({
             ))}
           </span>
         </div>
-        {saved && (
+        {saved ? (
           <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm">
             <div className="w-4 md:w-[37.71px] h-4 md:h-[37.71px]">
               <IconFlower
@@ -113,6 +115,16 @@ export function DetailInfoContainer({
               />
             </div>
           </div>
+        ) : (
+          <button>
+            <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm">
+              <div className="w-4 md:w-[37.71px] h-4 md:h-[37.71px]">
+                <IconFlowerOutline
+                  className={cn('w-full h-full text-[#898989]')}
+                />
+              </div>
+            </div>
+          </button>
         )}
       </div>
       <div className="relative">
