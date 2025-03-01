@@ -21,7 +21,7 @@ export function SearchBar({
       callback: () => onChange(value),
     });
   };
-
+``
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     onChange(value);

@@ -18,7 +18,7 @@ export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [reviewText, setReviewText] = useState('');
   const [rating, setRating] = useState(0);
-  const [, setReviewImage] = useState<File | null>();
+  const [reviewImage, setReviewImage] = useState<File | null>();
   const [imageName, setImageName] = useState<string | null>(null);
 
   const reviewService = new ReviewService({
@@ -53,7 +53,7 @@ export function OneLineReviewWrite({ storeUuid }: OneLineReviewWriteProps) {
         content: reviewText,
         rating: rating,
       },
-      images: [imageName!],
+      images: [reviewImage!],
     };
     const result = await reviewService.createStoreOnlineReviews(data);
     console.log(result);

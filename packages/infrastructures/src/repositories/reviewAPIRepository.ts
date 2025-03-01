@@ -43,16 +43,20 @@ export default class ReviewAPIRepository
 
     const url = `${this.endpoint}/stores/${storeUuid}/reviews`;
 
-    const response = await fetch<
-      { request: OnelineReviewRequests; images?: string[] },
-      CreateOnelineReviewResponse[]
-    >({
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      data: { request, images },
+    const formData = new FormData();
+    formData.append(
+      'request',
+      new Blob([JSON.stringify(request)], { type: 'application/json' }),
+    );
+    if (images) {
+      images.forEach((image, index) => {
+        formData.append(`images[${index}]`, image);
+      });
+    }
+    const response = await fetch<void, CreateOnelineReviewResponse[]>({
       method: 'POST',
       url: url,
+      formData,
     });
 
     return response;

@@ -100,8 +100,8 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
   const { push, pop } = useContext(PortalContext);
 
-  // const searchParam = useSearchParams(); //TODO
-  // const keyword = searchParam.get('query');
+  const searchParam = useSearchParams();
+  const keyword = searchParam.get('query');
 
   const {
     selectedCategories,
@@ -546,7 +546,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         const stores = await fetchNearbyStores(
           mapCenterRef.current,
           selectedPreferenceTags,
-          // keyword as string,
+          keyword as string,
         );
         if (stores) {
           await updateNewClusterMarkers(mapCenterRef.current, stores);
@@ -558,7 +558,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     }
   }, [
     selectedPreferenceTags,
-    // keyword,
+    keyword,
     fetchNearbyStores,
     updateNewClusterMarkers,
   ]);
@@ -619,7 +619,11 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       }, 3000);
 
       // 컴포넌트가 언마운트되거나 error가 변경될 때 타이머 정리
-      return () => clearTimeout(timer);
+      return () => {
+        servicesRef.current.geoService?.stopWatchingPosition();
+        servicesRef.current.mapService?.clearAllMarkers();
+        clearTimeout(timer);
+      };
     }
   }, [error]);
 
@@ -699,6 +703,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           refetchStore={handleRefetchBtnClick}
         />
       </div>
+      m
     </div>
   );
 }
