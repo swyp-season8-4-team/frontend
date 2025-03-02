@@ -91,7 +91,7 @@ export default function MateWriteForm({ initialMate }: Props) {
         longitude: null,
       },
       ...(uploadFile && { imageFile: uploadFile }),
-    }, !initialMate)
+    }, initialMate === undefined)
     
     router.replace(`${NavigationPathGroup.MateDetail}${id}`);
   };
