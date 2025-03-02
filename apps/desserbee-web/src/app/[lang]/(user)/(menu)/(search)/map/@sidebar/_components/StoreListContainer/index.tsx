@@ -35,7 +35,7 @@ export function StoreListContainer({
   );
   const [parentListInfo, setParentListInfo] =
     useState<ParentSavedListResponse>();
-  const [storeData, setStoreData] = useState([]);
+  const [storeData, setStoreData] = useState<StoresInSavedListData[]>([]);
 
   const storeService = useMemo(
     () =>
@@ -59,37 +59,40 @@ export function StoreListContainer({
     setSelectedStoreUuId(storeUuId);
   };
 
-  const handleStoreDeleteBtnClick = async () => {
-    if (!selectedStoreUuId) return;
-
+  const handleStoresInSavedListFetch = useCallback(async () => {
     try {
-      await storeService.deleteStoreInSavedList({
-        listId,
-        storeUuid: selectedStoreUuId,
+      // 부모 리스트 정보 가져오기
+      const parentList = await storeService.getParentSavedList({
+        listId: Number(listId),
+      });
+      setParentListInfo(parentList);
+
+      // 리스트에 포함된 가게 정보 가져오기
+      const response = await storeService.getStoresInSavedList({
+        listId: Number(listId),
       });
 
-      setSelectedStoreUuId(null);
+      // 실제 API 응답 구조에 맞게 타입 조정 (응답이 객체이고 storeData 속성을 가짐)
+      interface StoreListResponse {
+        iconColorId: number;
+        listId: number;
+        listName: string;
+        storeCount: number;
+        storeData: StoresInSavedListData[];
+        userUuid: string;
+      }
 
-      await handleStoresInSavedListFetch();
+      // 타입 단언 사용
+      const typedResponse = response as unknown as StoreListResponse;
+
+      if (typedResponse && typedResponse.storeData) {
+        setStoreData(typedResponse.storeData);
+      } else {
+        setStoreData([]);
+      }
     } catch (error) {
-      console.error('가게 삭제 실패:', error);
+      setStoreData([]);
     }
-  };
-
-  const handleStoresInSavedListFetch = useCallback(async () => {
-    // 부모 리스트 정보 가져오기
-    const parentList = await storeService.getParentSavedList({
-      listId: Number(listId),
-    });
-    setParentListInfo(parentList);
-
-    // 리스트에 포함된 가게 정보 가져오기
-    const response = await storeService.getStoresInSavedList({
-      listId: Number(listId),
-    });
-
-    // 타입 오류 해결을 위한 타입 단언
-    setStoreData((response as any).storeData || []);
   }, [listId, storeService]);
 
   useEffect(() => {
