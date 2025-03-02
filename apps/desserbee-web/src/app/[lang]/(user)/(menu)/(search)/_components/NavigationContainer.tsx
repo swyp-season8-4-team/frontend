@@ -8,11 +8,7 @@ import { NavigationPathname } from '@repo/entity/src/navigation';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
 
-interface Props {
-  isAuthorized: boolean;
-}
-
-export default function NavigationContainer({ isAuthorized }: Props) {
+export default function NavigationContainer() {
   const pathname = usePathname();
   const normalizedPath = pathname.split('/', 3)[2];
   const currentPathName = `/${normalizedPath}`;
@@ -31,9 +27,9 @@ export default function NavigationContainer({ isAuthorized }: Props) {
     {
       icon: <IconProfileOutline className="w-full h-full" />,
       text: '마이',
-      path: isAuthorized ? NavigationPathname.My : NavigationPathname.SignIn,
+      path: NavigationPathname.My,
     },
-  ], [isAuthorized]);
+  ], []);
 
   return (
     <NavBar
