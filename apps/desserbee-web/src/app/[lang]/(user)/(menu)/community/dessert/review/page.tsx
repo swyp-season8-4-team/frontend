@@ -1,7 +1,5 @@
-export default async function CommunityDessertReviewPage() {
-  return (
-    <main>
-      
-    </main>
-  )
+import { redirect } from 'next/navigation';
+
+export default function CommunityDessertReviewPage() {
+  redirect('/ready');
 }

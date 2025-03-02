@@ -67,7 +67,7 @@ export default function SignUpTermsOfServiceForm() {
           gender,
         });
 
-        if (profileImage) {
+        if (!!profileImage) {
           await updateProfileImageAction(profileImage);
         }
         
