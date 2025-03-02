@@ -192,12 +192,14 @@ export default class MateAPIRepository
     
     const { from, to, mateCategoryId, keyword } = data;
 
+    
+
     const response = await fetch<MateListRequest, MateRawAllListResponse>({
       method: 'GET',
       url: `${this.endpoint}/mates`,
       query: {
-        ...(from && { from: from.toString() }),
-        ...(to && { to: to.toString() }),
+        ...(typeof from === 'number' && { from: from.toString() }),
+        ...(typeof to === 'number' && { to: to.toString() }),
         ...(mateCategoryId && { mateCategoryId: this.mateConverter.convertMateCategoryToId(mateCategoryId).toString() }),
         ...(keyword && { keyword: encodeURIComponent(keyword) }),
       },
