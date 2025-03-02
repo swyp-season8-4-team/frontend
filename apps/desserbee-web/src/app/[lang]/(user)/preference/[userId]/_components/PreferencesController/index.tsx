@@ -44,9 +44,17 @@ export default function PreferencesController() {
               <PreferencesQnA 
                 {...qna}
                 key={`qna-${index}`}
-                onClickA={() => {
+                onClickA={async () => {
                   addPreference(index + 1);
                   updateCurrentQuestion(index + 1);
+                  if (index === qnaList.length - 1) {
+                    await submitPreferencesAction({
+                      user,
+                      preferences,
+                    });
+                    router.replace(`${NavigationLanguageGroup.ko}${NavigationPathname.Map}`);
+                    return;
+                  }
                 }}
                 onClickB={async () => {
                   if (index === qnaList.length - 1) {
