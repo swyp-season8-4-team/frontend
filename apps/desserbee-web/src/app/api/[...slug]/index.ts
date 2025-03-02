@@ -25,8 +25,6 @@ export async function httpHandler(request: Request): Promise<Response> {
     method: request.method,
   };
 
-  console.log('requestInit', requestInit);
-
   if (request.method === 'POST' || request.method === 'PATCH') {
     requestInit.body = await request.text();
   }

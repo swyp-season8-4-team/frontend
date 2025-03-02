@@ -1,5 +1,6 @@
 'use client';
 
+import { UserContext } from "@/contexts/UserContext";
 import Modal from "@repo/design-system/components/Modal";
 import type { Mate } from "@repo/entity/src/mate";
 import MateAPIRepository from "@repo/infrastructures/src/repositories/mateAPIRepository";
@@ -8,6 +9,8 @@ import { PortalContext } from "@repo/ui/contexts/PortalContext";
 import MateService from "@repo/usecase/src/mateService";
 import Link from "next/link";
 import { useContext } from "react";
+import { useRouter } from "next/navigation";
+import { NavigationPathname } from "@repo/entity/src/navigation";
 
 const mateService = new MateService({
   mateRepository: new MateAPIRepository(), 
@@ -18,13 +21,11 @@ interface Props {
 }
 
 export default function MatePostActions({ mate }: Props) {
+  const router = useRouter();
+  const { user } = useContext(UserContext);
   const { push, pop } = useContext(PortalContext);
 
   const handleDelete = async () => {
-    await mateService.delete({
-      id: mate.id,
-    });
-
     const closeModal = () => {
       pop('modal');
     }
@@ -41,6 +42,7 @@ export default function MatePostActions({ mate }: Props) {
                     id: mate.id,
                   });
                   closeModal();
+                  router.replace(NavigationPathname.CommunityDessertMate);
                 }}
               >
                 삭제하기
@@ -54,12 +56,16 @@ export default function MatePostActions({ mate }: Props) {
             </>
           }
           visible={true}
-          title="삭제하기"
-          description="정말 삭제하시겠습니까?"
+          title="정말 삭제하시겠습니까?"
+          description="삭제한 게시글은 복구할 수 없습니다."
           onClose={closeModal}
         />
       )
     });
+  }
+
+  if (!user || user.id !== mate.userId) {
+    return null;
   }
 
   return (
