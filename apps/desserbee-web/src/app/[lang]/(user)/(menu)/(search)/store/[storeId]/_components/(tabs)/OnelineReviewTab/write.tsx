@@ -53,18 +53,36 @@ export function OneLineReviewWrite({
   };
 
   const handleSubmit = async () => {
-    const data = {
-      storeUuid: storeUuid,
-      request: {
-        userUuid: user?.id as string,
-        content: reviewText,
-        rating: rating,
-      },
-      images: [reviewImage!],
-    };
-    await reviewService.createStoreOnlineReviews(data);
-    const pathname = window.location.pathname;
-    router.push(pathname);
+    try {
+      const data = {
+        storeUuid: storeUuid,
+        request: {
+          userUuid: user?.id as string,
+          content: reviewText,
+          rating: rating,
+        },
+        images: reviewImage ? [reviewImage] : [],
+      };
+
+      await reviewService.createStoreOnlineReviews(data);
+
+      // 리뷰 작성 후 상태 초기화
+      setReviewText('');
+      setRating(0);
+      setPreviewImage(null);
+      setReviewImage(null);
+      setImageName(null);
+
+      // 부모 컴포넌트로 돌아가기
+      if (handleBackToReviewBtnClick) {
+        handleBackToReviewBtnClick();
+      }
+
+      // 서버 컴포넌트 데이터 새로고침
+      router.refresh();
+    } catch (error) {
+      console.error('리뷰 작성 중 오류가 발생했습니다:', error);
+    }
   };
 
   return (
