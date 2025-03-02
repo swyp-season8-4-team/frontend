@@ -111,15 +111,21 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
     }
   };
 
-  const handleDeleteList = async (listId: number) => {
+  const handleDeleteList = async (listId: number, e: React.MouseEvent) => {
     try {
+      // 이벤트 전파 중지
+      e.stopPropagation();
+
       console.log('삭제된 리스트:', listId);
 
-      await storeService.deleteSavedList({ listId: listId, authorization: '' });
+      await storeService.deleteSavedList({ listId: listId });
       setSelectedListId(null);
       router.refresh();
     } catch (error) {
       console.error('리스트 삭제 실패:', error);
+      // 삭제 실패 시에도 이벤트 전파를 중지하여 상위 요소의 클릭 이벤트 실행 방지
+      e.preventDefault();
+      e.stopPropagation();
     }
   };
 
@@ -233,7 +239,9 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
                         </span>
                         <button
                           className="text-[8px] md:text-[14px] text-nowrap"
-                          onClick={() => handleDeleteList(saveListItem.listId)}
+                          onClick={(e) =>
+                            handleDeleteList(saveListItem.listId, e)
+                          }
                         >
                           리스트 삭제하기
                         </button>

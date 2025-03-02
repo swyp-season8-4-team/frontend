@@ -6,35 +6,29 @@ import type { SavedListData } from '@repo/entity/src/store';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import StoreService from '@repo/usecase/src/storeService';
 import { useRouter, useSearchParams } from 'next/navigation';
-import {
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-  useMemo,
-  useRef,
-} from 'react';
+import { useCallback, useContext, useEffect, useState, useMemo } from 'react';
 import { CreateListModal } from '../../../../map/_modals/CreateListModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import IconFlower from '@repo/design-system/components/icons/IconFlower';
 import { cn } from '@repo/ui/lib/utils';
 import IconPlus from '@repo/design-system/components/icons/IconPlus';
-import { totalSavedList } from '../../../../map/_consts/marker';
 import IconCheck from '@repo/design-system/components/icons/IconCheck';
 
 interface SaveStoreBottomSheetContainerProps {
   showBottomSheet: boolean;
+  storeUuid: string;
 }
 
 export function SaveStoreBottomSheetContainer({
   showBottomSheet,
+  storeUuid,
 }: SaveStoreBottomSheetContainerProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const { push, pop } = useContext(PortalContext);
 
-  const [selectedListId, setSelectedListId] = useState<number | null>(null);
+  const [selectedListId, setSelectedListId] = useState<number>(0);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(showBottomSheet);
   const [savedLists, setSavedLists] = useState<SavedListData[]>([]);
   const { user } = useContext(UserContext);
@@ -88,17 +82,28 @@ export function SaveStoreBottomSheetContainer({
           onClose={() => {
             pop('modal');
             setSavedLists([]);
-            router.push('?saveStore=true'); // 모달 닫을 때 바텀시트트 다시 열기
+            handleSavedListFetch();
+            router.push('?saveStore=true');
           }}
           onComplete={(listName: string, colorId: number) => {
             pop('modal');
             setSavedLists([]);
-            handleCreateListComplete(listName, colorId);
+            handleCreateListComplete(listName, colorId).then(() => {
+              handleSavedListFetch();
+            });
             router.refresh();
-            router.push('?saveStore=true'); // 완료 후 바텀시트 다시 열기
+            router.push('?saveStore=true');
           }}
         />
       ),
+    });
+  };
+
+  const hadleSaveInListBtnClick = async (listId: number) => {
+    await storeService.addStoreInSavedList({
+      listId: listId as number,
+      storeUuid,
+      userPreferences: user?.preferences as number[],
     });
   };
 
@@ -125,91 +130,91 @@ export function SaveStoreBottomSheetContainer({
     setIsBottomSheetOpen(hasBottomsheet);
   }, [searchParams]);
 
-  // useEffect(() => {
-  //   handleSavedListFetch();
-  // }, [handleSavedListFetch]);
+  useEffect(() => {
+    handleSavedListFetch();
+  }, [handleSavedListFetch]);
 
-  // if (!savedLists) return null;
-  const savedList = totalSavedList;
+  if (!savedLists) return null;
+
   return (
-    <BottomSheet isOpen={isBottomSheetOpen} onClose={handleBottomSheetClose}>
-      <button
-        className="flex items-center"
-        onClick={() => {
-          handleSideBarClose();
-          handleCreateListBtnClick();
-        }}
-      >
-        <span className=" flex justify-center items-center mr-2 border-[#D5D5D5]  border-[0.5px] rounded-sm w-[37.5px] aspect-square ">
-          <IconPlus className="w-full full text-[#6F6F6F]" />
-        </span>
-        <span className="text-[#6F6F6F] text-[18px]">새 리스트 만들기</span>
-      </button>
-      {/* {savedLists.map((list) => (
-        <div key={list.listId} className="flex items-center">
-          <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm w-[20.45px] md:w-[37.5px] aspect-square">
-            <IconFlower
-              className={cn(getIconColor(list.iconColorId), 'w-full h-full')}
-            />
-          </div>
-        </div>
-      ))} */}
-      {savedList.map((list) => (
-        <div
-          onClick={() => handleListSelect(list.listId)}
-          key={list.listId}
-          className={cn('border-b-[#E8E8E8] border-b-[1.4px] p-[7.29px]')}
+    <BottomSheet
+      className="h-[50%] p-4"
+      isOpen={isBottomSheetOpen}
+      onClose={handleBottomSheetClose}
+    >
+      <div className="flex flex-col h-full overflow-y-auto scrollbar-none">
+        <button
+          className="flex items-center"
+          onClick={() => {
+            handleSideBarClose();
+            handleCreateListBtnClick();
+          }}
         >
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center">
-              <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm w-[37.5px] aspect-square">
-                <IconFlower
-                  className={cn(
-                    getIconColor(list.iconColorId),
-                    'w-full h-full',
-                  )}
-                />
-              </div>
-              <div className="text-[14px] font-semibold mr-[5px]">
-                {list.listName}
-              </div>
-              <div className="text-[14px] text-[#898989]">
-                {list.storeCount}
-              </div>
-            </div>
+          <span className="flex justify-center items-center mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm w-[37.5px] aspect-square">
+            <IconPlus className="w-full full text-[#6F6F6F]" />
+          </span>
+          <span className="text-[#6F6F6F] text-[18px]">새 리스트 만들기</span>
+        </button>
+        <div className="flex-1 overflow-y-auto scrollbar-none">
+          {savedLists.map((list) => (
+            <div
+              onClick={() => handleListSelect(list.listId)}
+              key={list.listId}
+              className={cn('border-b-[#E8E8E8] border-b-[1.4px] p-[7.29px]')}
+            >
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center">
+                  <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm w-[37.5px] aspect-square">
+                    <IconFlower
+                      className={cn(
+                        getIconColor(list.iconColorId),
+                        'w-full h-full',
+                      )}
+                    />
+                  </div>
+                  <div className="text-[14px] font-semibold mr-[5px]">
+                    {list.listName}
+                  </div>
+                  <div className="text-[14px] text-[#898989]">
+                    {list.storeCount}
+                  </div>
+                </div>
 
-            <div>
-              <button
-                className={cn(
-                  selectedListId === list.listId
-                    ? 'bg-[#FFB700] border-none'
-                    : 'bg-white border border-[#9F9F9F]',
-                  'flex justify-center items-center  rounded-full w-[15px] h-[15px] aspect-square',
-                )}
-              >
-                <div className="w-2 h-2">
-                  <IconCheck
+                <div>
+                  <button
                     className={cn(
                       selectedListId === list.listId
-                        ? 'text-white'
-                        : 'text-[#9F9F9F]',
-                      'w-full h-full',
+                        ? 'bg-[#FFB700] border-none'
+                        : 'bg-white border border-[#9F9F9F]',
+                      'flex justify-center items-center rounded-full w-[15px] h-[15px] aspect-square',
                     )}
-                  />
+                  >
+                    <div className="w-2 h-2">
+                      <IconCheck
+                        className={cn(
+                          selectedListId === list.listId
+                            ? 'text-white'
+                            : 'text-[#9F9F9F]',
+                          'w-full h-full',
+                        )}
+                      />
+                    </div>
+                  </button>
                 </div>
-              </button>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
-      ))}
-      <button
-        className={cn(
-          savedLists.length > 0 ? "'bg-[#9F9F9F] " : 'bg-[#FFB700]',
-          'text-white text-lg font-semibold w-full rounded-[100px] md:p-2',
-        )}
-      >
-        리스트에 담기
-      </button>
+        <button
+          onClick={() => hadleSaveInListBtnClick(selectedListId)}
+          className={cn(
+            selectedListId ? 'bg-[#FFB700]' : 'bg-[#D5D5D5]',
+            'text-white text-lg font-semibold w-full rounded-[100px] md:p-2 mt-2 mb-4',
+          )}
+        >
+          리스트에 담기
+        </button>
+      </div>
     </BottomSheet>
   );
 }
