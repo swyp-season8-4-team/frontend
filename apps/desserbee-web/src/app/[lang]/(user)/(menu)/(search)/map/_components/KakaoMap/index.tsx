@@ -43,6 +43,7 @@ import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService
 import { ReFetchStoreBtn } from '../ReFetchStoreBtn';
 import { calculateDistance } from '../../_utils/distance';
 import { useTag } from '../../../_hooks/useTag';
+import { BottomSheet } from '@repo/design-system/components/BottomSheet';
 
 interface KakaoMapProps {
   preferenceCategories: PreferenceData[];
@@ -571,8 +572,12 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         if (hash.startsWith('#q=')) {
           const query = decodeURIComponent(hash.substring(3));
           setSearchKeyword(query);
+          // 검색어가 있으면 즉시 바텀시트 표시
+          setShowBottomSheet(!!query);
+          console.log('Initial hash detected, setting bottom sheet:', !!query);
         } else {
           setSearchKeyword('');
+          setShowBottomSheet(false);
         }
       }
     };
@@ -604,6 +609,13 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const previousSelectedTagsRef = useRef<number[]>([]);
   const previousSearchKeywordRef = useRef<string>('');
 
+  const [showBottomSheet, setShowBottomSheet] = useState(false);
+
+  // 바텀시트 닫는 핸들러 추가
+  const handleCloseBottomSheet = useCallback(() => {
+    setShowBottomSheet(false);
+  }, []);
+
   useEffect(() => {
     if (
       JSON.stringify(previousSelectedTagsRef.current) !==
@@ -619,6 +631,18 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         if (stores) {
           await updateNewClusterMarkers(mapCenterRef.current, stores);
           setIsFetchRequired(false);
+
+          // 검색어가 있을 때 바텀시트 표시 (일정 시간 후에 업데이트)
+          console.log(
+            'Search keyword changed:',
+            searchKeyword,
+            'Setting bottom sheet:',
+            !!searchKeyword,
+          );
+          // 약간의 지연을 두어 상태 업데이트가 확실히 반영되도록 함
+          setTimeout(() => {
+            setShowBottomSheet(!!searchKeyword);
+          }, 100);
         }
       };
       fetchAndUpdate();
@@ -631,35 +655,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     fetchNearbyStores,
     updateNewClusterMarkers,
   ]);
-
-  // // 전체 검색 (선호도 태그 ,키워드 검색)
-  // useEffect(() => {
-  //   if (
-  //     JSON.stringify(previousSelectedTagsRef.current) !==
-  //     JSON.stringify(selectedPreferenceTags)
-  //   ) {
-  //     const fetchAndUpdate = async () => {
-  //       if (typeof window !== 'undefined') {
-  //         const hash = window.location.hash;
-  //         if (hash.startsWith('#q=')) {
-  //           const query = decodeURIComponent(hash.substring(3));
-  //           // query 값 사용하기
-  //           const stores = await fetchNearbyStores(
-  //             mapCenterRef.current,
-  //             selectedPreferenceTags,
-  //             query,
-  //           );
-  //           if (stores) {
-  //             await updateNewClusterMarkers(mapCenterRef.current, stores);
-  //             setIsFetchRequired(false);
-  //           }
-  //         }
-  //       }
-  //     };
-  //     fetchAndUpdate();
-  //     previousSelectedTagsRef.current = selectedPreferenceTags;
-  //   }
-  // }, [selectedPreferenceTags, fetchNearbyStores, updateNewClusterMarkers]);
 
   // 현 위치에서 검색
   useEffect(() => {
@@ -758,6 +753,16 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           clearSelectedCategories={clearSelectedCategories}
           refetchStore={handleRefetchBtnClick}
         />
+        <BottomSheet isOpen={showBottomSheet} onClose={handleCloseBottomSheet}>
+          <div>
+            {searchKeyword ? (
+              <p className="text-lg font-medium">{searchKeyword} 검색 결과</p>
+            ) : (
+              <p>검색 결과가 없습니다</p>
+            )}
+            {/* 여기에 검색 결과 내용을 추가할 수 있습니다 */}
+          </div>
+        </BottomSheet>
       </div>
     </div>
   );
