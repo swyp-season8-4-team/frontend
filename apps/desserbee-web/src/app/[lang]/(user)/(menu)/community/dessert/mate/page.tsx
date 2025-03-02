@@ -6,7 +6,7 @@ import CategoryFilter from "./_components/CategoryFilter";
 import CommunityMateFixedTopArea from "./_components/CommunityMateFixedTopArea";
 import CommunityMateSection from "./_components/CommunityMateSection";
 import CommunityMateTitle from "./_components/CommunityMateTitle";
-import { CommunityMateCategoryProvider } from "./_contexts/CommunityMateCategoryContext";
+import { CommunityMateCategorySearchProvider } from "./_contexts/CommunityMateCategorySearchContext";
 
 export const dynamic = 'force-dynamic';
 
@@ -20,7 +20,7 @@ export default async function CommunityMatePage({ searchParams }: WithSearchPara
     <>
       <main className="max-w-screen-md mx-auto px-4 py-6 h-[calc(100dvh-65px)] overflow-hidden flex flex-col">
         {/* 타이틀 영역 */}
-        <CommunityMateCategoryProvider>
+        <CommunityMateCategorySearchProvider>
           <CommunityMateFixedTopArea>
             <div className="flex justify-between relative mb-6">
               <CommunityMateTitle />
@@ -45,7 +45,7 @@ export default async function CommunityMatePage({ searchParams }: WithSearchPara
           {/* 그라데이션 효과를 스크롤 영역 내부로 이동 */}
           <div className="sticky left-0 bottom-0 w-full h-[100px] bg-gradient-to-b from-[#F9FAFC]/0 to-[#F9FAFC] to-[84.75%]" />
         </div>
-        </CommunityMateCategoryProvider>
+        </CommunityMateCategorySearchProvider>
       </main>
     </>
   );

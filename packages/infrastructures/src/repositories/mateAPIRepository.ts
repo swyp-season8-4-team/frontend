@@ -190,7 +190,7 @@ export default class MateAPIRepository
       throw new Error('data is required');
     }
     
-    const { from, to, mateCategoryId } = data;
+    const { from, to, mateCategoryId, keyword } = data;
 
     const response = await fetch<MateListRequest, MateRawAllListResponse>({
       method: 'GET',
@@ -199,6 +199,7 @@ export default class MateAPIRepository
         ...(from && { from: from.toString() }),
         ...(to && { to: to.toString() }),
         ...(mateCategoryId && { mateCategoryId: this.mateConverter.convertMateCategoryToId(mateCategoryId).toString() }),
+        ...(keyword && { keyword: encodeURIComponent(keyword) }),
       },
     });
 

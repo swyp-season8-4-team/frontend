@@ -2,14 +2,14 @@
 
 import type { MateCategory } from '@repo/entity/src/mate';
 import { useContext } from 'react';
-import { CommunityMateCategoryContext } from '../../_contexts/CommunityMateCategoryContext';
+import { CommunityMateCategorySearchContext } from '../../_contexts/CommunityMateCategorySearchContext';
 
 interface CategoryFilterProps {
   categories: MateCategory[];
 }
 
 export default function CategoryFilter({ categories }: CategoryFilterProps) {
-  const { activeCategory, handleCategoryClick } = useContext(CommunityMateCategoryContext);
+  const { activeCategory, handleCategoryClick } = useContext(CommunityMateCategorySearchContext);
   
   return (
     <div className="flex gap-2 overflow-x-auto mb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
