@@ -100,9 +100,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
   const { push, pop } = useContext(PortalContext);
 
-  const searchParam = useSearchParams();
-  const keyword = searchParam.get('query');
-
   const {
     selectedCategories,
     isMyPreferSelected,
@@ -633,14 +630,10 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           setIsFetchRequired(false);
 
           // 검색어가 있을 때 바텀시트 표시 (일정 시간 후에 업데이트)
-          console.log(
-            'Search keyword changed:',
-            searchKeyword,
-            'Setting bottom sheet:',
-            !!searchKeyword,
-          );
+
           // 약간의 지연을 두어 상태 업데이트가 확실히 반영되도록 함
           setTimeout(() => {
+            setNearByStores(stores);
             setShowBottomSheet(!!searchKeyword);
           }, 100);
         }
@@ -753,16 +746,10 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           clearSelectedCategories={clearSelectedCategories}
           refetchStore={handleRefetchBtnClick}
         />
-        <BottomSheet isOpen={showBottomSheet} onClose={handleCloseBottomSheet}>
-          <div>
-            {searchKeyword ? (
-              <p className="text-lg font-medium">{searchKeyword} 검색 결과</p>
-            ) : (
-              <p>검색 결과가 없습니다</p>
-            )}
-            {/* 여기에 검색 결과 내용을 추가할 수 있습니다 */}
-          </div>
-        </BottomSheet>
+        {/* <BottomSheet
+          isOpen={showBottomSheet}
+          onClose={handleCloseBottomSheet}
+        ></BottomSheet> */}
       </div>
     </div>
   );
