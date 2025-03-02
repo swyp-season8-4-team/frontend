@@ -125,6 +125,16 @@ export default class MateService {
     return response;
   }
 
+  async cancelSave(data: MateSaveRequest) {
+    if (!this.mateRepository) {
+      throw new Error('mateRepository is not set');
+    }
+
+    const response = await this.mateRepository.cancelSave({ data });
+
+    return response;
+  }
+
   async acceptMyTeamMember(data: MateAcceptRequest) {
     if (!this.mateRepository) {
       throw new Error('mateRepository is not set');

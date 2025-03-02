@@ -235,6 +235,7 @@ export interface MateRepository {
   delete(data: BaseRequestData<MateRequest>): Promise<void>; // 모임 삭제
   update(data: BaseRequestData<MateUpdateRequest>): Promise<void>; // 모임 수정
   save(data: BaseRequestData<MateSaveRequest>): Promise<unknown>; // 모임 저장
+  cancelSave(data: BaseRequestData<MateSaveRequest>): Promise<unknown>; // 모임 저장 취소
   getSavedMateList(data: BaseRequestData<MateListRequest>): Promise<Mate[]>; // 저장한 모임 목록 조회
   createReply(data: BaseRequestData<MateReplyRequest>): Promise<unknown>; // 모임 댓글 생성
   deleteReply(data: BaseRequestData<Omit<MateReplyUpdateRequest, 'content'>>): Promise<unknown>; // 모임 댓글 삭제
