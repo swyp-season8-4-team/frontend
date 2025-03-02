@@ -190,14 +190,15 @@ export default class MateAPIRepository
       throw new Error('data is required');
     }
     
-    const { from, to } = data;
+    const { from, to, mateCategoryId } = data;
 
     const response = await fetch<MateListRequest, MateRawAllListResponse>({
       method: 'GET',
       url: `${this.endpoint}/mates`,
       query: {
-        from: from.toString(),
-        to: to.toString(),
+        ...(from && { from: from.toString() }),
+        ...(to && { to: to.toString() }),
+        ...(mateCategoryId && { mateCategoryId: this.mateConverter.convertMateCategoryToId(mateCategoryId).toString() }),
       },
     });
 
@@ -370,8 +371,8 @@ export default class MateAPIRepository
       method: 'GET',
       url: `${this.endpoint}/mates/${id}/reply`,
       query: {
-        from: from.toString(),
-        to: to.toString(),
+        ...(from && { from: from.toString() }),
+        ...(to && { to: to.toString() }),
       },
     });
 
@@ -392,8 +393,8 @@ export default class MateAPIRepository
       method: 'GET',
       url: `${this.endpoint}/mates/saved`,
       query: {
-        from: from.toString(),
-        to: to.toString(),
+        ...(from && { from: from.toString() }),
+        ...(to && { to: to.toString() }),
       }
     });
     

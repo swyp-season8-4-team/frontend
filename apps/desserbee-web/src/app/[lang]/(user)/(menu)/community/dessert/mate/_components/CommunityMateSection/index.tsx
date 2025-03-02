@@ -1,6 +1,6 @@
 import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
 import MateService from '@repo/usecase/src/mateService';
-import { CommunityMateProvider } from '../../_contexts/CommunityMateContext';
+import { CommunityMateListProvider } from '../../_contexts/CommunityMateListContext';
 import CommunityMateList from '../CommunityMateList';
 
 const mateService = new MateService({
@@ -19,8 +19,8 @@ export default async function CommunityMateSection({ q }: Props) {
   const { mates, isLast } = await mateService.getMateList({ from: 0, to: 9, ...(q && { keyword: q }) });
 
   return (
-    <CommunityMateProvider initialIsLast={isLast} initialMates={mates}>
+    <CommunityMateListProvider initialIsLast={isLast} initialMates={mates}>
       <CommunityMateList />
-    </CommunityMateProvider>
+    </CommunityMateListProvider>
   )
 }

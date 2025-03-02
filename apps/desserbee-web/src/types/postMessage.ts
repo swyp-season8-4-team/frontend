@@ -1,3 +1,7 @@
+// FIXME: 한개파일 말고 분리해서 관리
+
+import type { MateCategory } from "@repo/entity/src/mate";
+
 export enum SearchMessageAction {
   OpenSearchBar = 'open-search-bar',
 }
@@ -5,4 +9,17 @@ export enum SearchMessageAction {
 export interface SearchMessageData {
   action: SearchMessageAction;
   payload?: unknown;
+}
+
+export enum MateSearchMessageAction {
+  GetMateCategories = 'get-mate-categories',
+}
+
+export interface MateSearchMessagePayload {
+  selectedCategory?: MateCategory;
+}
+
+export interface MateSearchMessageData {
+  action: MateSearchMessageAction;
+  payload?: MateSearchMessagePayload;
 }
