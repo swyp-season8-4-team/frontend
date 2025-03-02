@@ -296,10 +296,7 @@ export default class StoreAPIRepository
     return response;
   }
 
-  async deleteSavedList({
-    authorization,
-    data,
-  }: BaseRequestData<DeleteSavedListRequest>): Promise<void> {
+  async deleteSavedList({ data }: BaseRequestData<DeleteSavedListRequest>) {
     if (!data) {
       throw Error('data required');
     }
@@ -308,12 +305,7 @@ export default class StoreAPIRepository
 
     const url = `${this.endpoint}/user-store/lists/${listId}`;
 
-    const response = await fetch<DeleteSavedListRequest, Promise<void>>({
-      ...(authorization && {
-        headers: {
-          Authorization: authorization,
-        },
-      }),
+    const response = await fetch<DeleteSavedListRequest, void>({
       method: 'DELETE',
       url,
     });
@@ -435,11 +427,11 @@ export default class StoreAPIRepository
     const { userUuid } = data || {};
 
     const response = await fetch<SavedListRequest, SavedListData[]>({
-      // ...(authorization && {
-      //   headers: {
-      //     Authorization: authorization,
-      //   },
-      // }),
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'GET',
       url: `${this.endpoint}/user-store/${userUuid}/lists`,
     });

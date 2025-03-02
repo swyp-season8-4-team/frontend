@@ -516,16 +516,13 @@ export default class StoreService {
     }
   }
 
-  async deleteSavedList(
-    params: DeleteSavedListRequest & { authorization: string },
-  ): Promise<void> {
+  async deleteSavedList(params: DeleteSavedListRequest): Promise<void> {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
-      const { authorization, ...rest } = params;
+      const { ...rest } = params;
       await this.storeRepository.deleteSavedList({
-        authorization,
         data: rest,
       });
     } catch (error) {

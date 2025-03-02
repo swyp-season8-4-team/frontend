@@ -115,7 +115,7 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
     try {
       console.log('삭제된 리스트:', listId);
 
-      await storeService.deleteSavedList({ listId: listId, authorization: '' });
+      await storeService.deleteSavedList({ listId: listId });
       setSelectedListId(null);
       router.refresh();
     } catch (error) {

@@ -675,11 +675,11 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
               setIsInitialized(true);
             })
             .catch((err) => {
-              // console.error('지도 로드 실패:', err);
+              console.error('지도 로드 실패:', err);
               setError('지도 초기화에 실패했습니다.');
             });
         } catch (error) {
-          // console.error('서비스 초기화 실패:', error);
+          console.error('서비스 초기화 실패:', error);
           setError('지도 초기화 중 오류가 발생했습니다.');
         }
       });
