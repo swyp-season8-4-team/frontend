@@ -59,6 +59,23 @@ export function StoreListContainer({
     setSelectedStoreUuId(storeUuId);
   };
 
+  const handleStoreDeleteBtnClick = async () => {
+    if (!selectedStoreUuId) return;
+
+    try {
+      await storeService.deleteStoreInSavedList({
+        listId,
+        storeUuid: selectedStoreUuId,
+      });
+
+      setSelectedStoreUuId(null);
+
+      await handleStoresInSavedListFetch();
+    } catch (error) {
+      console.error('가게 삭제 실패:', error);
+    }
+  };
+
   const handleStoresInSavedListFetch = useCallback(async () => {
     try {
       // 부모 리스트 정보 가져오기
