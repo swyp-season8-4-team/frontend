@@ -89,13 +89,7 @@ export default class StoreAPIRepository
     }
 
     const { latitude, longitude, radius } = data || {};
-    // 헤더에 자연스럽게 붙는지 확인
     const response = await fetch<void, NearByStoreData[]>({
-      // ...(authorization && {
-      //   headers: {
-      //     Authorization: authorization,
-      //   },
-      // }),
       method: 'GET',
       url: `${this.endpoint}/stores/map/my-preferences?latitude=${latitude}&longitude=${longitude}&radius=${radius}`,
     });

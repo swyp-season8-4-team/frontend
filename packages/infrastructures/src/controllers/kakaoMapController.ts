@@ -35,10 +35,8 @@ export default class KakaoMapController implements MapController {
       kakaoMap.addControl(zoomControl, kakao.maps.ControlPosition.BOTTOMRIGHT);
 
       this.map = new KakaoMapAdapter(kakaoMap);
-      console.log('지도가 성공적으로 생성되었습니다.');
       return this.map;
     } catch (error) {
-      console.error('지도 생성 중 오류가 발생했습니다:', error);
       throw error;
     }
   }
@@ -70,11 +68,7 @@ export default class KakaoMapController implements MapController {
         markerImageSrc,
         handleMarkerClick,
       );
-      console.log(
-        `${storeMapData.length}개의 마커가 성공적으로 생성되었습니다.`,
-      );
     } catch (error) {
-      console.error('마커 생성 중 오류가 발생했습니다:', error);
       throw error;
     }
   }
@@ -85,9 +79,7 @@ export default class KakaoMapController implements MapController {
         throw new Error('Map is not initialized');
       }
       this.map.clearAllMarkers();
-      console.log('모든 마커가 성공적으로 제거되었습니다.');
     } catch (error) {
-      console.error('마커 제거 중 오류가 발생했습니다:', error);
       throw error;
     }
   }
@@ -98,13 +90,8 @@ export default class KakaoMapController implements MapController {
         throw new Error('Map is not initialized');
       }
       const marker = this.map.getMarkerById(storeUuid);
-      console.log(`마커 조회 완료 - ID: ${storeUuid}`);
       return marker;
     } catch (error) {
-      console.error(
-        `마커 조회 중 오류가 발생했습니다 (ID: ${storeUuid}):`,
-        error,
-      );
       throw error;
     }
   }
@@ -118,9 +105,7 @@ export default class KakaoMapController implements MapController {
         throw new Error('Map is not initialized');
       }
       this.map.createCurrentPositionMarker(position, markerImageSrc);
-      console.log('현재 위치 마커가 성공적으로 생성되었습니다.');
     } catch (error) {
-      console.error('현재 위치 마커 생성 중 오류가 발생했습니다:', error);
       throw error;
     }
   }
@@ -131,9 +116,7 @@ export default class KakaoMapController implements MapController {
         throw new Error('Map is not initialized');
       }
       this.map.removeCurrentPositionMarker();
-      console.log('현재 위치 마커가 성공적으로 제거되었습니다.');
     } catch (error) {
-      console.error('현재 위치 마커 제거 중 오류가 발생했습니다:', error);
       throw error;
     }
   }
@@ -157,7 +140,6 @@ export default class KakaoMapController implements MapController {
       const center = this.map.getCenter();
       return center;
     } catch (error) {
-      console.error('지도 중심 좌표를 가져오는 중 오류가 발생했습니다:', error);
       throw error;
     }
   }
@@ -171,13 +153,11 @@ export default class KakaoMapController implements MapController {
       const sw = bounds.getSouthWest();
       const ne = bounds.getNorthEast();
 
-      console.log('지도 경계를 성공적으로 가져왔습니다.');
       return {
         sw: { latitude: sw.getLat(), longitude: sw.getLng() },
         ne: { latitude: ne.getLat(), longitude: ne.getLng() },
       };
     } catch (error) {
-      console.error('지도 경계를 가져오는 중 오류가 발생했습니다:', error);
       throw error;
     }
   }
@@ -188,9 +168,7 @@ export default class KakaoMapController implements MapController {
         throw new Error('Map is not initialized');
       }
       this.map.relayout();
-      console.log('지도 레이아웃이 성공적으로 재조정되었습니다.');
     } catch (error) {
-      console.error('지도 레이아웃 재조정 중 오류가 발생했습니다:', error);
       throw error;
     }
   }
@@ -227,10 +205,7 @@ export default class KakaoMapController implements MapController {
         );
         this.zoomChangedHandler = null;
       }
-
-      console.log('모든 지도 이벤트 리스너가 제거되었습니다.');
     } catch (error) {
-      console.error('이벤트 리스너 제거 중 오류가 발생했습니다:', error);
       throw error;
     }
   }
