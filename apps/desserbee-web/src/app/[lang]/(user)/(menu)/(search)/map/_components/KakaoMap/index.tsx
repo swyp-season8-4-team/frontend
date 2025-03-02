@@ -559,19 +559,62 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     mapCenterRef.current = mapCenter;
   }, [mapCenter]);
 
+  // 검색어 상태 추가
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
+
+  // URL 해시 변경 감지를 위한 useEffect
+  useEffect(() => {
+    // 초기 해시 확인
+    const checkInitialHash = () => {
+      if (typeof window !== 'undefined') {
+        const hash = window.location.hash;
+        if (hash.startsWith('#q=')) {
+          const query = decodeURIComponent(hash.substring(3));
+          setSearchKeyword(query);
+        } else {
+          setSearchKeyword('');
+        }
+      }
+    };
+
+    // 해시 변경 이벤트 핸들러
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash.startsWith('#q=')) {
+        const query = decodeURIComponent(hash.substring(3));
+        setSearchKeyword(query);
+      } else {
+        setSearchKeyword('');
+      }
+    };
+
+    // 초기 해시 확인
+    checkInitialHash();
+
+    // 해시 변경 이벤트 리스너 등록
+    window.addEventListener('hashchange', handleHashChange);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
+
   // 태그, 검색 포함 필터링
   const previousSelectedTagsRef = useRef<number[]>([]);
+  const previousSearchKeywordRef = useRef<string>('');
 
   useEffect(() => {
     if (
       JSON.stringify(previousSelectedTagsRef.current) !==
-      JSON.stringify(selectedPreferenceTags)
+        JSON.stringify(selectedPreferenceTags) ||
+      previousSearchKeywordRef.current !== searchKeyword
     ) {
       const fetchAndUpdate = async () => {
         const stores = await fetchNearbyStores(
           mapCenterRef.current,
           selectedPreferenceTags,
-          keyword as string,
+          searchKeyword,
         );
         if (stores) {
           await updateNewClusterMarkers(mapCenterRef.current, stores);
@@ -580,10 +623,11 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       };
       fetchAndUpdate();
       previousSelectedTagsRef.current = selectedPreferenceTags;
+      previousSearchKeywordRef.current = searchKeyword;
     }
   }, [
     selectedPreferenceTags,
-    keyword,
+    searchKeyword,
     fetchNearbyStores,
     updateNewClusterMarkers,
   ]);
