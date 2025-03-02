@@ -12,49 +12,45 @@ const authService = new AuthService({
 export default async function signOutAction() {
   const headerList = await headers();
   const authorization = headerList.get('authorization');
-  console.log('authorization', authorization);
   // 서버에 로그아웃 요청 시도 (토큰이 없어도 쿠키는 삭제해야 함)
-  if (authorization) {
+  if (!!authorization) {
     try {
-      // await authService.signOut(authorization);
+      await authService.signOut(authorization);
     } catch (error) {
       console.error('Error during sign out:', error);
       // 서버 로그아웃 실패해도 계속 진행 (쿠키는 삭제해야 함)
     } finally {
-      // path 옵션 추가 및 expires 설정으로 확실하게 삭제
-      const cookieList = await cookies();
-      cookieList.delete('accessToken');
-      cookieList.delete('refreshToken');
+        const domain =
+          process.env.NEXT_PUBLIC_APP_ENV !== 'local'
+            ? process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN
+            : '';
+        
+        const cookieList = await cookies();
+      
+        // 백업 방법: 빈 값과 과거 만료일로 덮어쓰기
+        cookieList.set('accessToken', '', {
+          httpOnly: true,
+          secure: isProd,
+          sameSite: 'lax',
+          domain,
+          path: '/',
+          expires: new Date(0),
+          maxAge: 0,
+        });
+        
+        cookieList.set('refreshToken', '', {
+          httpOnly: true,
+          secure: isProd,
+          sameSite: 'strict',
+          domain,
+          path: '/',
+          expires: new Date(0),
+          maxAge: 0,
+        });
     }
   }
 
   
 
-  // const domain =
-  //   process.env.NEXT_PUBLIC_APP_ENV !== 'local'
-  //     ? process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN
-  //     : '';
   
-  
-  
-  // 백업 방법: 빈 값과 과거 만료일로 덮어쓰기
-  // cookieList.set('accessToken', '', {
-  //   httpOnly: true,
-  //   secure: isProd,
-  //   sameSite: 'lax',
-  //   domain,
-  //   path: '/',
-  //   expires: new Date(0),
-  //   maxAge: 0,
-  // });
-  
-  // cookieList.set('refreshToken', '', {
-  //   httpOnly: true,
-  //   secure: isProd,
-  //   sameSite: 'strict',
-  //   domain,
-  //   path: '/',
-  //   expires: new Date(0),
-  //   maxAge: 0,
-  // });
 }
