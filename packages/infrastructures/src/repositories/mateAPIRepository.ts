@@ -283,8 +283,26 @@ export default class MateAPIRepository
       data: {
         userUuid: userId,
       },
-      method: 'PATCH',
-      url: `${this.endpoint}/saved/${id}`,
+      method: 'POST',
+      url: `${this.endpoint}/mates/saved/${id}`,
+    });
+
+    return response;
+  }
+
+  async cancelSave({ data }: BaseRequestData<MateSaveRequest>): Promise<unknown> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+    
+    const { id, userId } = data;
+
+    const response = await fetch<{ userUuid: string }, unknown>({
+      data: {
+        userUuid: userId,
+      },
+      method: 'DELETE',
+      url: `${this.endpoint}/mates/saved/${id}`,
     });
 
     return response;

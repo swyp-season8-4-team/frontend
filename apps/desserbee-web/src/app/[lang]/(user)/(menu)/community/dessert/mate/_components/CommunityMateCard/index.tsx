@@ -24,7 +24,7 @@ export default function CommunityMateCard({ mate }: Props) {
         <Chip text={mateCategory} />
         <div className="flex items-center gap-[9.076px]">
           {recruit && <span className="text-[#393939] text-sm">모집중</span>}
-          <CommunityMateCardHeartButton />
+          <CommunityMateCardHeartButton mateId={mate.id} />
         </div>
       </div>
       <div className="flex gap-2 w-full">
