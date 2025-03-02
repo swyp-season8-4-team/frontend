@@ -7,7 +7,7 @@ import ReviewService from '@repo/usecase/src/reviewService';
 import ReviewAPIRepository from '@repo/infrastructures/src/repositories/reviewAPIRepository';
 import { UserContext } from '@/contexts/UserContext';
 import { cn } from '@repo/ui/lib/utils';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 interface OneLineReviewWriteProps {
   storeUuid: string;
@@ -18,6 +18,7 @@ export function OneLineReviewWrite({
   storeUuid,
   handleBackToReviewBtnClick,
 }: OneLineReviewWriteProps) {
+  const router = useRouter();
   const { user } = useContext(UserContext);
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -26,6 +27,7 @@ export function OneLineReviewWrite({
   const [reviewImage, setReviewImage] = useState<File | null>();
   const [imageName, setImageName] = useState<string | null>(null);
 
+  console.log(storeUuid);
   const reviewService = new ReviewService({
     reviewRepository: new ReviewAPIRepository(),
   });
@@ -60,8 +62,9 @@ export function OneLineReviewWrite({
       },
       images: [reviewImage!],
     };
-    const result = await reviewService.createStoreOnlineReviews(data);
-    redirect('/');
+    await reviewService.createStoreOnlineReviews(data);
+    const pathname = window.location.pathname;
+    router.push(pathname);
   };
 
   return (

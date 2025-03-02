@@ -72,7 +72,7 @@ export function PreferenceTags({
             <Tag
               className={cn(
                 // 'text-3 md:text-lg py-[6px] md:py-2 md:px-3 font-medium select-none text-nowrap text-[#DE8332]',
-                'text-3  py-[6px] font-medium select-none text-nowrap text-[#DE8332]',
+                'text-3 py-[6px] font-medium select-none text-nowrap text-[#DE8332]',
                 isMyPreferSelected && 'text-white bg-[#DE8332]',
               )}
               onClick={() => {

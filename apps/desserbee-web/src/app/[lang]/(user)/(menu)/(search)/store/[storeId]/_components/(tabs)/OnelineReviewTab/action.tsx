@@ -3,6 +3,7 @@
 import { cookies } from 'next/headers';
 
 export async function saveReviewPageData(storeInfo: {
+  storeUuid: string;
   totalReviewCount: number;
   averageRating: number;
   storeReviews: Array<{

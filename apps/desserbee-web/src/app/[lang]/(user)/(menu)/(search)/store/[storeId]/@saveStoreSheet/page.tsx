@@ -1,23 +1,26 @@
 import { SaveStoreBottomSheetContainer } from '../_components/(bottomSheet)';
 
 interface SavedStoreSheetProps {
+  params: Promise<{
+    storeId: string;
+  }>;
   searchParams: Promise<{
     saveStore: string;
-    storeUuid: string;
   }>;
 }
 
 export default async function SavedStoreSheet({
+  params,
   searchParams,
 }: SavedStoreSheetProps) {
-  const params = await searchParams;
+  const { saveStore } = await searchParams;
+  const { storeId } = await params;
 
-  const bottomsheet = params.saveStore === 'true';
-  const storeUuid = params.storeUuid;
+  const bottomsheet = saveStore === 'true';
 
   return (
     <SaveStoreBottomSheetContainer
-      storeUuid={storeUuid}
+      storeUuid={storeId}
       showBottomSheet={bottomsheet}
     />
   );
