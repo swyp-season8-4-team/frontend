@@ -3,21 +3,24 @@
 import { MateSearchMessageAction } from "@/types/postMessage";
 import type { MateCategory } from "@repo/entity/src/mate";
 import type { WithChildren } from "@repo/ui";
-import { createContext, useState } from "react";
+import { debounce } from "@repo/utility/src/debounce";
+import { createContext, useState, useCallback } from "react";
 
 interface State {
   activeCategory: MateCategory | null;
   handleCategoryClick: (category: MateCategory) => void;
+  handleMateSearch: (debounceKey: string, keyword: string) => void;
 }
 
 const defaultState: State = {
   activeCategory: null,
   handleCategoryClick: () => {},
+  handleMateSearch: () => {},
 };
 
-export const CommunityMateCategoryContext = createContext<State>(defaultState);
+export const CommunityMateCategorySearchContext = createContext<State>(defaultState);
 
-export function CommunityMateCategoryProvider({ children }: WithChildren) {
+export function CommunityMateCategorySearchProvider({ children }: WithChildren) {
   const [activeCategory, setActiveCategory] = useState<MateCategory | null>(null);
   
   const handleCategoryClick = (category: MateCategory) => {
@@ -31,10 +34,25 @@ export function CommunityMateCategoryProvider({ children }: WithChildren) {
       },
     }, window.location.origin);
   };
+
+  const handleMateSearch = useCallback((debounceKey: string, keyword: string) => {
+    debounce({
+      key: debounceKey,
+      wait: 200,
+      callback: () => {
+        window.postMessage({
+          action: MateSearchMessageAction.GetMateSearch,
+          payload: {
+            keyword,
+          },
+        }, window.location.origin);
+      }
+    });
+  }, []);
   
   return (
-    <CommunityMateCategoryContext.Provider value={{ activeCategory, handleCategoryClick }}>
+    <CommunityMateCategorySearchContext.Provider value={{ activeCategory, handleCategoryClick, handleMateSearch }}>
       {children}
-    </CommunityMateCategoryContext.Provider>
+    </CommunityMateCategorySearchContext.Provider>
   )
 }

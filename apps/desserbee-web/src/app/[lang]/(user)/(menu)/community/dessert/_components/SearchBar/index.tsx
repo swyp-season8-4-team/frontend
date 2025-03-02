@@ -1,19 +1,23 @@
 'use client';
 
-import { useState, useCallback, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
+import { CommunityMateCategorySearchContext } from "../../mate/_contexts/CommunityMateCategorySearchContext";
 
 export default function SearchBar() {
+  const { handleMateSearch } = useContext(CommunityMateCategorySearchContext);
   const [query, setQuery] = useState("");
   
-  const handleSearch = useCallback((e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // 검색어가 있으면 검색 실행
-    if (query) {
-      // 실제 검색 로직 구현
-      console.log("Searching for:", query);
-    }
-  }, [query]);
+
+    handleMateSearch('dessert-mate-search-submit', query);
+
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+    handleMateSearch('dessert-mate-search-input', e.target.value);
+  };
 
   // 검색창이 나타날 때 input에 포커스
   useEffect(() => {
@@ -28,9 +32,9 @@ export default function SearchBar() {
       <div className="relative flex items-center">
         <input
           type="text"
-          placeholder="맛집동"
+          placeholder="검색어를 입력해주세요"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={handleInputChange}
           className="w-full py-3 px-12 rounded-full bg-white text-sm focus:outline-none"
         />
         <div className="absolute left-4">

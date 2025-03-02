@@ -13,10 +13,12 @@ export interface SearchMessageData {
 
 export enum MateSearchMessageAction {
   GetMateCategories = 'get-mate-categories',
+  GetMateSearch = 'get-mate-search',
 }
 
 export interface MateSearchMessagePayload {
   selectedCategory?: MateCategory;
+  keyword?: string;
 }
 
 export interface MateSearchMessageData {
