@@ -8,7 +8,10 @@ export default class MapService {
     this.mapController = mapController ?? null;
   }
 
-  async addCurrentPositionMaker(position: MapPosition, markerImageSrc: string) {
+  async addCurrentPositionMarker(
+    position: MapPosition,
+    markerImageSrc: string,
+  ) {
     if (!this.mapController) {
       throw new Error('mapController is not set');
     }
