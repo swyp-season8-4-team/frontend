@@ -33,6 +33,8 @@ export default async function signOutAction() {
           secure: isProd,
           sameSite: 'lax',
           domain,
+          path: '/',
+          expires: new Date(0),
           maxAge: 0,
         });
         
@@ -41,6 +43,8 @@ export default async function signOutAction() {
           secure: isProd,
           sameSite: 'strict',
           domain,
+          path: '/',
+          expires: new Date(0),
           maxAge: 0,
         });
     }

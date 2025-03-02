@@ -10,7 +10,6 @@ import { MateDetailProvider } from "./_contexts/MateDetailContext";
 import MateCommentListSection from "./_components/MateCommentListSection";
 
 const mateService = new MateService({
-  
   mateRepository: new MateAPIRepository(), 
 })
 
@@ -36,8 +35,6 @@ export default async function MateDetailPage({ params }: WithParams) {
 
   const waitList = waitListResult.status === 'fulfilled' ? waitListResult.value : [];
   
-  console.info(mate);
-
   return (
     <main className="flex flex-col h-[calc(100dvh - 52px)] px-4 gap-4 bg-[#f6f6f6]">
       <MateDetailProvider mate={mate}>

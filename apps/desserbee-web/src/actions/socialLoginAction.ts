@@ -25,10 +25,16 @@ export default async function socialLoginAction({ code, provider, next }: Action
 
   const cookieList = await cookies();
 
+  const domain =
+  process.env.NEXT_PUBLIC_APP_ENV !== 'local'
+    ? process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN
+    : '';
+
   cookieList.set('accessToken', accessToken, {
     httpOnly: true,
     secure: isProd,
     sameSite: 'lax',
+    domain,
     maxAge: expiresIn,
   });
 
@@ -36,6 +42,7 @@ export default async function socialLoginAction({ code, provider, next }: Action
     httpOnly: true,
     secure: isProd,
     sameSite: 'strict',
+    domain,
   });
 
   if (!isPreferenceSet) {
