@@ -1,10 +1,11 @@
 'use client';
 
+import { memo } from 'react';
 import { SearchBar } from '@repo/design-system/components/SearchBar';
-import { useSearch } from '../_hooks/useSearch';
+import { useHashSearch } from '../_hooks/useHashSearch';
 
-export function SearchBarContainer() {
-  const { searchTerm, placeHolder, onChange, onSearch } = useSearch();
+export const SearchBarContainer = memo(function SearchBarContainer() {
+  const { searchTerm, placeHolder, onChange, onSearch } = useHashSearch();
 
   return (
     <SearchBar
@@ -14,4 +15,4 @@ export function SearchBarContainer() {
       onSearch={onSearch}
     />
   );
-}
+});

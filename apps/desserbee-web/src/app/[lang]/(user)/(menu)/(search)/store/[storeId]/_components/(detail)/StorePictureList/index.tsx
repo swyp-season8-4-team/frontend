@@ -4,12 +4,12 @@ import Image from 'next/image';
 import { useContext } from 'react';
 import { StorePictureCarouselModal } from '../../../_modals/StorePictureCarouselModal';
 interface StorePictureListProps
-  extends Pick<StoreSummaryInfoData, 'storeImages'> {
+  extends Pick<StoreSummaryInfoData, 'ownerPickImages'> {
   menuImages: string[];
 }
 
 export function StorePictureList({
-  storeImages = [],
+  ownerPickImages = [],
   menuImages = [],
 }: StorePictureListProps) {
   const { push, pop } = useContext(PortalContext);
@@ -22,7 +22,7 @@ export function StorePictureList({
     push('modal', {
       component: (
         <StorePictureCarouselModal
-          images={[...storeImages, ...menuImages]}
+          images={[...ownerPickImages, ...menuImages]}
           onClose={closeModal}
         />
       ),
@@ -31,8 +31,8 @@ export function StorePictureList({
 
   return (
     <div className="flex gap-[9px] md:gap-[22px] py-3 md:py-7">
-      {storeImages?.map((image, index) =>
-        index === storeImages.length - 1 ? (
+      {ownerPickImages?.map((image, index) =>
+        index === ownerPickImages.length - 1 ? (
           <button
             onClick={handlePlusBtnClick}
             key={image}

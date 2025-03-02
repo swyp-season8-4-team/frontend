@@ -1,5 +1,6 @@
 import IconSearch from '../icons/IconSearch';
 import { debounce } from '../../../../utility/src/debounce';
+import { memo, useCallback } from 'react';
 
 interface SearchBarProps {
   searchTerm: string;
@@ -8,37 +9,49 @@ interface SearchBarProps {
   onSearch?: (value: string) => void;
 }
 
-export function SearchBar({
+export const SearchBar = memo(function SearchBar({
   searchTerm,
   placeHolder,
   onChange,
   onSearch,
 }: SearchBarProps) {
-  const debouncedSetSearchTerm = (value: string) => {
-    debounce({
-      key: 'searchBarInput',
-      wait: 300,
-      callback: () => onChange(value),
-    });
-  };
-``
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    onChange(value);
-    debouncedSetSearchTerm(value);
-  };
+  const debouncedSetSearchTerm = useCallback(
+    (value: string) => {
+      debounce({
+        key: 'searchBarInput',
+        wait: 300,
+        callback: () => onChange(value),
+      });
+    },
+    [onChange],
+  );
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && onSearch) {
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      onChange(value);
+      debouncedSetSearchTerm(value);
+    },
+    [onChange, debouncedSetSearchTerm],
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter' && onSearch) {
+        e.preventDefault();
+        onSearch(searchTerm);
+      }
+    },
+    [onSearch, searchTerm],
+  );
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      onSearch(searchTerm);
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    onSearch?.(searchTerm);
-  };
+      onSearch?.(searchTerm);
+    },
+    [onSearch, searchTerm],
+  );
 
   return (
     <form className="relative px-4 w-full" onSubmit={handleSubmit}>
@@ -55,4 +68,4 @@ export function SearchBar({
       </div>
     </form>
   );
-}
+});

@@ -92,4 +92,11 @@ export default class MapService {
     }
     this.mapController.clearAllMarkers();
   }
+
+  removeAllEventListeners() {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+    this.mapController.removeAllEventListeners();
+  }
 }

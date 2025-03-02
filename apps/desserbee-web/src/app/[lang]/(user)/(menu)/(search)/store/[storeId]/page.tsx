@@ -1,8 +1,6 @@
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import { DetailContainer } from './_components/(detail)/DetailContainer';
-import AuthService from '@repo/usecase/src/authService';
-import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 import NotFound from '@/app/[lang]/[...not-found]/page';
 // import { storeDetail } from '../../map/_consts/marker';
 
@@ -32,12 +30,6 @@ export default async function StoreDetailPage({
     const parentListInfo = await storeService.getParentSavedList({
       listId: storeDetail.savedListId,
     });
-
-    // const parentListInfo = {
-    //   listId: 121,
-    //   listName: '맛집!@',
-    //   iconColorId: 3,
-    // };
 
     return (
       <DetailContainer

@@ -9,7 +9,7 @@ import { StoreInfo } from '../../../../../map/@bottomSheet/_components/StoreInfo
 import { HexagonGrid } from '@repo/design-system/components/HexagonGrid';
 import IconDownload from '@repo/design-system/components/icons/IconDownload';
 import IconFlower from '@repo/design-system/components/icons/IconFlower';
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { CouponIsNotReadyModal } from '../../../../../map/_modals/CouponIsNotReadyModal';
 import StoreService from '@repo/usecase/src/storeService';
@@ -17,11 +17,15 @@ import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIR
 import { cn } from '@repo/ui/lib/utils';
 import { getIconColor } from '../../../../../map/_utils/iconColor';
 import IconFlowerOutline from '@repo/design-system/components/icons/IconFlowerOutline';
+import { UserContext } from '@/contexts/UserContext';
+import { useRouter } from 'next/navigation';
+import { NeedLoginModal } from '../../../_modals/NeedLoginModal';
 
 interface DetailInfoContainerProps extends StoreDetailInfoData {
   parentlistInfo?: ParentSavedListResponse;
 }
 export function DetailInfoContainer({
+  storeUuid,
   name,
   animalYn,
   tumblerYn,
@@ -65,9 +69,13 @@ export function DetailInfoContainer({
 
   const hexagonGridProps = {
     contents: topPreferences,
-    previewImages: storeImages,
+    storeImages,
     ownerPickImages,
   };
+
+  const router = useRouter();
+
+  const { user } = useContext(UserContext);
 
   const { push, pop } = useContext(PortalContext);
 
@@ -82,7 +90,18 @@ export function DetailInfoContainer({
 
     await storeService.updateCouponCount();
   };
-  // const handleListsForSave
+
+  const handleIconFlowerClick = useCallback(() => {
+    if (!user) {
+      push('modal', {
+        component: <NeedLoginModal onClose={closeModal} />,
+      });
+    } else {
+      router.replace(`?saveStore=true`, {
+        scroll: false,
+      });
+    }
+  }, [router]);
 
   return (
     <div>
@@ -104,7 +123,7 @@ export function DetailInfoContainer({
             ))}
           </span>
         </div>
-        {saved ? (
+        {saved && user ? (
           <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm">
             <div className="w-4 md:w-[37.71px] h-4 md:h-[37.71px]">
               <IconFlower
@@ -116,7 +135,7 @@ export function DetailInfoContainer({
             </div>
           </div>
         ) : (
-          <button>
+          <button onClick={() => handleIconFlowerClick()}>
             <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm">
               <div className="w-4 md:w-[37.71px] h-4 md:h-[37.71px]">
                 <IconFlowerOutline

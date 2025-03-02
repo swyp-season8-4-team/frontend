@@ -1,11 +1,14 @@
 'use client';
 import { useRouter, useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
 import { OneLineReviewWrite } from './write';
 import { OneLineReviewHeader } from './header';
 import { OneLineReviewItem } from './item';
 import { saveReviewPageData } from './action';
+import { UserContext } from '@/contexts/UserContext';
+import { PortalContext } from '@repo/ui/contexts/PortalContext';
+import { NeedLoginModal } from '../../../_modals/NeedLoginModal';
 
 interface OnelineReviewTabProps {
   onelineReviews: Pick<
@@ -19,11 +22,29 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
   const params = useParams();
   const storeId = params.storeId as string;
 
+  const { user } = useContext(UserContext);
+  const { push, pop } = useContext(PortalContext);
+
   const displayedReviews = onelineReviews.storeReviews.slice(0, 4);
   const [isReviewing, setIsReviewing] = useState(false);
 
+  const closeModal = () => {
+    pop('modal');
+  };
+
   const handleWriteReviewBtnClick = () => {
-    setIsReviewing(true);
+    if (!user) {
+      push('modal', {
+        component: <NeedLoginModal onClose={closeModal} />,
+      });
+      return;
+    } else {
+      setIsReviewing(true);
+    }
+  };
+
+  const handleBackToReviewBtnClick = () => {
+    setIsReviewing(false);
   };
 
   const handleOnelineReviewItemClick = async () => {
@@ -32,7 +53,12 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
   };
 
   if (isReviewing) {
-    return <OneLineReviewWrite storeUuid={storeId} />;
+    return (
+      <OneLineReviewWrite
+        handleBackToReviewBtnClick={handleBackToReviewBtnClick}
+        storeUuid={storeId}
+      />
+    );
   }
   return (
     <div className="pb-[15.73px] md:pb-[27px]">
