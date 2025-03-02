@@ -2,7 +2,7 @@ import type { Mate, MateReply, MateWriteRequest, RawMateReply, RawMateWriteReuqe
 
 export default class MateConverter {
   convertRawToMate(rawMate: RawMate): Mate {
-    return {
+    const result = {
       id: rawMate.mateUuid,
       recruit: rawMate.recruitYn,
       userId: rawMate.userUuid,
@@ -20,6 +20,8 @@ export default class MateConverter {
       createdAt: rawMate.createdAt,
       updatedAt: rawMate.updatedAt,
     };
+
+    return result;
   }
 
   convertRawToMateReply(raw: RawMateReply): MateReply {
