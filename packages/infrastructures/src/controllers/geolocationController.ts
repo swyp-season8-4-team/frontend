@@ -26,14 +26,23 @@ export default class GeolocationController {
   }
 
   getCurrentPosition(): Promise<MapPosition> {
+    // console.log('[GeolocationController] 위치 정보 요청 시작');
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
+        console.error(
+          '[GeolocationController] 브라우저가 위치 정보를 지원하지 않음',
+        );
         reject(new Error('notSupport'));
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
         (pos) => {
+          // console.log('[GeolocationController] 위치 정보 획득 성공', {
+          //   accuracy: pos.coords.accuracy,
+          //   timestamp: new Date(pos.timestamp).toISOString(),
+          // });
+
           const { latitude, longitude } = this.formatCoordinates(
             pos.coords.latitude,
             pos.coords.longitude,
@@ -43,9 +52,15 @@ export default class GeolocationController {
             { latitude, longitude },
             pos.coords.accuracy,
           );
+          // console.log('[GeolocationController] 필터링된 위치 정보', position);
           resolve(position);
         },
         (err) => {
+          console.error('[GeolocationController] 위치 정보 획득 실패', {
+            code: err.code,
+            message: err.message,
+          });
+
           if (err.code === 3) {
             reject(new Error('delayed'));
           } else if (err.code === 1) {

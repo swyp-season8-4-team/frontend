@@ -22,6 +22,7 @@ export default class KakaoMapController implements MapController {
   private zoomChangedHandler:
     | ((event: kakao.maps.event.EventTarget) => void)
     | null = null;
+  private currentPositionMarker: any = null;
 
   async createMap(container: HTMLDivElement, position: MapPosition) {
     try {
@@ -207,6 +208,73 @@ export default class KakaoMapController implements MapController {
       }
     } catch (error) {
       throw error;
+    }
+  }
+
+  updateCurrentPositionMarker(position: MapPosition, marker: any): void {
+    try {
+      if (!this.map || !marker) {
+        console.error(
+          '[KakaoMapController] 맵 또는 마커가 초기화되지 않았습니다.',
+        );
+        return;
+      }
+
+      // 새 좌표 생성
+      const latlng = new window.kakao.maps.LatLng(
+        position.latitude,
+        position.longitude,
+      );
+
+      // 마커 위치 업데이트
+      marker.setPosition(latlng);
+
+      // console.log(
+      //   '[KakaoMapController] 현재 위치 마커 위치 업데이트 완료',
+      //   position,
+      // );
+    } catch (error) {
+      console.error(
+        '[KakaoMapController] 마커 위치 업데이트 중 오류 발생:',
+        error,
+      );
+    }
+  }
+
+  addCurrentPositionMaker(position: MapPosition, imageSrc: string): any {
+    try {
+      if (!this.map) {
+        console.error('[KakaoMapController] 맵이 초기화되지 않았습니다.');
+        return null;
+      }
+
+      const imageSize = new window.kakao.maps.Size(16, 24);
+      const markerImage = new window.kakao.maps.MarkerImage(
+        imageSrc,
+        imageSize,
+      );
+      const latlng = new window.kakao.maps.LatLng(
+        position.latitude,
+        position.longitude,
+      );
+
+      const marker = new window.kakao.maps.Marker({
+        position: latlng,
+        image: markerImage,
+        map: this.map.getNativeMap(),
+        zIndex: 100,
+      });
+
+      this.currentPositionMarker = marker;
+      // console.log('[KakaoMapController] 현재 위치 마커 추가 완료', position);
+
+      return marker;
+    } catch (error) {
+      console.error(
+        '[KakaoMapController] 현재 위치 마커 추가 중 오류 발생:',
+        error,
+      );
+      return null;
     }
   }
 }
