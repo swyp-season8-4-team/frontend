@@ -13,6 +13,7 @@ import defaultFemaleProfileImage from '@/assets/images/image-default-female-prof
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import Modal from '@repo/design-system/components/Modal';
 import { Button } from '@repo/ui/components/button';
+import { MateDetailContext } from '../../_contexts/MateDetailContext';
 
 const mateService = new MateService({
   mateRepository: new MateAPIRepository(),
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export default function CurrentApplyList({ waitList }: Props) {
+  const { mate: ownerMate } = useContext(MateDetailContext);
   const { push, pop } = useContext(PortalContext);
   const { user } = useContext(UserContext);
   const [isOpen, setIsOpen] = useState(false);
@@ -41,10 +43,11 @@ export default function CurrentApplyList({ waitList }: Props) {
     }
 
     const handleAccept = async () => {
+      
       await mateService.acceptMyTeamMember({
         creatorUserId: user.id,
         userId: mate.userId,
-        mateId: mate.id,
+        mateId: ownerMate.id,
       });
       closeModal();
     }
@@ -92,7 +95,7 @@ export default function CurrentApplyList({ waitList }: Props) {
       await mateService.rejectMyTeamMember({
         creatorUserId: user.id,
         userId: mate.userId,
-        mateId: mate.id,
+        mateId: ownerMate.id,
       });
       closeModal();
     }
