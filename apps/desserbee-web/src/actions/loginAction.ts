@@ -29,12 +29,18 @@ export async function loginAction(formData: FormData): Promise<SignInResponse | 
     const { accessToken, refreshToken, expiresIn } = response;
 
     const cookieList = await cookies();
+
+    const domain =
+    process.env.NEXT_PUBLIC_APP_ENV !== 'local'
+      ? process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN
+      : '';
     
     // 토큰 저장
     cookieList.set('accessToken', accessToken, {
       httpOnly: true,
       secure: isProd,
       sameSite: 'lax',
+      domain,
       maxAge: expiresIn,
     });
 
@@ -42,6 +48,7 @@ export async function loginAction(formData: FormData): Promise<SignInResponse | 
       httpOnly: true,
       secure: isProd,
       sameSite: 'strict',
+      domain
     });
 
     return response;

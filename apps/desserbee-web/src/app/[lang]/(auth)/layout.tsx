@@ -11,7 +11,7 @@ const authService = new AuthService({
 export default async function AuthLayout({ children }: WithChildren) {
   const authorization = await authService.getAuthorization();
 
-  if (authorization) {
+  if (!!authorization) {
     redirect(NavigationPathname.Map);
   }
 
