@@ -5,7 +5,6 @@ import type { StoreDetailInfoData } from '@repo/entity/src/store';
 import { OneLineReviewWrite } from './write';
 import { OneLineReviewHeader } from './header';
 import { OneLineReviewItem } from './item';
-import { saveReviewPageData } from './action';
 import { UserContext } from '@/contexts/UserContext';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { NeedLoginModal } from '../../../_modals/NeedLoginModal';
@@ -13,7 +12,7 @@ import { NeedLoginModal } from '../../../_modals/NeedLoginModal';
 interface OnelineReviewTabProps {
   onelineReviews: Pick<
     StoreDetailInfoData,
-    'storeReviews' | 'totalReviewCount' | 'averageRating' | 'storeUuid'
+    'storeReviews' | 'totalReviewCount' | 'averageRating'
   >;
 }
 

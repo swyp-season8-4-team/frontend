@@ -6,6 +6,7 @@ import { OnelineReviewTab } from '../OnelineReviewTab';
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { CommunityIsNotReadyModal } from '../../../../../map/_modals/CommunityIsNotReadyModal';
+import { useParams } from 'next/navigation';
 
 interface TabContainerProps {
   onelineReviews: Pick<
