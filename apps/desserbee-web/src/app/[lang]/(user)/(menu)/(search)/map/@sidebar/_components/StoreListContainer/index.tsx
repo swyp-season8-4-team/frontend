@@ -59,6 +59,23 @@ export function StoreListContainer({
     setSelectedStoreUuId(storeUuId);
   };
 
+  const handleStoreDeleteBtnClick = async () => {
+    if (!selectedStoreUuId) return;
+
+    try {
+      await storeService.deleteStoreInSavedList({
+        listId,
+        storeUuid: selectedStoreUuId,
+      });
+
+      setSelectedStoreUuId(null);
+
+      await handleStoresInSavedListFetch();
+    } catch (error) {
+      console.error('가게 삭제 실패:', error);
+    }
+  };
+
   const handleStoresInSavedListFetch = useCallback(async () => {
     try {
       // 부모 리스트 정보 가져오기
@@ -225,6 +242,8 @@ export function StoreListContainer({
         {isEditing && (
           <div className="right-0 bottom-0 left-0 absolute flex justify-center items-center bg-white py-[6px] md:py-[12.02px] w-full">
             <button
+              onClick={handleStoreDeleteBtnClick}
+              disabled={!selectedStoreUuId}
               className={cn(
                 selectedStoreUuId
                   ? 'bg-primary cursor-pointer'
