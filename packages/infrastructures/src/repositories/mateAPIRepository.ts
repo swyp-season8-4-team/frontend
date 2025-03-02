@@ -284,7 +284,7 @@ export default class MateAPIRepository
         userUuid: userId,
       },
       method: 'POST',
-      url: `${this.endpoint}/saved/${id}`,
+      url: `${this.endpoint}/mates/saved/${id}`,
     });
 
     return response;
@@ -302,7 +302,7 @@ export default class MateAPIRepository
         userUuid: userId,
       },
       method: 'DELETE',
-      url: `${this.endpoint}/saved/${id}`,
+      url: `${this.endpoint}/mates/saved/${id}`,
     });
 
     return response;
