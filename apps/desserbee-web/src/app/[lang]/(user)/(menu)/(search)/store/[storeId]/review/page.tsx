@@ -29,7 +29,7 @@ export default async function OneLineReviewPage({
   let reviewPageData;
   try {
     reviewPageData = await reviewService.getStoreOnlineReviews({
-      storeUuid: storeId,
+      storeUuid: reviewActionData.storeUuid,
     });
   } catch (err) {
     console.log(err);
