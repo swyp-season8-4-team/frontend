@@ -557,7 +557,9 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
   // 태그, 검색 포함 필터링
   const previousSelectedTagsRef = useRef<number[]>([]);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout>();
 
+  // 실시간 마커 업데이트
   useEffect(() => {
     if (
       JSON.stringify(previousSelectedTagsRef.current) !==
@@ -577,27 +579,30 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       fetchAndUpdate();
       previousSelectedTagsRef.current = selectedPreferenceTags;
     }
-  }, [
-    selectedPreferenceTags,
-    keyword,
-    fetchNearbyStores,
-    updateNewClusterMarkers,
-  ]);
+  }, [selectedPreferenceTags, keyword, fetchNearbyStores, updateNewClusterMarkers]);
 
-  // 전체 검색
+  // 전체 검색 (선호도 태그 ,키워드 검색)
   useEffect(() => {
     if (
       JSON.stringify(previousSelectedTagsRef.current) !==
       JSON.stringify(selectedPreferenceTags)
     ) {
       const fetchAndUpdate = async () => {
-        const stores = await fetchNearbyStores(
-          mapCenterRef.current,
-          selectedPreferenceTags,
-        );
-        if (stores) {
-          await updateNewClusterMarkers(mapCenterRef.current, stores);
-          setIsFetchRequired(false);
+        if (typeof window !== 'undefined') {
+          const hash = window.location.hash;
+          if (hash.startsWith('#q=')) {
+            const query = decodeURIComponent(hash.substring(3));
+            // query 값 사용하기
+            const stores = await fetchNearbyStores(
+              mapCenterRef.current,
+              selectedPreferenceTags,
+              query,
+            );
+            if (stores) {
+              await updateNewClusterMarkers(mapCenterRef.current, stores);
+              setIsFetchRequired(false);
+            }
+          }
         }
       };
       fetchAndUpdate();
