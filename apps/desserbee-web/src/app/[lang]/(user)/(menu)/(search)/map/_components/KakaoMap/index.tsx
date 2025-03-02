@@ -557,9 +557,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
   // 태그, 검색 포함 필터링
   const previousSelectedTagsRef = useRef<number[]>([]);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // 실시간 마커 업데이트
   useEffect(() => {
     if (
       JSON.stringify(previousSelectedTagsRef.current) !==
@@ -579,7 +577,12 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       fetchAndUpdate();
       previousSelectedTagsRef.current = selectedPreferenceTags;
     }
-  }, [selectedPreferenceTags, keyword, fetchNearbyStores, updateNewClusterMarkers]);
+  }, [
+    selectedPreferenceTags,
+    keyword,
+    fetchNearbyStores,
+    updateNewClusterMarkers,
+  ]);
 
   // 전체 검색 (선호도 태그 ,키워드 검색)
   useEffect(() => {
