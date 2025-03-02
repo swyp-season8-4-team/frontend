@@ -59,16 +59,57 @@ export function StoreListContainer({
     setSelectedStoreUuId(storeUuId);
   };
 
-  const handleStoresInSavedListFetch = useCallback(async () => {
-    const parentList = await storeService.getParentSavedList({
-      listId: Number(listId),
-    });
-    setParentListInfo(parentList);
+  const handleStoreDeleteBtnClick = async () => {
+    if (!selectedStoreUuId) return;
 
-    const stores = await storeService.getStoresInSavedList({
-      listId: Number(listId),
-    });
-    setStoreData(stores);
+    try {
+      await storeService.deleteStoreInSavedList({
+        listId,
+        storeUuid: selectedStoreUuId,
+      });
+
+      setSelectedStoreUuId(null);
+
+      await handleStoresInSavedListFetch();
+    } catch (error) {
+      console.error('가게 삭제 실패:', error);
+    }
+  };
+
+  const handleStoresInSavedListFetch = useCallback(async () => {
+    try {
+      // 부모 리스트 정보 가져오기
+      const parentList = await storeService.getParentSavedList({
+        listId: Number(listId),
+      });
+      setParentListInfo(parentList);
+
+      // 리스트에 포함된 가게 정보 가져오기
+      const response = await storeService.getStoresInSavedList({
+        listId: Number(listId),
+      });
+
+      // 실제 API 응답 구조에 맞게 타입 조정 (응답이 객체이고 storeData 속성을 가짐)
+      interface StoreListResponse {
+        iconColorId: number;
+        listId: number;
+        listName: string;
+        storeCount: number;
+        storeData: StoresInSavedListData[];
+        userUuid: string;
+      }
+
+      // 타입 단언 사용
+      const typedResponse = response as unknown as StoreListResponse;
+
+      if (typedResponse && typedResponse.storeData) {
+        setStoreData(typedResponse.storeData);
+      } else {
+        setStoreData([]);
+      }
+    } catch (error) {
+      setStoreData([]);
+    }
   }, [listId, storeService]);
 
   useEffect(() => {
@@ -76,6 +117,7 @@ export function StoreListContainer({
   }, [handleStoresInSavedListFetch]);
 
   if (!parentListInfo) return;
+
   return (
     <SideBar
       {...{
@@ -129,7 +171,7 @@ export function StoreListContainer({
           </div>
         </div>
         <div className="[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] overflow-y-auto [scrollbar-width:none]">
-          {Array.isArray(storeData) ? (
+          {Array.isArray(storeData) && storeData ? (
             storeData.map((store, index) => (
               <div
                 onClick={() => handleStoreSelectBtnClick(store.storeUuid)}
@@ -188,12 +230,11 @@ export function StoreListContainer({
                       </div>
                     ))}
                   </div>
-                  z
                 </div>
               </div>
             ))
           ) : (
-            <div className="text-[10px] w-full h-full flex justify-center items-center p-5 md:p-10">
+            <div className="text-[10px] md:text-base w-full h-full flex justify-center items-center p-5 md:p-10">
               아직 담은 가게가 없습니다.
             </div>
           )}
@@ -201,6 +242,8 @@ export function StoreListContainer({
         {isEditing && (
           <div className="right-0 bottom-0 left-0 absolute flex justify-center items-center bg-white py-[6px] md:py-[12.02px] w-full">
             <button
+              onClick={handleStoreDeleteBtnClick}
+              disabled={!selectedStoreUuId}
               className={cn(
                 selectedStoreUuId
                   ? 'bg-primary cursor-pointer'

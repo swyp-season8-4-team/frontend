@@ -338,7 +338,6 @@ export default class StoreAPIRepository
   }
 
   async deleteStoreInSavedList({
-    authorization,
     data,
   }: BaseRequestData<DeleteStoreInSavedListRequest>): Promise<void> {
     if (!data) {
@@ -350,11 +349,6 @@ export default class StoreAPIRepository
     const url = `${this.endpoint}/user-store/lists/${listId}/stores/${storeUuid}`;
 
     const response = await fetch<DeleteStoreInSavedListRequest, Promise<void>>({
-      ...(authorization && {
-        headers: {
-          Authorization: authorization,
-        },
-      }),
       method: 'DELETE',
       url,
     });
