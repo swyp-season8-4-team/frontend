@@ -1,12 +1,12 @@
 'use client';
 
 import { startTransition, useContext, useEffect, useRef, useState } from "react";
-import { CommunityMateContext } from "../../_contexts/CommunityMateContext";
+import { CommunityMateListContext } from "../../_contexts/CommunityMateListContext";
 import CommunityMateCard from "../CommunityMateCard";
 import { nanoid } from "nanoid";
 
 export default function CommunityMateList() {
-  const { mates, isLast, loadMore } = useContext(CommunityMateContext);
+  const { mates, isLast, loadMore } = useContext(CommunityMateListContext);
   const observerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   

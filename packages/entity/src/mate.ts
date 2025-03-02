@@ -130,9 +130,10 @@ export interface MateFireRequest {
 }
 
 export interface MateListRequest {
-  from: number;
-  to: number;
+  from?: number;
+  to?: number;
   keyword?: string;
+  mateCategoryId?: MateCategory;
 }
 
 export interface MateListResponse {

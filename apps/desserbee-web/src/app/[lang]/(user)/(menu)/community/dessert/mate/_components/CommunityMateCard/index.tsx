@@ -5,6 +5,7 @@ import { cn } from "@repo/ui/lib/utils";
 import Image from 'next/image';
 import Link from "next/link";
 import CommunityMateCardHeartButton from "../CommunityMateCardHeartButton";
+import { Fragment } from "react";
 
 interface Props {
   mate: Mate;
@@ -12,6 +13,8 @@ interface Props {
 
 export default function CommunityMateCard({ mate }: Props) {
   const { title, content, nickname, recruit, mateImage, mateCategory } = mate;
+  
+  const LinkChip = recruit ? Link : Fragment;
 
   return (
     <div
@@ -39,16 +42,14 @@ export default function CommunityMateCard({ mate }: Props) {
         </div>
           <div className="flex justify-between items-center self-stretch">
             <span className="text-gray-500 text-sm">{nickname}</span>
-            {recruit && <Link href={`/mate/${mate.id}`}>
+            {recruit && <LinkChip href={`/mate/${mate.id}`}>
               <Chip
-                className={cn("gap-[6.05px] border-none rounded-[75.63px] px-[12.101px] py-[4.538px] text-white",recruit ? "bg-[#FFB700]" : "bg-[#545454]")}
+                className={cn("border-none rounded-[75.63px] px-[12.101px] py-[4.538px] text-white",recruit ? "bg-[#FFB700]" : "bg-[#545454]")}
                 text={'참여하기'}
               />
-            </Link>}
+            </LinkChip>}
             {!recruit && (
-              <Link href={`/mate/${mate.id}`}>
-                <Chip className={cn("gap-[6.05px] rounded-[75.63px] px-[12.101px] py-[4.538px] text-white bg-[#545454]")} text="모집완료" />
-              </Link>
+              <Chip className={cn("gap-[6.05px] rounded-[75.63px] px-[12.101px] py-[4.538px] text-white bg-[#545454]")} text="모집완료" />
             )}
           </div>
         </div>
