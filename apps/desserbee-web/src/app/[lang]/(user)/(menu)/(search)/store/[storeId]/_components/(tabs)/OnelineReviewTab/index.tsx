@@ -12,7 +12,7 @@ import { NeedLoginModal } from '../../../_modals/NeedLoginModal';
 interface OnelineReviewTabProps {
   onelineReviews: Pick<
     StoreDetailInfoData,
-    'storeReviews' | 'totalReviewCount' | 'averageRating'
+    'storeReviews' | 'totalReviewCount' | 'averageRating' | 'storeUuid'
   >;
 }
 

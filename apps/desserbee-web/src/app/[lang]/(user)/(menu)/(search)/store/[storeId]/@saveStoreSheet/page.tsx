@@ -18,6 +18,7 @@ export default async function SavedStoreSheet({
 
   const bottomsheet = saveStore === 'true';
 
+  console.log(saveStore, storeId);
   return (
     <SaveStoreBottomSheetContainer
       storeUuid={storeId}
