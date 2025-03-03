@@ -129,13 +129,15 @@ async function getToken(request: NextRequest): Promise<string | null> {
 
   if (isAccessTokenExpired) {
     if (isRefreshTokenExpired) {
+      cookies.delete('accessToken');
+      cookies.delete('refreshToken');
       return null;
     }
     
     // 리프레시 토큰을 가지고 다시 accessToken 발급
     const { accessToken: updatedAccessToken }: { accessToken: string } =
       await authService.refreshAccessToken(accessToken);
-    cookies.set('refreshToken', updatedAccessToken);
+    cookies.set('accessToken', updatedAccessToken);
     newAccessToken = updatedAccessToken;
   }
 
