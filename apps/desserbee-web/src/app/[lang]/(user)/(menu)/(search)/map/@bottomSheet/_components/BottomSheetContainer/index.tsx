@@ -10,12 +10,14 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 interface BottomSheetContainerProps {
   showBottomSheet: boolean;
-  storeSummary: StoreSummaryInfoData;
+  storeSummary: StoreSummaryInfoData | null;
+  fetchStoreSummary: (storeId: string) => Promise<void>;
 }
 
 export function BottomSheetContainer({
   showBottomSheet,
   storeSummary,
+  fetchStoreSummary,
 }: BottomSheetContainerProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -25,9 +27,16 @@ export function BottomSheetContainer({
   useEffect(() => {
     // URL 파라미터 변경을 감지하여 바텀시트 상태 업데이트
     const hasBottomsheet = searchParams.get('bottomsheet') === 'true';
-    const hasStoreId = searchParams.get('storeId');
-    setIsBottomSheetOpen(hasBottomsheet && !!hasStoreId);
-  }, [searchParams]);
+    const storeId = searchParams.get('storeId');
+    const shouldOpen = hasBottomsheet && storeId !== null;
+
+    setIsBottomSheetOpen(shouldOpen);
+
+    // 바텀시트가 열릴 때만 데이터 가져오기
+    if (shouldOpen && storeId) {
+      fetchStoreSummary(storeId);
+    }
+  }, [searchParams, fetchStoreSummary]);
 
   const handleBottomSheetClose = () => {
     const params = new URLSearchParams(searchParams);
@@ -39,7 +48,7 @@ export function BottomSheetContainer({
     });
   };
 
-  if (!storeSummary) return null;
+  if (!isBottomSheetOpen || !storeSummary) return null;
 
   const storeSummaryProps = {
     storeUuid: storeSummary.storeUuid,

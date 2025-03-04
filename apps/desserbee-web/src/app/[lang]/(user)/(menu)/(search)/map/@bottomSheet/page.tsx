@@ -1,37 +1,45 @@
+'use client';
+
 import { BottomSheetContainer } from './_components/BottomSheetContainer';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
+import { useState, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
+import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 
-interface BottomSheetPageProps {
-  searchParams: Promise<{
-    bottomsheet: string;
-    storeId?: string;
-  }>;
-}
+export default function BottomSheetPage() {
+  const searchParams = useSearchParams();
+  const [storeSummary, setStoreSummary] = useState<StoreSummaryInfoData | null>(
+    null,
+  );
 
-export default async function BottomSheetPage({
-  searchParams,
-}: BottomSheetPageProps) {
-  const params = await searchParams;
-  const storeId = params.storeId;
-  // const fakeStoreId = '18c1cf2d-788c-4de5-8c2a-932515e06625';
+  const bottomsheet = searchParams.get('bottomsheet') === 'true';
+  const storeId = searchParams.get('storeId');
 
-  const bottomsheet = params.bottomsheet === 'true';
+  const fetchStoreSummary = useCallback(async (id: string) => {
+    if (!id) return;
 
-  const storeService = new StoreService({
-    storeRepository: new StoreAPIRepository(),
-  });
+    const storeService = new StoreService({
+      storeRepository: new StoreAPIRepository(),
+    });
 
-  // 조건문을 더 명확하게 수정
+    try {
+      const summary = await storeService.getStoreSummary(id);
+      setStoreSummary(summary);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   if (!storeId || !bottomsheet) {
     return null;
   }
 
-  const storeSummary = await storeService.getStoreSummary(storeId);
   return (
     <BottomSheetContainer
       showBottomSheet={bottomsheet}
       storeSummary={storeSummary}
+      fetchStoreSummary={fetchStoreSummary}
     />
   );
 }
