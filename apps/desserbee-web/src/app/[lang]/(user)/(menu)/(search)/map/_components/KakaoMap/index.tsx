@@ -475,6 +475,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const handleMoveToCurrentPosition = useCallback(() => {
     if (servicesRef.current.mapService && isMapLoaded) {
       servicesRef.current.mapService.setMapCenter(currentPosition);
+      setIsFetchRequired(true);
     }
   }, [isMapLoaded, currentPosition]);
 
