@@ -18,7 +18,6 @@ export function OneLineReviewWrite({
   storeUuid,
   handleBackToReviewBtnClick,
 }: OneLineReviewWriteProps) {
-  const router = useRouter();
   const { user } = useContext(UserContext);
 
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -27,7 +26,6 @@ export function OneLineReviewWrite({
   const [reviewImage, setReviewImage] = useState<File | null>();
   const [imageName, setImageName] = useState<string | null>(null);
 
-  console.log(storeUuid);
   const reviewService = new ReviewService({
     reviewRepository: new ReviewAPIRepository(),
   });
@@ -73,13 +71,17 @@ export function OneLineReviewWrite({
       setReviewImage(null);
       setImageName(null);
 
-      // 부모 컴포넌트로 돌아가기
-      if (handleBackToReviewBtnClick) {
-        handleBackToReviewBtnClick();
-      }
+      // 페이지 새로고침 (setTimeout 사용)
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
 
-      // 서버 컴포넌트 데이터 새로고침
-      router.refresh();
+      // 부모 컴포넌트로 돌아가기 - 타이밍 문제로 제거
+      // if (handleBackToReviewBtnClick) {
+      //   handleBackToReviewBtnClick();
+      // }
+
+      // router.refresh()는 필요 없음
     } catch (error) {
       console.error('리뷰 작성 중 오류가 발생했습니다:', error);
     }
