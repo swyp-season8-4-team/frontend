@@ -110,9 +110,7 @@ export function SaveStoreBottomSheetContainer({
       userPreferences: user?.preferences as number[],
     });
 
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
+    handleBottomSheetClose();
   };
 
   const getIconColor = (colorId: number) => {
@@ -141,6 +139,13 @@ export function SaveStoreBottomSheetContainer({
   useEffect(() => {
     handleSavedListFetch();
   }, [handleSavedListFetch]);
+
+  // BottomSheet가 열릴 때마다 리스트 새로 불러오기
+  useEffect(() => {
+    if (isBottomSheetOpen) {
+      handleSavedListFetch();
+    }
+  }, [isBottomSheetOpen, handleSavedListFetch]);
 
   if (!savedLists) return null;
 
