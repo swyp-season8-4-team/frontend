@@ -29,10 +29,17 @@ export function StorePictureList({
     });
   };
 
+  // 최대 4개의 이미지만 보여줌
+  const displayImages = [...ownerPickImages, ...menuImages].slice(0, 4);
+  // 빈 슬롯 계산 (항상 4개 슬롯을 채우기 위해)
+  const emptySlots = Math.max(0, 4 - displayImages.length);
+  // 4개 이상의 이미지가 있는지 확인
+  const hasMoreImages = ownerPickImages.length > 4 || menuImages.length > 0;
+
   return (
     <div className="flex gap-[9px] md:gap-[22px] py-3 md:py-7">
-      {ownerPickImages?.map((image, index) =>
-        index === ownerPickImages.length - 1 ? (
+      {displayImages.map((image, index) =>
+        index === displayImages.length - 1 && hasMoreImages ? (
           <button
             onClick={handlePlusBtnClick}
             key={image}
@@ -61,6 +68,12 @@ export function StorePictureList({
           </div>
         ),
       )}
+      {Array.from({ length: emptySlots }).map((_, index) => (
+        <div
+          key={`empty-${index}`}
+          className="w-full aspect-[190/162] bg-gray-100"
+        />
+      ))}
     </div>
   );
 }

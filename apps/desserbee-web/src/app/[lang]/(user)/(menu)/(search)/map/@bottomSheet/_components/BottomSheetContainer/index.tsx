@@ -11,13 +11,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 interface BottomSheetContainerProps {
   showBottomSheet: boolean;
   storeSummary: StoreSummaryInfoData | null;
-  fetchStoreSummary: (storeId: string) => Promise<void>;
 }
 
 export function BottomSheetContainer({
   showBottomSheet,
   storeSummary,
-  fetchStoreSummary,
 }: BottomSheetContainerProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -31,12 +29,7 @@ export function BottomSheetContainer({
     const shouldOpen = hasBottomsheet && storeId !== null;
 
     setIsBottomSheetOpen(shouldOpen);
-
-    // 바텀시트가 열릴 때만 데이터 가져오기
-    if (shouldOpen && storeId) {
-      fetchStoreSummary(storeId);
-    }
-  }, [searchParams, fetchStoreSummary]);
+  }, [searchParams]);
 
   const handleBottomSheetClose = () => {
     const params = new URLSearchParams(searchParams);
