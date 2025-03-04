@@ -374,41 +374,70 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
   // 지도 첫 초기화
   const loadMap = useCallback(
-    async (initializedServices: {
-      mapService: MapService;
-      geoService: GeolocationService;
-      storeService: StoreService;
-    }) => {
+    async (
+      initializedServices: {
+        mapService: MapService;
+        geoService: GeolocationService;
+        storeService: StoreService;
+      },
+      lastPosition?: MapPosition,
+    ) => {
       if (!mapRef.current) {
         console.error('loadMap: Map container not found (mapRef.current falsy');
         return;
       }
 
       try {
-        // 첫 위치는 현재 위치
-        const result = await handleInitialGeoPositonFetch(
+        // 현재 위치 가져오기 (실제 사용자 위치)
+        const actualPosition = await handleInitialGeoPositonFetch(
           initializedServices,
           openPermissionModal,
         );
 
-        if (!result) {
+        const mapCenterPosition = lastPosition || actualPosition;
+
+        // 위치 정보가 없는 경우 초기화 불가능
+        if (!mapCenterPosition) {
+          setError(
+            '위치 정보를 가져오는데에 오류가 생겼습니다. 잠시 후 다시 시도해주세요.',
+          );
           return;
         }
 
+        // 지도 초기화
         await initializedServices.mapService.initializeMap(
           mapRef.current,
-          result,
+          mapCenterPosition,
         );
 
         initializedServices.mapService.addCenterChangedListener(
           handleMapCenterChange,
         );
 
-        await initializedServices.mapService.addCurrentPositionMarker(
-          result,
-          userMarkerImage.src,
-        );
+        // lastPosition이 있을 경우 지도 중심 설정
+        if (lastPosition) {
+          setMapCenter(lastPosition);
+          await initializedServices.mapService.setMapCenter(lastPosition);
+        }
 
+        // 실제 위치 정보가 있는 경우에만 현재 위치 마커 추가
+        if (actualPosition) {
+          setCurrentPosition(actualPosition);
+          const marker =
+            await initializedServices.mapService.addCurrentPositionMarker(
+              actualPosition,
+              userMarkerImage.src,
+            );
+          currentPositionMarkerRef.current = marker;
+
+          // 저장된 위치가 없는 경우에만 실제 위치로 지도 중심 이동
+          if (!lastPosition) {
+            await initializedServices.mapService.setMapCenter(actualPosition);
+            setMapCenter(actualPosition);
+          }
+        }
+
+        // 위치 추적 시작
         await initializedServices.geoService.startWatchingPosition(
           updateCurrentMarker,
           {
@@ -417,8 +446,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
             maximumAge: 0,
           },
         );
-
-        await initializedServices.mapService.setMapCenter(result);
 
         await initializedServices.mapService.addMarkersWithClustering(
           nearByStores,
@@ -570,25 +597,29 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   // 카카오맵 초기화 로직
   useEffect(() => {
     if (isScriptLoaded && !isInitialized && mapRef.current) {
+      // 초기화 전에 먼저 세션 스토리지 확인
+      const lastPosition = sessionStorageRepository.get(
+        'lastPosition',
+      ) as MapPosition;
+
       window.kakao.maps.load(() => {
         try {
           // 서비스 초기화
           const initializedServices = initializeServices();
           servicesRef.current = initializedServices;
 
-          // 지도 로드
-          loadMap(initializedServices)
+          // 지도 로드 - 저장된 위치가 있으면 사용
+          loadMap(initializedServices, lastPosition)
             .then(() => {
               setIsMapLoaded(true);
               setIsInitialized(true);
-              setIsFetchRequired(true);
 
-              // 지도가 완전히 초기화된 후 sessionStorage 삭제
-              // 이렇게 하면 새로고침 시 geolocation을 사용하고,
-              // 바텀시트나 상세페이지에서 돌아왔을 때는 이미 사용했으므로 문제 없음
-              setTimeout(() => {
-                sessionStorageRepository.delete('lastPosition');
-              }, 1000);
+              // 위치가 있었으면 해당 위치 중심으로 가게 정보 가져오기
+              if (lastPosition) {
+                setMapCenter(lastPosition);
+              }
+
+              setIsFetchRequired(true);
             })
             .catch((err) => {
               console.error('지도 로드 실패:', err);
@@ -634,6 +665,21 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     };
   }, [isInitialized]);
 
+  // URL 쿼리 파라미터 감지 및 처리
+  useEffect(() => {
+    if (typeof window !== 'undefined' && isMapLoaded) {
+      // 마지막 위치가 있으면 해당 위치로 이동
+      const lastPosition = sessionStorageRepository.get(
+        'lastPosition',
+      ) as MapPosition;
+
+      if (lastPosition && servicesRef.current.mapService) {
+        servicesRef.current.mapService.setMapCenter(lastPosition);
+        setMapCenter(lastPosition);
+      }
+    }
+  }, [isMapLoaded, sessionStorageRepository]);
+
   const preferenceTagsProps = useMemo(
     () => ({
       categories: preferenceCategories,
@@ -662,23 +708,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const handleRefetchBtnClick = () => {
     setIsFetchRequired(true);
   };
-
-  // URL 쿼리 파라미터 감지 및 처리
-  useEffect(() => {
-    if (typeof window !== 'undefined' && isMapLoaded) {
-      // 마지막 위치가 있으면 해당 위치로 이동
-      const lastPosition = sessionStorageRepository.get(
-        'lastPosition',
-      ) as MapPosition;
-
-      if (lastPosition && servicesRef.current.mapService) {
-        servicesRef.current.mapService.setMapCenter(lastPosition);
-        setMapCenter(lastPosition);
-
-        // 이동 후에는 삭제하지 않음 (지도 초기화 완료 후 삭제됨)
-      }
-    }
-  }, [isMapLoaded, sessionStorageRepository]);
 
   return (
     <div>
