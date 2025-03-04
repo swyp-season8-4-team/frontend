@@ -32,6 +32,7 @@ export function SaveStoreBottomSheetContainer({
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(showBottomSheet);
   const [savedLists, setSavedLists] = useState<SavedListData[]>([]);
   const { user } = useContext(UserContext);
+  const [error, setError] = useState<string | null>(null);
 
   const storeService = useMemo(
     () =>
@@ -104,15 +105,26 @@ export function SaveStoreBottomSheetContainer({
   };
 
   const hadleSaveInListBtnClick = async (listId: number) => {
-    await storeService.addStoreInSavedList({
-      listId: listId as number,
-      storeUuid,
-      userPreferences: user?.preferences as number[],
-    });
+    try {
+      await storeService.addStoreInSavedList({
+        listId: listId as number,
+        storeUuid,
+        userPreferences: user?.preferences as number[],
+      });
 
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
+      handleBottomSheetClose();
+    } catch (error: any) {
+      // 409 Conflict 에러 확인
+      if (error.response && error.response.status === 409) {
+        setError('이미 저장한 리스트입니다.');
+      } else {
+        console.error('가게 저장 중 오류 발생:', error);
+        setError('저장 중 오류가 발생했습니다.');
+      }
+
+      // 에러를 반환하거나 전파하지 않고 여기서 처리 완료
+      return; // 함수 종료
+    }
   };
 
   const getIconColor = (colorId: number) => {
@@ -142,6 +154,26 @@ export function SaveStoreBottomSheetContainer({
     handleSavedListFetch();
   }, [handleSavedListFetch]);
 
+  // BottomSheet가 열릴 때마다 리스트 새로 불러오기
+  useEffect(() => {
+    if (isBottomSheetOpen) {
+      handleSavedListFetch();
+    }
+  }, [isBottomSheetOpen, handleSavedListFetch]);
+
+  // 에러 메시지 타이머 설정
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [error]);
+
   if (!savedLists) return null;
 
   return (
@@ -151,6 +183,12 @@ export function SaveStoreBottomSheetContainer({
       onClose={handleBottomSheetClose}
     >
       <div className="flex flex-col h-full overflow-y-auto scrollbar-none">
+        {error && (
+          <div className="top-1/3 left-1/2 z-20 absolute bg-red-100 px-4 py-2 border border-red-400 rounded text-red-700 -translate-x-1/2 transform">
+            {error}
+          </div>
+        )}
+
         <button
           className="flex items-center"
           onClick={() => {

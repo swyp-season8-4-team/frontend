@@ -154,20 +154,22 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
             <span>저장 리스트 &nbsp;</span>
             <span>{totalSavedList.length}</span>
           </div>
-          <button
-            className="flex items-center my-[11.97px] md:my-[22px]"
-            onClick={() => {
-              handleSideBarClose();
-              handleCreateListBtnClick();
-            }}
-          >
-            <span className="flex justify-center items-center mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm w-[20.7px] md:w-[30.45px] aspect-square">
-              <IconPlus className="w-[70%] h-[70%] text-[#6F6F6F]" />
-            </span>
-            <span className="text-[#6F6F6F] md:text-[18px] text-xs">
-              새 리스트 만들기
-            </span>
-          </button>
+          {totalSavedList.length < 10 && (
+            <button
+              className="flex items-center my-[11.97px] md:my-[22px]"
+              onClick={() => {
+                handleSideBarClose();
+                handleCreateListBtnClick();
+              }}
+            >
+              <span className="flex justify-center items-center mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm w-[20.7px] md:w-[30.45px] aspect-square">
+                <IconPlus className="w-[70%] h-[70%] text-[#6F6F6F]" />
+              </span>
+              <span className="text-[#6F6F6F] md:text-[18px] text-xs">
+                새 리스트 만들기
+              </span>
+            </button>
+          )}
         </div>
         <div className="[&::-webkit-scrollbar]:hidden flex-grow pr-1 [-ms-overflow-style:none] overflow-y-auto [scrollbar-width:none]">
           {totalSavedList.map((saveListItem, index) => (
