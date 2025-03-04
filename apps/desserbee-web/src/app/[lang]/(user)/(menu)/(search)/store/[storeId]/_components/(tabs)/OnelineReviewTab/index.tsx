@@ -1,5 +1,5 @@
 'use client';
-import { useRouter, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useContext, useState } from 'react';
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
 import { OneLineReviewWrite } from './write';

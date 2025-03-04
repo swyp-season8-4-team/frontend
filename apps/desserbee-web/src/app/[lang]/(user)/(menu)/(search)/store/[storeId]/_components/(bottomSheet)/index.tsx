@@ -68,11 +68,15 @@ export function SaveStoreBottomSheetContainer({
   ) => {
     if (!user?.id) return;
 
-    await storeService.createSavedList({
-      userUuid: user.id,
-      listName: listName,
-      iconColorId: colorId,
-    });
+    try {
+      await storeService.createSavedList({
+        userUuid: user.id,
+        listName: listName,
+        iconColorId: colorId,
+      });
+    } catch (err) {
+      console.log('가게 담는 중 에러 발생: ' + err);
+    }
   };
 
   const handleCreateListBtnClick = () => {
@@ -105,6 +109,10 @@ export function SaveStoreBottomSheetContainer({
       storeUuid,
       userPreferences: user?.preferences as number[],
     });
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   const getIconColor = (colorId: number) => {
