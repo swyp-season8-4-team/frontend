@@ -134,6 +134,16 @@ export default {
             transform: 'translateX(0) translateY(0)',
           },
         },
+        'slide-center': {
+          '0%': {
+            transform: 'translate(-50%, 100%)',
+            opacity: '0',
+          },
+          '100%': {
+            transform: 'translate(-50%, -50%)',
+            opacity: '1',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',

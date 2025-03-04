@@ -20,15 +20,17 @@ export function BottomSheet({
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 z-bottomSheet bg-black/50"
+          className="fixed inset-0 z-bottomSheet bg- w-full flex justify-center"
           onClick={onClose}
         >
           <div
             ref={bottomSheetRef}
             className={cn(
-              'bottom-0 z-bottomSheet fixed select-none',
-              'bg-white px-base pt-[20px] pb-4 rounded-t-base max-w-[768px] w-full',
+              'bottom-0 z-bottomSheet fixed select-none w-full',
+              'left-0 right-0 mx-auto',
+              'bg-white px-base pt-[20px] pb-4 rounded-t-base max-w-[768px]',
               'animate-slide-up transition-transform duration-500 ease-out',
+              isOpen ? 'translate-y-0' : 'translate-y-full',
               className,
             )}
             onClick={(e) => e.stopPropagation()}
