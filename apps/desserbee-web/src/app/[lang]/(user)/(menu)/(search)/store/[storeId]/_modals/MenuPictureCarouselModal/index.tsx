@@ -23,10 +23,12 @@ export function MenuPictureCarouselModal({
 
   useEffect(() => {
     const updateImagesPerPage = () => {
-      if (window.innerWidth < 768) {
-        setImagesPerPage(4);
-      } else {
+      if (window.innerWidth > 1024) {
         setImagesPerPage(8);
+      } else if (window.innerWidth >= 767) {
+        setImagesPerPage(6);
+      } else {
+        setImagesPerPage(4);
       }
     };
 
@@ -64,24 +66,24 @@ export function MenuPictureCarouselModal({
     <CustomModal
       isCloseBtnShow={false}
       onClose={onClose}
-      className="top-[50%] p-4 md:p-4 rounded-[6.91px] md:rounded-base min-w-[293px] md:max-w-[689px] aspect-[293/333] md:aspect-[250/193]"
+      className="top-[50%] p-4 md:p-4  md:rounded-base min-w-[293px] md:max-w-[689px]  "
     >
       <div className="h-full">
         <Carousel
           setApi={setApi}
           className="relative flex flex-col justify-center w-full h-full"
         >
-          <div className="flex items-end md:ml-[59px] font-semibold text-[8px] sm:text-base md:text-xl">
+          <div className="flex items-end font-semibold text-[8px] sm:text-base md:text-xl">
             <div>메뉴 &nbsp;</div>
             <div className="text-[#898989]">{menus.length}</div>
           </div>
           <CarouselContent className="h-full">
             {Array.from({ length: totalPages }).map((_, pageIndex) => (
               <CarouselItem key={pageIndex} className="w-full">
-                <div className="gap-x-10 gap-y-1 md:gap-[14px] grid grid-cols-2 md:grid-cols-4 md:px-[59px] h-full">
+                <div className="gap-x-10 gap-y-1 md:gap-[14px] grid grid-cols-2 md:grid-cols-3 md:grid-rows-2 lg:grid-cols-4 md:px-4 h-full">
                   {getPageImages(pageIndex).map((menu, menuIndex) => (
                     <div key={`${pageIndex}-${menuIndex}`} className="">
-                      <div className="relative bg-[#D2D2D2] rounded-[5px] md:rounded-xl md:max-h-[133px] aspect-square overflow-hidden">
+                      <div className="relative bg-[#eeeeee] rounded-xl md:max-h-[133px] aspect-square overflow-hidden">
                         {menu.images && menu.images.length > 0 ? (
                           <Image
                             src={menu.images[0]}

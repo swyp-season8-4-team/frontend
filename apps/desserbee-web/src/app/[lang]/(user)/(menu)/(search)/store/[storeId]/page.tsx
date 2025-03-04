@@ -25,6 +25,7 @@ export default async function StoreDetailPage({
 
   const storeDetail = await storeService.getStoreDetail(storeId);
   const storeDetails = storeDetail;
+  // console.log(storeDetail);
 
   if (storeDetail.savedListId) {
     const parentListInfo = await storeService.getParentSavedList({
