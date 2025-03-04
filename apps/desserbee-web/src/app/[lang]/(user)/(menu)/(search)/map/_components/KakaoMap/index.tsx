@@ -76,7 +76,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     [],
   );
 
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -239,7 +238,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
   // 지도 중심, 반경내 상점들 받아서 마커 및 클러스터 마커 추가
   const updateNewClusterMarkers = useCallback(
-    async (position: MapPosition, stores: NearByStoreData[]) => {
+    async (stores: NearByStoreData[]) => {
       if (!areServicesInitialized(servicesRef.current)) {
         return;
       }
@@ -417,11 +416,14 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           },
         );
 
-        // 첫 로드 시에만 지도 중심 위치 변경
-        if (isFirstLoad) {
-          await initializedServices.mapService.setMapCenter(result);
-          setIsFirstLoad(false); // 첫 로드 이후로는 실행되지 않도록 설정
-        }
+        await initializedServices.mapService.setMapCenter(result);
+
+        // const lastPosition = sessionStorageRepository.get(
+        //   'lastPosition',
+        // ) as MapPosition;
+
+        // await initializedServices.mapService.setMapCenter(lastPosition);
+        // setMapCenter(lastPosition);
 
         await initializedServices.mapService.addMarkersWithClustering(
           nearByStores,
@@ -441,7 +443,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     [
       handleMapCenterChange,
       handleStoreMarkerClick,
-      isFirstLoad,
       nearByStores,
       openPermissionModal,
       updateCurrentMarker,
@@ -512,7 +513,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       const fetchAndUpdate = async () => {
         const stores = await fetchNearbyStores(mapCenterRef.current);
         if (stores) {
-          await updateNewClusterMarkers(mapCenterRef.current, stores);
+          await updateNewClusterMarkers(stores);
           setIsFetchRequired(false);
         }
       };
@@ -538,7 +539,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         );
 
         if (stores) {
-          await updateNewClusterMarkers(mapCenterRef.current, stores);
+          await updateNewClusterMarkers(stores);
           setIsFetchRequired(false);
 
           // 약간의 지연을 두어 상태 업데이트가 확실히 반영되도록 함
@@ -659,6 +660,24 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const handleRefetchBtnClick = () => {
     setIsFetchRequired(true);
   };
+
+  // URL 쿼리 파라미터 감지 및 처리
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // 마지막 위치가 있으면 해당 위치로 이동
+      const lastPosition = sessionStorageRepository.get(
+        'lastPosition',
+      ) as MapPosition;
+
+      if (lastPosition && servicesRef.current.mapService && isMapLoaded) {
+        servicesRef.current.mapService.setMapCenter(lastPosition);
+        setMapCenter(lastPosition);
+
+        // 이동 후 무조건 sessionStorage 정리 (바텀시트 상태와 무관하게)
+        sessionStorageRepository.delete('lastPosition');
+      }
+    }
+  }, [isMapLoaded, sessionStorageRepository]);
 
   return (
     <div>
