@@ -496,12 +496,9 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         if (hash.startsWith('#q=')) {
           const query = decodeURIComponent(hash.substring(3));
           setSearchKeyword(query);
-          // 검색어가 있으면 즉시 바텀시트 표시
-          // setShowBottomSheet(!!query);
           console.log('Initial hash detected, setting bottom sheet:', !!query);
         } else {
           setSearchKeyword('');
-          // setShowBottomSheet(false);
         }
       }
     };
@@ -676,6 +673,9 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       if (lastPosition && servicesRef.current.mapService) {
         servicesRef.current.mapService.setMapCenter(lastPosition);
         setMapCenter(lastPosition);
+
+        // 이동 후 무조건 sessionStorage 정리 (바텀시트 상태와 무관하게)
+        sessionStorageRepository.delete('lastPosition');
       }
     }
   }, [isMapLoaded, sessionStorageRepository]);
