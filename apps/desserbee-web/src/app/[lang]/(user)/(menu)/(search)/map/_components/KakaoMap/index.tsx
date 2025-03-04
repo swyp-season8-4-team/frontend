@@ -135,12 +135,9 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
   // 제일 먼저 서비스 초기화
   const initializeServices = () => {
-    // console.log('initializeServices: 서비스 초기화 시작');
-
     const mapService = new MapService({
       mapController: new KakaoMapController(),
     });
-    // console.log('initializeServices: MapService 초기화 완료 ✅');
 
     const geoService = new GeolocationService({
       geolocationController: new GeolocationController(
@@ -148,12 +145,10 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         new MovingAverageFilter(3),
       ),
     });
-    // console.log('initializeServices: GeolocationService 초기화 완료 ✅');
 
     const storeService = new StoreService({
       storeRepository: new StoreAPIReopository(),
     });
-    // console.log('initializeServices: StoreService 초기화 완료 ✅');
 
     return { mapService, geoService, storeService };
   };
@@ -183,11 +178,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     // 최대 거리 선택
     const maxDistance = Math.max(...distances);
 
-    // console.log(
-    //   'calculateFetchRadius: 계산된 최대 반지름 📏:',
-    //   maxDistance,
-    //   'm',
-    // );
     return maxDistance * 1000;
   }, []);
 
@@ -199,9 +189,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     ) => {
       try {
         if (!servicesRef.current.storeService) {
-          // console.log(
-          //   'fetchNearbyStores: storeService 서비스가 초기화되지 않음, 주변 가게 불러오기 중지 🛑',
-          // );
           return null;
         }
 
@@ -217,14 +204,11 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           });
 
         setNearByStores(nearByStores);
-        // console.log('fetchNearbyStores: 주변 가게 업데이트 완료 🏪');
 
         setRetryCount(0);
         setError(null);
         return nearByStores;
       } catch (error) {
-        // console.error('가게 정보를 불러오는데 실패했습니다:', error);
-        // console.error('다시 시도합니다 :' + 'retry(' + retryCount + ')');
         if (retryCount < MAX_RETRY) {
           setRetryCount((prev) => prev + 1);
           setTimeout(
@@ -246,7 +230,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   );
 
   const updateLastFetchPosition = useCallback((position: MapPosition) => {
-    // console.log('updateLastFetchPosition: 마지막 fetch 위치 저장 ✅');
     setLastFetchPosition(position);
   }, []);
 
@@ -254,38 +237,24 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const updateNewClusterMarkers = useCallback(
     async (position: MapPosition, stores: NearByStoreData[]) => {
       if (!areServicesInitialized(servicesRef.current)) {
-        // console.log(
-        //   'updateNewClusterMarkers: 서비스가 초기화되지 않음, 가게 클러스터 마커 업데이트 중지 🛑',
-        // );
         return;
       }
       try {
         isLoadingRef.current = true;
 
-        // console.log('updateCurrentMarker: 이전 마커 모두두 제거 시작 🗑️');
         await servicesRef.current.mapService?.clearAllMarkers();
 
         if (stores.length !== 0) {
-          // console.log(
-          //   'updateNewClusterMarkers: 주변 가게 있음 🏪, 새로운 가게 마커 추가 시작  ',
-          // );
-
           await servicesRef.current.mapService?.addMarkersWithClustering(
             stores,
             storeMarkerImage.src,
             handleStoreMarkerClick,
           );
-          // console.log('updateNewClusterMarkers: 새로운 가게 마커 추가 완료 📍');
           updateLastFetchPosition(position);
         } else {
-          // console.log('updateNewClusterMarkers: 주변 가게 정보 없음 🍃');
           setError('주변 가게가 없습니다');
         }
       } catch (error) {
-        // console.error(
-        //   'updateNewClusterMarkers: 가게 마커 업데이트 중 오류 ⚠️:',
-        //   error,
-        // );
         setError('가게 정보 업데이트에 실패했습니다.');
       } finally {
         isLoadingRef.current = false;
@@ -305,8 +274,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         if (!areServicesInitialized(servicesRef.current)) {
           return;
         }
-
-        // console.log('현재 위치 업데이트 시작: ', position);
 
         // 이미 마커가 있으면 제거하지 말고 위치만 업데이트
         if (currentPositionMarkerRef.current) {
@@ -359,15 +326,12 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     const permissionStatus = await navigator.permissions.query({
       name: 'geolocation',
     });
-    // console.log('handleInitialGeoPositonFetch: 위치 권한 확인');
 
     if (permissionStatus.state === 'denied') {
-      // console.log('handleInitialGeoPositonFetch: 위치 권한 거부됨');
       openPermissionModal();
       return null;
     }
 
-    // console.log('handleInitialGeoPositonFetch: 현재 위치 정보 요청 시작 🏃');
     const result = await initializedServices.geoService.getCurrentPosition();
 
     if ('errorMessage' in result) {
@@ -395,13 +359,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       return null;
     }
 
-    // console.log('handleInitialGeoPositonFetch: 현재 위치 정보 획득 성공 🚩:', {
-    //   latitude: result.latitude,
-    //   longitude: result.longitude,
-    // });
-
     setCurrentPosition(result);
-    // console.log('handleInitialGeoPositonFetch: 현재 위치 저장 🚩');
 
     return result;
   };
@@ -419,8 +377,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       geoService: GeolocationService;
       storeService: StoreService;
     }) => {
-      // console.log('loadMap: 지도 로딩 시작 🗺️');
-
       if (!mapRef.current) {
         console.error('loadMap: Map container not found (mapRef.current falsy');
         return;
@@ -434,31 +390,22 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         );
 
         if (!result) {
-          // console.error(
-          //   '현재 위치 로딩에 문제가 생겼습니다.⚠️ 지도 로드 중지 🛑',
-          // );
           return;
         }
 
-        // console.log('loadMap: 지도 초기화 시작');
         await initializedServices.mapService.initializeMap(
           mapRef.current,
           result,
         );
 
-        // console.log('loadMap: 지도 중심 추적 시작');
         initializedServices.mapService.addCenterChangedListener(
           handleMapCenterChange,
         );
 
-        // console.log('loadMap: 지도 초기화 완료 🗺️');
-
-        // console.log('loadMap: 현재 위치 마커 추가 시작');
         await initializedServices.mapService.addCurrentPositionMarker(
           result,
           userMarkerImage.src,
         );
-        // console.log('loadMap: 현재 위치 마커 추가 완료 📍');
 
         await initializedServices.geoService.startWatchingPosition(
           updateCurrentMarker,
@@ -468,24 +415,19 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
             maximumAge: 0,
           },
         );
-        // console.log('loadMap: 실시간 위치 추적 시작');
 
         // 첫 로드 시에만 지도 중심 위치 변경
         if (isFirstLoad) {
           await initializedServices.mapService.setMapCenter(result);
-          // console.log('loadMap: 불러온 위치로 지도 중심 위치 변경');
           setIsFirstLoad(false); // 첫 로드 이후로는 실행되지 않도록 설정
         }
 
-        // console.log('loadMap: 주변 가게 마커 추가 시작');
         await initializedServices.mapService.addMarkersWithClustering(
           nearByStores,
           storeMarkerImage.src,
           handleStoreMarkerClick,
         );
-        // console.log('loadMap: 주변 가게 마커 추가 완료 📍');
       } catch (err) {
-        // console.error('loadMap: 지도 초기화 중 오류 발생 ⚠️:', err);
         if (err instanceof GeolocationPermissionError) {
           if (err.message === 'PERMISSION_DENIED') {
             openPermissionModal();
@@ -611,14 +553,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const previousSelectedTagsRef = useRef<number[]>([]);
   const previousSearchKeywordRef = useRef<string>('');
 
-  // 검색 바텀시트 (이후 추가)
-  // const [showBottomSheet, setShowBottomSheet] = useState(false);
-
-  // // 바텀시트 닫는 핸들러 추가
-  // const handleCloseBottomSheet = useCallback(() => {
-  //   setShowBottomSheet(false);
-  // }, []);
-
   useEffect(() => {
     if (
       JSON.stringify(previousSelectedTagsRef.current) !==
@@ -636,12 +570,9 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           await updateNewClusterMarkers(mapCenterRef.current, stores);
           setIsFetchRequired(false);
 
-          // 검색어가 있을 때 바텀시트 표시 (일정 시간 후에 업데이트)
-
           // 약간의 지연을 두어 상태 업데이트가 확실히 반영되도록 함
           setTimeout(() => {
             setNearByStores(stores);
-            // setShowBottomSheet(!!searchKeyword);
           }, 100);
         }
       };
@@ -700,7 +631,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   // 카카오맵 초기화 로직 분리 및 단순화
   useEffect(() => {
     if (isScriptLoaded && !isInitialized && mapRef.current) {
-      // console.log('카카오맵 초기화 시작');
       window.kakao.maps.load(() => {
         try {
           // 서비스 초기화
@@ -753,10 +683,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           clearSelectedCategories={clearSelectedCategories}
           refetchStore={handleRefetchBtnClick}
         />
-        {/* <BottomSheet
-          isOpen={showBottomSheet}
-          onClose={handleCloseBottomSheet}
-        ></BottomSheet> */}
       </div>
     </div>
   );
