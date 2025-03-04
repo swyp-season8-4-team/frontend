@@ -3,6 +3,7 @@ import { BannerCarousel } from './_components/BannerCarousel';
 
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
+import NotFound from '@/app/[lang]/[...not-found]/page';
 
 export default async function MapPage() {
   // 불러올 데이터
@@ -14,7 +15,15 @@ export default async function MapPage() {
     storeRepository: new StoreAPIReopository(),
   });
 
-  const preferenceCategories = await storeService.getAllPreference();
+  let preferenceCategories;
+
+  try {
+    preferenceCategories = await storeService.getAllPreference();
+  } catch (error) {
+    console.log(error);
+
+    return <NotFound />;
+  }
 
   // if (!authorization) redirect(NavigationPathname.SignIn);
 
