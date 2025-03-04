@@ -642,6 +642,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
             .then(() => {
               setIsMapLoaded(true);
               setIsInitialized(true);
+              setIsFetchRequired(true);
             })
             .catch((err) => {
               console.error('지도 로드 실패:', err);
