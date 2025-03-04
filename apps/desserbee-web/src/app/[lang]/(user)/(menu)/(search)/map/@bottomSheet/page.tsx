@@ -1,35 +1,29 @@
-'use client';
-
 import { BottomSheetContainer } from './_components/BottomSheetContainer';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
-import { useState, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
-import type { StoreSummaryInfoData } from '@repo/entity/src/store';
 
-export default function BottomSheetPage() {
-  const searchParams = useSearchParams();
-  const [storeSummary, setStoreSummary] = useState<StoreSummaryInfoData | null>(
-    null,
-  );
+export default async function BottomSheetPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ bottomsheet?: string; storeId?: string }>;
+}) {
+  const searchParam = await searchParams;
+  const bottomsheet = searchParam.bottomsheet === 'true';
+  const storeId = searchParam.storeId;
 
-  const bottomsheet = searchParams.get('bottomsheet') === 'true';
-  const storeId = searchParams.get('storeId');
+  let storeSummary = null;
 
-  const fetchStoreSummary = useCallback(async (id: string) => {
-    if (!id) return;
-
+  if (storeId) {
     const storeService = new StoreService({
       storeRepository: new StoreAPIRepository(),
     });
 
     try {
-      const summary = await storeService.getStoreSummary(id);
-      setStoreSummary(summary);
+      storeSummary = await storeService.getStoreSummary(storeId);
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }
 
   if (!storeId || !bottomsheet) {
     return null;
@@ -39,7 +33,6 @@ export default function BottomSheetPage() {
     <BottomSheetContainer
       showBottomSheet={bottomsheet}
       storeSummary={storeSummary}
-      fetchStoreSummary={fetchStoreSummary}
     />
   );
 }
