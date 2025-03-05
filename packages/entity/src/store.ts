@@ -1,5 +1,4 @@
 import type { BaseRequestData } from './appMetadata';
-import type { OneLineReview } from './review';
 
 export interface Store {
   storeId: number;
@@ -489,6 +488,54 @@ export interface PreferenceData {
   preferenceDesc: string;
 }
 
+// oneline-review
+export interface OneLineReview {
+  reviewUuid: string;
+  storeId: number;
+  nickname: string;
+  profileImage: string;
+  content: string;
+  rating: number;
+  createdAt: string;
+  images: string[];
+}
+
+export interface OnelineReviewRequests {
+  userUuid: string;
+  content: string;
+  rating: number;
+}
+export interface CreateOnelineReviewRequestFormData {
+  storeUuid: string;
+  request: OnelineReviewRequests;
+  // images?: string[];
+  images?: File[];
+}
+
+export interface CreateOnelineReviewResponse {
+  reviewUuid: string;
+  storeId: number;
+  content: string;
+  rating: number;
+  createdAt: string;
+  images: string[];
+}
+
+export interface StoreOnelineReivewRequest {
+  storeUuid: string;
+}
+
+export interface StoreOnelineReivewData {
+  reviewUuid: string;
+  storeId: number;
+  nickname: string;
+  profileImage: string;
+  content: string;
+  rating: number;
+  createdAt: string;
+  images: string[];
+}
+
 export interface StoreRepository {
   // preference
   getAllPreference(): Promise<PreferenceData[]>;
@@ -598,4 +645,15 @@ export interface StoreRepository {
 
   // coupon count
   updateCouponCount(): Promise<void>;
+
+  // review
+  getStoreOnelineReviews(
+    data: BaseRequestData<StoreOnelineReivewRequest>,
+  ): Promise<StoreOnelineReivewData[]>;
+
+  createOnelineReview({
+    data,
+  }: BaseRequestData<CreateOnelineReviewRequestFormData>): Promise<
+    CreateOnelineReviewResponse[]
+  >;
 }

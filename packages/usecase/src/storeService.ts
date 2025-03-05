@@ -25,6 +25,10 @@ import type {
   StoresInSavedListRequest,
   ParentSavedListRequest,
   ParentSavedListResponse,
+  CreateOnelineReviewRequestFormData,
+  CreateOnelineReviewResponse,
+  StoreOnelineReivewRequest,
+  StoreOnelineReivewData,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -594,6 +598,47 @@ export default class StoreService {
       });
       return response;
     } catch (error) {
+      throw error;
+    }
+  }
+
+  // store oneline review
+  async getStoreOnlineReviews(
+    params: StoreOnelineReivewRequest,
+  ): Promise<StoreOnelineReivewData[]> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set');
+    }
+
+    try {
+      const result = await this.storeRepository.getStoreOnelineReviews({
+        data: params,
+      });
+      console.log(`가게 한줄 리뷰 조회 완료 `);
+
+      return result;
+    } catch (error) {
+      console.error(`가게 한줄 리뷰 조회 오류 발생 `, error);
+      throw error;
+    }
+  }
+
+  async createStoreOnlineReviews(
+    params: CreateOnelineReviewRequestFormData,
+  ): Promise<CreateOnelineReviewResponse[]> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set');
+    }
+
+    try {
+      const result = await this.storeRepository.createOnelineReview({
+        data: params,
+      });
+      console.log(`가게 한줄 리뷰 생성 완료 `);
+
+      return result;
+    } catch (error) {
+      console.error(`가게 한줄 리뷰 생성 오류 발생 `, error);
       throw error;
     }
   }
