@@ -3,9 +3,9 @@ import { cookies } from 'next/headers';
 import { DetailPageHeader } from '../_components/Header';
 import { OneLineReviewWrite } from '../_components/(tabs)/OnelineReviewTab/write';
 import { OneLineReviewItem } from '../_components/(tabs)/OnelineReviewTab/item';
-import type { OneLineReview } from '@repo/entity/src/review';
-import ReviewService from '@repo/usecase/src/reviewService';
-import ReviewAPIReopository from '@repo/infrastructures/src/repositories/reviewAPIRepository';
+import type { OneLineReview } from '@repo/entity/src/store';
+import StoreService from '@repo/usecase/src/storeService';
+import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 
 interface OneLineReviewPageProps {
   params: Promise<{ storeId: string }>;
@@ -16,8 +16,8 @@ export default async function OneLineReviewPage({
 }: OneLineReviewPageProps) {
   const { storeId } = await params;
 
-  const reviewService = new ReviewService({
-    reviewRepository: new ReviewAPIReopository(),
+  const storeService = new StoreService({
+    storeRepository: new StoreAPIRepository(),
   });
 
   const cookieStore = await cookies();
@@ -27,8 +27,9 @@ export default async function OneLineReviewPage({
     : null;
 
   let reviewPageData;
+  console.log(reviewActionData.storeUuid);
   try {
-    reviewPageData = await reviewService.getStoreOnlineReviews({
+    reviewPageData = await storeService.getStoreOnlineReviews({
       storeUuid: reviewActionData.storeUuid,
     });
   } catch (err) {

@@ -144,7 +144,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   // 화면 내 거리 계산
   const calculateFetchRadius = useCallback(() => {
     if (!servicesRef.current.mapService) {
-      return 4000; // 기본값
+      return 4000;
     }
 
     const bounds = servicesRef.current.mapService.getMapBound();
@@ -164,10 +164,11 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       }), // se
     ];
 
-    // 최대 거리 선택
-    const maxDistance = Math.max(...distances);
+    // 화면 기반 거리와 최소 동 단위 반경 중 더 큰 값 선택
+    const screenDistance = Math.max(...distances);
+    const minNeighborhoodRadius = 4;
 
-    return maxDistance * 1000;
+    return Math.max(screenDistance, minNeighborhoodRadius) * 1000;
   }, []);
 
   // 가게

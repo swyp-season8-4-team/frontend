@@ -3,8 +3,8 @@ import { useContext, useState } from 'react';
 import IconPicutre from '@repo/design-system/components/icons/IconPicture';
 import IconHalfStar from '@repo/design-system/components/icons/IconHalfStar';
 import Image from 'next/image';
-import ReviewService from '@repo/usecase/src/reviewService';
-import ReviewAPIRepository from '@repo/infrastructures/src/repositories/reviewAPIRepository';
+import StoreService from '@repo/usecase/src/storeService';
+import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import { UserContext } from '@/contexts/UserContext';
 import { cn } from '@repo/ui/lib/utils';
 import { useRouter } from 'next/navigation';
@@ -26,8 +26,8 @@ export function OneLineReviewWrite({
   const [reviewImage, setReviewImage] = useState<File | null>();
   const [, setImageName] = useState<string | null>(null);
 
-  const reviewService = new ReviewService({
-    reviewRepository: new ReviewAPIRepository(),
+  const storeService = new StoreService({
+    storeRepository: new StoreAPIRepository(),
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,7 +62,7 @@ export function OneLineReviewWrite({
         images: reviewImage ? [reviewImage] : [],
       };
 
-      await reviewService.createStoreOnlineReviews(data);
+      await storeService.createStoreOnlineReviews(data);
 
       // 리뷰 작성 후 상태 초기화
       setReviewText('');

@@ -15,9 +15,9 @@ import {
   useMemo,
 } from 'react';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
-import { CreateListModal } from '../../../_modals/CreateListModal';
+import { CreateListModal } from '../../_modals/CreateListModal';
 import type { SavedListData } from '@repo/entity/src/store';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { NavigationPathGroup } from '@repo/entity/src/navigation';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';

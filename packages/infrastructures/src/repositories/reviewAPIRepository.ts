@@ -1,12 +1,8 @@
 import fetch from '@repo/api/src/fetch';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import type {
-  CreateOnelineReviewRequestFormData,
-  CreateOnelineReviewResponse,
   ReviewRepository,
   ReviewUpdateData,
-  StoreOnelineReivewData,
-  StoreOnelineReivewRequest
 } from '@repo/entity/src/review';
 import APIRepository from './apiRepository';
 
@@ -73,54 +69,6 @@ export default class ReviewAPIRepository
     const response = await fetch<unknown, unknown>({
       method: 'GET',
       url: url,
-    });
-
-    return response;
-  }
-
-  async getStoreOnelineReviews({
-    data,
-  }: BaseRequestData<StoreOnelineReivewRequest>): Promise<
-    StoreOnelineReivewData[]
-  > {
-    const { storeUuid } = data || {};
-
-    const url = `${this.endpoint}/stores/${storeUuid}/reviews`;
-
-    const response = await fetch<void, StoreOnelineReivewData[]>({
-      method: 'POST',
-      url: url,
-    });
-
-    return response;
-  }
-
-  async createOnelineReview({
-    data,
-  }: BaseRequestData<CreateOnelineReviewRequestFormData>): Promise<
-    CreateOnelineReviewResponse[]
-  > {
-    if (!data) {
-      throw Error('data required');
-    }
-    const { storeUuid, request, images } = data || {};
-
-    const url = `${this.endpoint}/stores/${storeUuid}/reviews`;
-
-    const formData = new FormData();
-    formData.append(
-      'request',
-      new Blob([JSON.stringify(request)], { type: 'application/json' }),
-    );
-    if (images) {
-      images.forEach((image, index) => {
-        formData.append(`images[${index}]`, image);
-      });
-    }
-    const response = await fetch<void, CreateOnelineReviewResponse[]>({
-      method: 'POST',
-      url: url,
-      formData,
     });
 
     return response;
