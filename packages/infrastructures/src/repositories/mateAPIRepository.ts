@@ -137,8 +137,8 @@ export default class MateAPIRepository
 
     const response = await fetch<RawMateAcceptRequest, unknown>({
       data: {
-        creatorUuid: creatorUserId,
-        targetUuid: userId,
+        creatorUserUuid: creatorUserId,
+        acceptUserUuid: userId,
       },
       method: 'PATCH',
       url: `${this.endpoint}/mates/${mateId}/apply`,

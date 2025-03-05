@@ -1,7 +1,7 @@
 'use client';
 
 import { MateSearchMessageAction, type MateSearchMessageData } from "@/types/postMessage";
-import type { Mate, MateCategory } from "@repo/entity/src/mate";
+import type { Mate, MateCommunityCategory } from "@repo/entity/src/mate";
 import MateAPIRepository from "@repo/infrastructures/src/repositories/mateAPIRepository";
 import type { WithChildren } from "@repo/ui";
 import useMessageEvent from "@repo/ui/hooks/useMessageEvent";
@@ -36,7 +36,7 @@ export function CommunityMateListProvider({ children, initialIsLast, initialMate
   const [isLast, setIsLast] = useState(initialIsLast);
   const [page, setPage] = useState(10);
   const [keyword, setKeyword] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<MateCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<MateCommunityCategory | null>(null);
 
   const loadMore = useCallback(async () => {
     if (isLast) {

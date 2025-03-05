@@ -29,7 +29,7 @@ export default function CommunityMateCard({ mate }: Props) {
       </div>
       <div className="flex gap-2 w-full">
         <Image
-          alt={``}
+          alt={`${mate.id}-mate-image`}
           src={!!mateImage ? mateImage : defaultImage}
           width={64}
           height={64}
