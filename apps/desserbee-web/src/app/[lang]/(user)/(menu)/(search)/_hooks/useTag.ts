@@ -20,11 +20,19 @@ export const useTag = () => {
   };
 
   const handleMyPreferenceTagClick = (userPreferences: number[]) => {
-    setSelectedCategories(() => {
-      const newSet = new Set([...userPreferences]);
-      return newSet;
+    setIsMyPreferSelected((prev) => {
+      const newValue = !prev;
+
+      setSelectedCategories(() => {
+        if (newValue) {
+          return new Set([...userPreferences]);
+        } else {
+          return new Set();
+        }
+      });
+
+      return newValue;
     });
-    setIsMyPreferSelected(true);
   };
 
   const clearSelectedCategories = () => {
