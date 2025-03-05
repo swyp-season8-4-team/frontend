@@ -5,6 +5,8 @@ import { SupportISO639Language } from '@repo/entity/src/i18n';
 import { decodeJWT, isExpiredJWT } from '@repo/utility/src/jwt';
 import AuthService from '@repo/usecase/src/authService';
 import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
+import { NavigationPathname } from '@repo/entity/src/navigation';
+import NavigationService from '@repo/usecase/src/navigationService';
 
 const savedTokens: { [key: string]: string } = {};
 
@@ -30,15 +32,15 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  // const authorization = requestHeaders.get('authorization');
+  const authorization = requestHeaders.get('authorization');
 
-  // TODO: 로그인 여부에 따른 페이지 접근 권한 체크
-  // const authService = new AuthService({});
+  // 로그인 여부에 따른 페이지 접근 권한 체크
+  const navigationService = new NavigationService();
 
-  // const isSignInServicePath = await authService.isSignInServicePath(pathname);
-  // if (!isSignInServicePath && !authorization) {
-  //   return next;
-  // }
+  const isSignInServicePath = navigationService.isSignInServicePath(pathname);
+  if (!isSignInServicePath && !authorization) {
+    return next;
+  }
 
   const pathnameHasLocale = Object.values(SupportISO639Language).some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
@@ -51,17 +53,17 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(request.nextUrl);
   }
 
-  // if (!authorization) {
-  //   // Redirect to sign-in page if there is no authorization
-  //   const redirectURL = request.nextUrl.clone();
+  if (!authorization) {
+    // Redirect to sign-in page if there is no authorization
+    const redirectURL = request.nextUrl.clone();
 
-  //   const originalSearchParam = redirectURL.search;
-  //   redirectURL.pathname = `${getLocale(request)}/${NavigationPathname.signIn}`;
-  //   redirectURL.search = '';
-  //   redirectURL.searchParams.set('next', `${pathname}${originalSearchParam}`);
+    const originalSearchParam = redirectURL.search;
+    redirectURL.pathname = `ko${NavigationPathname.SignIn}`;
+    redirectURL.search = '';
+    redirectURL.searchParams.set('next', `${pathname}${originalSearchParam}`);
 
-  //   return NextResponse.redirect(redirectURL);
-  // }
+    return NextResponse.redirect(redirectURL);
+  }
 
   return next;
 }
@@ -135,7 +137,6 @@ async function getToken(request: NextRequest): Promise<string | null> {
     // 리프레시 토큰을 가지고 다시 accessToken 발급
     const { accessToken: updatedAccessToken }: { accessToken: string } =
       await authService.refreshAccessToken(accessToken);
-    cookies.set('refreshToken', updatedAccessToken);
     newAccessToken = updatedAccessToken;
   }
 

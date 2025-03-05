@@ -1,10 +1,5 @@
-import type { WithParams } from "@/app";
-import { NavigationPathname } from "@repo/entity/src/navigation";
-import Link from "next/link";
 import KakaoLogo from "./_components/KakaoLogo";
 import LoginForm from "./_components/LoginForm";
-
-interface Props extends WithParams {}
 
 export default async function SignInPage() {
   return (
