@@ -1,5 +1,5 @@
 'use client';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useContext, useState } from 'react';
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
 import { OneLineReviewWrite } from './write';
@@ -8,6 +8,7 @@ import { OneLineReviewItem } from './item';
 import { UserContext } from '@/contexts/UserContext';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { NeedLoginModal } from '../../../_modals/NeedLoginModal';
+import { saveReviewPageData } from './action';
 
 interface OnelineReviewTabProps {
   onelineReviews: Pick<
@@ -17,7 +18,8 @@ interface OnelineReviewTabProps {
 }
 
 export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
-  // const router = useRouter();
+  const router = useRouter();
+
   const params = useParams();
   const storeId = params.storeId as string;
 
@@ -46,10 +48,17 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
     setIsReviewing(false);
   };
 
-  // const handleOnelineReviewItemClick = async () => {
-  //   await saveReviewPageData(onelineReviews);
-  //   router.push(`/store/${storeId}/review`);
-  // };
+  const handleOnelineReviewItemClick = async () => {
+    const reviewData = {
+      storeUuid: storeId,
+      totalReviewCount: onelineReviews.totalReviewCount,
+      averageRating: onelineReviews.averageRating,
+      storeReviews: onelineReviews.storeReviews,
+    };
+
+    await saveReviewPageData(reviewData);
+    router.push(`/store/${storeId}/review`);
+  };
 
   if (isReviewing) {
     return (
@@ -67,7 +76,7 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
         totalReviewCount={onelineReviews.totalReviewCount}
       />
       <div
-        // onClick={handleOnelineReviewItemClick}
+        onClick={handleOnelineReviewItemClick}
         className="flex flex-col gap-1 md:gap-3"
       >
         {onelineReviews.storeReviews.length !== 0 ? (
