@@ -19,6 +19,7 @@ export function OneLineReviewItem({
   createdAt,
   rating,
 }: OneLineReviewItemProps) {
+  console.log(images);
   return (
     <div className="flex justify-start items-center bg-[#F6F6F6] p-[5px] md:px-[14px] md:py-3 w-full">
       <div className="bg-[#D2D2D2] rounded-[1px] md:rounded-[3px] w-[21px] md:w-[58px] aspect-square overflow-hidden">
