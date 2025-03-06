@@ -32,12 +32,14 @@ export function MenuTab({ menus }: MenuTabProps) {
           <span>메뉴 &nbsp;</span>
           <span className="text-[#898989]">{menus.length}</span>
         </div>
-        <button
-          onClick={handleMoreBtnClick}
-          className="text-[10px] md:text-base"
-        >
-          더보기
-        </button>
+        {menus.length > 0 && (
+          <button
+            onClick={handleMoreBtnClick}
+            className="text-[10px] md:text-base"
+          >
+            더보기
+          </button>
+        )}
       </div>
       <div className="gap-x-[5px] md:gap-y-[18px] md:gap-x-[14px] grid grid-cols-2">
         {displayedMenus.map((menu, index) => (
