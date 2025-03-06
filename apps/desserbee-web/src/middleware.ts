@@ -16,6 +16,17 @@ export async function middleware(request: NextRequest) {
 
   const requestHeaders = new Headers(headers);
 
+  const pathnameHasLocale = Object.values(SupportISO639Language).some(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
+  );
+
+  if (!pathnameHasLocale) {
+    // Redirect if there is no locale
+    const locale = getLocale(request);
+    request.nextUrl.pathname = `/${locale}${pathname}`;
+    return NextResponse.redirect(request.nextUrl);
+  }
+
   const verificationToken = cookies.get('verificationToken')?.value;
   if (verificationToken) {
     requestHeaders.set('X-Email-Verification-Token', `${verificationToken}`);
@@ -40,17 +51,6 @@ export async function middleware(request: NextRequest) {
   const isSignInServicePath = navigationService.isSignInServicePath(pathname);
   if (!isSignInServicePath && !authorization) {
     return next;
-  }
-
-  const pathnameHasLocale = Object.values(SupportISO639Language).some(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
-  );
-
-  if (!pathnameHasLocale) {
-    // Redirect if there is no locale
-    const locale = getLocale(request);
-    request.nextUrl.pathname = `/${locale}${pathname}`;
-    return NextResponse.redirect(request.nextUrl);
   }
 
   if (!authorization) {
@@ -133,7 +133,7 @@ async function getToken(request: NextRequest): Promise<string | null> {
     if (isRefreshTokenExpired) {
       return null;
     }
-    
+
     // 리프레시 토큰을 가지고 다시 accessToken 발급
     const { accessToken: updatedAccessToken }: { accessToken: string } =
       await authService.refreshAccessToken(accessToken);
