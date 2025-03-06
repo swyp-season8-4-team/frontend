@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
 import IconStar from '@repo/design-system/components/icons/IconStar';
+import IconPicutre from '@repo/design-system/components/icons/IconPicture';
 
 import { formatDate } from '../../../../_utils/date';
 import { useContext, useState } from 'react';
@@ -35,15 +36,48 @@ export function OneLineReviewItem({
   const router = useRouter();
   const { user } = useContext(UserContext);
   const [isEditing, setIsEditing] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [editedRating, setEditedRating] = useState(rating);
   const [editedContent, setEditedContent] = useState(content);
-
+  const [editedImage, setEditedImage] = useState<File | null>();
   const storeService = new StoreService({
     storeRepository: new StoreAPIRepository(),
   });
 
-  const handleEdit = () => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      setEditedImage(file);
+    }
+  };
+
+  const handleEdit = async () => {
     if (isEditing) {
-      setIsEditing(false);
+      try {
+        if (!user?.id) return;
+
+        const data = {
+          storeUuid: storeUuid,
+          reviewUuid: reviewUuid,
+          request: {
+            userUuid: user.id,
+            content: editedContent,
+            rating: editedRating,
+          },
+          newImages: editedImage ? [editedImage] : [],
+        };
+
+        await storeService.editOnelineReview(data);
+        setIsEditing(false);
+        router.refresh();
+      } catch (err) {
+        console.log('리뷰 수정 중 에러: ' + err);
+      }
     } else {
       setIsEditing(true);
     }
@@ -66,14 +100,45 @@ export function OneLineReviewItem({
   return (
     <div className="flex justify-start items-center bg-[#F6F6F6] p-[5px] md:px-[14px] md:py-3 w-full">
       <div className="bg-[#D2D2D2] rounded-[1px] md:rounded-[3px] w-[21px] md:w-[58px] aspect-square overflow-hidden">
-        {images && images.length > 0 && (
-          <Image
-            src={images[0]}
-            alt="리뷰 이미지"
-            className="w-full h-full object-fit"
-            width={58}
-            height={58}
-          />
+        {isEditing ? (
+          <>
+            <label
+              htmlFor="editReviewImage"
+              className="cursor-pointer w-full h-full flex items-center justify-center"
+            >
+              {previewImage ? (
+                <Image
+                  src={previewImage}
+                  alt="수정할 이미지"
+                  className="w-full h-full object-fit"
+                  width={58}
+                  height={58}
+                />
+              ) : (
+                <div className="text-[#545454] w-full h-full flex items-center justify-center">
+                  <IconPicutre className="w-1/2 h-1/2" />
+                </div>
+              )}
+            </label>
+            <input
+              type="file"
+              id="editReviewImage"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="hidden"
+            />
+          </>
+        ) : (
+          images &&
+          images.length > 0 && (
+            <Image
+              src={images[0]}
+              alt="리뷰 이미지"
+              className="w-full h-full object-fit"
+              width={58}
+              height={58}
+            />
+          )
         )}
       </div>
       <div className="flex justify-between items-center w-full">

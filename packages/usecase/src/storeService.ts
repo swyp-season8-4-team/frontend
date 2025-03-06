@@ -30,6 +30,8 @@ import type {
   StoreOnelineReivewRequest,
   StoreOnelineReivewData,
   DeleteOnelineReviewRequest,
+  EditOnelineReviewRequest,
+  OneLineReview,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -653,6 +655,23 @@ export default class StoreService {
       await this.storeRepository.deleteOnelineReview({
         data: params,
       });
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async editOnelineReview(
+    params: EditOnelineReviewRequest,
+  ): Promise<OneLineReview> {
+    try {
+      if (!this.storeRepository) {
+        throw new Error('storeRepository is not set');
+      }
+
+      const result = await this.storeRepository.editOnelineReview({
+        data: params,
+      });
+      return result;
     } catch (error) {
       throw error;
     }

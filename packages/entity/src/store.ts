@@ -546,6 +546,8 @@ export interface DeleteOnelineReviewRequest {
 export interface EditOnelineReviewRequest {
   storeUuid: string;
   reviewUuid: string;
+  request: OnelineReviewRequests;
+  newImages?: File[];
 }
 
 export interface StoreRepository {
@@ -672,4 +674,8 @@ export interface StoreRepository {
   deleteOnelineReview({
     data,
   }: BaseRequestData<DeleteOnelineReviewRequest>): Promise<void>;
+
+  editOnelineReview({
+    data,
+  }: BaseRequestData<EditOnelineReviewRequest>): Promise<OneLineReview>;
 }

@@ -39,6 +39,8 @@ import type {
   StoreOnelineReivewRequest,
   StoreOnelineReivewData,
   DeleteOnelineReviewRequest,
+  EditOnelineReviewRequest,
+  OneLineReview,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -649,6 +651,39 @@ export default class StoreAPIRepository
     const response = await fetch<DeleteOnelineReviewRequest, void>({
       method: 'DELETE',
       url,
+    });
+
+    return response;
+  }
+
+  async editOnelineReview({
+    data,
+  }: BaseRequestData<EditOnelineReviewRequest>): Promise<OneLineReview> {
+    if (!data) {
+      throw Error('data required');
+    }
+    const { storeUuid, reviewUuid, request, newImages } = data || {};
+
+    const url = `${this.endpoint}/stores/${storeUuid}/reviews/${reviewUuid}`;
+
+    const formData = new FormData();
+    formData.append(
+      'request',
+      new Blob([JSON.stringify(request)], { type: 'application/json' }),
+    );
+    if (newImages) {
+      if (Array.isArray(newImages)) {
+        newImages.forEach((image) => {
+          formData.append('newImages', image);
+        });
+      } else {
+        formData.append('newImages', newImages);
+      }
+    }
+    const response = await fetch<void, OneLineReview>({
+      method: 'PATCH',
+      url: url,
+      formData,
     });
 
     return response;

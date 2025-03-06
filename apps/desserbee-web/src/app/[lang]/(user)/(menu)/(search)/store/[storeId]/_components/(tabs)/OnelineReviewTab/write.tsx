@@ -7,7 +7,6 @@ import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import { UserContext } from '@/contexts/UserContext';
 import { cn } from '@repo/ui/lib/utils';
-import { useRouter } from 'next/navigation';
 
 interface OneLineReviewWriteProps {
   storeUuid: string;
