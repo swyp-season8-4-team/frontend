@@ -45,8 +45,16 @@ export function MenuTab({ menus }: MenuTabProps) {
             key={`${menu.menuUuid}-${index}`}
             className="flex justify-between w-full text-[10px]"
           >
-            {/* <div>{menu.isPopular ? <div>인기메뉴!</div> : ''}</div> */}
-            <div className="md:text-xl">{menu.name}</div>
+            <div className="flex gap-[2px] items-center">
+              <div className="md:text-xl">{menu.name}</div>
+              {menu.isPopular ? (
+                <div className="text-[8px] md:text-base text-primary">
+                  인기 메뉴
+                </div>
+              ) : (
+                ''
+              )}
+            </div>
             <div className="md:text-lg">{menu.price}</div>
           </div>
         ))}

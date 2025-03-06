@@ -107,7 +107,7 @@ export function DetailInfoContainer({
     <div>
       <div className="flex justify-between items-center mb-[9px]">
         <div className="flex justify-start items-center">
-          <span className="md:mr-[10.37px] font-semibold text-3 md:text-t28">
+          <span className="md:mr-[10.37px] font-semibold text-base md:text-t28">
             {name}
           </span>
           <StoreFeatureIconList {...storeFeatureIconListProps} />

@@ -20,6 +20,15 @@ export function MenuPictureCarouselModal({
   onClose,
 }: PictureCarouselModalProps) {
   const [imagesPerPage, setImagesPerPage] = useState(8);
+  const [api, setApi] = useState<CarouselApi>();
+  const [, setCurrent] = useState(0);
+
+  const totalPages = Math.ceil(menus.length / imagesPerPage);
+
+  const getPageImages = (pageIndex: number) => {
+    const startIndex = pageIndex * imagesPerPage;
+    return menus.slice(startIndex, startIndex + imagesPerPage);
+  };
 
   useEffect(() => {
     const updateImagesPerPage = () => {
@@ -39,16 +48,6 @@ export function MenuPictureCarouselModal({
       window.removeEventListener('resize', updateImagesPerPage);
     };
   }, []);
-
-  const totalPages = Math.ceil(menus.length / imagesPerPage);
-
-  const getPageImages = (pageIndex: number) => {
-    const startIndex = pageIndex * imagesPerPage;
-    return menus.slice(startIndex, startIndex + imagesPerPage);
-  };
-
-  const [api, setApi] = useState<CarouselApi>();
-  const [, setCurrent] = useState(0);
 
   useEffect(() => {
     if (!api) {
