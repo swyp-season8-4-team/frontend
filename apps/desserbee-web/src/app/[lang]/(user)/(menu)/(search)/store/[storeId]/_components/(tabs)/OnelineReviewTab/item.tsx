@@ -9,6 +9,7 @@ import { UserContext } from '@/contexts/UserContext';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import { useRouter } from 'next/navigation';
+import IconHalfStar from '@repo/design-system/components/icons/IconHalfStar';
 
 interface OneLineReviewItemProps {
   userUuid: string;
@@ -174,17 +175,49 @@ export function OneLineReviewItem({
             )}
           </div>
           {isEditing ? (
-            <input
-              type="text"
-              value={editedContent}
-              onChange={(e) => {
-                if (e.target.value.length <= 50) {
-                  setEditedContent(e.target.value);
-                }
-              }}
-              maxLength={50}
-              className="text-[8px] md:text-base border rounded px-1"
-            />
+            <div>
+              <div className="flex items-center justify-start">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <div
+                    key={star}
+                    className="relative w-[8px] md:w-[15px] h-[8px] md:h-[15px]"
+                  >
+                    <button
+                      className="left-0 z-10 absolute w-1/2 h-full"
+                      onClick={() => setEditedRating(star - 0.5)}
+                    />
+                    <button
+                      className="right-0 z-10 absolute w-1/2 h-full"
+                      onClick={() => setEditedRating(star)}
+                    />
+                    <IconHalfStar
+                      className="w-[8px] md:w-[15px] h-[8px] md:h-[15px]"
+                      filled={
+                        editedRating >= star
+                          ? 'full'
+                          : editedRating === star - 0.5
+                            ? 'left'
+                            : 'none'
+                      }
+                    />
+                  </div>
+                ))}
+                <span className="ml-1 text-[8px] md:text-base">
+                  {editedRating}
+                </span>
+              </div>
+              <input
+                type="text"
+                value={editedContent}
+                onChange={(e) => {
+                  if (e.target.value.length <= 50) {
+                    setEditedContent(e.target.value);
+                  }
+                }}
+                maxLength={50}
+                className="text-[8px] md:text-base border rounded px-1"
+              />
+            </div>
           ) : (
             <div className="text-[8px] md:text-base">{content}</div>
           )}

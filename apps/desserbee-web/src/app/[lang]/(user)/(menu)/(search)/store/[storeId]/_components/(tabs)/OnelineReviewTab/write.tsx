@@ -7,6 +7,7 @@ import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import { UserContext } from '@/contexts/UserContext';
 import { cn } from '@repo/ui/lib/utils';
+import { useRouter } from 'next/navigation';
 
 interface OneLineReviewWriteProps {
   storeUuid: string;
@@ -18,7 +19,7 @@ export function OneLineReviewWrite({
   handleBackToReviewBtnClick,
 }: OneLineReviewWriteProps) {
   const { user } = useContext(UserContext);
-
+  const router = useRouter();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [reviewText, setReviewText] = useState('');
   const [rating, setRating] = useState(0);
@@ -87,7 +88,10 @@ export function OneLineReviewWrite({
 
       // 페이지 새로고침 (setTimeout 사용)
       setTimeout(() => {
-        window.location.reload();
+        router.refresh();
+        if (handleBackToReviewBtnClick) {
+          handleBackToReviewBtnClick();
+        }
       }, 100);
     } catch (error) {
       console.error('리뷰 작성 중 오류가 발생했습니다:', error);
