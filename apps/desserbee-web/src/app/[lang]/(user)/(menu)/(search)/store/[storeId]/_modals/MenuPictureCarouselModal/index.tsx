@@ -33,6 +33,13 @@ export function MenuPictureCarouselModal({
     return menus.slice(startIndex, startIndex + imagesPerPage);
   };
 
+  const handleMenuImageClick = (menu: Menu) => {
+    if (menu.images?.[0]) {
+      setSelectedMenu(menu);
+      setShowOneImageModal(true);
+    }
+  };
+
   useEffect(() => {
     const updateImagesPerPage = () => {
       if (window.innerWidth > 1024) {
@@ -87,10 +94,7 @@ export function MenuPictureCarouselModal({
                     <div key={`${pageIndex}-${menuIndex}`} className="">
                       <div
                         className="relative bg-[#eeeeee] rounded-xl md:max-h-[133px] aspect-square overflow-hidden cursor-pointer"
-                        onClick={() => {
-                          setSelectedMenu(menu);
-                          setShowOneImageModal(true);
-                        }}
+                        onClick={() => handleMenuImageClick(menu)}
                       >
                         {menu.images && menu.images.length > 0 ? (
                           <Image

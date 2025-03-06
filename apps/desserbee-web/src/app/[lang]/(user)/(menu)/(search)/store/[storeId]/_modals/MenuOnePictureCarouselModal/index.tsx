@@ -24,6 +24,8 @@ export function MenuOnePictureCarouselModal({
   const [api, setApi] = useState<CarouselApi>();
   const [, setCurrent] = useState(0);
 
+  const filteredMenus = menus.filter((menu) => menu.images?.[0]);
+
   useEffect(() => {
     if (api) {
       api.scrollTo(initialIndex);
@@ -42,7 +44,7 @@ export function MenuOnePictureCarouselModal({
     });
   }, [api]);
 
-  if (!menus) return <div>메뉴가 존재하지 않습니다.</div>;
+  if (!filteredMenus.length) return <div>표시할 메뉴 이미지가 없습니다.</div>;
 
   return (
     <div className="z-modal relative">
@@ -77,26 +79,26 @@ export function MenuOnePictureCarouselModal({
           <Carousel
             setApi={setApi}
             className="relative flex flex-col justify-center w-full h-full"
+            opts={{
+              skipSnaps: true,
+              duration: 0,
+            }}
           >
             <CarouselContent className="h-full">
-              {menus.map((menu, index) => (
+              {filteredMenus.map((menu, index) => (
                 <CarouselItem
                   key={index}
                   className="w-full h-full flex items-center justify-center"
                 >
                   <div className="relative h-[calc(90vh-120px)] max-h-[700px] flex items-center justify-center">
-                    {menu.images && menu.images.length > 0 ? (
-                      <Image
-                        src={menu.images[0]}
-                        alt={menu.name}
-                        width={1200}
-                        height={800}
-                        className="max-w-full max-h-full w-auto h-auto object-contain"
-                        priority
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-[#eeeeee]" />
-                    )}
+                    <Image
+                      src={menu.images![0]}
+                      alt={menu.name}
+                      width={1200}
+                      height={800}
+                      className="max-w-full max-h-full w-auto h-auto object-contain"
+                      priority
+                    />
                   </div>
                 </CarouselItem>
               ))}
