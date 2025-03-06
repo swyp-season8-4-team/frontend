@@ -665,8 +665,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     };
   }, [isInitialized]);
 
-  // URL 쿼리 파라미터 감지 및 처리
-
   const moveToStore = useCallback(() => {
     if (!isMapLoaded || !servicesRef.current.mapService) return;
 
@@ -687,7 +685,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       setMapCenter(paramPosition);
       setIsFetchRequired(true);
 
-      // 마커 fetch 추가
       fetchNearbyStores(paramPosition)
         .then((stores) => {
           if (stores) {
@@ -715,7 +712,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     }
   }, [isMapLoaded, sessionStorageRepository]);
 
-  // useEffect 수정
   useEffect(() => {
     if (!isMapLoaded) return;
 

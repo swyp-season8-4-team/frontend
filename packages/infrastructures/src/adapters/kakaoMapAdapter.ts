@@ -7,6 +7,7 @@ interface CustomMarker extends kakao.maps.Marker {
     name: string;
     address: string;
   };
+  overlay?: kakao.maps.CustomOverlay;
 }
 
 export class KakaoMapAdapter implements ExternalMap {
@@ -104,7 +105,8 @@ export class KakaoMapAdapter implements ExternalMap {
         zIndex: -1,
       });
 
-      // 초기 가시성 설정
+      marker.overlay = overlay;
+
       const updateOverlayVisibility = () => {
         const currentLevel = this.map.getLevel();
         if (currentLevel > 4) {
@@ -142,6 +144,10 @@ export class KakaoMapAdapter implements ExternalMap {
   clearAllMarkers(): void {
     this.markers.forEach((marker) => {
       marker.setMap(null);
+      // 마커에 연결된 오버레이 제거
+      if (marker.overlay) {
+        marker.overlay.setMap(null);
+      }
     });
     this.markers = [];
 
