@@ -109,7 +109,7 @@ export class KakaoMapAdapter implements ExternalMap {
 
       const updateOverlayVisibility = () => {
         const currentLevel = this.map.getLevel();
-        if (currentLevel > 4) {
+        if (currentLevel > 4 || !marker.getMap()) {
           overlay.setMap(null);
         } else {
           overlay.setMap(this.map);
@@ -118,12 +118,14 @@ export class KakaoMapAdapter implements ExternalMap {
 
       updateOverlayVisibility();
 
-      // 줌 레벨 변경 시 가시성만 업데이트
-      kakao.maps.event.addListener(
-        this.map,
-        'zoom_changed',
-        updateOverlayVisibility,
-      );
+      // 줌 레벨 변경 시 가시성 업데이트
+      if (marker.getMap()) {
+        kakao.maps.event.addListener(
+          this.map,
+          'zoom_changed',
+          updateOverlayVisibility,
+        );
+      }
 
       kakao.maps.event.addListener(marker, 'click', () => {
         handleMarkerClick(store.storeUuid);
