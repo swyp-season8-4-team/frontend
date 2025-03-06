@@ -617,9 +617,13 @@ export default class StoreAPIRepository
       new Blob([JSON.stringify(request)], { type: 'application/json' }),
     );
     if (images) {
-      images.forEach((image, index) => {
-        formData.append(`images[${index}]`, image);
-      });
+      if (Array.isArray(images)) {
+        images.forEach((image, index) => {
+          formData.append('images', image);
+        });
+      } else {
+        formData.append('images', images);
+      }
     }
     const response = await fetch<void, CreateOnelineReviewResponse[]>({
       method: 'POST',

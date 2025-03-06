@@ -20,6 +20,15 @@ export function MenuPictureCarouselModal({
   onClose,
 }: PictureCarouselModalProps) {
   const [imagesPerPage, setImagesPerPage] = useState(8);
+  const [api, setApi] = useState<CarouselApi>();
+  const [, setCurrent] = useState(0);
+
+  const totalPages = Math.ceil(menus.length / imagesPerPage);
+
+  const getPageImages = (pageIndex: number) => {
+    const startIndex = pageIndex * imagesPerPage;
+    return menus.slice(startIndex, startIndex + imagesPerPage);
+  };
 
   useEffect(() => {
     const updateImagesPerPage = () => {
@@ -39,16 +48,6 @@ export function MenuPictureCarouselModal({
       window.removeEventListener('resize', updateImagesPerPage);
     };
   }, []);
-
-  const totalPages = Math.ceil(menus.length / imagesPerPage);
-
-  const getPageImages = (pageIndex: number) => {
-    const startIndex = pageIndex * imagesPerPage;
-    return menus.slice(startIndex, startIndex + imagesPerPage);
-  };
-
-  const [api, setApi] = useState<CarouselApi>();
-  const [, setCurrent] = useState(0);
 
   useEffect(() => {
     if (!api) {
@@ -73,7 +72,7 @@ export function MenuPictureCarouselModal({
           setApi={setApi}
           className="relative flex flex-col justify-center w-full h-full"
         >
-          <div className="flex items-end font-semibold text-[8px] sm:text-base md:text-xl">
+          <div className="flex items-end font-semibold text-[10px] sm:text-base md:text-xl">
             <div>메뉴 &nbsp;</div>
             <div className="text-[#898989]">{menus.length}</div>
           </div>

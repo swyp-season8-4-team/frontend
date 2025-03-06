@@ -73,10 +73,10 @@ export function SummaryInfoContainer({
     <div className="flex flex-col w-full">
       <div className="flex justify-between mb-[2px] md:mb-[9px]">
         <div className="flex items-center">
-          <div className="mx-[3px] md:mx-2 w-[9px] md:w-[21px]">
+          <div className="mx-[3px] md:mx-2 w-[10px] md:w-[21px]">
             <IconStar className="w-full h-full text-[#FFB700]" />
           </div>
-          <span className="text-[8px] md:text-xl mr-1 md:mr-2">
+          <span className="text-[10px] md:text-xl mr-1 md:mr-2">
             {averageRating}
           </span>
           <StoreFeatureIconList {...storeFeatureIconListProps} />
@@ -89,7 +89,7 @@ export function SummaryInfoContainer({
             <div className="flex justify-center items-center mr-[0.57px] w-[10px] md:w-[18.08px]">
               <IconDetail className="w-full h-full" />
             </div>
-            <div className="text-[8px] md:text-lg">자세히 보기</div>
+            <div className="text-[10px] md:text-lg">자세히 보기</div>
           </div>
         </button>
       </div>
@@ -100,7 +100,7 @@ export function SummaryInfoContainer({
         <span className="flex flex-wrap">
           {tags.map((tag, index) => (
             <span
-              className="font-medium text-[#6F6F6F] text-[8px] md:text-t20"
+              className="font-medium text-[#6F6F6F] text-[10px] md:text-t20"
               key={tag}
             >
               {tag}

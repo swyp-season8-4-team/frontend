@@ -52,6 +52,10 @@ export function OneLineReviewWrite({
 
   const handleSubmit = async () => {
     try {
+      if (rating === 0) {
+        alert('별점을 선택해주세요');
+        return;
+      }
       const data = {
         storeUuid: storeUuid,
         request: {
@@ -75,13 +79,6 @@ export function OneLineReviewWrite({
       setTimeout(() => {
         window.location.reload();
       }, 100);
-
-      // 부모 컴포넌트로 돌아가기 - 타이밍 문제로 제거
-      // if (handleBackToReviewBtnClick) {
-      //   handleBackToReviewBtnClick();
-      // }
-
-      // router.refresh()는 필요 없음
     } catch (error) {
       console.error('리뷰 작성 중 오류가 발생했습니다:', error);
     }

@@ -107,11 +107,11 @@ export function DetailInfoContainer({
     <div>
       <div className="flex justify-between items-center mb-[9px]">
         <div className="flex justify-start items-center">
-          <span className="md:mr-[10.37px] font-semibold text-3 md:text-t28">
+          <span className="md:mr-[10.37px] font-semibold text-base md:text-t28">
             {name}
           </span>
           <StoreFeatureIconList {...storeFeatureIconListProps} />
-          <span className="flex ml-[5.55px] md:ml-[13px] text-[8px] md:text-base">
+          <span className="flex ml-[5.55px] md:ml-[13px] text-[10px] md:text-base">
             {tags.map((tag, index) => (
               <span
                 className="font-medium text-[#6F6F6F] md:text-t20"
@@ -149,10 +149,10 @@ export function DetailInfoContainer({
       <div className="relative">
         <button
           onClick={async () => handleBtnClick()}
-          className="text-start flex items-center border border-[#9F9F9F] rounded-[10px] w-full md:h-12 overflow-hidden"
+          className="text-start flex items-center border border-[#9F9F9F] rounded-[5px] md:rounded-[10px] w-full md:h-12 overflow-hidden"
         >
-          <div className="bg-primary min-w-[10px] md:w-4 md:h-full "></div>
-          <div className="md:px-[10px] md:py-3 w-[calc(100%-95px)] md:w-[calc(100%-103px)] overflow-hidden text-[8px] md:text-[18px] md:text-nowrap">
+          <div className="bg-primary min-w-[10px] w-2 h-6 mr-1 md:w-4 md:h-full"></div>
+          <div className="md:px-[10px] md:py-3 w-[calc(100%-95px)] md:w-[calc(100%-103px)] overflow-hidden text-[10px] md:text-[18px] md:text-nowrap">
             할인 / 이벤트 확인하기
           </div>
           <div className="flex justify-center items-center border-[#9F9F9F] border-l-[1px] border-dashed w-[87px] h-full">
@@ -170,10 +170,10 @@ export function DetailInfoContainer({
             <StoreInfo {...storeInfoProps} />
           </div>
           <div className="flex gap-[7.26px] md:gap-[17px]">
-            <button className="px-[17.8px] md:px-10 md:py-[9px] border border-[#9F9F9F] rounded-[25.62px] md:rounded-[60px] md:min-w-[113px] h-fit text-[8px] md:text-xl text-nowrap">
+            <button className="px-[17.8px] md:px-10 md:py-[9px] border border-[#9F9F9F] rounded-[25.62px] md:rounded-[60px] md:min-w-[113px] h-fit text-[10px] md:text-xl text-nowrap">
               <a href={`tel:${phone}`}>전화</a>
             </button>
-            <button className="px-[17.8px] md:px-10 md:py-[9px] border border-[#9F9F9F] rounded-[25.62px] md:rounded-[60px] md:min-w-[113px] h-fit text-[8px] md:text-xl text-nowrap">
+            <button className="px-[17.8px] md:px-10 md:py-[9px] border border-[#9F9F9F] rounded-[25.62px] md:rounded-[60px] md:min-w-[113px] h-fit text-[10px] md:text-xl text-nowrap">
               <a
                 href={`https://map.kakao.com/link/to/${name},${latitude},${longitude}`}
               >
@@ -190,7 +190,7 @@ export function DetailInfoContainer({
         {notice.map((content) => (
           <div
             key={content}
-            className="bg-[#F6F6F6] p-[6px] md:p-[13px] rounded-[4.27px] md:rounded-[10px] w-full text-[8px] md:text-base leading-3"
+            className="bg-[#F6F6F6] p-[6px] md:p-[13px] rounded-[4.27px] md:rounded-[10px] w-full text-[10px] md:text-base leading-3"
           >
             {content}
           </div>

@@ -1,4 +1,4 @@
-import { SaveStoreBottomSheetContainer } from '../_components/(bottomSheet)';
+import { SaveStoreBottomSheetContainer } from './_components/SaveStoreBottomSheetContainer';
 
 interface SavedStoreSheetProps {
   params: Promise<{

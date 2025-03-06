@@ -7,7 +7,7 @@ import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIR
 import StoreService from '@repo/usecase/src/storeService';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useContext, useEffect, useState, useMemo } from 'react';
-import { CreateListModal } from '../../../../map/@sidebar/_modals/CreateListModal';
+import { CreateListModal } from '../../../../../map/@sidebar/_modals/CreateListModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import IconFlower from '@repo/design-system/components/icons/IconFlower';
 import { cn } from '@repo/ui/lib/utils';

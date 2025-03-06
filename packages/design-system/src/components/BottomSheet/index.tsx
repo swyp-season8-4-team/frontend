@@ -20,7 +20,7 @@ export function BottomSheet({
     <>
       {isOpen && (
         <div
-          className="fixed inset-0 z-bottomSheet bg- w-full flex justify-center"
+          className="z-bottomSheet fixed inset-0 flex justify-center w-full h-full"
           onClick={onClose}
         >
           <div
@@ -36,10 +36,10 @@ export function BottomSheet({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="h-full">
-              <div className="flex justify-center items-center mb-[21px] w-full relative">
+              <div className="relative flex justify-center items-center mb-[21px] w-full">
                 <div className="absolute border-[#545454] border-[2.14px] md:border-[3px] rounded-[5px] w-[49.33px] md:w-[115.5px]"></div>
                 <button
-                  className="absolute right-0 top-[-10px] w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700"
+                  className="top-[-10px] right-0 absolute flex justify-center items-center w-8 h-8 text-gray-500 hover:text-gray-700"
                   onClick={onClose}
                   aria-label="닫기"
                 >

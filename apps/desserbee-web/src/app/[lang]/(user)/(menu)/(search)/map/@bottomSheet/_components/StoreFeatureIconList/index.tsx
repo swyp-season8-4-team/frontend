@@ -86,7 +86,7 @@ export function StoreFeatureIconList({
                 {feature.icon}
               </div>
               {selectedIconIndex === index && (
-                <div className="top-[22px] md:top-12 before:top-[-2px] md:before:top-[-5px] left-1/2 before:left-1/2 z-10 absolute before:absolute bg-[#E8E8E8] px-[6px] py-[5px] md:px-[10px] md:py-1 before:border-r-[3px] md:before:border-r-[6px] before:border-r-transparent before:border-b-[3px] md:before:border-b-[6px] before:border-b-[#E8E8E8] before:border-l-[3px] md:before:border-l-[6px] before:border-l-transparent rounded-[1.65px] md:rounded-[5px] text-[4px] md:text-sm text-nowrap before:content-[''] -translate-x-1/2 before:-translate-x-1/2 h-[5px] md:h-auto leading-[5px] md:leading-normal flex items-center justify-center">
+                <div className="top-[22px] md:top-12 before:top-[-2px] md:before:top-[-5px] left-1/2 before:left-1/2 z-10 absolute before:absolute bg-[#E8E8E8] px-[6px] py-[5px] md:px-[10px] md:py-1 before:border-r-[3px] md:before:border-r-[6px] before:border-r-transparent before:border-b-[3px] md:before:border-b-[6px] before:border-b-[#E8E8E8] before:border-l-[3px] md:before:border-l-[6px] before:border-l-transparent rounded-[1.65px] md:rounded-[5px] text-[8px] md:text-base text-nowrap before:content-[''] -translate-x-1/2 before:-translate-x-1/2 h-[5px] md:h-auto leading-[5px] md:leading-normal flex items-center justify-center">
                   {feature.tooltip}
                 </div>
               )}
