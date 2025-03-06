@@ -7,6 +7,7 @@ export async function saveReviewPageData(storeInfo: {
   totalReviewCount: number;
   averageRating: number;
   storeReviews: Array<{
+    userUuid: string;
     reviewUuid: string;
     content: string;
     createdAt: string;

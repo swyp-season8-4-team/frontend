@@ -10,6 +10,7 @@ import {
   useMemo,
 } from 'react';
 import React from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import storeMarkerImage from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/icon-marker.svg';
 import userMarkerImage from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/icon-current-marker.svg';
@@ -39,7 +40,6 @@ import {
 
 import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
-import { useRouter } from 'next/navigation';
 import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService';
 import { ReFetchStoreBtn } from '../ReFetchStoreBtn';
 import { calculateDistance } from '../../_utils/distance';
@@ -60,6 +60,7 @@ const areServicesInitialized = (services: {
 
 export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const mapRef = useRef<HTMLDivElement>(null);
   const servicesRef = useRef<{
     mapService: MapService | null;
@@ -664,23 +665,56 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     };
   }, [isInitialized]);
 
-  // URL 쿼리 파라미터 감지 및 처리
-  useEffect(() => {
-    if (typeof window !== 'undefined' && isMapLoaded) {
-      // 마지막 위치가 있으면 해당 위치로 이동
-      const lastPosition = sessionStorageRepository.get(
-        'lastPosition',
-      ) as MapPosition;
+  const moveToStore = useCallback(() => {
+    if (!isMapLoaded || !servicesRef.current.mapService) return;
 
-      if (lastPosition && servicesRef.current.mapService) {
-        servicesRef.current.mapService.setMapCenter(lastPosition);
-        setMapCenter(lastPosition);
+    const latParam = searchParams.get('latitude');
+    const lngParam = searchParams.get('longitude');
 
-        // 이동 후 무조건 sessionStorage 정리 (바텀시트 상태와 무관하게)
-        sessionStorageRepository.delete('lastPosition');
-      }
+    if (!latParam || !lngParam) return;
+
+    const paramPosition = {
+      latitude: parseFloat(latParam),
+      longitude: parseFloat(lngParam),
+    };
+
+    // 유효한 좌표인지 확인
+    if (!isNaN(paramPosition.latitude) && !isNaN(paramPosition.longitude)) {
+      servicesRef.current.mapService.setMapCenter(paramPosition);
+      servicesRef.current.mapService.setMapLevel(1);
+      setMapCenter(paramPosition);
+      setIsFetchRequired(true);
+
+      fetchNearbyStores(paramPosition)
+        .then((stores) => {
+          if (stores) {
+            updateNewClusterMarkers(stores);
+          }
+        })
+        .catch((error) => {
+          console.error('마커 fetch 실패:', error);
+          setError('마커를 불러오는데 실패했습니다.');
+        });
     }
-  }, [isMapLoaded, sessionStorageRepository]);
+  }, [isMapLoaded, searchParams, fetchNearbyStores, updateNewClusterMarkers]);
+
+  useEffect(() => {
+    if (!isMapLoaded) return;
+
+    const hasLocationParams =
+      searchParams.get('latitude') && searchParams.get('longitude');
+    const lastPosition = sessionStorageRepository.get(
+      'lastPosition',
+    ) as MapPosition;
+
+    if (hasLocationParams) {
+      moveToStore();
+    } else if (lastPosition) {
+      servicesRef.current.mapService?.setMapCenter(lastPosition);
+      setMapCenter(lastPosition);
+      setIsFetchRequired(true);
+    }
+  }, [isMapLoaded, moveToStore, searchParams, sessionStorageRepository]);
 
   const preferenceTagsProps = useMemo(
     () => ({

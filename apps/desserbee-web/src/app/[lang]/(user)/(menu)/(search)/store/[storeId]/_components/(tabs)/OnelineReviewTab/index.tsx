@@ -82,6 +82,7 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
         {onelineReviews.storeReviews.length !== 0 ? (
           displayedReviews.map((review) => (
             <OneLineReviewItem
+              userUuid={review.userUuid}
               content={review.content}
               createdAt={review.createdAt}
               images={review.images}

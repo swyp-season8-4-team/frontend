@@ -33,6 +33,7 @@ export function BottomSheet({
               isOpen ? 'translate-y-0' : 'translate-y-full',
               className,
             )}
+            style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="h-full">

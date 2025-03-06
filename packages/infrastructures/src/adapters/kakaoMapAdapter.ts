@@ -7,6 +7,7 @@ interface CustomMarker extends kakao.maps.Marker {
     name: string;
     address: string;
   };
+  overlay?: kakao.maps.CustomOverlay;
 }
 
 export class KakaoMapAdapter implements ExternalMap {
@@ -80,6 +81,52 @@ export class KakaoMapAdapter implements ExternalMap {
         address: store.address,
       };
 
+      // 커스텀 오버레이 추가
+      const content = `<div style="
+                        padding: 1px 2px;
+                        background-color: white;
+                        border-radius: 8px;
+                        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+                        font-size: 13px;
+                        font-weight: 600;
+                        color: #333;
+                        text-align: center;
+                        white-space: nowrap;
+                        transform: translateY(-5px);
+                        border: 1px solid #eee;
+                        max-width: 150px;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                      ">${store.name}</div>`;
+      const overlay = new kakao.maps.CustomOverlay({
+        content: content,
+        position: marker.getPosition(),
+        yAnchor: 0.1,
+        zIndex: -1,
+      });
+
+      marker.overlay = overlay;
+
+      const updateOverlayVisibility = () => {
+        const currentLevel = this.map.getLevel();
+        if (currentLevel > 4 || !marker.getMap()) {
+          overlay.setMap(null);
+        } else {
+          overlay.setMap(this.map);
+        }
+      };
+
+      updateOverlayVisibility();
+
+      // 줌 레벨 변경 시 가시성 업데이트
+      if (marker.getMap()) {
+        kakao.maps.event.addListener(
+          this.map,
+          'zoom_changed',
+          updateOverlayVisibility,
+        );
+      }
+
       kakao.maps.event.addListener(marker, 'click', () => {
         handleMarkerClick(store.storeUuid);
       });
@@ -90,7 +137,7 @@ export class KakaoMapAdapter implements ExternalMap {
     this.clusterer = new kakao.maps.MarkerClusterer({
       map: this.map,
       averageCenter: true,
-      minLevel: 5,
+      minLevel: 6,
     });
 
     this.clusterer.addMarkers(this.markers);
@@ -99,6 +146,10 @@ export class KakaoMapAdapter implements ExternalMap {
   clearAllMarkers(): void {
     this.markers.forEach((marker) => {
       marker.setMap(null);
+      // 마커에 연결된 오버레이 제거
+      if (marker.overlay) {
+        marker.overlay.setMap(null);
+      }
     });
     this.markers = [];
 
@@ -175,12 +226,6 @@ export class KakaoMapAdapter implements ExternalMap {
 
     // 현재 위치 마커 제거
     this.removeCurrentPositionMarker();
-
-    // 이벤트 리스너 제거 - 수정된 부분
-    // kakao.maps.event.removeAllListener(this.map); // 잘못된 메서드
-
-    // 올바른 방법: 개별 이벤트 핸들러 제거 (이벤트 토큰을 저장했다면)
-    // 또는 이벤트를 등록할 때 반환되는 토큰을 배열로 저장해두고 제거
 
     // 클러스터러 제거
     if (this.clusterer) {

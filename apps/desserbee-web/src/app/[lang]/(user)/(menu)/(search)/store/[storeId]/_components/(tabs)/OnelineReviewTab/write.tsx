@@ -25,6 +25,11 @@ export function OneLineReviewWrite({
   const [rating, setRating] = useState(0);
   const [reviewImage, setReviewImage] = useState<File | null>();
   const [, setImageName] = useState<string | null>(null);
+  const [errors, setErrors] = useState({
+    rating: false,
+    image: false,
+    text: false,
+  });
 
   const storeService = new StoreService({
     storeRepository: new StoreAPIRepository(),
@@ -52,10 +57,16 @@ export function OneLineReviewWrite({
 
   const handleSubmit = async () => {
     try {
-      if (rating === 0) {
-        alert('별점을 선택해주세요');
+      setErrors({
+        rating: rating === 0,
+        image: !reviewImage,
+        text: !reviewText,
+      });
+
+      if (rating === 0 || !reviewImage || !reviewText) {
         return;
       }
+
       const data = {
         storeUuid: storeUuid,
         request: {
@@ -91,6 +102,7 @@ export function OneLineReviewWrite({
           <div className="font-semibold text-[8px] md:text-lg">
             이 장소에 대해 만족하셨나요?
           </div>
+
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
               <div
@@ -119,13 +131,20 @@ export function OneLineReviewWrite({
             ))}
             <span className="ml-1 text-[8px] md:text-base">{rating}</span>
           </div>
+          {errors.rating && (
+            <p className="text-red-500 text-[8px] md:text-sm mt-1">
+              별점을 선택해주세요.
+            </p>
+          )}
         </div>
-        <div
-          onClick={handleBackToReviewBtnClick}
-          className="text-[6px] md:text-base text-nowrap"
-        >
-          리뷰 다시 보러가기
-        </div>
+        {handleBackToReviewBtnClick && (
+          <div
+            onClick={handleBackToReviewBtnClick}
+            className="text-[6px] md:text-base text-nowrap"
+          >
+            리뷰 다시 보러가기
+          </div>
+        )}
       </div>
       <form method="post" encType="multipart/form-data">
         <label htmlFor="reviewImage">
@@ -163,12 +182,20 @@ export function OneLineReviewWrite({
           onChange={handleImageChange}
           className="hidden"
         />
+        {errors.image && (
+          <p className="text-red-500 text-[8px] md:text-sm mt-1">
+            사진을 추가해주세요.
+          </p>
+        )}
         <div className="font-semibold text-[8px] md:text-lg">
           어떤 점이 좋았나요?
         </div>
         <div className="relative h-fit">
           <input
-            className="px-[6px] py-[10px] border border-[#9F9F9F] rounded-[4.24px] md:rounded-[10px] w-full text-[8px] md:text-lg"
+            className={cn(
+              'px-[6px] py-[10px] border rounded-[4.24px] md:rounded-[10px] w-full text-[8px] md:text-lg',
+              errors.text ? 'border-red-500' : 'border-[#9F9F9F]',
+            )}
             name="review"
             placeholder="50자 이내로 작성해주세요."
             maxLength={50}
@@ -179,6 +206,11 @@ export function OneLineReviewWrite({
             {reviewText.length}/50
           </span>
         </div>
+        {errors.text && (
+          <p className="text-red-500 text-[8px] md:text-sm mt-1">
+            리뷰 내용을 입력해주세요.
+          </p>
+        )}
         <div className="flex justify-end w-full">
           <button
             onClick={handleSubmit}
