@@ -73,7 +73,7 @@ export function MenuPictureCarouselModal({
           setApi={setApi}
           className="relative flex flex-col justify-center w-full h-full"
         >
-          <div className="flex items-end font-semibold text-[8px] sm:text-base md:text-xl">
+          <div className="flex items-end font-semibold text-[10px] sm:text-base md:text-xl">
             <div>메뉴 &nbsp;</div>
             <div className="text-[#898989]">{menus.length}</div>
           </div>

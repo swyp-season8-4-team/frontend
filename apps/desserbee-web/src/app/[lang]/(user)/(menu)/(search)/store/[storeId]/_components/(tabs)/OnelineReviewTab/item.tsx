@@ -44,18 +44,18 @@ export function OneLineReviewItem({
                 height={21}
               />
             </div>
-            <div className="text-[6px] md:text-base">{nickname}</div>
+            <div className="text-[8px] md:text-base">{nickname}</div>
           </div>
-          <div className="text-[6px] md:text-base">{content}</div>
+          <div className="text-[8px] md:text-base">{content}</div>
         </div>
         <div>
           <div className="flex items-center">
-            <div className="md:mr-[2px] w-[6px] md:w-[17px] h-[6px] md:h-[17px]">
+            <div className="md:mr-[2px] w-[8px] md:w-[17px] h-[8px] md:h-[17px]">
               <IconStar className="w-full h-full text-[#FFB700]" />
             </div>
-            <div className="text-[6px] md:text-base">{rating}</div>
+            <div className="text-[8px] md:text-base">{rating}</div>
           </div>
-          <div className="text-[5px] md:text-sm">{formatDate(createdAt)}</div>
+          <div className="text-[8px] md:text-sm">{formatDate(createdAt)}</div>
         </div>
       </div>
     </div>

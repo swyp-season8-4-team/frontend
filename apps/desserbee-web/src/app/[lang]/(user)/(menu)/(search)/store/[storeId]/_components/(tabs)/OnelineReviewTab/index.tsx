@@ -92,7 +92,7 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
             />
           ))
         ) : (
-          <div className="w-full text-[8px] md:text-base text-center">
+          <div className="w-full text-[10px] md:text-base text-center">
             아직 작성된 리뷰가 없어요.
           </div>
         )}

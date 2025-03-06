@@ -69,7 +69,7 @@ export function TabContainer({
               setActiveTab(id);
               handleCommunityReviewTabClick(id);
             }}
-            className={`text-[8px] md:text-lg leading-3  ${
+            className={`text-[10px] md:text-lg leading-3  ${
               activeTab === id
                 ? 'border-b-[3.56px] md:border-b-[4.56px] border-[#FFB700] '
                 : 'text-[#9F9F9F]'

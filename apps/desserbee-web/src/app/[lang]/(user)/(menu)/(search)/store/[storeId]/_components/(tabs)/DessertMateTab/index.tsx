@@ -62,7 +62,7 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
 
   if (mate.length === 0) {
     return (
-      <div className="w-full text-[8px] md:text-base text-center">
+      <div className="w-full text-[10px] md:text-base text-center">
         아직 등록된 디저트 메이트 게시글이 없어요.
       </div>
     );
