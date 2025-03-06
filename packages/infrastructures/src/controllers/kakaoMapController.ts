@@ -163,6 +163,18 @@ export default class KakaoMapController implements MapController {
     }
   }
 
+  setMapLevel(level: number) {
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      const center = this.map.setLevel(level);
+      return center;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   relayout(): void {
     try {
       if (!this.map) {

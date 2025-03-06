@@ -89,6 +89,14 @@ export default class MapService {
     return this.mapController.getMapBound();
   }
 
+  setMapLevel(level: number) {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+
+    return this.mapController.setMapLevel(level);
+  }
+
   async clearAllMarkers() {
     if (!this.mapController) {
       throw new Error('mapController is not set');
