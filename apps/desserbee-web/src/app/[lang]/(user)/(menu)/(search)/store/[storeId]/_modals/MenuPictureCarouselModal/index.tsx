@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from 'react';
 import IconDirection from '@repo/design-system/components/icons/IconDirection';
 import type { Menu } from '@repo/entity/src/store';
+import { MenuOnePictureCarouselModal } from '../MenuOnePictureCarouselModal/index';
 
 interface PictureCarouselModalProps {
   menus: Menu[];
@@ -22,6 +23,8 @@ export function MenuPictureCarouselModal({
   const [imagesPerPage, setImagesPerPage] = useState(8);
   const [api, setApi] = useState<CarouselApi>();
   const [, setCurrent] = useState(0);
+  const [showOneImageModal, setShowOneImageModal] = useState(false);
+  const [selectedMenu, setSelectedMenu] = useState<Menu | null>(null);
 
   const totalPages = Math.ceil(menus.length / imagesPerPage);
 
@@ -82,7 +85,13 @@ export function MenuPictureCarouselModal({
                 <div className="gap-x-10 gap-y-1 md:gap-[14px] grid grid-cols-2 md:grid-cols-3 md:grid-rows-2 lg:grid-cols-4 md:px-4 h-full">
                   {getPageImages(pageIndex).map((menu, menuIndex) => (
                     <div key={`${pageIndex}-${menuIndex}`} className="">
-                      <div className="relative bg-[#eeeeee] rounded-xl md:max-h-[133px] aspect-square overflow-hidden">
+                      <div
+                        className="relative bg-[#eeeeee] rounded-xl md:max-h-[133px] aspect-square overflow-hidden cursor-pointer"
+                        onClick={() => {
+                          setSelectedMenu(menu);
+                          setShowOneImageModal(true);
+                        }}
+                      >
                         {menu.images && menu.images.length > 0 ? (
                           <Image
                             src={menu.images[0]}
@@ -129,6 +138,13 @@ export function MenuPictureCarouselModal({
           </div>
         </Carousel>
       </div>
+      {showOneImageModal && selectedMenu && (
+        <MenuOnePictureCarouselModal
+          menus={menus}
+          initialIndex={menus.findIndex((menu) => menu === selectedMenu)}
+          onClose={() => setShowOneImageModal(false)}
+        />
+      )}
     </CustomModal>
   );
 }
