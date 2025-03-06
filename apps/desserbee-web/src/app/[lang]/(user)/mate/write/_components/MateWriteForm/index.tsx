@@ -4,14 +4,14 @@ import { useContext, useMemo, useRef, useState } from 'react';
 // import { ChevronLeft } from 'lucide-react';
 import { UserContext } from '@/contexts/UserContext';
 import IconChevronDown from '@repo/design-system/components/icons/IconChevronDown';
-import type { Mate, MateCategory } from '@repo/entity/src/mate';
+import type { Mate, MateCommunityCategory } from '@repo/entity/src/mate';
 import { NavigationPathGroup } from '@repo/entity/src/navigation';
 import MateConverter from '@repo/infrastructures/src/mappers/mateConverter';
 import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
 import MateService from '@repo/usecase/src/mateService';
 import { useRouter } from 'next/navigation';
 
-const CATEGORIES: MateCategory[] = ['친목도모', '사진맛집', '카공모임', '건강맛집', '빵지순례', '카페투어'];
+const CATEGORIES: MateCommunityCategory[] = ['친목도모', '사진맛집', '카공모임', '건강맛집', '빵지순례', '카페투어'];
 
 const mateConverter = new MateConverter();
 const mateService = new MateService({
@@ -31,7 +31,7 @@ export default function MateWriteForm({ initialMate }: Props) {
   const [space, setSpace] = useState(initialMate?.place?.placeName ?? '');
   const [content, setContent] = useState(initialMate?.content ?? '');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<MateCategory | null>(initialMate?.mateCategory ?? null);
+  const [selectedCategory, setSelectedCategory] = useState<MateCommunityCategory | null>(initialMate?.mateCategory ?? null);
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [uploadedImage, setUploadedImage] = useState<string | null>(initialMate?.mateImage ?? null);
 
@@ -47,7 +47,7 @@ export default function MateWriteForm({ initialMate }: Props) {
     );
   }, [selectedCategory, title, space, content]);
 
-  const handleCategorySelect = (category: MateCategory) => {
+  const handleCategorySelect = (category: MateCommunityCategory) => {
     setSelectedCategory(category);
     setIsDropdownOpen(false);
   };

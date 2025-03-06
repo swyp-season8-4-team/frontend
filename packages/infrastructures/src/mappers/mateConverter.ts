@@ -1,4 +1,4 @@
-import type { Mate, MateReply, MateWriteRequest, RawMateReply, RawMateWriteReuqest, MateCategory, RawMate } from "@repo/entity/src/mate";
+import type { Mate, MateReply, MateWriteRequest, RawMateReply, RawMateWriteReuqest, MateCommunityCategory, RawMate } from "@repo/entity/src/mate";
 
 export default class MateConverter {
   convertRawToMate(rawMate: RawMate): Mate {
@@ -9,7 +9,7 @@ export default class MateConverter {
       title: rawMate.title,
       content: rawMate.content,
       nickname: rawMate.nickname,
-      ...(rawMate.mateImage && { mateImage: rawMate.mateImage.length > 0 ? rawMate.mateImage[0] : '' }),
+      mateImage: rawMate.mateImage,
       mateCategory: rawMate.mateCategory,
       place: rawMate.place,
       profileImage: rawMate.profileImage.length > 0 ? rawMate.profileImage[0] : '',
@@ -54,7 +54,7 @@ export default class MateConverter {
     };
   }
 
-  convertMateCategoryToId(mateCategory: MateCategory | null): number {
+  convertMateCategoryToId(mateCategory: MateCommunityCategory | null): number {
     switch (mateCategory) {
       case '친목도모':
         return 1;

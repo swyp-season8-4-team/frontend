@@ -14,9 +14,6 @@ const authService = new AuthService({
 
 export default async function CommunityIntroPage() {
   const authorization = await authService.getAuthorization();
-  if (!authorization) {
-    redirect(NavigationPathname.SignIn);
-  }
   
   return (
     <main className="flex flex-col px-5 py-6 bg-[#F6F6F6] h-[100dvh]">
