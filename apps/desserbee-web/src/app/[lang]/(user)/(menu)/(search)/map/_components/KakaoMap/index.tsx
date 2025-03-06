@@ -698,32 +698,23 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     }
   }, [isMapLoaded, searchParams, fetchNearbyStores, updateNewClusterMarkers]);
 
-  const moveToLastPosition = useCallback(() => {
-    if (!isMapLoaded || !servicesRef.current.mapService) return;
-
-    const lastPosition = sessionStorageRepository.get(
-      'lastPosition',
-    ) as MapPosition;
-
-    if (lastPosition) {
-      servicesRef.current.mapService.setMapCenter(lastPosition);
-      setMapCenter(lastPosition);
-      sessionStorageRepository.delete('lastPosition');
-    }
-  }, [isMapLoaded, sessionStorageRepository]);
-
   useEffect(() => {
     if (!isMapLoaded) return;
 
     const hasLocationParams =
       searchParams.get('latitude') && searchParams.get('longitude');
+    const lastPosition = sessionStorageRepository.get(
+      'lastPosition',
+    ) as MapPosition;
 
     if (hasLocationParams) {
       moveToStore();
-    } else {
-      moveToLastPosition();
+    } else if (lastPosition) {
+      servicesRef.current.mapService?.setMapCenter(lastPosition);
+      setMapCenter(lastPosition);
+      setIsFetchRequired(true);
     }
-  }, [isMapLoaded, moveToStore, moveToLastPosition, searchParams]);
+  }, [isMapLoaded, moveToStore, searchParams, sessionStorageRepository]);
 
   const preferenceTagsProps = useMemo(
     () => ({
