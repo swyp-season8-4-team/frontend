@@ -683,7 +683,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     // 유효한 좌표인지 확인
     if (!isNaN(paramPosition.latitude) && !isNaN(paramPosition.longitude)) {
       servicesRef.current.mapService.setMapCenter(paramPosition);
-      servicesRef.current.mapService.setMapLevel(2);
+      servicesRef.current.mapService.setMapLevel(1);
       setMapCenter(paramPosition);
       setIsFetchRequired(true);
 
@@ -727,7 +727,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     } else {
       moveToLastPosition();
     }
-  }, [isMapLoaded, moveToStore, moveToLastPosition]);
+  }, [isMapLoaded, moveToStore, moveToLastPosition, searchParams]);
 
   const preferenceTagsProps = useMemo(
     () => ({
