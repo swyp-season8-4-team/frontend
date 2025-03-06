@@ -7,7 +7,6 @@ import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import { UserContext } from '@/contexts/UserContext';
 import { cn } from '@repo/ui/lib/utils';
-import { useRouter } from 'next/navigation';
 
 interface OneLineReviewWriteProps {
   storeUuid: string;
@@ -99,7 +98,7 @@ export function OneLineReviewWrite({
     <div className="flex flex-col pb-[15.73px] md:pb-[27px] w-full">
       <div className="flex justify-between items-center w-full">
         <div className="flex justify-start items-center gap-[10px] md:gap-[7px] w-full">
-          <div className="font-semibold text-[8px] md:text-lg">
+          <div className="font-semibold text-[10px] md:text-lg">
             이 장소에 대해 만족하셨나요?
           </div>
 
@@ -140,7 +139,7 @@ export function OneLineReviewWrite({
         {handleBackToReviewBtnClick && (
           <div
             onClick={handleBackToReviewBtnClick}
-            className="text-[6px] md:text-base text-nowrap"
+            className="text-[8px] md:text-base text-nowrap"
           >
             리뷰 다시 보러가기
           </div>

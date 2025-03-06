@@ -75,13 +75,12 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
         handleWriteReviewBtnClick={handleWriteReviewBtnClick}
         totalReviewCount={onelineReviews.totalReviewCount}
       />
-      <div
-        onClick={handleOnelineReviewItemClick}
-        className="flex flex-col gap-1 md:gap-3"
-      >
+      <div className="flex flex-col gap-1 md:gap-3">
         {onelineReviews.storeReviews.length !== 0 ? (
           displayedReviews.map((review) => (
             <OneLineReviewItem
+              storeUuid={storeId}
+              reviewUuid={review.reviewUuid}
               userUuid={review.userUuid}
               content={review.content}
               createdAt={review.createdAt}
@@ -97,6 +96,12 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
             아직 작성된 리뷰가 없어요.
           </div>
         )}
+        <div
+          onClick={handleOnelineReviewItemClick}
+          className="w-full flex justify-end text-[8px] md:text-base"
+        >
+          <div>리뷰 더보기</div>
+        </div>
       </div>
     </div>
   );

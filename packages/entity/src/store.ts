@@ -538,6 +538,18 @@ export interface StoreOnelineReivewData {
   images: string[];
 }
 
+export interface DeleteOnelineReviewRequest {
+  storeUuid: string;
+  reviewUuid: string;
+}
+
+export interface EditOnelineReviewRequest {
+  storeUuid: string;
+  reviewUuid: string;
+  request: OnelineReviewRequests;
+  newImages?: File[];
+}
+
 export interface StoreRepository {
   // preference
   getAllPreference(): Promise<PreferenceData[]>;
@@ -658,4 +670,12 @@ export interface StoreRepository {
   }: BaseRequestData<CreateOnelineReviewRequestFormData>): Promise<
     CreateOnelineReviewResponse[]
   >;
+
+  deleteOnelineReview({
+    data,
+  }: BaseRequestData<DeleteOnelineReviewRequest>): Promise<void>;
+
+  editOnelineReview({
+    data,
+  }: BaseRequestData<EditOnelineReviewRequest>): Promise<OneLineReview>;
 }
