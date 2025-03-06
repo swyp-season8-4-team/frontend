@@ -592,7 +592,7 @@ export default class StoreAPIRepository
     const url = `${this.endpoint}/stores/${storeUuid}/reviews`;
 
     const response = await fetch<void, StoreOnelineReivewData[]>({
-      method: 'POST',
+      method: 'GET',
       url: url,
     });
 
