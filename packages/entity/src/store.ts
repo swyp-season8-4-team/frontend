@@ -490,6 +490,7 @@ export interface PreferenceData {
 
 // oneline-review
 export interface OneLineReview {
+  userUuid: string;
   reviewUuid: string;
   storeId: number;
   nickname: string;
@@ -526,6 +527,7 @@ export interface StoreOnelineReivewRequest {
 }
 
 export interface StoreOnelineReivewData {
+  userUuid: string;
   reviewUuid: string;
   storeId: number;
   nickname: string;

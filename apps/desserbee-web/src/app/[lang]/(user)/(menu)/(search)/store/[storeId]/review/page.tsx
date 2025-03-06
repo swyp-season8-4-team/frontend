@@ -49,6 +49,7 @@ export default async function OneLineReviewPage({
           {reviewPageData &&
             reviewPageData.map((storeReview: OneLineReview) => (
               <OneLineReviewItem
+                userUuid={storeReview.userUuid}
                 images={storeReview.images}
                 content={storeReview.content}
                 createdAt={storeReview.createdAt}

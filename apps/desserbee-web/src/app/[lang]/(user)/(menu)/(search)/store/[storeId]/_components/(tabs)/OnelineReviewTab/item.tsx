@@ -1,9 +1,13 @@
+'use client';
 import Image from 'next/image';
 import IconStar from '@repo/design-system/components/icons/IconStar';
 
 import { formatDate } from '../../../../_utils/date';
+import { useContext } from 'react';
+import { UserContext } from '@/contexts/UserContext';
 
 interface OneLineReviewItemProps {
+  userUuid: string;
   images: string[];
   profileImage: string;
   nickname: string;
@@ -12,6 +16,7 @@ interface OneLineReviewItemProps {
   createdAt: string;
 }
 export function OneLineReviewItem({
+  userUuid,
   images,
   profileImage,
   nickname,
@@ -19,6 +24,8 @@ export function OneLineReviewItem({
   createdAt,
   rating,
 }: OneLineReviewItemProps) {
+  const { user } = useContext(UserContext);
+  console.log(userUuid);
   return (
     <div className="flex justify-start items-center bg-[#F6F6F6] p-[5px] md:px-[14px] md:py-3 w-full">
       <div className="bg-[#D2D2D2] rounded-[1px] md:rounded-[3px] w-[21px] md:w-[58px] aspect-square overflow-hidden">
@@ -45,6 +52,16 @@ export function OneLineReviewItem({
               />
             </div>
             <div className="text-[8px] md:text-base">{nickname}</div>
+            {userUuid === user?.id && (
+              <div className="text-[#8b8b8b] text-[7px] md:text-[14px]">
+                수정
+              </div>
+            )}
+            {userUuid === user?.id && (
+              <div className="text-[#8b8b8b] text-[7px] md:text-[14px]">
+                삭제
+              </div>
+            )}
           </div>
           <div className="text-[8px] md:text-base">{content}</div>
         </div>
