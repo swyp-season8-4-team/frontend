@@ -38,6 +38,7 @@ import type {
   CreateOnelineReviewResponse,
   StoreOnelineReivewRequest,
   StoreOnelineReivewData,
+  DeleteOnelineReviewRequest,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -629,6 +630,25 @@ export default class StoreAPIRepository
       method: 'POST',
       url: url,
       formData,
+    });
+
+    return response;
+  }
+
+  async deleteOnelineReview({
+    data,
+  }: BaseRequestData<DeleteOnelineReviewRequest>): Promise<void> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { storeUuid, reviewUuid } = data || {};
+
+    const url = `${this.endpoint}/stores/${storeUuid}/reviews/${reviewUuid}`;
+
+    const response = await fetch<DeleteOnelineReviewRequest, void>({
+      method: 'DELETE',
+      url,
     });
 
     return response;

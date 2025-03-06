@@ -29,6 +29,7 @@ import type {
   CreateOnelineReviewResponse,
   StoreOnelineReivewRequest,
   StoreOnelineReivewData,
+  DeleteOnelineReviewRequest,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -639,6 +640,20 @@ export default class StoreService {
       return result;
     } catch (error) {
       console.error(`가게 한줄 리뷰 생성 오류 발생 `, error);
+      throw error;
+    }
+  }
+
+  async deleteOnelineReview(params: DeleteOnelineReviewRequest): Promise<void> {
+    try {
+      if (!this.storeRepository) {
+        throw new Error('storeRepository is not set');
+      }
+
+      await this.storeRepository.deleteOnelineReview({
+        data: params,
+      });
+    } catch (error) {
       throw error;
     }
   }
