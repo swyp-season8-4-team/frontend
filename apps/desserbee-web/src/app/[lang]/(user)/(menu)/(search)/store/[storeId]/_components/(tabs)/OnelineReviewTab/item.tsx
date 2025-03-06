@@ -43,7 +43,6 @@ export function OneLineReviewItem({
 
   const handleEdit = () => {
     if (isEditing) {
-      // TODO: API 호출로 리뷰 수정
       setIsEditing(false);
     } else {
       setIsEditing(true);
