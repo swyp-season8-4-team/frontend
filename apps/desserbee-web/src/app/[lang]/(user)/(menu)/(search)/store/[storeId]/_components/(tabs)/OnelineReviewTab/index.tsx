@@ -77,31 +77,33 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
       />
       <div className="flex flex-col gap-1 md:gap-3">
         {onelineReviews.storeReviews.length !== 0 ? (
-          displayedReviews.map((review) => (
-            <OneLineReviewItem
-              storeUuid={storeId}
-              reviewUuid={review.reviewUuid}
-              userUuid={review.userUuid}
-              content={review.content}
-              createdAt={review.createdAt}
-              images={review.images}
-              nickname={review.nickname}
-              profileImage={review.profileImage}
-              rating={review.rating}
-              key={review.reviewUuid}
-            />
-          ))
+          <div className="flex flex-col gap-1 md:gap-3">
+            {displayedReviews.map((review) => (
+              <OneLineReviewItem
+                storeUuid={storeId}
+                reviewUuid={review.reviewUuid}
+                userUuid={review.userUuid}
+                content={review.content}
+                createdAt={review.createdAt}
+                images={review.images}
+                nickname={review.nickname}
+                profileImage={review.profileImage}
+                rating={review.rating}
+                key={review.reviewUuid}
+              />
+            ))}
+            <div
+              onClick={handleOnelineReviewItemClick}
+              className="w-full flex justify-end text-[8px] md:text-base"
+            >
+              {onelineReviews.storeReviews.length > 4 && <div>리뷰 더보기</div>}
+            </div>
+          </div>
         ) : (
           <div className="w-full text-[10px] md:text-base text-center">
             아직 작성된 리뷰가 없어요.
           </div>
         )}
-        <div
-          onClick={handleOnelineReviewItemClick}
-          className="w-full flex justify-end text-[8px] md:text-base"
-        >
-          <div>리뷰 더보기</div>
-        </div>
       </div>
     </div>
   );

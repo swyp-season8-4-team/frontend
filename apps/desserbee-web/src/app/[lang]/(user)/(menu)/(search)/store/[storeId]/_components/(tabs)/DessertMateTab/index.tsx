@@ -2,13 +2,13 @@ import type { StoreDetailInfoData } from '@repo/entity/src/store';
 import IconBookmark from '@repo/design-system/components/icons/IconBookmark';
 import Image from 'next/image';
 import { cn } from '@repo/ui/lib/utils';
-import { useContext, useOptimistic } from 'react';
+import { useContext, useOptimistic, useState } from 'react';
 import { startTransition } from 'react';
 import MateService from '@repo/usecase/src/mateService';
 import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
 import { UserContext } from '@/contexts/UserContext';
-import { redirect } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
+import { useRouter } from 'next/navigation';
 
 interface DessertMateTabProps {
   mate: StoreDetailInfoData['mate']; // 자체가 배열로 타입 지정
@@ -28,10 +28,11 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
   const mateService = new MateService({
     mateRepository: new MateAPIRepository(),
   });
-
+  const router = useRouter();
   const { user } = useContext(UserContext);
   const displayedMates = mate.slice(0, 3);
 
+  const [isSaved, setIsSaved] = useState(false);
   const [optimisticState, addOptimistic] = useOptimistic(
     displayedMates,
     (state, index) => {
@@ -44,26 +45,38 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
   const handleToggleSaved = (uuid: string, index: number) => {
     startTransition(async () => {
       if (!user) {
-        redirect('/sign-in');
+        router.replace('/sign-in');
       } else {
         addOptimistic(index);
-        await mateService.save({ id: uuid, userId: user.id });
+        setIsSaved((prev) => !prev);
+        if (!isSaved) {
+          await mateService.save({ id: uuid, userId: user.id });
+        } else {
+          await mateService.cancelSave({ id: uuid, userId: user.id });
+        }
       }
     });
   };
 
   const handleGoCommunityMateBtnClick = () => {
     if (!user) {
-      redirect('/sign-in');
+      router.replace('/sign-in');
     } else {
-      redirect(`${NavigationPathname.CommunityDessertMate}`);
+      router.replace(`${NavigationPathname.CommunityDessertMate}`);
     }
   };
 
   if (mate.length === 0) {
     return (
-      <div className="w-full text-[10px] md:text-base text-center">
-        아직 등록된 디저트 메이트 게시글이 없어요.
+      <div>
+        <div className="w-full text-[10px] md:text-base text-center">
+          아직 등록된 디저트 메이트 게시글이 없어요.
+        </div>
+        <div className="flex justify-end w-full py-3">
+          <button onClick={handleGoCommunityMateBtnClick}>
+            디저트 메이트 찾으러 가기
+          </button>
+        </div>
       </div>
     );
   }
