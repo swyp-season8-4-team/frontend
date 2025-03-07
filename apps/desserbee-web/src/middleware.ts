@@ -39,9 +39,7 @@ export async function middleware(request: NextRequest) {
   const token = await getToken(request);
   if (token) {
     requestHeaders.set('authorization', `Bearer ${token}`);
-  }
 
-  if (token !== null) {
     const userUuid = getUserUuidFromToken(token);
     if (userUuid) {
       requestHeaders.set('X-User-UUID', userUuid);
