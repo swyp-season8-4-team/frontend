@@ -95,7 +95,8 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
   const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
 
-  const [retryCount, setRetryCount] = useState(0);
+  const [, setRetryCount] = useState(0);
+  const retryCountRef = useRef(0);
   const MAX_RETRY = 3;
   const RETRY_DELAY = 3000;
 
@@ -198,15 +199,18 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         setNearByStores(nearByStores);
 
         setRetryCount(0);
+        retryCountRef.current = 0;
         setError(null);
         return nearByStores;
       } catch {
-        if (retryCount < MAX_RETRY) {
+        if (retryCountRef.current < MAX_RETRY) {
           setRetryCount((prev) => prev + 1);
+          retryCountRef.current += 1;
           setTimeout(
             () => fetchNearbyStores(position, preferenceTagIds, searchKeyword),
             RETRY_DELAY,
           );
+          return;
         } else {
           setError(
             '가게 정보를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.',
@@ -218,7 +222,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         return null;
       }
     },
-    [retryCount, calculateFetchRadius],
+    [calculateFetchRadius],
   );
 
   const handleMapCenterChange = useCallback(() => {
