@@ -165,10 +165,12 @@ export default class StoreAPIRepository
 
     const { storeUuid, userUuid } = data || {};
 
-    const response = await fetch<{ userUuid?: string }, StoreDetailInfoData>({
+    console.log(
+      `${this.endpoint}/stores/${storeUuid}/details${userUuid ? `?userUuid=${userUuid}` : ''}`,
+    );
+    const response = await fetch<void, StoreDetailInfoData>({
       method: 'GET',
-      url: `${this.endpoint}/stores/${storeUuid}/details`,
-      ...(userUuid && { data: { userUuid } }),
+      url: `${this.endpoint}/stores/${storeUuid}/details${userUuid ? `?userUuid=${userUuid}` : ''}`,
     });
 
     return response;

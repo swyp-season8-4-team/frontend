@@ -19,7 +19,6 @@ export default async function StoreDetailPage({
 
   const storeId = (await params).storeId;
 
-  console.log(userUuid);
   const storeService = new StoreService({
     storeRepository: new StoreAPIReopository(),
   });
