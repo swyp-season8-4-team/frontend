@@ -23,33 +23,10 @@ export function isExpiredJWT(token: string): boolean {
   return exp * 1000 < Date.now(); // TODO: 만료기간 바뀔수 있음
 }
 
-export function decodeToken(token: string) {
-  try {
-    if (!token || typeof token !== 'string') {
-      return null;
-    }
-
-    const parts = token.split('.');
-    if (parts.length !== 3) {
-      return null;
-    }
-
-    const [, payload] = parts;
-    if (!payload) {
-      return null;
-    }
-
-    return JSON.parse(Buffer.from(payload, 'base64url').toString('utf8'));
-  } catch (error) {
-    console.error('Token decode error:', error);
-    return null;
-  }
-}
-
 export function getUserUuidFromToken(token: string): string | null {
   try {
-    const { userUuid } = decodeToken(token);
-    return userUuid;
+    const { userUuid } = decodeJWT(token);
+    return userUuid as string;
   } catch (error) {
     console.error('Failed to decode JWT for userUuid:', error);
     return null;

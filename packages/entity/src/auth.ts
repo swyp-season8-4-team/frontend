@@ -1,19 +1,22 @@
-import type { BaseRequestData } from "./appMetadata";
-import type { Gender } from "./user";
+import type { BaseRequestData } from './appMetadata';
+import type { Gender } from './user';
 
 export enum OAuthSocialProvider {
-  KAKAO = "kakao",
+  KAKAO = 'kakao',
 }
 
-export function isOAuthSocialProvider(provider: string): provider is OAuthSocialProvider {
-  return !!Object.values(OAuthSocialProvider).find((socialProvider) =>
-    provider === socialProvider
+export function isOAuthSocialProvider(
+  provider: string,
+): provider is OAuthSocialProvider {
+  return !!Object.values(OAuthSocialProvider).find(
+    (socialProvider) => provider === socialProvider,
   );
 }
 
 export interface JWTPayload {
+  userUuid?: string;
   exp: number;
-  sub: string;
+  sub?: string;
   sg?: number;
 }
 
@@ -32,7 +35,8 @@ export interface RawSignInResponse extends JWTTokens {
   profileImageUrl: string;
 }
 
-export interface SignInResponse extends Omit<RawSignInResponse, 'userUuid' | 'preferenceSet'> {
+export interface SignInResponse
+  extends Omit<RawSignInResponse, 'userUuid' | 'preferenceSet'> {
   userId: string;
   isPreferenceSet: boolean;
 }
@@ -95,11 +99,19 @@ export interface AuthRepository {
   signIn(data: BaseRequestData<SignInData>): Promise<SignInResponse>; // 일반 로그인
   signUp(data: BaseRequestData<unknown>): Promise<unknown>; // 회원가입
   signOut(data: BaseRequestData<SignOutData>): Promise<void>;
-  resetPassword(data: BaseRequestData<ResetPasswordData>): Promise<ResetPasswordResponse>;
-  findPassword(data: BaseRequestData<{ email: string }>): Promise<unknown>;  
-  validateResetPasswordToken(data: BaseRequestData<{ email: string, token: string }>): Promise<unknown>;
-  verifyEmailRequest(data: BaseRequestData<VerifyEmailRequestData>): Promise<VerifyEmailRequestResponse>; // 이메일 검증 요청
-  verifyEmail(data: BaseRequestData<VerifyEmailData>): Promise<VerifyEmailResponse>; // 이메일 검증
+  resetPassword(
+    data: BaseRequestData<ResetPasswordData>,
+  ): Promise<ResetPasswordResponse>;
+  findPassword(data: BaseRequestData<{ email: string }>): Promise<unknown>;
+  validateResetPasswordToken(
+    data: BaseRequestData<{ email: string; token: string }>,
+  ): Promise<unknown>;
+  verifyEmailRequest(
+    data: BaseRequestData<VerifyEmailRequestData>,
+  ): Promise<VerifyEmailRequestResponse>; // 이메일 검증 요청
+  verifyEmail(
+    data: BaseRequestData<VerifyEmailData>,
+  ): Promise<VerifyEmailResponse>; // 이메일 검증
   getAuthorization(accessToken?: string): Promise<string | null>;
   refreshAccessToken(refreshToken: string): Promise<JWTTokens>;
 }
