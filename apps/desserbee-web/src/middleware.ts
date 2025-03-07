@@ -124,9 +124,11 @@ async function getToken(request: NextRequest): Promise<string | null> {
 
   // 저장된 토큰이 있고 만료되지 않았다면 반환
   const decodedAccessToken = decodeJWT(accessToken);
-  const savedToken = savedTokens[decodedAccessToken.sub];
-  if (savedToken && !isExpiredJWT(savedToken)) {
-    return savedToken;
+  if (decodedAccessToken?.sub) {
+    const savedToken = savedTokens[decodedAccessToken.sub];
+    if (savedToken && !isExpiredJWT(savedToken)) {
+      return savedToken;
+    }
   }
 
   const isAccessTokenExpired = isExpiredJWT(accessToken);
