@@ -22,6 +22,7 @@ import { NavigationPathGroup } from '@repo/entity/src/navigation';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import { UserContext } from '@/contexts/UserContext';
+import { HTTPError } from '@repo/api/src/error';
 
 interface SideBarContainerProps {
   showSidebar: boolean;
@@ -54,11 +55,22 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
   ) => {
     if (!user?.id) return;
 
-    await storeService.createSavedList({
-      userUuid: user.id,
-      listName: listName,
-      iconColorId: colorId,
-    });
+    try {
+      await storeService.createSavedList({
+        userUuid: user.id,
+        listName: listName,
+        iconColorId: colorId,
+      });
+    } catch (err) {
+      if (err instanceof HTTPError) {
+        const statusCode = err.data.statusCode;
+
+        if (statusCode === 409) {
+          alert('동일한 이름의 리스트는 생성할 수 없습니다.');
+          return;
+        }
+      }
+    }
   };
 
   const handleCreateListBtnClick = () => {

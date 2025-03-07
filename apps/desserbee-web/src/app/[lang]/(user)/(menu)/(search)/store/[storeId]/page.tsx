@@ -32,6 +32,8 @@ export default async function StoreDetailPage({
       listId: storeDetail.savedListId,
     });
 
+    console.log(storeDetail);
+
     return (
       <DetailContainer
         storeDetail={storeDetails}
