@@ -165,9 +165,6 @@ export default class StoreAPIRepository
 
     const { storeUuid, userUuid } = data || {};
 
-    console.log(
-      `${this.endpoint}/stores/${storeUuid}/details${userUuid ? `?userUuid=${userUuid}` : ''}`,
-    );
     const response = await fetch<void, StoreDetailInfoData>({
       method: 'GET',
       url: `${this.endpoint}/stores/${storeUuid}/details${userUuid ? `?userUuid=${userUuid}` : ''}`,
