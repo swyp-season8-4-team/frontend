@@ -125,13 +125,10 @@ export default {
         },
         'slide-up': {
           '0%': {
-            transform: 'translateX(0) translateY(100%)',
-          },
-          '70%': {
-            transform: 'translateX(0) translateY(0)',
+            transform: 'translateY(100%)',
           },
           '100%': {
-            transform: 'translateX(0) translateY(0)',
+            transform: 'translateY(0)',
           },
         },
         'slide-center': {
