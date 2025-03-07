@@ -32,6 +32,7 @@ import type {
   DeleteOnelineReviewRequest,
   EditOnelineReviewRequest,
   OneLineReview,
+  StoreDetailInfoRequest,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -138,17 +139,16 @@ export default class StoreService {
     }
   }
 
-  async getStoreDetail(storeUuid: string): Promise<StoreDetailInfoData> {
+  async getStoreDetail(
+    params: StoreDetailInfoRequest,
+  ): Promise<StoreDetailInfoData> {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
 
       const requestData = {
-        data: {
-          storeUuid,
-          user: null,
-        },
+        data: params,
       };
 
       const response = await this.storeRepository.getStoreDetail(requestData);

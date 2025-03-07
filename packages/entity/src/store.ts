@@ -131,6 +131,7 @@ export interface StoreSummaryInfoData
 
 export interface StoreDetailInfoRequest {
   storeUuid: string;
+  userUuid?: string;
 }
 
 export interface StoreDetailInfoData

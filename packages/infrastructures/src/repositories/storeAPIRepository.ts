@@ -41,6 +41,7 @@ import type {
   DeleteOnelineReviewRequest,
   EditOnelineReviewRequest,
   OneLineReview,
+  StoreDetailInfoRequest,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -157,20 +158,17 @@ export default class StoreAPIRepository
     return response;
   }
 
-  async getStoreDetail({
-    data,
-  }: BaseRequestData<{
-    storeUuid: string;
-  }>) {
+  async getStoreDetail({ data }: BaseRequestData<StoreDetailInfoRequest>) {
     if (!data) {
       throw Error('data required');
     }
 
-    const { storeUuid } = data || {};
+    const { storeUuid, userUuid } = data || {};
 
-    const response = await fetch<void, StoreDetailInfoData>({
+    const response = await fetch<{ userUuid?: string }, StoreDetailInfoData>({
       method: 'GET',
       url: `${this.endpoint}/stores/${storeUuid}/details`,
+      ...(userUuid && { data: { userUuid } }),
     });
 
     return response;
