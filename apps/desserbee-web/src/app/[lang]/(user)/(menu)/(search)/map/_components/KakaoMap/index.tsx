@@ -149,6 +149,16 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       return 4000;
     }
 
+    // sessionStorage에서 lastPosition 확인
+    const lastPosition = sessionStorageRepository.get(
+      'lastPosition',
+    ) as MapPosition;
+
+    // lastPosition이 없으면 더 넓은 반경 (500km) 반환
+    if (!lastPosition) {
+      return 500000;
+    }
+
     const bounds = servicesRef.current.mapService.getMapBound();
     const center = servicesRef.current.mapService.getMapCenter();
 
@@ -171,7 +181,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     const minNeighborhoodRadius = 4;
 
     return Math.max(screenDistance, minNeighborhoodRadius) * 1000;
-  }, []);
+  }, [sessionStorageRepository]);
 
   // 가게
   const fetchNearbyStores = useCallback(
