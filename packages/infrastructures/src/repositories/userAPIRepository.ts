@@ -137,4 +137,5 @@ export default class UserAPIRepository extends APIRepository implements UserRepo
   
     return this.userConverter.convertRawToUser(response);
   }
+
 }

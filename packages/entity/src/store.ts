@@ -622,7 +622,6 @@ export interface StoreRepository {
 
   // 상세정보에서 사용
   getParentSavedList({
-    authorization,
     data,
   }: BaseRequestData<ParentSavedListRequest>): Promise<ParentSavedListResponse>;
 

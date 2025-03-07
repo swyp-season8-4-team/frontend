@@ -361,7 +361,6 @@ export default class StoreAPIRepository
   }
 
   async getParentSavedList({
-    authorization,
     data,
   }: BaseRequestData<ParentSavedListRequest>): Promise<ParentSavedListResponse> {
     if (!data) {
@@ -374,11 +373,6 @@ export default class StoreAPIRepository
       ParentSavedListRequest,
       ParentSavedListResponse
     >({
-      ...(authorization && {
-        headers: {
-          Authorization: authorization,
-        },
-      }),
       method: 'GET',
       url: `${this.endpoint}/user-store/lists/${listId}`,
     });
