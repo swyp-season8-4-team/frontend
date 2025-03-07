@@ -14,9 +14,8 @@ export function isOAuthSocialProvider(
 }
 
 export interface JWTPayload {
-  userUuid?: string;
   exp: number;
-  sub?: string;
+  sub?: { email: string; roles: string[]; userUuid: string };
   sg?: number;
 }
 

@@ -25,8 +25,8 @@ export function isExpiredJWT(token: string): boolean {
 
 export function getUserUuidFromToken(token: string): string | null {
   try {
-    const { userUuid } = decodeJWT(token);
-    return userUuid as string;
+    const { sub } = decodeJWT(token);
+    return sub?.userUuid as string;
   } catch (error) {
     console.error('Failed to decode JWT for userUuid:', error);
     return null;
