@@ -501,7 +501,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       if (typeof window !== 'undefined') {
         const hash = window.location.hash;
         if (hash.startsWith('#q=')) {
-          const query = decodeURIComponent(hash.substring(3));
+          const query = hash.substring(3);
           setSearchKeyword(query);
           console.log('Initial hash detected, setting bottom sheet:', !!query);
         } else {
@@ -514,7 +514,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     const handleHashChange = () => {
       const hash = window.location.hash;
       if (hash.startsWith('#q=')) {
-        const query = decodeURIComponent(hash.substring(3));
+        const query = hash.substring(3);
         setSearchKeyword(query);
       } else {
         setSearchKeyword('');
