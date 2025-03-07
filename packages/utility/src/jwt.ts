@@ -2,9 +2,9 @@ import type { JWTPayload } from '@repo/entity/src/auth';
 
 export function decodeJWT(token: string): JWTPayload {
   const [, payload] = token.split('.');
-  
+
   return JSON.parse(
-    Buffer.from(payload, 'base64').toString('utf8')
+    Buffer.from(payload, 'base64').toString('utf8'),
   ) as JWTPayload;
 }
 
@@ -21,4 +21,14 @@ export function isExpiredJWT(token: string): boolean {
   }
 
   return exp * 1000 < Date.now(); // TODO: 만료기간 바뀔수 있음
+}
+
+export function getUserUuidFromToken(token: string): string | null {
+  try {
+    const { sub: userUuid } = decodeJWT(token);
+    return userUuid;
+  } catch (error) {
+    console.error('Failed to decode JWT for userUuid:', error);
+    return null;
+  }
 }
