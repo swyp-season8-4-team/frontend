@@ -9,8 +9,8 @@ export default function StoreDetailLayout({
   saveStoreSheet,
 }: StoreDetailLayoutProps) {
   return (
-    <div className="fixed inset-0 z-30 flex flex-col max-w-[768px] bg-white overflow-hidden">
-      <div className="flex-1 overflow-y-auto">{children}</div>
+    <div className="fixed inset-0 z-30 flex flex-col  w-full max-w-[768px] bg-white overflow-hidden justify-center left-1/2 transform -translate-x-1/2">
+      <div className="flex-1 overflow-y-auto ">{children}</div>
       {saveStoreSheet}
     </div>
   );
