@@ -81,8 +81,8 @@ export default class MateService {
 
     const authorization = await this.authRepository?.getAuthorization();
     const response = await this.mateRepository.getDetails({
-      data,
       authorization,
+      data,
     });
 
     return response;
@@ -98,7 +98,7 @@ export default class MateService {
     return response;
   }
 
-  async getWaitList(data: MateRequest) {
+  async getWaitList(data: MateRequest): Promise<Mate[]> {
     if (!this.mateRepository) {
       throw new Error('mateRepository is not set');
     }

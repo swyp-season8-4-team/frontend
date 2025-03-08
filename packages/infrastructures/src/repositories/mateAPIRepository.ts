@@ -192,8 +192,6 @@ export default class MateAPIRepository
     
     const { from, to, mateCategoryId, keyword } = data;
 
-    
-
     const response = await fetch<MateListRequest, MateRawAllListResponse>({
       method: 'GET',
       url: `${this.endpoint}/mates`,
@@ -216,7 +214,7 @@ export default class MateAPIRepository
       throw new Error('data is required');
     }
 
-    const response = await fetch<MateRequest, RawMate>({
+    const response = await fetch<MateRequest, any>({
       ...(authorization && {
         headers: {
           Authorization: authorization,

@@ -8,8 +8,10 @@ import MatePostSection from "./_components/MatePostSection";
 import MyMateDetailSection from "./_components/MyMateDetailSection";
 import { MateDetailProvider } from "./_contexts/MateDetailContext";
 import MateCommentListSection from "./_components/MateCommentListSection";
+import AuthNextAppRouteRepository from "@repo/infrastructures/src/repositories/authNextAppRouteRepository";
 
 const mateService = new MateService({
+  authRepository: new AuthNextAppRouteRepository(),
   mateRepository: new MateAPIRepository(), 
 })
 
@@ -34,6 +36,8 @@ export default async function MateDetailPage({ params }: WithParams) {
   }
 
   const waitList = waitListResult.status === 'fulfilled' ? waitListResult.value : [];
+
+  console.log('wwwww', waitList);
 
   return (
     <main className="flex flex-col h-[calc(100dvh - 52px)] px-4 gap-4 bg-[#f6f6f6]">

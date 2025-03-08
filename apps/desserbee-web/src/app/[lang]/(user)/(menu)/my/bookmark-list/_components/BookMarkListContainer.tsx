@@ -1,20 +1,22 @@
 'use client';
-import Image from 'next/image';
-import { BookMarkHeader } from './BookMarkHeader';
 
+import Image from 'next/image';
 import mapImg from '../_assets/svg/map.svg';
 import houseImg from '../_assets/svg/house.svg';
 import beeImg from '../_assets/svg/bee.svg';
 import type { Mate } from '@repo/entity/src/mate';
+import { MyPageSubMenuPageHeader } from '../../_components/MyPageSubMenuPageHeader';
+
 interface BookMarkListContainerProps {
   savedDessertMate: Mate[];
 }
+
 export function BookMarkListContainer({
   savedDessertMate,
 }: BookMarkListContainerProps) {
   return (
-    <div>
-      <BookMarkHeader title="저장 목록" />
+    <>
+      <MyPageSubMenuPageHeader title="저장 목록" />
       <div className="flex flex-col gap-6 md:gap-[61px]">
         <div className="flex flex-col gap-[7.25px] md:gap-[14px]">
           <div className="text-[10px] md:text-[22px] font-semibold">
@@ -90,6 +92,6 @@ export function BookMarkListContainer({
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

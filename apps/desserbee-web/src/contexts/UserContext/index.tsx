@@ -9,11 +9,13 @@ import type { StaticImageData } from 'next/image';
 interface State {
   user: User | null;
   realProfileImageUrl: string | StaticImageData;
+  updateUserProfile: (profileData: Partial<User>) => void;
 }
 
 const defaultState: State = {
   user: null,
   realProfileImageUrl: '',
+  updateUserProfile: () => {},
 };
 
 export const UserContext = createContext<State>(defaultState);
@@ -39,6 +41,10 @@ export function UserProvider({ children, user: initialUser }: Props) {
     return DefaultFemaleAvatar;
   }, [user])
 
+  const updateUserProfile = (profileData: Partial<User>) => {
+    setUser(prev => prev ? { ...prev, ...profileData } : null);
+  };
+
   useEffect(() => {
     setUser((prev) => {
       if (JSON.stringify(prev) !== JSON.stringify(initialUser)) {
@@ -54,6 +60,7 @@ export function UserProvider({ children, user: initialUser }: Props) {
       value={{
         user,
         realProfileImageUrl,
+        updateUserProfile,
       }}
     >
       {children}

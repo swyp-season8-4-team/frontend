@@ -3,8 +3,10 @@ import MateService from '@repo/usecase/src/mateService';
 import { CommunityMateListProvider } from '../../_contexts/CommunityMateListContext';
 import CommunityMateList from '../CommunityMateList';
 import ScrollGradient from '../../../_components/ScrollGradient';
+import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 
 const mateService = new MateService({
+  authRepository: new AuthNextAppRouteRepository(),
   mateRepository: new MateAPIRepository(),
 })
 
