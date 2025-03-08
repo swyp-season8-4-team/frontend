@@ -2,6 +2,7 @@ import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRep
 import MateService from '@repo/usecase/src/mateService';
 import { CommunityMateListProvider } from '../../_contexts/CommunityMateListContext';
 import CommunityMateList from '../CommunityMateList';
+import ScrollGradient from '../../../_components/ScrollGradient';
 
 const mateService = new MateService({
   mateRepository: new MateAPIRepository(),
@@ -21,6 +22,7 @@ export default async function CommunityMateSection({ q }: Props) {
   return (
     <CommunityMateListProvider initialIsLast={isLast} initialMates={mates}>
       <CommunityMateList />
+      {mates.length > 0 && <ScrollGradient />}
     </CommunityMateListProvider>
   )
 }

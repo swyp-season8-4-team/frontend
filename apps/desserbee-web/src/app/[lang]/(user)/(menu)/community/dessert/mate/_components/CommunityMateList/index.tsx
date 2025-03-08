@@ -44,7 +44,7 @@ export default function CommunityMateList() {
           />
         )
       })}
-      <div ref={observerRef} className="h-4" />
+      <div ref={observerRef} />
     </section>
   )
 }

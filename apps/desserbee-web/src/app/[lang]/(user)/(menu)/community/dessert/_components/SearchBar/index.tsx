@@ -1,10 +1,10 @@
 'use client';
 
 import { useContext, useEffect, useState } from "react";
-import { CommunityMateCategorySearchContext } from "../../mate/_contexts/CommunityMateCategorySearchContext";
+import { CommunityDessertCategorySearchContext } from "../../_contexts/CommunityDessertCategorySearchContext";
 
 export default function SearchBar() {
-  const { handleMateSearch } = useContext(CommunityMateCategorySearchContext);
+  const { handleSearch: handleMateSearch } = useContext(CommunityDessertCategorySearchContext);
   const [query, setQuery] = useState("");
   
   const handleSearch = (e: React.FormEvent) => {
