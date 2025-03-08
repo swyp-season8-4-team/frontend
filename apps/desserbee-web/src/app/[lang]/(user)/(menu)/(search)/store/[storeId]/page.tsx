@@ -34,7 +34,6 @@ export default async function StoreDetailPage({
 
   const storeDetails = storeDetail;
 
-  //TODO: 영민님이 userUuid sub에 담아서 보내도록 수정하면 제대로 되는지 확인해야함
   if (storeDetail.savedListId) {
     const parentListInfo = await storeService.getParentSavedList({
       listId: storeDetail.savedListId,
