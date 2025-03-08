@@ -26,7 +26,7 @@ export function isExpiredJWT(token: string): boolean {
 export function getUserUuidFromToken(token: string): string | null {
   try {
     const { sub } = decodeJWT(token);
-    return sub as string; // userUuid key 없이 그냥 받아와도 되는건가.?
+    return sub as string;
   } catch (error) {
     console.error('Failed to decode JWT for userUuid:', error);
     return null;

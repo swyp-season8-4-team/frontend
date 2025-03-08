@@ -5,8 +5,13 @@ import { BookMarkHeader } from './BookMarkHeader';
 import mapImg from '../_assets/svg/map.svg';
 import houseImg from '../_assets/svg/house.svg';
 import beeImg from '../_assets/svg/bee.svg';
-
-export function BookMarkListContainer() {
+import type { Mate } from '@repo/entity/src/mate';
+interface BookMarkListContainerProps {
+  savedDessertMate: Mate[];
+}
+export function BookMarkListContainer({
+  savedDessertMate,
+}: BookMarkListContainerProps) {
   return (
     <div>
       <BookMarkHeader title="저장 목록" />
@@ -64,9 +69,10 @@ export function BookMarkListContainer() {
             저장한 디저트 메이트
           </div>
           <div className="grid grid-cols-4 gap-[6.42px] md:gap-4">
-            {Array.from([1, 2, 3, 4]).map((store) => (
+            {Array.from([1, 2, 3, 4]).map((mate) => (
               <div
-                key={store}
+                // key={mate.id}
+                key={mate}
                 className="bg-[#D9D9D9] rounded-[4.01px] w-full aspect-square flex justify-center items-center"
               >
                 <div className="w-1/2">
