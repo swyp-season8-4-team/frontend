@@ -73,7 +73,10 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
           아직 등록된 디저트 메이트 게시글이 없어요.
         </div>
         <div className="flex justify-end w-full py-3">
-          <button onClick={handleGoCommunityMateBtnClick}>
+          <button
+            className="text-[10px] md:text-base"
+            onClick={handleGoCommunityMateBtnClick}
+          >
             디저트 메이트 찾으러 가기
           </button>
         </div>
