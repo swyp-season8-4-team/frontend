@@ -132,7 +132,7 @@ export interface StoreSummaryInfoData
 export interface StoreDetailInfoRequest {
   storeUuid: string;
   userUuid?: string;
-  authorization?: string
+  authorization?: string;
 }
 
 export interface StoreDetailInfoData
@@ -353,6 +353,7 @@ export interface SavedListData {
 // 상세정보에서 사용
 export interface ParentSavedListRequest {
   listId: number;
+  authorization?: string;
 }
 
 // export interface StoreInSavedListResponse {

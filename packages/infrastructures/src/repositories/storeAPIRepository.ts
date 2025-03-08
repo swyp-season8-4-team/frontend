@@ -371,6 +371,7 @@ export default class StoreAPIRepository
 
   async getParentSavedList({
     data,
+    authorization,
   }: BaseRequestData<ParentSavedListRequest>): Promise<ParentSavedListResponse> {
     if (!data) {
       throw Error('data required');
@@ -382,6 +383,11 @@ export default class StoreAPIRepository
       ParentSavedListRequest,
       ParentSavedListResponse
     >({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'GET',
       url: `${this.endpoint}/user-store/lists/${listId}`,
     });
