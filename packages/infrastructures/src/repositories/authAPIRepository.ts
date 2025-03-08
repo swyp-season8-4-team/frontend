@@ -180,10 +180,10 @@ export default class AuthAPIRepository extends APIRepository implements AuthRepo
       throw new Error('This method is only available on the server side.');
     }
 
-    const response = await fetch<{ refreshToken: string }, JWTTokens>({
-      headers: {
-        authorization: `Bearer ${refreshToken}`,
-      },
+    const response = await fetch<void, JWTTokens>({
+      // headers: {
+      //   authorization: `Bearer ${refreshToken}`,
+      // },
       method: 'POST',
       url: `${this.endpoint}/auth/token/refresh`,
     });
