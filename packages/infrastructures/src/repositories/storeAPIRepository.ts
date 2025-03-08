@@ -167,7 +167,8 @@ export default class StoreAPIRepository
 
     const response = await fetch<void, StoreDetailInfoData>({
       method: 'GET',
-      url: `${this.endpoint}/stores/${storeUuid}/details${userUuid ? `?userUuid=${userUuid}` : ''}`,
+      // url: `${this.endpoint}/stores/${storeUuid}/details${userUuid ? `?userUuid=${userUuid}` : ''}`,
+      url: `${this.endpoint}/stores/${storeUuid}/details`,
     });
 
     return response;
