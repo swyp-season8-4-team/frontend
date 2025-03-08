@@ -32,7 +32,7 @@ export default class ReviewAPIRepository
     return response;
   }
 
-  async getDetail({ data }: BaseRequestData<ReviewUpdateData>): Promise<Review> {
+  async getDetail({ authorization, data }: BaseRequestData<ReviewUpdateData>): Promise<Review> {
     if (!data) {
       throw new Error('data is not set');
     }
@@ -42,6 +42,7 @@ export default class ReviewAPIRepository
     const url = `${this.endpoint}/review/${id}`;
 
     const response = await fetch<void, RawReview>({
+      ...(authorization && { headers: { Authorization: authorization } }),
       method: 'GET',
       url: url,
     });
