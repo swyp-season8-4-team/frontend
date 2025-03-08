@@ -96,7 +96,9 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
               onClick={handleOnelineReviewItemClick}
               className="w-full flex justify-end text-[8px] md:text-base"
             >
-              {onelineReviews.storeReviews.length > 4 && <div>리뷰 더보기</div>}
+              {onelineReviews.storeReviews.length > 4 && (
+                <div className="text-[10px] md:text-base">리뷰 더보기</div>
+              )}
             </div>
           </div>
         ) : (
