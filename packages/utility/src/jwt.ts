@@ -22,13 +22,3 @@ export function isExpiredJWT(token: string): boolean {
 
   return exp * 1000 < Date.now(); // TODO: 만료기간 바뀔수 있음
 }
-
-export function getUserUuidFromToken(token: string): string | null {
-  try {
-    const { sub } = decodeJWT(token);
-    return sub as string;
-  } catch (error) {
-    console.error('Failed to decode JWT for userUuid:', error);
-    return null;
-  }
-}

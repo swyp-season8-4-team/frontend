@@ -2,11 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { match } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 import { SupportISO639Language } from '@repo/entity/src/i18n';
-import {
-  decodeJWT,
-  getUserUuidFromToken,
-  isExpiredJWT,
-} from '@repo/utility/src/jwt';
+import { decodeJWT, isExpiredJWT } from '@repo/utility/src/jwt';
 import AuthService from '@repo/usecase/src/authService';
 import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
 import { NavigationPathname } from '@repo/entity/src/navigation';
@@ -39,11 +35,6 @@ export async function middleware(request: NextRequest) {
   const token = await getToken(request);
   if (token) {
     requestHeaders.set('authorization', `Bearer ${token}`);
-
-    const userUuid = getUserUuidFromToken(token);
-    if (userUuid) {
-      requestHeaders.set('X-User-UUID', userUuid);
-    }
   }
 
   const next = NextResponse.next({

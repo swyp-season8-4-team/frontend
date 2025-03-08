@@ -66,21 +66,25 @@ export default class UserService {
     return response;
   }
 
-  // async getUserID(): Promise<string> {
-  //   if (!this.authRepository) {
-  //     throw new Error('authRepository is not set');
-  //   }
+  async getUserID(): Promise<string | null> {
+    if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
 
-  //   const authToken = await this.authRepository.getAuthorization();
+    const authToken = await this.authRepository.getAuthorization();
 
-  //   if (!authToken) {
-  //     throw new Error('Authorization header is not found');
-  //   }
+    if (!authToken) {
+      throw new Error('Authorization header is not found');
+    }
 
-  //   const { sub } = decodeJWT(authToken);
+    const { sub } = decodeJWT(authToken);
 
-  //   return sub;
-  // }
+    if (sub) {
+      return sub;
+    } else {
+      return null;
+    }
+  }
 
   async validateNickname({
     nickname,
