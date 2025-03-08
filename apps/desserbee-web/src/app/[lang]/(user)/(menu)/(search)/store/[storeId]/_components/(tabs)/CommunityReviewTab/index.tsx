@@ -31,15 +31,16 @@ export function CommunityReviewTab() {
               <div className="text-[10px] md:text-base">닉네임</div>
             </div>
             <div className="text-[10px] md:text-base line-clamp-1 md:line-clamp-2">
-              리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용
-              리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용
+              이 카페 푸딩이 정말 맛있어요! 커피랑 같이 먹으니까 더 맛있네요.
+              친구들이랑 오기 좋은 곳 같아요. 분위기도 좋고 디저트도 맛있어서
+              자주 방문할 것 같습니다.
             </div>
           </div>
         </div>
       </div>
-      <div className="w-full text-[10px] md:text-base text-center">
+      {/* <div className="w-full text-[10px] md:text-base text-center">
         <div>해당 가게에 작성된 커뮤니티 리뷰가 없어요.</div>
-      </div>
+      </div> */}
       <div className="flex w-full justify-end">
         <button
           className="text-[10px] md:text-base"
