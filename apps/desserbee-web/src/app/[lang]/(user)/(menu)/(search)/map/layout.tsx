@@ -13,7 +13,7 @@ export default async function MapLayout({
   const authorization = headerList.get('authorization');
   if (!authorization) {
     return (
-      <div className="w-full flex justify-center">
+      <div className="w-full flex justify-center selection:bg-primary selection:text-white">
         {bottomSheet}
         {sidebar}
         {children}
@@ -22,7 +22,7 @@ export default async function MapLayout({
   }
 
   return (
-    <div>
+    <div className="selection:bg-primary selection:text-white">
       {bottomSheet}
       {sidebar}
       {children}

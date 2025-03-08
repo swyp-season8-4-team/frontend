@@ -601,9 +601,10 @@ export default class StoreService {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
-      const { ...rest } = params;
+      const { authorization, ...rest } = params;
       const response = await this.storeRepository.getStoresInSavedList({
         data: rest,
+        authorization,
       });
       return response;
     } catch (error) {

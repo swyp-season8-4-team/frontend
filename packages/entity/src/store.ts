@@ -381,6 +381,7 @@ export interface ParentSavedListResponse {
 
 export interface StoresInSavedListRequest {
   listId: number;
+  authorization?: string;
 }
 
 export interface StoresInSavedListData {
