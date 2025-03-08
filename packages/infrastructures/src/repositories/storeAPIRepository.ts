@@ -62,6 +62,7 @@ export default class StoreAPIRepository
   // store
   async getNearbyStores({
     data,
+    authorization,
   }: BaseRequestData<NearByStoreRequest>): Promise<NearByStoreData[]> {
     if (!data) {
       throw Error('data required');
@@ -81,6 +82,11 @@ export default class StoreAPIRepository
     }
 
     const response = await fetch<void, NearByStoreData[]>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'GET',
       url,
     });

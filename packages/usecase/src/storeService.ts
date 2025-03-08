@@ -60,12 +60,14 @@ export default class StoreService {
     radius,
     preferenceTagIds,
     searchKeyword,
+    authorization,
   }: {
     latitude: number;
     longitude: number;
     radius: number;
     preferenceTagIds?: number[];
     searchKeyword?: string;
+    authorization?: string;
   }): Promise<NearByStoreData[]> {
     try {
       if (!this.storeRepository) {
@@ -79,6 +81,7 @@ export default class StoreService {
           preferenceTagIds,
           searchKeyword,
         },
+        authorization,
       };
 
       const response = await this.storeRepository.getNearbyStores(requestData);
