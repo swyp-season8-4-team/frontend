@@ -82,7 +82,7 @@ export function SaveStoreBottomSheetContainer({
         const statusCode = err.data.statusCode;
 
         if (statusCode === 409) {
-          alert('동일한 이름의 리스트는 생성할 수 없습니다.');
+          setError('동일한 이름의 리스트는 생성할 수 없습니다.');
           return;
         }
       }
