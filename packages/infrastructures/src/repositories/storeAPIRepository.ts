@@ -158,7 +158,10 @@ export default class StoreAPIRepository
     return response;
   }
 
-  async getStoreDetail({ data }: BaseRequestData<StoreDetailInfoRequest>) {
+  async getStoreDetail({
+    data,
+    authorization,
+  }: BaseRequestData<StoreDetailInfoRequest>) {
     if (!data) {
       throw Error('data required');
     }
@@ -166,6 +169,11 @@ export default class StoreAPIRepository
     const { storeUuid, userUuid } = data || {};
 
     const response = await fetch<void, StoreDetailInfoData>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'GET',
       // url: `${this.endpoint}/stores/${storeUuid}/details${userUuid ? `?userUuid=${userUuid}` : ''}`,
       url: `${this.endpoint}/stores/${storeUuid}/details`,

@@ -147,8 +147,10 @@ export default class StoreService {
         throw new Error('storeRepository is not set');
       }
 
+      const { authorization, ...rest } = params;
       const requestData = {
-        data: params,
+        data: rest,
+        authorization,
       };
 
       const response = await this.storeRepository.getStoreDetail(requestData);
