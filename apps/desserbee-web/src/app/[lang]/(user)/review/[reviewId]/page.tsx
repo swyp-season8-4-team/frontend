@@ -4,8 +4,10 @@ import ReviewService from "@repo/usecase/src/reviewService";
 import { notFound } from "next/navigation";
 import ReviewPostSection from "./_components/ReviewPostSection";
 import { ReviewDetailProvider } from "./_contexts/ReviewDetailContext";
+import AuthNextAppRouteRepository from "@repo/infrastructures/src/repositories/authNextAppRouteRepository";
 
 const reviewService = new ReviewService({
+  authRepository: new AuthNextAppRouteRepository(),
   reviewRepository: new ReviewAPIRepository(),
 })
 
