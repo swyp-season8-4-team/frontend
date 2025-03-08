@@ -1,27 +1,19 @@
 // FIXME: 한개파일 말고 분리해서 관리
 
-import type { MateCommunityCategory } from "@repo/entity/src/mate";
+import type { CommunityCategory } from "@repo/entity/src/community";
 
 export enum SearchMessageAction {
   OpenSearchBar = 'open-search-bar',
+  GetCategories = 'get-categories',
+  GetSearch = 'get-search',
+}
+
+export interface CommunitySearchMessagePayload {
+  selectedCategory?: CommunityCategory;
+  keyword?: string;
 }
 
 export interface SearchMessageData {
   action: SearchMessageAction;
-  payload?: unknown;
-}
-
-export enum MateSearchMessageAction {
-  GetMateCategories = 'get-mate-categories',
-  GetMateSearch = 'get-mate-search',
-}
-
-export interface MateSearchMessagePayload {
-  selectedCategory?: MateCommunityCategory;
-  keyword?: string;
-}
-
-export interface MateSearchMessageData {
-  action: MateSearchMessageAction;
-  payload?: MateSearchMessagePayload;
+  payload?: CommunitySearchMessagePayload;
 }

@@ -1,15 +1,15 @@
 'use client';
 
-import type { MateCategory } from '@repo/entity/src/mate';
 import { useContext } from 'react';
-import { CommunityMateCategorySearchContext } from '../../_contexts/CommunityMateCategorySearchContext';
+import { CommunityDessertCategorySearchContext } from '../../_contexts/CommunityDessertCategorySearchContext';
+import type { CommunityCategory } from '@repo/entity/src/community';
 
-interface CategoryFilterProps {
-  categories: MateCategory[];
+interface Props {
+  categories: CommunityCategory[];
 }
 
-export default function CategoryFilter({ categories }: CategoryFilterProps) {
-  const { activeCategory, handleCategoryClick } = useContext(CommunityMateCategorySearchContext);
+export default function DessertCategoryFilter({ categories }: Props) {
+  const { activeCategory, handleCategoryClick } = useContext(CommunityDessertCategorySearchContext);
   
   return (
     <div className="flex gap-2 overflow-x-auto mb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
