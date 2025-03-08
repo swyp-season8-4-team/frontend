@@ -15,7 +15,8 @@ export default class ReviewService {
       throw new Error('ReviewRepository is not set');
     }
 
-    const response = await this.reviewRepository.getDetail({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.reviewRepository.getDetail({ data, authorization });
 
     return response;
   }
