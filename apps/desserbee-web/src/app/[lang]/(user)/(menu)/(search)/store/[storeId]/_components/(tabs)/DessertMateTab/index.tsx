@@ -86,7 +86,9 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
 
   return (
     <div>
-      <div className="font-semibold text-[12px] mb-3">디저트 메이트</div>
+      <div className="font-semibold text-[12px] md:text-lg mb-3">
+        디저트 메이트
+      </div>
       <div className="flex flex-col gap-y-[5px] md:gap-y-3">
         {optimisticState.map(
           (
@@ -130,7 +132,7 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
                 </div>
               </div>
               <div className="flex items-center">
-                <div className="w-[45px] h-[45px] m-1 aspect-square bg-[#D9D9D9] overflow-hidden  md:w-[97px] md:h-[97px]">
+                <div className="w-[45px] h-[45px] flex-shrink-0 m-1 aspect-square bg-[#D9D9D9] overflow-hidden  md:w-[97px] md:h-[97px]">
                   <Image
                     className="w-full h-full"
                     src={thumbnail}

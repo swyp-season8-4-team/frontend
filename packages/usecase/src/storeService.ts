@@ -60,12 +60,14 @@ export default class StoreService {
     radius,
     preferenceTagIds,
     searchKeyword,
+    authorization,
   }: {
     latitude: number;
     longitude: number;
     radius: number;
     preferenceTagIds?: number[];
     searchKeyword?: string;
+    authorization?: string;
   }): Promise<NearByStoreData[]> {
     try {
       if (!this.storeRepository) {
@@ -79,6 +81,7 @@ export default class StoreService {
           preferenceTagIds,
           searchKeyword,
         },
+        authorization,
       };
 
       const response = await this.storeRepository.getNearbyStores(requestData);
@@ -147,8 +150,10 @@ export default class StoreService {
         throw new Error('storeRepository is not set');
       }
 
+      const { authorization, ...rest } = params;
       const requestData = {
-        data: params,
+        data: rest,
+        authorization,
       };
 
       const response = await this.storeRepository.getStoreDetail(requestData);
@@ -578,9 +583,10 @@ export default class StoreService {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
-      const { ...rest } = params;
+      const { authorization, ...rest } = params;
       const response = await this.storeRepository.getParentSavedList({
         data: rest,
+        authorization,
       });
       return response;
     } catch (error) {
@@ -595,9 +601,10 @@ export default class StoreService {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
       }
-      const { ...rest } = params;
+      const { authorization, ...rest } = params;
       const response = await this.storeRepository.getStoresInSavedList({
         data: rest,
+        authorization,
       });
       return response;
     } catch (error) {

@@ -21,7 +21,6 @@ export function DetailContainer({
   parentlistInfo,
 }: DetailContainerProps) {
   if (!storeDetail) throw Error('store 상세 정보 불러오기 실패');
-
   const getAllMenuImages = (menus: Menu[]): string[] => {
     return menus.reduce((allImages: string[], menu) => {
       const menuImages = menu.images || [];

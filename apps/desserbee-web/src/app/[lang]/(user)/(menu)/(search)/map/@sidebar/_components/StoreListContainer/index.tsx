@@ -17,6 +17,7 @@ import {
   type StoresInSavedListData,
   type ParentSavedListResponse,
 } from '@repo/entity/src/store';
+import { getParentSavedList, getStoresInSavedList } from './action';
 
 interface StoreListContainerProps {
   listId: number;
@@ -78,18 +79,15 @@ export function StoreListContainer({
 
   const handleStoresInSavedListFetch = useCallback(async () => {
     try {
-      // 부모 리스트 정보 가져오기
-      const parentList = await storeService.getParentSavedList({
+      const parentList = await getParentSavedList({
         listId: Number(listId),
       });
       setParentListInfo(parentList);
 
-      // 리스트에 포함된 가게 정보 가져오기
-      const response = await storeService.getStoresInSavedList({
+      const response = await getStoresInSavedList({
         listId: Number(listId),
       });
 
-      // 실제 API 응답 구조에 맞게 타입 조정 (응답이 객체이고 storeData 속성을 가짐)
       interface StoreListResponse {
         iconColorId: number;
         listId: number;
@@ -107,10 +105,10 @@ export function StoreListContainer({
       } else {
         setStoreData([]);
       }
-    } catch (error) {
+    } catch {
       setStoreData([]);
     }
-  }, [listId, storeService]);
+  }, [listId]);
 
   useEffect(() => {
     handleStoresInSavedListFetch();
@@ -122,7 +120,7 @@ export function StoreListContainer({
     <SideBar
       {...{
         className:
-          'absolute top-[100px] md:top-[135px] md:w-[370px] right-4 h-[calc(100dvh-287px)] cursor-pointer',
+          'absolute top-[105px] md:top-[110px]  md:w-[370px] right-4 h-[calc(100dvh-287px)] cursor-pointer',
         isSideBarOpen: showStoreList,
         handleSideBarClose: handleListClose,
         isCloseBtnShow: false,

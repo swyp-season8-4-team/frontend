@@ -44,6 +44,7 @@ import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService
 import { ReFetchStoreBtn } from '../ReFetchStoreBtn';
 import { calculateDistance } from '../../_utils/distance';
 import { useTag } from '../../../_hooks/useTag';
+import { getNearbyStores } from './action';
 
 interface KakaoMapProps {
   preferenceCategories: PreferenceData[];
@@ -197,14 +198,13 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
         const fetchRadius = calculateFetchRadius();
 
-        const nearByStores =
-          await servicesRef.current.storeService!.getNearbyStores({
-            latitude: position.latitude,
-            longitude: position.longitude,
-            radius: fetchRadius,
-            preferenceTagIds,
-            searchKeyword,
-          });
+        const nearByStores = await getNearbyStores({
+          latitude: position.latitude,
+          longitude: position.longitude,
+          radius: fetchRadius,
+          preferenceTagIds,
+          searchKeyword,
+        });
 
         setNearByStores(nearByStores);
 
