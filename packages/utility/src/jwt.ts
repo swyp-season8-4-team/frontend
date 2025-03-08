@@ -2,9 +2,9 @@ import type { JWTPayload } from '@repo/entity/src/auth';
 
 export function decodeJWT(token: string): JWTPayload {
   const [, payload] = token.split('.');
-  
+
   return JSON.parse(
-    Buffer.from(payload, 'base64').toString('utf8')
+    Buffer.from(payload, 'base64').toString('utf8'),
   ) as JWTPayload;
 }
 

@@ -2,6 +2,7 @@ import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import { DetailContainer } from './_components/(detail)/DetailContainer';
 import NotFound from '@/app/[lang]/[...not-found]/page';
+import { headers } from 'next/headers';
 // import { storeDetail } from '../../map/_consts/marker';
 
 interface StoreDetailPageProps {
@@ -13,6 +14,9 @@ interface StoreDetailPageProps {
 export default async function StoreDetailPage({
   params,
 }: StoreDetailPageProps) {
+  const headersList = await headers();
+  const userUuid = headersList.get('X-User-UUID');
+
   const storeId = (await params).storeId;
 
   const storeService = new StoreService({
@@ -23,9 +27,12 @@ export default async function StoreDetailPage({
     return <NotFound />;
   }
 
-  const storeDetail = await storeService.getStoreDetail(storeId);
+  const storeDetail = await storeService.getStoreDetail({
+    storeUuid: storeId,
+    ...(userUuid && { userUuid }),
+  });
+
   const storeDetails = storeDetail;
-  // console.log(storeDetail);
 
   if (storeDetail.savedListId) {
     const parentListInfo = await storeService.getParentSavedList({
@@ -35,7 +42,7 @@ export default async function StoreDetailPage({
     return (
       <DetailContainer
         storeDetail={storeDetails}
-        parentlistInfo={parentListInfo} // 담은 가게임을 보여줄때
+        parentlistInfo={parentListInfo}
       />
     );
   } else {

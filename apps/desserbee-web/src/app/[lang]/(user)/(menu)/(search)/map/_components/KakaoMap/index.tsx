@@ -95,7 +95,8 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
   const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
 
-  const [retryCount, setRetryCount] = useState(0);
+  const [, setRetryCount] = useState(0);
+  const retryCountRef = useRef(0);
   const MAX_RETRY = 3;
   const RETRY_DELAY = 3000;
 
@@ -148,6 +149,16 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       return 4000;
     }
 
+    // sessionStorage에서 lastPosition 확인
+    const lastPosition = sessionStorageRepository.get(
+      'lastPosition',
+    ) as MapPosition;
+
+    // lastPosition이 없으면 더 넓은 반경 (500km) 반환
+    if (!lastPosition) {
+      return 500000;
+    }
+
     const bounds = servicesRef.current.mapService.getMapBound();
     const center = servicesRef.current.mapService.getMapCenter();
 
@@ -170,7 +181,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     const minNeighborhoodRadius = 4;
 
     return Math.max(screenDistance, minNeighborhoodRadius) * 1000;
-  }, []);
+  }, [sessionStorageRepository]);
 
   // 가게
   const fetchNearbyStores = useCallback(
@@ -198,15 +209,18 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         setNearByStores(nearByStores);
 
         setRetryCount(0);
+        retryCountRef.current = 0;
         setError(null);
         return nearByStores;
       } catch {
-        if (retryCount < MAX_RETRY) {
+        if (retryCountRef.current < MAX_RETRY) {
           setRetryCount((prev) => prev + 1);
+          retryCountRef.current += 1;
           setTimeout(
             () => fetchNearbyStores(position, preferenceTagIds, searchKeyword),
             RETRY_DELAY,
           );
+          return;
         } else {
           setError(
             '가게 정보를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.',
@@ -218,7 +232,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         return null;
       }
     },
-    [retryCount, calculateFetchRadius],
+    [calculateFetchRadius],
   );
 
   const handleMapCenterChange = useCallback(() => {
@@ -497,7 +511,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       if (typeof window !== 'undefined') {
         const hash = window.location.hash;
         if (hash.startsWith('#q=')) {
-          const query = decodeURIComponent(hash.substring(3));
+          const query = hash.substring(3);
           setSearchKeyword(query);
           console.log('Initial hash detected, setting bottom sheet:', !!query);
         } else {
@@ -510,7 +524,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     const handleHashChange = () => {
       const hash = window.location.hash;
       if (hash.startsWith('#q=')) {
-        const query = decodeURIComponent(hash.substring(3));
+        const query = hash.substring(3);
         setSearchKeyword(query);
       } else {
         setSearchKeyword('');

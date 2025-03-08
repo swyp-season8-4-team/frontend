@@ -13,16 +13,16 @@ export function NeedLoginModal({ onClose }: NeedLoginModalProps) {
       className="flex justify-center items-center my-[50px] p-5 w-[214px] md:w-[308px] aspect-square"
     >
       <div className="flex flex-col items-center">
-        <div className="w-[62px] md:w-[94px] md:">
+        <div className="w-[62px] md:w-[94px]">
           <IconBee className="w-full h-full" />
         </div>
-        <div className="font-semibold text-[14px] md:text-[18px]">
+        <div className="font-semibold text-[14px] md:text-base">
           로그인이 필요한 서비스입니다.
         </div>
         <Link
           onClick={onClose}
           href={'/sign-in'}
-          className="bg-primary rounded-[100px] w-full text-white md:text-[22px] text-center"
+          className="bg-primary rounded-[100px] w-full p-1 text-white text-[14px] md:text-base text-center"
         >
           로그인 하기
         </Link>

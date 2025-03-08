@@ -123,7 +123,7 @@ export function DetailInfoContainer({
             ))}
           </span>
         </div>
-        {saved && user ? (
+        {saved ? (
           <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm">
             <div className="w-4 md:w-[37.71px] h-4 md:h-[37.71px]">
               <IconFlower

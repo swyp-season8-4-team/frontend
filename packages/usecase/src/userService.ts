@@ -1,5 +1,11 @@
 import type { AuthRepository } from '@repo/entity/src/auth';
-import type { NicknameValidationRequestData, NicknameValidationResponse, TargetUser, User, UserRepository } from '@repo/entity/src/user';
+import type {
+  NicknameValidationRequestData,
+  NicknameValidationResponse,
+  TargetUser,
+  User,
+  UserRepository,
+} from '@repo/entity/src/user';
 import { decodeJWT } from '@repo/utility/src/jwt';
 
 export default class UserService {
@@ -34,7 +40,10 @@ export default class UserService {
     }
 
     const authorization = await this.authRepository?.getAuthorization();
-    const response = await this.userRepository.updateMe({ authorization, data });
+    const response = await this.userRepository.updateMe({
+      authorization,
+      data,
+    });
 
     return response;
   }
@@ -49,12 +58,15 @@ export default class UserService {
     }
 
     const authorization = await this.authRepository?.getAuthorization();
-    const response = await this.userRepository.getTarget({ data: { id }, authorization });
+    const response = await this.userRepository.getTarget({
+      data: { id },
+      authorization,
+    });
 
     return response;
   }
 
-  async getUserID(): Promise<string> {
+  async getUserID(): Promise<string | null> {
     if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }
@@ -67,15 +79,24 @@ export default class UserService {
 
     const { sub } = decodeJWT(authToken);
 
-    return sub;
+    if (sub) {
+      return sub;
+    } else {
+      return null;
+    }
   }
 
-  async validateNickname({ nickname, purpose }: NicknameValidationRequestData): Promise<NicknameValidationResponse> {
+  async validateNickname({
+    nickname,
+    purpose,
+  }: NicknameValidationRequestData): Promise<NicknameValidationResponse> {
     if (!this.userRepository) {
       throw new Error('userRepository is not set');
     }
 
-    const response = await this.userRepository.validateNickname({ data: { nickname, purpose } });
+    const response = await this.userRepository.validateNickname({
+      data: { nickname, purpose },
+    });
 
     return response;
   }
@@ -86,7 +107,10 @@ export default class UserService {
     }
 
     const authorization = await this.authRepository?.getAuthorization();
-    const response = await this.userRepository.uploadProfileImage({ data: { image }, authorization });
+    const response = await this.userRepository.uploadProfileImage({
+      data: { image },
+      authorization,
+    });
 
     return response;
   }
