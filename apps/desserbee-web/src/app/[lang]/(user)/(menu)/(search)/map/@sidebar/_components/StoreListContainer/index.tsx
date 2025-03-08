@@ -122,7 +122,7 @@ export function StoreListContainer({
     <SideBar
       {...{
         className:
-          'absolute top-[100px] md:top-[135px] md:w-[370px] right-4 h-[calc(100dvh-287px)] cursor-pointer',
+          'absolute top-[105px] md:top-[110px]  md:w-[370px] right-4 h-[calc(100dvh-287px)] cursor-pointer',
         isSideBarOpen: showStoreList,
         handleSideBarClose: handleListClose,
         isCloseBtnShow: false,
