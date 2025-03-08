@@ -136,7 +136,7 @@ async function getToken(request: NextRequest): Promise<string | null> {
 
     // 리프레시 토큰을 가지고 다시 accessToken 발급
     const { accessToken: updatedAccessToken }: { accessToken: string } =
-      await authService.refreshAccessToken(accessToken);
+      await authService.refreshAccessToken(refreshToken);
     newAccessToken = updatedAccessToken;
   }
 
