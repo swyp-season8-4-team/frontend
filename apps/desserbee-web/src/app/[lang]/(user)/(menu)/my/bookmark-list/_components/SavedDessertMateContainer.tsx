@@ -2,7 +2,5 @@ import CommunityMateList from '../../../community/dessert/mate/_components/Commu
 import { CommunityMateListProvider } from '../../../community/dessert/mate/_contexts/CommunityMateListContext';
 
 export function SavedDessertMateContainer() {
-  return (
-  
-  );
+  return <div></div>;
 }
