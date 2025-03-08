@@ -17,7 +17,7 @@ export default async function CommunityMatePage({ searchParams }: WithSearchPara
   const categories: CommunityCategory[] = ['친목도모', '사진맛집', '카공모임', '건강맛집', '빵지순례', '카페투어'];
 
   return (
-    <main className="max-w-screen-md mx-auto px-4 py-6 h-[calc(100dvh-65px)] overflow-hidden flex flex-col">
+    <main className="max-w-screen-md mx-auto px-4 py-6 h-[calc(100dvh-65px)] overflow-hidden flex flex-col bg-[#f6f6f6]">
       {/* 타이틀 영역 */}
       <CommunityDessertCategorySearchProvider>
         <CommunityMateFixedTopArea>
