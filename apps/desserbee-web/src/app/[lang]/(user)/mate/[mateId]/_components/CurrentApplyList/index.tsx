@@ -29,6 +29,8 @@ export default function CurrentApplyList({ waitList }: Props) {
   const { user } = useContext(UserContext);
   const [isOpen, setIsOpen] = useState(false);
 
+  console.log(waitList);
+
   const handleClick = () => {
     setIsOpen(prev => !prev);
   };

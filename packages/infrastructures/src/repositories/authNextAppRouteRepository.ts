@@ -8,7 +8,8 @@ export default class AuthNextAppRouteRepository implements AuthRepository {
   }
   
   async getAuthorization(): Promise<string | null> {
-    return (await headers()).get('authorization');
+    const headerList = await headers();
+    return headerList.get('authorization');
   }
   
   refreshAccessToken(): Promise<JWTTokens> {
