@@ -1,4 +1,5 @@
-import DefaultMaleAvatar from '@/assets/images/image-default-male-profile.png';
+import DefaultMaleAvatar from '@/assets/images/image-default-male-profile.png'
+import DefaultFemaleAvatar from '@/assets/images/image-default-female-profile.png';
 import type { Mate } from "@repo/entity/src/mate";
 import MateAPIRepository from "@repo/infrastructures/src/repositories/mateAPIRepository";
 import MateService from "@repo/usecase/src/mateService";
@@ -28,7 +29,19 @@ export default async function MatePostSection({ mate, replyCount }: Props) {
 
   const myTeamMembers = myTeamMembersResult.status === 'fulfilled' ? myTeamMembersResult.value : [];
 
-  const { mateCategory, mateImage, title, content, place, nickname, profileImage, updatedAt } = mate;
+  const {
+    mateCategory,
+    mateImage,
+    title,
+    content,
+    place,
+    nickname,
+    profileImage,
+    updatedAt,
+    gender
+  } = mate;
+
+  const profileImageUrl = !!profileImage ? profileImage : gender === 'MALE' ? DefaultMaleAvatar : DefaultFemaleAvatar;
 
   return (
     <section className="border rounded-[10px] bg-[#ffffff] px-2 py-2">
@@ -48,7 +61,7 @@ export default async function MatePostSection({ mate, replyCount }: Props) {
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-2">
             <Image
-              src={!!profileImage ? profileImage : DefaultMaleAvatar}
+              src={profileImageUrl}
               alt="profile-mate-detail"
               width={40}
               height={40}

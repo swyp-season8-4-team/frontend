@@ -18,10 +18,13 @@ export default function CommunityMateCard({ mate }: Props) {
 
   return (
     <div
-      className="flex flex-col bg-white rounded-xl p-4 shadow-sm gap-[6.78px]"
+      className="flex flex-col bg-white rounded-xl p-4 shadow-sm gap-[12px]"
     >
       <div className="flex justify-between items-center">
-        <Chip text={mateCategory} />
+        <Chip 
+          className="rounded-[44.317px] border-[0.443px] border-[#6F6F6F] text-[12px] w-[70px]"
+          text={mateCategory}
+        />
         <div className="flex items-center gap-[9.076px]">
           {recruit && <span className="text-[#393939] text-sm">모집중</span>}
           <CommunityMateCardHeartButton mateId={mate.id} />
@@ -31,9 +34,9 @@ export default function CommunityMateCard({ mate }: Props) {
         <Image
           alt={`${mate.id}-mate-image`}
           src={!!mateImage ? mateImage : defaultImage}
-          width={64}
-          height={64}
-          className="w-16 h-16 rounded-md"
+          width={44}
+          height={44}
+          className="w-16 h-16 rounded-md bg-[#f6f6f6]"
         />
         <div className="flex flex-col gap-[12.1px] w-full">
         <div className="flex flex-col gap-[4.54px]">
