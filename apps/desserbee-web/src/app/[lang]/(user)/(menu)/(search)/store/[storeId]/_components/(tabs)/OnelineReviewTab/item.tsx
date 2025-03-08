@@ -70,7 +70,7 @@ export function OneLineReviewItem({
             content: editedContent,
             rating: editedRating,
           },
-          newImages: editedImage ? [editedImage] : [],
+          ...(editedImage && { newImages: [editedImage] }),
         };
 
         await storeService.editOnelineReview(data);
