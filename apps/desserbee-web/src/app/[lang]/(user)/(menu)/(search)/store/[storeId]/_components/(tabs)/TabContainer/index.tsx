@@ -6,7 +6,6 @@ import { OnelineReviewTab } from '../OnelineReviewTab';
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { CommunityIsNotReadyModal } from '../../../../../map/_modals/CommunityIsNotReadyModal';
-import { useParams } from 'next/navigation';
 
 interface TabContainerProps {
   onelineReviews: Pick<
@@ -33,18 +32,18 @@ export function TabContainer({
 }: TabContainerProps) {
   const [activeTab, setActiveTab] = useState<TabId>('menu');
 
-  const { push, pop } = useContext(PortalContext);
+  // const { push, pop } = useContext(PortalContext);
 
-  const closeModal = () => {
-    pop('modal');
-  };
+  // const closeModal = () => {
+  //   pop('modal');
+  // };
 
-  const handleCommunityReviewTabClick = (id: string) => {
-    if (id !== 'community') return;
-    push('modal', {
-      component: <CommunityIsNotReadyModal onClose={closeModal} />,
-    });
-  };
+  // const handleCommunityReviewTabClick = (id: string) => {
+  //   if (id !== 'community') return;
+  //   push('modal', {
+  //     component: <CommunityIsNotReadyModal onClose={closeModal} />,
+  //   });
+  // };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -67,7 +66,7 @@ export function TabContainer({
             key={id}
             onClick={() => {
               setActiveTab(id);
-              handleCommunityReviewTabClick(id);
+              // handleCommunityReviewTabClick(id);
             }}
             className={`text-[10px] md:text-lg leading-3  ${
               activeTab === id

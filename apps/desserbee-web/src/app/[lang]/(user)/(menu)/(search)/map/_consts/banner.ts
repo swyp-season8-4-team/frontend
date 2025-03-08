@@ -2,6 +2,7 @@ import bee from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/logo-bee.sv
 import map from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/banner-map.png';
 import store from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/banner-store.png';
 import ticket from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/banner-ticket.png';
+import { NavigationPathname } from '@repo/entity/src/navigation';
 
 export const BANNERS = [
   {
@@ -30,6 +31,6 @@ export const BANNERS = [
     bgColor: 'bg-[#FFC635]',
     btnContent: '디저트 리뷰 보기',
     imgSrc: map,
-    path: '/community/reviews',
+    path: `${NavigationPathname.CommunityDessertReview}`,
   },
 ];

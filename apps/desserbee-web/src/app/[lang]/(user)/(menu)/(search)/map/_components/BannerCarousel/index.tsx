@@ -29,12 +29,7 @@ export function BannerCarousel() {
   };
 
   const handleDessertReviewBtnClick = (e: React.MouseEvent, index: number) => {
-    if (index === 3) {
-      e.preventDefault();
-      push('modal', {
-        component: <ReviewNotReadyModal onClose={closeModal} />,
-      });
-    } else if (index === 2) {
+    if (index === 2) {
       e.preventDefault();
       push('modal', {
         component: <CouponIsNotReadyModal onClose={closeModal} />,
