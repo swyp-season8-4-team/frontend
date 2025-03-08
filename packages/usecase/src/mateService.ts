@@ -187,7 +187,7 @@ export default class MateService {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.write({ data, method: 'POST' });
+    const response = await this.mateRepository.write({ data, method: isNew ? 'POST' : 'PATCH' });
 
     return response;
   }
