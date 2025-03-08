@@ -13,6 +13,7 @@ import IconFlower from '@repo/design-system/components/icons/IconFlower';
 import { cn } from '@repo/ui/lib/utils';
 import IconPlus from '@repo/design-system/components/icons/IconPlus';
 import IconCheck from '@repo/design-system/components/icons/IconCheck';
+import { HTTPError } from '@repo/api/src/error';
 
 interface SaveStoreBottomSheetContainerProps {
   showBottomSheet: boolean;
@@ -28,11 +29,12 @@ export function SaveStoreBottomSheetContainer({
 
   const { push, pop } = useContext(PortalContext);
 
-  const [selectedListId, setSelectedListId] = useState<number>(0);
+  const [selectedListId, setSelectedListId] = useState<number | null>(null);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(showBottomSheet);
   const [savedLists, setSavedLists] = useState<SavedListData[]>([]);
   const { user } = useContext(UserContext);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const storeService = useMemo(
     () =>
@@ -76,7 +78,14 @@ export function SaveStoreBottomSheetContainer({
         iconColorId: colorId,
       });
     } catch (err) {
-      console.log('가게 담는 중 에러 발생: ' + err);
+      if (err instanceof HTTPError) {
+        const statusCode = err.data.statusCode;
+
+        if (statusCode === 409) {
+          setError('동일한 이름의 리스트는 생성할 수 없습니다.');
+          return;
+        }
+      }
     }
   };
 
@@ -89,6 +98,7 @@ export function SaveStoreBottomSheetContainer({
             setSavedLists([]);
             handleSavedListFetch();
             router.push('?saveStore=true');
+            router.refresh();
           }}
           onComplete={(listName: string, colorId: number) => {
             pop('modal');
@@ -112,14 +122,18 @@ export function SaveStoreBottomSheetContainer({
         userPreferences: user?.preferences as number[],
       });
 
-      handleBottomSheetClose();
+      setSuccessMessage('저장이 완료되었습니다');
+      setSelectedListId(null);
+      setTimeout(() => {
+        router.refresh();
+        handleBottomSheetClose();
+      }, 1000);
     } catch (error: any) {
       // 409 Conflict 에러 확인
       if (error.response && error.response.status === 409) {
         setError('이미 저장한 리스트입니다.');
       } else {
-        console.error('가게 저장 중 오류 발생:', error);
-        setError('저장 중 오류가 발생했습니다.');
+        setError('이미 저장한 리스트입니다.');
       }
 
       // 에러를 반환하거나 전파하지 않고 여기서 처리 완료
@@ -174,23 +188,41 @@ export function SaveStoreBottomSheetContainer({
     }
   }, [error]);
 
+  // 성공 메시지 타이머 설정
+  useEffect(() => {
+    if (successMessage) {
+      const timer = setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [successMessage]);
+
   if (!savedLists) return null;
 
   return (
     <BottomSheet
-      className="h-[50%] p-4"
+      className="h-auto max-h-[80vh] p-4"
       isOpen={isBottomSheetOpen}
       onClose={handleBottomSheetClose}
     >
-      <div className="flex flex-col h-full overflow-y-auto scrollbar-none">
+      <div className="flex flex-col h-full">
         {error && (
           <div className="top-1/3 left-1/2 z-20 absolute bg-red-100 px-4 py-2 border border-red-400 rounded text-red-700 -translate-x-1/2 transform">
             {error}
           </div>
         )}
+        {successMessage && (
+          <div className="top-1/3 left-1/2 z-20 absolute bg-green-100 px-4 py-2 border border-green-400 rounded text-green-700 -translate-x-1/2 transform">
+            {successMessage}
+          </div>
+        )}
 
         <button
-          className="flex items-center"
+          className="flex items-center mb-4"
           onClick={() => {
             handleSideBarClose();
             handleCreateListBtnClick();
@@ -201,7 +233,7 @@ export function SaveStoreBottomSheetContainer({
           </span>
           <span className="text-[#6F6F6F] text-[18px]">새 리스트 만들기</span>
         </button>
-        <div className="flex-1 overflow-y-auto scrollbar-none">
+        <div className="flex-1 overflow-y-auto">
           {savedLists.map((list) => (
             <div
               onClick={() => handleListSelect(list.listId)}
@@ -252,10 +284,12 @@ export function SaveStoreBottomSheetContainer({
           ))}
         </div>
         <button
-          onClick={() => hadleSaveInListBtnClick(selectedListId)}
+          onClick={() =>
+            selectedListId && hadleSaveInListBtnClick(selectedListId)
+          }
           className={cn(
             selectedListId ? 'bg-[#FFB700]' : 'bg-[#D5D5D5]',
-            'text-white text-lg font-semibold w-full rounded-[100px] md:p-2 mt-2 mb-4',
+            'text-white text-lg font-semibold w-full rounded-[100px] md:p-2 mt-4',
           )}
         >
           리스트에 담기
