@@ -86,7 +86,9 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
 
   return (
     <div>
-      <div className="font-semibold text-[12px] mb-3">디저트 메이트</div>
+      <div className="font-semibold text-[12px] md:text-lg mb-3">
+        디저트 메이트
+      </div>
       <div className="flex flex-col gap-y-[5px] md:gap-y-3">
         {optimisticState.map(
           (

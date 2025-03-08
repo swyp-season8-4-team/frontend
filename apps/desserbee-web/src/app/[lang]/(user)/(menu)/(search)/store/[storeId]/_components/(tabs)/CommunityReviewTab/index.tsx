@@ -9,8 +9,9 @@ export function CommunityReviewTab() {
   };
   return (
     <div className="w-full">
-      <div className="flex justify-start items-center bg-[#F6F6F6] p-[5px] md:px-[14px] md:py-3 w-full">
-        <div className="bg-[#D2D2D2] rounded-[1px] md:rounded-[3px] w-[21px] md:w-[58px] aspect-square overflow-hidden">
+      <div className="text-xs font-semibold md:text-lg">커뮤니티 리뷰</div>
+      <div className="flex justify-start items-center bg-[#F6F6F6] p-[8px] md:px-[14px] md:py-3 w-full">
+        <div className="bg-[#D2D2D2] flex-shrink-0 rounded-[1px] md:rounded-[3px] w-[21px] md:w-[147px] md:h-[94px] aspect-square md:aspect-[147/94] overflow-hidden">
           <Image
             src={bee}
             className="object-cover w-full h-full"
@@ -20,7 +21,7 @@ export function CommunityReviewTab() {
         <div className="flex justify-between items-center w-full">
           <div className="flex flex-col items-start pl-[3px] md:pl-[11px] leading-[50%] md:leading-[130%]">
             <div className="flex items-center gap-x-[1px] gap-y-1 md:gap-x-[5px] md:gap-y-[7px]">
-              <div className="rounded-full bg-[#dadada] w-[10px] md:w-[21px] aspect-square overflow-hidden p-[10%]">
+              <div className="rounded-full bg-[#dadada] w-[10px] md:w-[36px] aspect-square overflow-hidden">
                 <Image
                   src={bee}
                   className="object-cover w-full h-full"
@@ -29,7 +30,8 @@ export function CommunityReviewTab() {
               </div>
               <div className="text-[10px] md:text-base">닉네임</div>
             </div>
-            <div className="text-[10px] md:text-base line-clamp-1">
+            <div className="text-[10px] md:text-base line-clamp-1 md:line-clamp-2">
+              리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용
               리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용리뷰내용
             </div>
           </div>
