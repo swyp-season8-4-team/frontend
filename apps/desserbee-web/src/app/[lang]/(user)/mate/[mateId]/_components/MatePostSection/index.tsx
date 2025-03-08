@@ -7,6 +7,8 @@ import Image from "next/image";
 import MateApplyState from "../MateApplyState";
 import MateDetailSeeMoreButton from '../MateDetailSeeMoreButton';
 import MatePostActions from '../MatePostActions';
+import Link from 'next/link';
+import { NavigationPathname } from '@repo/entity/src/navigation';
 
 const mateService = new MateService({
   mateRepository: new MateAPIRepository(), 
@@ -64,10 +66,15 @@ export default async function MatePostSection({ mate, replyCount }: Props) {
           </div>
         </div>
 
-        {/* <div className="mb-4">
-          <p className="mb-2">장소: {place?.placeName}</p>
-          <Link href={`${NavigationPathname.Map}?latitude=${place?.latitude}&longitude=${place?.longitude}`}>이 가게 위치 보러가기</Link>
-        </div> */}
+        {!!place?.latitude && !!place?.longitude && <div className="flex flex-col gap-[4px] mb-4">
+          <p className="text-[#393939] text-[12px] font-medium tracking-[-0.27px]">장소: {place?.placeName}</p>
+          <Link 
+            className="text-[#393939] text-[12px] font-medium tracking-[-0.27px] underline"
+            href={`${NavigationPathname.Map}?latitude=${place?.latitude}&longitude=${place?.longitude}`}
+          >
+            이 가게 위치 보러가기
+          </Link>
+        </div>}
         
         <div className="text-gray-700 mb-6">
           <p className="text-[#393939] text-[12px] leading-normal tracking-[-0.27px]">{content}</p>
@@ -78,7 +85,7 @@ export default async function MatePostSection({ mate, replyCount }: Props) {
           <div className="mb-4">
             <Image
               src={mateImage}
-              alt="post image"
+              alt="post-mate-image"
               width={800}
               height={400}
               className="w-full rounded-lg"

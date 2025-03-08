@@ -16,7 +16,7 @@ export interface RawMate {
   recruitYn: boolean;
   appliedYn?: boolean;
   mateImage: string;
-  profileImage: string[];
+  profileImage: string;
   mateCategory: CommunityCategory;
   place?: {
     placeName: string;
@@ -32,7 +32,6 @@ export interface RawMate {
 export interface Mate extends Omit<RawMate,
   'mateUuid' |
   'userUuid' |
-  'profileImage' |
   'mateImage' |
   'recruitYn' |
   'appliedYn'
@@ -40,7 +39,6 @@ export interface Mate extends Omit<RawMate,
   id: string;
   userId: string;
   mateImage: string;
-  profileImage: string;
   recruit: boolean;
   applied?: boolean;
 }
@@ -51,17 +49,16 @@ export interface RawMateReply {
   mateReplyId: string;
   content: string;
   nickname: string;
-  profileImage: string[];
+  profileImage: string;
   gender: Gender;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface MateReply extends Omit<RawMateReply, 'mateUuid' | 'userUuid' | 'profileImage'> {
+export interface MateReply extends Omit<RawMateReply, 'mateUuid' | 'userUuid'> {
   mateId: string;
   userId: string;
   mateReplyId: string;
-  profileImage: string;
 }
 
 export interface GetMateReplyListRequest {
