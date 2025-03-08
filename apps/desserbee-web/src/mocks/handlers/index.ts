@@ -2,9 +2,11 @@ import { HttpHandler } from 'msw';
 import { userHandlers } from './user-handlers';
 // import { storeHandlers } from './store-handlers';
 import { mateHandlers } from './mate-handlers';
+import { reviewHandlers } from './review-handlers';
 
 export const handlers: HttpHandler[] = [
   ...userHandlers,
   // ...storeHandlers,
-  ...mateHandlers,
+  // ...mateHandlers,
+  ...reviewHandlers,
 ];

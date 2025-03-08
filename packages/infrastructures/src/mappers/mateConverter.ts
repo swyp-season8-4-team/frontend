@@ -1,4 +1,5 @@
-import type { Mate, MateReply, MateWriteRequest, RawMateReply, RawMateWriteReuqest, MateCommunityCategory, RawMate } from "@repo/entity/src/mate";
+import type { CommunityCategory } from "@repo/entity/src/community";
+import type { Mate, MateReply, MateWriteRequest, RawMateReply, RawMateWriteReuqest, RawMate } from "@repo/entity/src/mate";
 
 export default class MateConverter {
   convertRawToMate(rawMate: RawMate): Mate {
@@ -54,7 +55,7 @@ export default class MateConverter {
     };
   }
 
-  convertMateCategoryToId(mateCategory: MateCommunityCategory | null): number {
+  convertMateCategoryToId(mateCategory: CommunityCategory | null): number {
     switch (mateCategory) {
       case '친목도모':
         return 1;

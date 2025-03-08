@@ -1,7 +1,8 @@
 'use client';
 
-import { MateSearchMessageAction, type MateSearchMessageData } from "@/types/postMessage";
-import type { Mate, MateCommunityCategory } from "@repo/entity/src/mate";
+import { SearchMessageAction, type SearchMessageData } from "@/types/postMessage";
+import type { CommunityCategory } from "@repo/entity/src/community";
+import type { Mate } from "@repo/entity/src/mate";
 import MateAPIRepository from "@repo/infrastructures/src/repositories/mateAPIRepository";
 import type { WithChildren } from "@repo/ui";
 import useMessageEvent from "@repo/ui/hooks/useMessageEvent";
@@ -36,7 +37,7 @@ export function CommunityMateListProvider({ children, initialIsLast, initialMate
   const [isLast, setIsLast] = useState(initialIsLast);
   const [page, setPage] = useState(10);
   const [keyword, setKeyword] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<MateCommunityCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<CommunityCategory | null>(null);
 
   const loadMore = useCallback(async () => {
     if (isLast) {
@@ -56,8 +57,8 @@ export function CommunityMateListProvider({ children, initialIsLast, initialMate
   }, [isLast, keyword, page, selectedCategory]);
 
   // FIXME: 중복코드
-  const messageReceiveHandler = useCallback(async ({ action, payload }: MateSearchMessageData) => {
-    if (action === MateSearchMessageAction.GetMateCategories) {
+  const messageReceiveHandler = useCallback(async ({ action, payload }: SearchMessageData) => {
+    if (action === SearchMessageAction.GetCategories) {
       const response = await mateService.getMateList({
         ...(payload?.selectedCategory && { from: 0, to: page }),
         mateCategoryId: payload?.selectedCategory
@@ -74,7 +75,7 @@ export function CommunityMateListProvider({ children, initialIsLast, initialMate
       return;
     }
 
-    if (action === MateSearchMessageAction.GetMateSearch) {
+    if (action === SearchMessageAction.GetSearch) {
       const response = await mateService.getMateList({
         ...(!payload?.keyword && { from: 0, to: page }),
         ...(!!payload?.keyword && { keyword: payload?.keyword }),

@@ -1,12 +1,13 @@
 'use client';
 
 import { startTransition, useContext, useEffect, useRef, useState } from "react";
-import { CommunityMateListContext } from "../../_contexts/CommunityMateListContext";
-import CommunityMateCard from "../CommunityMateCard";
-import { nanoid } from "nanoid";
 
-export default function CommunityMateList() {
-  const { mates, isLast, loadMore } = useContext(CommunityMateListContext);
+import { nanoid } from "nanoid";
+import { CommunityReviewListContext } from "../../_contexts/CommunityReviewListContext";
+import CommunityReviewCard from "../CommunityReviewCard";
+
+export default function CommunityReviewList() {
+  const { reviews, isLast, loadMore } = useContext(CommunityReviewListContext);
   const observerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
   
@@ -36,11 +37,11 @@ export default function CommunityMateList() {
 
   return (
     <section className="flex-1 overflow-y-auto relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] space-y-4">
-      {mates.map((mate) => {
+      {reviews.map((review) => {
         return (
-          <CommunityMateCard
-            key={mate.id || nanoid(10)}
-            mate={mate}
+          <CommunityReviewCard
+            key={review.id || nanoid(10)}
+            review={review}
           />
         )
       })}

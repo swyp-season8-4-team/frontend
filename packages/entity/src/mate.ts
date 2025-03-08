@@ -1,24 +1,6 @@
 import type { BaseRequestData } from "./appMetadata";
+import type { CommunityCategory } from "./community";
 import type { Gender } from "./user";
-
-
-export type MateCategory = MateCommunityCategory | MateReviewCategory;
-
-export type MateCommunityCategory = 
-  '친목도모' | 
-  '사진맛집' | 
-  '카공모임' | 
-  '건강맛집' | 
-  '빵지순례' | 
-  '카페투어';
-export type MateReviewCategory = 
-  '입터짐 조심' | 
-  '신상템 추천' | 
-  '세일 정보' | 
-  '웰시 디저트' | 
-  '빵지순례' | 
-  '내돈내산' |
-  '핫플레이스';
 
 export type MateApplyStatus = 'PENDING' | 'NONE' | 'APPROVED' | 'REJECTED' | 'BANNED';
 
@@ -35,7 +17,7 @@ export interface RawMate {
   appliedYn?: boolean;
   mateImage: string;
   profileImage: string[];
-  mateCategory: MateCommunityCategory;
+  mateCategory: CommunityCategory;
   place?: {
     placeName: string;
     address: string | null;
@@ -150,7 +132,7 @@ export interface MateListRequest {
   from?: number;
   to?: number;
   keyword?: string;
-  mateCategoryId?: MateCommunityCategory;
+  mateCategoryId?: CommunityCategory;
 }
 
 export interface MateListResponse {

@@ -1,4 +1,5 @@
 'use client';
+
 import { useEffect, useRef, useState } from 'react';
 
 export function MockProvider({ children }: { children: React.ReactNode }) {

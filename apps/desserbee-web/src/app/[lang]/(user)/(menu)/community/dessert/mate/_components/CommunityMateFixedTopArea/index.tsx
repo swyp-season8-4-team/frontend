@@ -1,23 +1,11 @@
 'use client';
 
-import { useCallback, useState } from "react";
-
-import type { SearchMessageData } from "@/types/postMessage";
-import { SearchMessageAction } from "@/types/postMessage";
-import useMessageEvent from "@repo/ui/hooks/useMessageEvent";
 import type { WithChildren } from "@repo/ui/index";
 import SearchBar from "../../../_components/SearchBar";
+import useSearchView from "../../../_hooks/useSearchView";
 
 export default function CommunityMateFixedTopArea({ children }: WithChildren) {
-  const [isViewSearchBar, setViewSearchBar] = useState(false);
-
-  const messagehandler = useCallback(({ action }: SearchMessageData) => {
-    if (action === SearchMessageAction.OpenSearchBar) {
-      setViewSearchBar(prev => !prev);
-    }
-  }, []);
-
-  useMessageEvent(messagehandler);
+  const { isViewSearchBar } = useSearchView();
 
   // 고정된 높이를 가진 컨테이너를 사용하고, 내부 콘텐츠만 전환
   return (
