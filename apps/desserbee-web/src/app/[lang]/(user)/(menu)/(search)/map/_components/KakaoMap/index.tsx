@@ -410,6 +410,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           openPermissionModal,
         );
 
+        // 지도 초기화 위치 결정 (저장된 위치 우선)
         const mapCenterPosition = lastPosition || actualPosition;
 
         // 위치 정보가 없는 경우 초기화 불가능
@@ -430,11 +431,8 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           handleMapCenterChange,
         );
 
-        // lastPosition이 있을 경우 지도 중심 설정
-        if (lastPosition) {
-          setMapCenter(lastPosition);
-          await initializedServices.mapService.setMapCenter(lastPosition);
-        }
+        // 지도 중심 설정 (이미 initializeMap에서 설정했으므로 중복 호출 제거)
+        setMapCenter(mapCenterPosition);
 
         // 실제 위치 정보가 있는 경우에만 현재 위치 마커 추가
         if (actualPosition) {
@@ -445,12 +443,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
               userMarkerImage.src,
             );
           currentPositionMarkerRef.current = marker;
-
-          // 저장된 위치가 없는 경우에만 실제 위치로 지도 중심 이동
-          if (!lastPosition) {
-            await initializedServices.mapService.setMapCenter(actualPosition);
-            setMapCenter(actualPosition);
-          }
         }
 
         // 위치 추적 시작
@@ -716,18 +708,12 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
     const hasLocationParams =
       searchParams.get('latitude') && searchParams.get('longitude');
-    const lastPosition = sessionStorageRepository.get(
-      'lastPosition',
-    ) as MapPosition;
 
+    // 이미 지도가 초기화된 상태에서만 위치 이동 처리
     if (hasLocationParams) {
       moveToStore();
-    } else if (lastPosition) {
-      servicesRef.current.mapService?.setMapCenter(lastPosition);
-      setMapCenter(lastPosition);
-      setIsFetchRequired(true);
     }
-  }, [isMapLoaded, moveToStore, searchParams, sessionStorageRepository]);
+  }, [isMapLoaded, moveToStore, searchParams]);
 
   const preferenceTagsProps = useMemo(
     () => ({
