@@ -47,12 +47,12 @@ import type {
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
 
-const preferenceConverter = new PreferenceConverter();
-
 export default class StoreAPIRepository
   extends APIRepository
   implements StoreRepository
 {
+  private readonly preferenceConverter = new PreferenceConverter();
+
   //preference
   async getAllPreference(): Promise<PreferenceData[]> {
     const response = await fetch<void, PreferenceData[]>({
@@ -78,7 +78,7 @@ export default class StoreAPIRepository
 
     if (preferenceTagNames && preferenceTagNames.length > 0) {
       const preferenceTagIds =
-        preferenceConverter.convertPreferenceToRaw(preferenceTagNames);
+        this.preferenceConverter.convertPreferenceToRaw(preferenceTagNames);
 
       url += `&preferenceTagIds=${preferenceTagIds.join(',')}`;
     }
@@ -134,7 +134,7 @@ export default class StoreAPIRepository
     const { latitude, longitude, radius, preferenceTagNames } = data || {};
 
     const preferenceTagIds =
-      preferenceConverter.convertPreferenceToRaw(preferenceTagNames);
+      this.preferenceConverter.convertPreferenceToRaw(preferenceTagNames);
 
     const response = await fetch<void, NearByStoreData[]>({
       ...(authorization && {
@@ -386,7 +386,7 @@ export default class StoreAPIRepository
     const { listId, storeUuid, userPreferences } = data || {};
 
     const preferenceTagIds =
-      preferenceConverter.convertPreferenceToRaw(userPreferences);
+      this.preferenceConverter.convertPreferenceToRaw(userPreferences);
 
     const url = `${this.endpoint}/user-store/lists/${listId}/stores/${storeUuid}`;
 
