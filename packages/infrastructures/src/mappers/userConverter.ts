@@ -1,7 +1,10 @@
 import type { RawUser } from "@repo/api/src/desserbee-web/user";
 import type { User } from "@repo/entity/src/user";
+import PreferenceConverter from "./preferenceConverter";
 
 export default class UserConverter {
+  private readonly preferenceConverter = new PreferenceConverter();
+  
   convertRawToUser(raw: RawUser): User {
     return {
       id: raw.userUuid,
@@ -11,7 +14,7 @@ export default class UserConverter {
       phoneNumber: raw.phoneNumber,
       address: raw.address,
       gender: raw.gender,
-      preferences: raw.preferences,
+      preferences: this.preferenceConverter.convertRawToPreference(raw.preferences.sort((a, b) => a - b)),
       mbti: raw.mbti,
       profileImageUrl: raw.profileImageUrl,
     };
@@ -26,7 +29,7 @@ export default class UserConverter {
       phoneNumber: user.phoneNumber,
       address: user.address,
       gender: user.gender,
-      preferences: user.preferences,
+      preferences: this.preferenceConverter.convertPreferenceToRaw(user.preferences),
       mbti: user.mbti,
       profileImageUrl: user.profileImageUrl,
     };

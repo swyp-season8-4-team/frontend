@@ -5,7 +5,6 @@ import { UserContext } from '@/contexts/UserContext';
 import Image from 'next/image';
 import { useContext, useRef, useState } from 'react';
 
-
 export default function ProfileSection() {
   const { user } = useContext(UserContext);
   const [imageUrl, setImageUrl] = useState<string>(user?.profileImageUrl ?? '');
