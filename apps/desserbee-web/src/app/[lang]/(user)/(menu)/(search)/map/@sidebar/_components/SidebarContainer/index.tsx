@@ -6,23 +6,15 @@ import IconPin from '@repo/design-system/components/icons/IconPin';
 import IconPlus from '@repo/design-system/components/icons/IconPlus';
 import IconTrashCan from '@repo/design-system/components/icons/IconTrashCan';
 import { cn } from '@repo/ui/lib/utils';
-import {
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-  useMemo,
-} from 'react';
+import { useContext, useEffect, useRef, useState, useCallback } from 'react';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { CreateListModal } from '../../_modals/CreateListModal';
 import type { SavedListData } from '@repo/entity/src/store';
 import { useRouter } from 'next/navigation';
 import { NavigationPathGroup } from '@repo/entity/src/navigation';
-import StoreService from '@repo/usecase/src/storeService';
-import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import { UserContext } from '@/contexts/UserContext';
 import { HTTPError } from '@repo/api/src/error';
+import { createSavedList, deleteSavedList, getSavedListAll } from './action';
 
 interface SideBarContainerProps {
   showSidebar: boolean;
@@ -36,13 +28,6 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
   const { user } = useContext(UserContext);
 
   const [totalSavedList, setTotalSavedList] = useState<SavedListData[]>([]);
-  const storeService = useMemo(
-    () =>
-      new StoreService({
-        storeRepository: new StoreAPIRepository(),
-      }),
-    [],
-  );
 
   const handleSideBarClose = () => {
     const currentPath = window.location.pathname;
@@ -56,7 +41,7 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
     if (!user?.id) return;
 
     try {
-      await storeService.createSavedList({
+      await createSavedList({
         userUuid: user.id,
         listName: listName,
         iconColorId: colorId,
@@ -127,9 +112,7 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
     try {
       e.stopPropagation();
 
-      console.log('삭제된 리스트:', listId);
-
-      await storeService.deleteSavedList({ listId: listId });
+      await deleteSavedList({ listId: listId });
       setSelectedListId(null);
       router.refresh();
     } catch (error) {
@@ -141,9 +124,9 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
 
   const handleTotalSavedList = useCallback(async () => {
     if (!user?.id) return;
-    const lists = await storeService.getSavedListAll(user.id);
+    const lists = await getSavedListAll({ userUuid: user.id });
     setTotalSavedList(lists);
-  }, [storeService, user]);
+  }, [user]);
 
   useEffect(() => {
     handleTotalSavedList();

@@ -14,6 +14,11 @@ import { cn } from '@repo/ui/lib/utils';
 import IconPlus from '@repo/design-system/components/icons/IconPlus';
 import IconCheck from '@repo/design-system/components/icons/IconCheck';
 import { HTTPError } from '@repo/api/src/error';
+import {
+  addStoreInSavedList,
+  createSavedList,
+  getSavedListAll,
+} from './action';
 
 interface SaveStoreBottomSheetContainerProps {
   showBottomSheet: boolean;
@@ -36,20 +41,12 @@ export function SaveStoreBottomSheetContainer({
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const storeService = useMemo(
-    () =>
-      new StoreService({
-        storeRepository: new StoreAPIRepository(),
-      }),
-    [],
-  );
-
   const handleSavedListFetch = useCallback(async () => {
     if (!user) return;
 
-    const savedLists = await storeService.getSavedListAll(user.id);
+    const savedLists = await getSavedListAll({ userUuid: user.id });
     setSavedLists(savedLists);
-  }, [storeService, user]);
+  }, [user]);
 
   const handleBottomSheetClose = () => {
     const params = new URLSearchParams(searchParams);
@@ -72,7 +69,7 @@ export function SaveStoreBottomSheetContainer({
     if (!user?.id) return;
 
     try {
-      await storeService.createSavedList({
+      await createSavedList({
         userUuid: user.id,
         listName: listName,
         iconColorId: colorId,
@@ -116,7 +113,7 @@ export function SaveStoreBottomSheetContainer({
 
   const hadleSaveInListBtnClick = async (listId: number) => {
     try {
-      await storeService.addStoreInSavedList({
+      await addStoreInSavedList({
         listId: listId as number,
         storeUuid,
         userPreferences: user?.preferences as number[],

@@ -132,7 +132,6 @@ export interface StoreSummaryInfoData
 export interface StoreDetailInfoRequest {
   storeUuid: string;
   userUuid?: string;
-  authorization?: string;
 }
 
 export interface StoreDetailInfoData
@@ -353,7 +352,6 @@ export interface SavedListData {
 // 상세정보에서 사용
 export interface ParentSavedListRequest {
   listId: number;
-  authorization?: string;
 }
 
 // export interface StoreInSavedListResponse {
@@ -563,17 +561,17 @@ export interface StoreRepository {
     data: BaseRequestData<NearByStoreRequest>,
   ): Promise<NearByStoreData[]>;
 
-  getNearbyFilteredStores(
-    data: BaseRequestData<NearbyFilteredStoresRequest>,
-  ): Promise<NearByStoreData[]>;
+  // getNearbyFilteredStores(
+  //   data: BaseRequestData<NearbyFilteredStoresRequest>,
+  // ): Promise<NearByStoreData[]>;
 
-  getNearbyPreferStores({
-    data,
-  }: BaseRequestData<NearByStoreRequest>): Promise<NearByStoreData[]>;
+  // getNearbyPreferStores({
+  //   data,
+  // }: BaseRequestData<NearByStoreRequest>): Promise<NearByStoreData[]>;
 
-  getNearBySearchStores(
-    data: BaseRequestData<NearByStoreSearchRequest>,
-  ): Promise<NearByStoreData[]>;
+  // getNearBySearchStores(
+  //   data: BaseRequestData<NearByStoreSearchRequest>,
+  // ): Promise<NearByStoreData[]>;
 
   getStoreSummary(
     data: BaseRequestData<StoreSummaryInfoRequest>,
