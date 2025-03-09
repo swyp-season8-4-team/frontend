@@ -17,10 +17,6 @@ import {
   createSavedList,
   getSavedListAll,
 } from './action';
-import PreferenceConverter from '@repo/infrastructures/src/mappers/preferenceConverter';
-
-// FIXME: 리팩토링이 필요한데 지금 할수 없어서 임시 사용 (원래 req, res raw data 변환용)
-const preferenceConverter = new PreferenceConverter();
 
 interface SaveStoreBottomSheetContainerProps {
   showBottomSheet: boolean;
@@ -118,7 +114,7 @@ export function SaveStoreBottomSheetContainer({
       await addStoreInSavedList({
         listId: listId as number,
         storeUuid,
-        userPreferences: preferenceConverter.convertPreferenceToRaw(user?.preferences || []),
+        userPreferences: user?.preferences || [],
       });
 
       setSuccessMessage('저장이 완료되었습니다');

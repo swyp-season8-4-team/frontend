@@ -386,18 +386,18 @@ export default class StoreAPIRepository
 
     const { listId, storeUuid, userPreferences } = data || {};
 
+    const preferenceTagIds =
+      preferenceConverter.convertPreferenceToRaw(userPreferences);
+
     const url = `${this.endpoint}/user-store/lists/${listId}/stores/${storeUuid}`;
 
-    const response = await fetch<
-      typeof userPreferences,
-      AddStoreInSavedListResponse
-    >({
+    const response = await fetch<number[], AddStoreInSavedListResponse>({
       ...(authorization && {
         headers: {
           Authorization: authorization,
         },
       }),
-      data: userPreferences,
+      data: preferenceTagIds,
       method: 'POST',
       url,
     });

@@ -434,7 +434,7 @@ export interface EditSavedListResponse {
 export interface AddStoreInSavedListRequest {
   listId: number;
   storeUuid: string;
-  userPreferences: number[];
+  userPreferences: Preference[];
 }
 
 export interface AddStoreInSavedListResponse {
@@ -445,7 +445,7 @@ export interface AddStoreInSavedListResponse {
   storeName: string;
   storeAddress: string;
   imageUrls: string[];
-  userPreferences: string[];
+  userPreferences: number[];
 }
 
 export interface DeleteSavedListRequest {

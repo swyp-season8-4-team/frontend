@@ -1,5 +1,6 @@
 'use server';
 
+import type { Preference } from '@repo/entity/src/preference';
 import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import StoreService from '@repo/usecase/src/storeService';
@@ -54,7 +55,7 @@ export async function getSavedListAll({ userUuid }: GetSavedListAll) {
 interface AddStoreInSavedList {
   listId: number;
   storeUuid: string;
-  userPreferences: number[];
+  userPreferences: Preference[];
 }
 
 export async function addStoreInSavedList({
