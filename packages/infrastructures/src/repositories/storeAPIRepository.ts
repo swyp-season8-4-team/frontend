@@ -386,7 +386,6 @@ export default class StoreAPIRepository
       ...(authorization && {
         headers: {
           Authorization: authorization,
-          'Content-Type': 'multipart/form-data',
         },
       }),
       data: userPreferences,

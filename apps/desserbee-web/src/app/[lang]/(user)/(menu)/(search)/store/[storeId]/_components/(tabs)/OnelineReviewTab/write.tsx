@@ -3,11 +3,10 @@ import { useContext, useState } from 'react';
 import IconPicutre from '@repo/design-system/components/icons/IconPicture';
 import IconHalfStar from '@repo/design-system/components/icons/IconHalfStar';
 import Image from 'next/image';
-import StoreService from '@repo/usecase/src/storeService';
-import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import { UserContext } from '@/contexts/UserContext';
 import { cn } from '@repo/ui/lib/utils';
 import { useRouter } from 'next/navigation';
+import { createStoreOnlineReviews } from './action';
 
 interface OneLineReviewWriteProps {
   storeUuid: string;
@@ -29,10 +28,6 @@ export function OneLineReviewWrite({
     rating: false,
     image: false,
     text: false,
-  });
-
-  const storeService = new StoreService({
-    storeRepository: new StoreAPIRepository(),
   });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -77,7 +72,7 @@ export function OneLineReviewWrite({
         images: reviewImage ? [reviewImage] : [],
       };
 
-      await storeService.createStoreOnlineReviews(data);
+      await createStoreOnlineReviews(data);
 
       // 리뷰 작성 후 상태 초기화
       setReviewText('');

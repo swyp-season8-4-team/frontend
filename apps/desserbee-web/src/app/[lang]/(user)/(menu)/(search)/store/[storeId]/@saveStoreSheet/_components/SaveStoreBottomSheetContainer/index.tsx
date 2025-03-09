@@ -3,10 +3,8 @@
 import { UserContext } from '@/contexts/UserContext';
 import { BottomSheet } from '@repo/design-system/components/BottomSheet';
 import type { SavedListData } from '@repo/entity/src/store';
-import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
-import StoreService from '@repo/usecase/src/storeService';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useCallback, useContext, useEffect, useState, useMemo } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { CreateListModal } from '../../../../../map/@sidebar/_modals/CreateListModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import IconFlower from '@repo/design-system/components/icons/IconFlower';

@@ -766,11 +766,18 @@ export default class StoreService {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
 
-      await this.storeRepository.deleteOnelineReview({
+      const authorization = await this.authRepository.getAuthorization();
+
+      const requestData = {
         data: params,
-      });
+        authorization,
+      };
+
+      await this.storeRepository.deleteOnelineReview(requestData);
     } catch (error) {
       throw error;
     }
@@ -782,11 +789,18 @@ export default class StoreService {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
 
-      const result = await this.storeRepository.editOnelineReview({
+      const authorization = await this.authRepository.getAuthorization();
+
+      const requestData = {
         data: params,
-      });
+        authorization,
+      };
+
+      const result = await this.storeRepository.editOnelineReview(requestData);
       return result;
     } catch (error) {
       throw error;

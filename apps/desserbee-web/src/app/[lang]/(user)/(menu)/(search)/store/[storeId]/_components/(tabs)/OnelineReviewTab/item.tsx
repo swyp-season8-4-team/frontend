@@ -6,10 +6,9 @@ import IconPicutre from '@repo/design-system/components/icons/IconPicture';
 import { formatDate } from '../../../../_utils/date';
 import { useContext, useState } from 'react';
 import { UserContext } from '@/contexts/UserContext';
-import StoreService from '@repo/usecase/src/storeService';
-import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import { useRouter } from 'next/navigation';
 import IconHalfStar from '@repo/design-system/components/icons/IconHalfStar';
+import { deleteOnelineReview, editOnelineReview } from './action';
 
 interface OneLineReviewItemProps {
   userUuid: string;
@@ -41,9 +40,6 @@ export function OneLineReviewItem({
   const [editedRating, setEditedRating] = useState(rating);
   const [editedContent, setEditedContent] = useState(content);
   const [editedImage, setEditedImage] = useState<File | null>();
-  const storeService = new StoreService({
-    storeRepository: new StoreAPIRepository(),
-  });
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -73,7 +69,7 @@ export function OneLineReviewItem({
           ...(editedImage && { newImages: [editedImage] }),
         };
 
-        await storeService.editOnelineReview(data);
+        await editOnelineReview(data);
         setIsEditing(false);
         router.refresh();
       } catch (err) {
@@ -90,7 +86,7 @@ export function OneLineReviewItem({
   ) => {
     if (confirm('리뷰를 삭제하시겠습니까?')) {
       try {
-        await storeService.deleteOnelineReview({ storeUuid, reviewUuid });
+        await deleteOnelineReview({ storeUuid, reviewUuid });
         router.refresh();
       } catch (err) {
         console.log('리뷰 삭제 중 에러: ' + err);

@@ -613,6 +613,7 @@ export interface StoreRepository {
   }: BaseRequestData<DeleteSavedListRequest>): Promise<void>;
 
   addStoreInSavedList({
+    authorization,
     data,
   }: BaseRequestData<AddStoreInSavedListRequest>): Promise<AddStoreInSavedListResponse>;
 
@@ -623,6 +624,7 @@ export interface StoreRepository {
 
   // 상세정보에서 사용
   getParentSavedList({
+    authorization,
     data,
   }: BaseRequestData<ParentSavedListRequest>): Promise<ParentSavedListResponse>;
 
@@ -667,16 +669,19 @@ export interface StoreRepository {
   ): Promise<StoreOnelineReivewData[]>;
 
   createOnelineReview({
+    authorization,
     data,
   }: BaseRequestData<CreateOnelineReviewRequestFormData>): Promise<
     CreateOnelineReviewResponse[]
   >;
 
   deleteOnelineReview({
+    authorization,
     data,
   }: BaseRequestData<DeleteOnelineReviewRequest>): Promise<void>;
 
   editOnelineReview({
+    authorization,
     data,
   }: BaseRequestData<EditOnelineReviewRequest>): Promise<OneLineReview>;
 }
