@@ -166,6 +166,17 @@ export interface StoreDetailInfoData
   menus: Menu[];
   totalReviewCount: number;
   storeReviews: OneLineReview[];
+  communityReviews: {
+    reviewUuid: string;
+    userUuid: string;
+    nickname: string;
+    profileImage: string;
+    thumbnail: string;
+    title: string;
+    content: string;
+    createdAt: string;
+    updatedAt?: string;
+  }[];
   mate: {
     mateUuid: string;
     mateCategory: string;
