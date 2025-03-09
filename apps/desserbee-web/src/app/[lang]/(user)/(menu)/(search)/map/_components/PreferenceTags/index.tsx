@@ -11,17 +11,14 @@ import { MyPreferNotSignInModal } from '../../_modals/MyPreferNotSignInModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import type { PreferenceData } from '@repo/entity/src/store';
 import { UserContext } from '@/contexts/UserContext';
-import PreferenceConverter from '@repo/infrastructures/src/mappers/preferenceConverter';
-
-// FIXME: 리팩토링이 필요한데 지금 할수 없어서 임시 사용 (원래 req, res raw data 변환용)
-const preferenceConverter = new PreferenceConverter();
+import type { Preference } from '@repo/entity/src/preference';
 
 interface PreferenceTagsProps {
   categories: PreferenceData[];
   isMyPreferSelected: boolean;
-  selectedCategories: Set<number>;
-  handleMyPreferenceTagClick: (userPreferences: number[]) => void;
-  updateSelectedTag: (category: number) => void;
+  selectedCategories: Set<Preference>;
+  handleMyPreferenceTagClick: (userPreferences: Preference[]) => void;
+  updateSelectedTag: (categoryName: Preference) => void;
 }
 
 export function PreferenceTags({
@@ -40,9 +37,8 @@ export function PreferenceTags({
   };
 
   const handleMyPreferenceBtnClick = () => {
-    console.log('My Preference Button Clicked');
     if (user) {
-      handleMyPreferenceTagClick(preferenceConverter.convertPreferenceToRaw(user.preferences));
+      handleMyPreferenceTagClick(user.preferences);
     } else {
       push('modal', {
         component: <MyPreferNotSignInModal onClose={closeModal} />,
@@ -50,10 +46,9 @@ export function PreferenceTags({
     }
   };
 
-  const handleTagClick = (categoryId: number) => {
-    console.log('Tag Clicked:', categoryId);
+  const handleTagClick = (categoryName: Preference) => {
     if (user) {
-      updateSelectedTag(categoryId);
+      updateSelectedTag(categoryName);
     } else {
       push('modal', {
         component: <MyPreferNotSignInModal onClose={closeModal} />,
@@ -93,11 +88,11 @@ export function PreferenceTags({
             >
               <div className="px-1 py-1">
                 <Tag
-                  onClick={() => handleTagClick(category.id)}
+                  onClick={() => handleTagClick(category.preferenceName)}
                   className={cn(
                     // 'text-3 md:text-lg font-medium py-[6px] md:py-2 md:px-3',
                     'text-3  font-medium py-[6px]',
-                    selectedCategories.has(category.id) &&
+                    selectedCategories.has(category.preferenceName) &&
                       'bg-primary text-white',
                   )}
                 >

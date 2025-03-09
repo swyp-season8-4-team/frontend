@@ -1,4 +1,5 @@
 import type { AuthRepository } from '@repo/entity/src/auth';
+import type { Preference } from '@repo/entity/src/preference';
 import type {
   StoreDetailInfoData,
   NearByStoreData,
@@ -66,13 +67,13 @@ export default class StoreService {
     latitude,
     longitude,
     radius,
-    preferenceTagIds,
+    preferenceTagNames,
     searchKeyword,
   }: {
     latitude: number;
     longitude: number;
     radius: number;
-    preferenceTagIds?: number[];
+    preferenceTagNames?: Preference[];
     searchKeyword?: string;
   }): Promise<NearByStoreData[]> {
     try {
@@ -89,7 +90,7 @@ export default class StoreService {
           latitude,
           longitude,
           radius,
-          preferenceTagIds,
+          preferenceTagNames,
           searchKeyword,
         },
         ...(authorization && { authorization }),

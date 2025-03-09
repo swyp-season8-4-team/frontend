@@ -1,4 +1,5 @@
 import APIRepository from './apiRepository';
+import PreferenceConverter from '../mappers/preferenceConverter';
 import type {
   StoreRepository,
   StoreSummaryInfoData,
@@ -50,6 +51,8 @@ export default class StoreAPIRepository
   extends APIRepository
   implements StoreRepository
 {
+  private readonly preferenceConverter = new PreferenceConverter();
+
   //preference
   async getAllPreference(): Promise<PreferenceData[]> {
     const response = await fetch<void, PreferenceData[]>({
@@ -68,12 +71,15 @@ export default class StoreAPIRepository
       throw Error('data required');
     }
 
-    const { latitude, longitude, radius, preferenceTagIds, searchKeyword } =
+    const { latitude, longitude, radius, preferenceTagNames, searchKeyword } =
       data || {};
 
     let url = `${this.endpoint}/stores/map?latitude=${latitude}&longitude=${longitude}&radius=${radius}`;
 
-    if (preferenceTagIds && preferenceTagIds.length > 0) {
+    if (preferenceTagNames && preferenceTagNames.length > 0) {
+      const preferenceTagIds =
+        this.preferenceConverter.convertPreferenceToRaw(preferenceTagNames);
+
       url += `&preferenceTagIds=${preferenceTagIds.join(',')}`;
     }
 
@@ -125,7 +131,10 @@ export default class StoreAPIRepository
       throw Error('data required');
     }
 
-    const { latitude, longitude, radius, preferenceTagId } = data || {};
+    const { latitude, longitude, radius, preferenceTagNames } = data || {};
+
+    const preferenceTagIds =
+      this.preferenceConverter.convertPreferenceToRaw(preferenceTagNames);
 
     const response = await fetch<void, NearByStoreData[]>({
       ...(authorization && {
@@ -135,7 +144,7 @@ export default class StoreAPIRepository
         },
       }),
       method: 'GET',
-      url: `${this.endpoint}/stores/map?latitude=${latitude}&longitude=${longitude}&radius=${radius}&preference=${preferenceTagId}`,
+      url: `${this.endpoint}/stores/map?latitude=${latitude}&longitude=${longitude}&radius=${radius}&preference=${preferenceTagIds}`,
     });
 
     return response;
@@ -357,7 +366,6 @@ export default class StoreAPIRepository
       ...(authorization && {
         headers: {
           Authorization: authorization,
-          'Content-Type': 'multipart/form-data',
         },
       }),
       method: 'DELETE',
@@ -377,18 +385,18 @@ export default class StoreAPIRepository
 
     const { listId, storeUuid, userPreferences } = data || {};
 
+    const preferenceTagIds =
+      this.preferenceConverter.convertPreferenceToRaw(userPreferences);
+
     const url = `${this.endpoint}/user-store/lists/${listId}/stores/${storeUuid}`;
 
-    const response = await fetch<
-      typeof userPreferences,
-      AddStoreInSavedListResponse
-    >({
+    const response = await fetch<number[], AddStoreInSavedListResponse>({
       ...(authorization && {
         headers: {
           Authorization: authorization,
         },
       }),
-      data: userPreferences,
+      data: preferenceTagIds,
       method: 'POST',
       url,
     });
