@@ -26,3 +26,20 @@ export async function getStoresInSavedList({ listId }: { listId: number }) {
 
   return storeList;
 }
+
+interface DeleteStoreInSavedList {
+  listId: number;
+  storeUuid: string;
+}
+
+export async function deleteStoreInSavedList({
+  listId,
+  storeUuid,
+}: DeleteStoreInSavedList) {
+  const response = await storeService.deleteStoreInSavedList({
+    listId,
+    storeUuid,
+  });
+
+  return response;
+}
