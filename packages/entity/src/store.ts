@@ -1,4 +1,5 @@
 import type { BaseRequestData } from './appMetadata';
+import type { Preference } from './preference';
 
 export interface Store {
   storeId: number;
@@ -73,14 +74,12 @@ export interface SavedList {
   savedListId: number | null;
 }
 
-// export type StoreTag = '베이커리' | '루프탑 있음' | '애완동물 동반 가능'; // TODO: 전체 카테고리 정리하기
-
 // store
 export interface NearByStoreRequest {
   latitude: number;
   longitude: number;
   radius: number;
-  preferenceTagIds?: number[];
+  preferenceTagNames?: Preference[];
   searchKeyword?: string;
 }
 
@@ -88,7 +87,7 @@ export interface NearbyFilteredStoresRequest {
   latitude: number;
   longitude: number;
   radius: number;
-  preferenceTagId: number[];
+  preferenceTagNames: Preference[];
 }
 
 export interface NearByStoreSearchRequest {
@@ -497,7 +496,7 @@ export interface GetMenuListRequest {
 
 export interface PreferenceData {
   id: number;
-  preferenceName: string;
+  preferenceName: Preference;
   preferenceDesc: string;
 }
 

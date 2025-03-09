@@ -1,25 +1,26 @@
+import type { Preference } from '@repo/entity/src/preference';
 import { useState } from 'react';
 
 export const useTag = () => {
-  const [selectedCategories, setSelectedCategories] = useState<Set<number>>(
+  const [selectedCategories, setSelectedCategories] = useState<Set<Preference>>(
     new Set(),
   );
   const [isMyPreferSelected, setIsMyPreferSelected] = useState(false);
 
-  const updateSelectedTag = (category: number) => {
+  const updateSelectedTag = (categoryName: Preference) => {
     setSelectedCategories((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(category)) {
-        newSet.delete(category);
+      if (newSet.has(categoryName)) {
+        newSet.delete(categoryName);
       } else {
-        newSet.add(category);
+        newSet.add(categoryName);
       }
       return newSet;
     });
     setIsMyPreferSelected(false);
   };
 
-  const handleMyPreferenceTagClick = (userPreferences: number[]) => {
+  const handleMyPreferenceTagClick = (userPreferences: Preference[]) => {
     setIsMyPreferSelected((prev) => {
       const newValue = !prev;
 

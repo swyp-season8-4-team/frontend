@@ -1,4 +1,5 @@
 import APIRepository from './apiRepository';
+import PreferenceConverter from '../mappers/preferenceConverter';
 import type {
   StoreRepository,
   StoreSummaryInfoData,
@@ -46,6 +47,8 @@ import type {
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
 
+const preferenceConverter = new PreferenceConverter();
+
 export default class StoreAPIRepository
   extends APIRepository
   implements StoreRepository
@@ -68,12 +71,16 @@ export default class StoreAPIRepository
       throw Error('data required');
     }
 
-    const { latitude, longitude, radius, preferenceTagIds, searchKeyword } =
+    const { latitude, longitude, radius, preferenceTagNames, searchKeyword } =
       data || {};
 
     let url = `${this.endpoint}/stores/map?latitude=${latitude}&longitude=${longitude}&radius=${radius}`;
 
-    if (preferenceTagIds && preferenceTagIds.length > 0) {
+    if (preferenceTagNames && preferenceTagNames.length > 0) {
+      const preferenceTagIds =
+        preferenceConverter.convertPreferenceToRaw(preferenceTagNames);
+
+      console.log(preferenceTagIds);
       url += `&preferenceTagIds=${preferenceTagIds.join(',')}`;
     }
 
@@ -125,7 +132,10 @@ export default class StoreAPIRepository
       throw Error('data required');
     }
 
-    const { latitude, longitude, radius, preferenceTagId } = data || {};
+    const { latitude, longitude, radius, preferenceTagNames } = data || {};
+
+    const preferenceTagIds =
+      preferenceConverter.convertPreferenceToRaw(preferenceTagNames);
 
     const response = await fetch<void, NearByStoreData[]>({
       ...(authorization && {
@@ -135,7 +145,7 @@ export default class StoreAPIRepository
         },
       }),
       method: 'GET',
-      url: `${this.endpoint}/stores/map?latitude=${latitude}&longitude=${longitude}&radius=${radius}&preference=${preferenceTagId}`,
+      url: `${this.endpoint}/stores/map?latitude=${latitude}&longitude=${longitude}&radius=${radius}&preference=${preferenceTagIds}`,
     });
 
     return response;

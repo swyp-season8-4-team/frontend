@@ -1,5 +1,6 @@
 'use server';
 
+import type { Preference } from '@repo/entity/src/preference';
 import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import StoreService from '@repo/usecase/src/storeService';
@@ -10,13 +11,13 @@ export async function getNearbyStores({
   latitude,
   longitude,
   radius,
-  preferenceTagIds,
+  preferenceTagNames,
   searchKeyword,
 }: {
   latitude: number;
   longitude: number;
   radius: number;
-  preferenceTagIds?: number[];
+  preferenceTagNames?: Preference[];
   searchKeyword?: string;
 }) {
   const storeService = new StoreService({
@@ -28,7 +29,7 @@ export async function getNearbyStores({
     latitude: latitude,
     longitude: longitude,
     radius: radius,
-    preferenceTagIds,
+    preferenceTagNames,
     searchKeyword,
   });
 
