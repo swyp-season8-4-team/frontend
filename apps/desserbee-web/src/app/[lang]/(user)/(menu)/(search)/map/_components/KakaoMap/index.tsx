@@ -642,8 +642,9 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
     const latParam = searchParams.get('latitude');
     const lngParam = searchParams.get('longitude');
+    const keyword = searchParams.get('keyword');
 
-    if (!latParam || !lngParam) return;
+    if (!latParam || !lngParam || !keyword) return;
 
     const paramPosition = {
       latitude: parseFloat(latParam),
@@ -657,7 +658,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       setMapCenter(paramPosition);
       setIsFetchRequired(true);
 
-      fetchNearbyStores(paramPosition)
+      fetchNearbyStores(paramPosition, [], keyword)
         .then((stores) => {
           if (stores) {
             updateNewClusterMarkers(stores);
