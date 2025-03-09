@@ -16,7 +16,7 @@ export function CommunityReviewTab({
   };
   return (
     <div className="w-full">
-      <div className="text-xs font-semibold md:text-lg">커뮤니티 리뷰</div>
+      <div className="text-[10px] font-semibold md:text-lg">커뮤니티 리뷰</div>
       {communityReviews.length > 0 ? (
         communityReviews.map((review) => (
           <div
