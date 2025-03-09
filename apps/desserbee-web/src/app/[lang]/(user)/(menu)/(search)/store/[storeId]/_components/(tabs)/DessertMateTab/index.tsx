@@ -132,15 +132,17 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
                 </div>
               </div>
               <div className="flex items-center">
-                <div className="w-[45px] h-[45px] flex-shrink-0 m-1 aspect-square bg-[#D9D9D9] overflow-hidden  md:w-[97px] md:h-[97px]">
-                  <Image
-                    className="w-full h-full"
-                    src={thumbnail}
-                    width={50}
-                    height={50}
-                    alt={nickname}
-                  />
-                </div>
+                {thumbnail && (
+                  <div className="w-[45px] h-[45px] flex-shrink-0 m-1 aspect-square bg-[#D9D9D9] overflow-hidden  md:w-[97px] md:h-[97px]">
+                    <Image
+                      className="w-full h-full"
+                      src={thumbnail}
+                      width={50}
+                      height={50}
+                      alt={nickname}
+                    />
+                  </div>
+                )}
                 <div className="flex flex-col leading-3">
                   <div className="font-semibold text-[10px] md:text-base">
                     {title}
