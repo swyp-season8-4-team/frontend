@@ -21,7 +21,8 @@ import { UserContext } from '@/contexts/UserContext';
 import { useRouter } from 'next/navigation';
 import { NeedLoginModal } from '../../../_modals/NeedLoginModal';
 
-interface DetailInfoContainerProps extends StoreDetailInfoData {
+interface DetailInfoContainerProps
+  extends Omit<StoreDetailInfoData, 'communityReviews'> {
   parentlistInfo?: ParentSavedListResponse;
 }
 export function DetailInfoContainer({

@@ -104,6 +104,12 @@ export default class StoreAPIRepository
 
     const { latitude, longitude, radius } = data || {};
     const response = await fetch<void, NearByStoreData[]>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+          'Content-Type': 'multipart/form-data',
+        },
+      }),
       method: 'GET',
       url: `${this.endpoint}/stores/map/my-preferences?latitude=${latitude}&longitude=${longitude}&radius=${radius}`,
     });
@@ -113,6 +119,7 @@ export default class StoreAPIRepository
 
   async getNearbyFilteredStores({
     data,
+    authorization,
   }: BaseRequestData<NearbyFilteredStoresRequest>): Promise<NearByStoreData[]> {
     if (!data) {
       throw Error('data required');
@@ -121,6 +128,12 @@ export default class StoreAPIRepository
     const { latitude, longitude, radius, preferenceTagId } = data || {};
 
     const response = await fetch<void, NearByStoreData[]>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+          'Content-Type': 'multipart/form-data',
+        },
+      }),
       method: 'GET',
       url: `${this.endpoint}/stores/map?latitude=${latitude}&longitude=${longitude}&radius=${radius}&preference=${preferenceTagId}`,
     });
@@ -130,6 +143,7 @@ export default class StoreAPIRepository
 
   async getNearBySearchStores({
     data,
+    authorization,
   }: BaseRequestData<NearByStoreSearchRequest>): Promise<NearByStoreData[]> {
     if (!data) {
       throw Error('data required');
@@ -138,6 +152,12 @@ export default class StoreAPIRepository
     const { latitude, longitude, radius, searchKeyword } = data || {};
 
     const response = await fetch<void, NearByStoreData[]>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+          'Content-Type': 'multipart/form-data',
+        },
+      }),
       method: 'GET',
       url: `${this.endpoint}/stores/map?latitude=${latitude}&longitude=${longitude}&radius=${radius}&searchKeyword=${searchKeyword}`,
     });
@@ -269,6 +289,7 @@ export default class StoreAPIRepository
   // saved list
   async createSavedList({
     data,
+    authorization,
   }: BaseRequestData<CreateSavedListRequest>): Promise<CreateSavedListResponse> {
     if (!data) {
       throw Error('data required');
@@ -279,6 +300,11 @@ export default class StoreAPIRepository
     const url = `${this.endpoint}/user-store/${userUuid}/lists?userUuid=${userUuid}&listName=${listName}&iconColorId=${iconColorId}`;
 
     const response = await fetch<void, CreateSavedListResponse>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'POST',
       url,
     });
@@ -315,7 +341,10 @@ export default class StoreAPIRepository
     return response;
   }
 
-  async deleteSavedList({ data }: BaseRequestData<DeleteSavedListRequest>) {
+  async deleteSavedList({
+    data,
+    authorization,
+  }: BaseRequestData<DeleteSavedListRequest>) {
     if (!data) {
       throw Error('data required');
     }
@@ -325,6 +354,12 @@ export default class StoreAPIRepository
     const url = `${this.endpoint}/user-store/lists/${listId}`;
 
     const response = await fetch<DeleteSavedListRequest, void>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+          'Content-Type': 'multipart/form-data',
+        },
+      }),
       method: 'DELETE',
       url,
     });
@@ -348,6 +383,11 @@ export default class StoreAPIRepository
       typeof userPreferences,
       AddStoreInSavedListResponse
     >({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       data: userPreferences,
       method: 'POST',
       url,
@@ -358,6 +398,7 @@ export default class StoreAPIRepository
 
   async deleteStoreInSavedList({
     data,
+    authorization,
   }: BaseRequestData<DeleteStoreInSavedListRequest>): Promise<void> {
     if (!data) {
       throw Error('data required');
@@ -368,6 +409,12 @@ export default class StoreAPIRepository
     const url = `${this.endpoint}/user-store/lists/${listId}/stores/${storeUuid}`;
 
     const response = await fetch<DeleteStoreInSavedListRequest, Promise<void>>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+          'Content-Type': 'multipart/form-data',
+        },
+      }),
       method: 'DELETE',
       url,
     });
@@ -574,28 +621,6 @@ export default class StoreAPIRepository
     return response;
   }
 
-  async getStoresInBounds({
-    data,
-  }: BaseRequestData<{
-    swLat: number;
-    swLng: number;
-    neLat: number;
-    neLng: number;
-  }>): Promise<NearByStoreData[]> {
-    if (!data) {
-      throw Error('data required');
-    }
-
-    const { swLat, swLng, neLat, neLng } = data;
-
-    const response = await fetch<void, NearByStoreData[]>({
-      method: 'GET',
-      url: `${this.endpoint}/stores/bounds?swLat=${swLat}&swLng=${swLng}&neLat=${neLat}&neLng=${neLng}`,
-    });
-
-    return response;
-  }
-
   // review
   async getStoreOnelineReviews({
     data,
@@ -616,6 +641,7 @@ export default class StoreAPIRepository
 
   async createOnelineReview({
     data,
+    authorization,
   }: BaseRequestData<CreateOnelineReviewRequestFormData>): Promise<
     CreateOnelineReviewResponse[]
   > {
@@ -641,6 +667,11 @@ export default class StoreAPIRepository
       }
     }
     const response = await fetch<void, CreateOnelineReviewResponse[]>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'POST',
       url: url,
       formData,
@@ -651,6 +682,7 @@ export default class StoreAPIRepository
 
   async deleteOnelineReview({
     data,
+    authorization,
   }: BaseRequestData<DeleteOnelineReviewRequest>): Promise<void> {
     if (!data) {
       throw Error('data required');
@@ -661,6 +693,11 @@ export default class StoreAPIRepository
     const url = `${this.endpoint}/stores/${storeUuid}/reviews/${reviewUuid}`;
 
     const response = await fetch<DeleteOnelineReviewRequest, void>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'DELETE',
       url,
     });
@@ -670,6 +707,7 @@ export default class StoreAPIRepository
 
   async editOnelineReview({
     data,
+    authorization,
   }: BaseRequestData<EditOnelineReviewRequest>): Promise<OneLineReview> {
     if (!data) {
       throw Error('data required');
@@ -693,6 +731,11 @@ export default class StoreAPIRepository
       }
     }
     const response = await fetch<void, OneLineReview>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'PATCH',
       url: url,
       formData,

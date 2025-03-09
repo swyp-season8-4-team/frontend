@@ -132,7 +132,6 @@ export interface StoreSummaryInfoData
 export interface StoreDetailInfoRequest {
   storeUuid: string;
   userUuid?: string;
-  authorization?: string;
 }
 
 export interface StoreDetailInfoData
@@ -167,6 +166,17 @@ export interface StoreDetailInfoData
   menus: Menu[];
   totalReviewCount: number;
   storeReviews: OneLineReview[];
+  communityReviews: {
+    reviewUuid: string;
+    userUuid: string;
+    nickname: string;
+    profileImage: string;
+    thumbnail: string;
+    title: string;
+    content: string;
+    createdAt: string;
+    updatedAt?: string;
+  }[];
   mate: {
     mateUuid: string;
     mateCategory: string;
@@ -353,7 +363,6 @@ export interface SavedListData {
 // 상세정보에서 사용
 export interface ParentSavedListRequest {
   listId: number;
-  authorization?: string;
 }
 
 // export interface StoreInSavedListResponse {
@@ -563,17 +572,17 @@ export interface StoreRepository {
     data: BaseRequestData<NearByStoreRequest>,
   ): Promise<NearByStoreData[]>;
 
-  getNearbyFilteredStores(
-    data: BaseRequestData<NearbyFilteredStoresRequest>,
-  ): Promise<NearByStoreData[]>;
+  // getNearbyFilteredStores(
+  //   data: BaseRequestData<NearbyFilteredStoresRequest>,
+  // ): Promise<NearByStoreData[]>;
 
-  getNearbyPreferStores({
-    data,
-  }: BaseRequestData<NearByStoreRequest>): Promise<NearByStoreData[]>;
+  // getNearbyPreferStores({
+  //   data,
+  // }: BaseRequestData<NearByStoreRequest>): Promise<NearByStoreData[]>;
 
-  getNearBySearchStores(
-    data: BaseRequestData<NearByStoreSearchRequest>,
-  ): Promise<NearByStoreData[]>;
+  // getNearBySearchStores(
+  //   data: BaseRequestData<NearByStoreSearchRequest>,
+  // ): Promise<NearByStoreData[]>;
 
   getStoreSummary(
     data: BaseRequestData<StoreSummaryInfoRequest>,
@@ -615,6 +624,7 @@ export interface StoreRepository {
   }: BaseRequestData<DeleteSavedListRequest>): Promise<void>;
 
   addStoreInSavedList({
+    authorization,
     data,
   }: BaseRequestData<AddStoreInSavedListRequest>): Promise<AddStoreInSavedListResponse>;
 
@@ -625,6 +635,7 @@ export interface StoreRepository {
 
   // 상세정보에서 사용
   getParentSavedList({
+    authorization,
     data,
   }: BaseRequestData<ParentSavedListRequest>): Promise<ParentSavedListResponse>;
 
@@ -669,16 +680,19 @@ export interface StoreRepository {
   ): Promise<StoreOnelineReivewData[]>;
 
   createOnelineReview({
+    authorization,
     data,
   }: BaseRequestData<CreateOnelineReviewRequestFormData>): Promise<
     CreateOnelineReviewResponse[]
   >;
 
   deleteOnelineReview({
+    authorization,
     data,
   }: BaseRequestData<DeleteOnelineReviewRequest>): Promise<void>;
 
   editOnelineReview({
+    authorization,
     data,
   }: BaseRequestData<EditOnelineReviewRequest>): Promise<OneLineReview>;
 }

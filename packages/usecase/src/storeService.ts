@@ -36,9 +36,17 @@ import type {
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
+  private readonly authRepository: AuthRepository | null;
 
-  constructor({ storeRepository }: { storeRepository: StoreRepository }) {
+  constructor({
+    storeRepository,
+    authRepository,
+  }: {
+    storeRepository: StoreRepository;
+    authRepository?: AuthRepository;
+  }) {
     this.storeRepository = storeRepository ?? null;
+    this.authRepository = authRepository ?? null;
   }
 
   async getAllPreference() {
@@ -60,19 +68,22 @@ export default class StoreService {
     radius,
     preferenceTagIds,
     searchKeyword,
-    authorization,
   }: {
     latitude: number;
     longitude: number;
     radius: number;
     preferenceTagIds?: number[];
     searchKeyword?: string;
-    authorization?: string;
   }): Promise<NearByStoreData[]> {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
+
+      const authorization = await this.authRepository.getAuthorization();
+
       const requestData = {
         data: {
           latitude,
@@ -81,7 +92,7 @@ export default class StoreService {
           preferenceTagIds,
           searchKeyword,
         },
-        authorization,
+        ...(authorization && { authorization }),
       };
 
       const response = await this.storeRepository.getNearbyStores(requestData);
@@ -92,35 +103,41 @@ export default class StoreService {
     }
   }
 
-  async getMyPreferNearByStores({
-    latitude,
-    longitude,
-    radius,
-  }: {
-    latitude: number;
-    longitude: number;
-    radius: number;
-  }): Promise<NearByStoreData[]> {
-    try {
-      if (!this.storeRepository) {
-        throw new Error('storeRepository is not set');
-      }
-      const requestData = {
-        data: {
-          latitude,
-          longitude,
-          radius,
-        },
-      };
+  // async getMyPreferNearByStores({
+  //   latitude,
+  //   longitude,
+  //   radius,
+  // }: {
+  //   latitude: number;
+  //   longitude: number;
+  //   radius: number;
+  // }): Promise<NearByStoreData[]> {
+  //   try {
+  //     if (!this.storeRepository) {
+  //       throw new Error('storeRepository is not set');
+  //     } else if (!this.authRepository) {
+  //       throw new Error('authRepository is not set');
+  //     }
 
-      const response =
-        await this.storeRepository.getNearbyPreferStores(requestData);
+  //     const authorization = await this.authRepository.getAuthorization();
 
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  }
+  //     const requestData = {
+  //       data: {
+  //         latitude,
+  //         longitude,
+  //         radius,
+  //       },
+  //       authorization,
+  //     };
+
+  //     const response =
+  //       await this.storeRepository.getNearbyPreferStores(requestData);
+
+  //     return response;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   async getStoreSummary(storeUuid: string): Promise<StoreSummaryInfoData> {
     try {
@@ -148,12 +165,15 @@ export default class StoreService {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
 
-      const { authorization, ...rest } = params;
+      const authorization = await this.authRepository.getAuthorization();
+
       const requestData = {
-        data: rest,
-        authorization,
+        data: params,
+        ...(authorization && { authorization }),
       };
 
       const response = await this.storeRepository.getStoreDetail(requestData);
@@ -164,11 +184,15 @@ export default class StoreService {
     }
   }
 
-  async getUserSavedStores(authorization: string, listId: number) {
+  async getUserSavedStores(listId: number) {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
+
+      const authorization = await this.authRepository.getAuthorization();
 
       const reqestData = {
         data: {
@@ -191,12 +215,17 @@ export default class StoreService {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
+
+      const authorization = await this.authRepository.getAuthorization();
 
       const reqestData = {
         data: {
           userUuid,
         },
+        authorization,
       };
 
       const result = await this.storeRepository.getSavedListAll({
@@ -210,19 +239,23 @@ export default class StoreService {
   }
 
   async registerStore(
-    params: RegisterStoreRequest & { authorization: string },
+    params: RegisterStoreRequest,
   ): Promise<RegisterStoreResponse> {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
 
-      const { authorization, ...rest } = params;
+      const authorization = await this.authRepository.getAuthorization();
 
-      const response = await this.storeRepository.registerStore({
+      const requestData = {
+        data: params,
         authorization,
-        data: rest,
-      });
+      };
+
+      const response = await this.storeRepository.registerStore(requestData);
 
       return response;
     } catch (error) {
@@ -230,18 +263,22 @@ export default class StoreService {
     }
   }
 
-  async editStore(
-    params: EditStoreRequest & { authorization: string },
-  ): Promise<EditStoreResponse> {
+  async editStore(params: EditStoreRequest): Promise<EditStoreResponse> {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
-      const { authorization, ...rest } = params;
-      const response = await this.storeRepository.editStore({
+
+      const authorization = await this.authRepository.getAuthorization();
+
+      const requestData = {
+        data: params,
         authorization,
-        data: rest,
-      });
+      };
+
+      const response = await this.storeRepository.editStore(requestData);
 
       return response;
     } catch (error) {
@@ -253,24 +290,32 @@ export default class StoreService {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
+
+      //TODO: 구현 필요
     } catch (error) {
       throw error;
     }
   }
 
-  async deleteStore(
-    params: DeleteStoreRequest & { authorization: string },
-  ): Promise<void> {
+  async deleteStore(params: DeleteStoreRequest): Promise<void> {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
-      const { authorization, ...rest } = params;
-      await this.storeRepository.deleteStore({
+
+      const authorization = await this.authRepository.getAuthorization();
+
+      const requestData = {
+        data: params,
         authorization,
-        data: rest,
-      });
+      };
+
+      await this.storeRepository.deleteStore(requestData);
     } catch (error) {
       throw error;
     }
@@ -289,156 +334,166 @@ export default class StoreService {
     }
   }
 
-  async getNearbyFilteredStores({
-    latitude,
-    longitude,
-    radius,
-    preferenceTagId,
-  }: {
-    latitude: number;
-    longitude: number;
-    radius: number;
-    preferenceTagId: number[];
-  }): Promise<NearByStoreData[]> {
+  // async getNearbyFilteredStores({
+  //   latitude,
+  //   longitude,
+  //   radius,
+  //   preferenceTagId,
+  // }: {
+  //   latitude: number;
+  //   longitude: number;
+  //   radius: number;
+  //   preferenceTagId: number[];
+  // }): Promise<NearByStoreData[]> {
+  //   try {
+  //     if (!this.storeRepository) {
+  //       throw new Error('storeRepository is not set');
+  //     }
+
+  //     const requestData = {
+  //       data: {
+  //         latitude,
+  //         longitude,
+  //         radius,
+  //         preferenceTagId,
+  //       },
+  //     };
+
+  //     const response =
+  //       await this.storeRepository.getNearbyFilteredStores(requestData);
+
+  //     return response;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
+
+  // async getNearbyPreferStores({
+  //   latitude,
+  //   longitude,
+  //   radius,
+  //   authorization,
+  // }: {
+  //   latitude: number;
+  //   longitude: number;
+  //   radius: number;
+  //   authorization: string;
+  // }): Promise<NearByStoreData[]> {
+  //   try {
+  //     if (!this.storeRepository) {
+  //       throw new Error('storeRepository is not set');
+  //     }
+
+  //     const requestData = {
+  //       authorization,
+  //       data: {
+  //         latitude,
+  //         longitude,
+  //         radius,
+  //       },
+  //     };
+
+  //     const response =
+  //       await this.storeRepository.getNearbyPreferStores(requestData);
+
+  //     return response;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
+
+  // async getNearBySearchStores({
+  //   latitude,
+  //   longitude,
+  //   radius,
+  //   searchKeyword,
+  // }: {
+  //   latitude: number;
+  //   longitude: number;
+  //   radius: number;
+  //   searchKeyword: string;
+  // }): Promise<NearByStoreData[]> {
+  //   try {
+  //     if (!this.storeRepository) {
+  //       throw new Error('storeRepository is not set');
+  //     }
+
+  //     const requestData = {
+  //       data: {
+  //         latitude,
+  //         longitude,
+  //         radius,
+  //         searchKeyword,
+  //       },
+  //     };
+
+  //     const response =
+  //       await this.storeRepository.getNearBySearchStores(requestData);
+
+  //     return response;
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
+
+  async createMenu(params: CreateMenuRequestFormData): Promise<void> {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
+
+      const authorization = await this.authRepository.getAuthorization();
 
       const requestData = {
-        data: {
-          latitude,
-          longitude,
-          radius,
-          preferenceTagId,
-        },
+        data: params,
+        authorization,
       };
 
-      const response =
-        await this.storeRepository.getNearbyFilteredStores(requestData);
-
-      return response;
+      await this.storeRepository.createMenu(requestData);
     } catch (error) {
       throw error;
     }
   }
 
-  async getNearbyPreferStores({
-    latitude,
-    longitude,
-    radius,
-    authorization,
-  }: {
-    latitude: number;
-    longitude: number;
-    radius: number;
-    authorization: string;
-  }): Promise<NearByStoreData[]> {
+  async editMenu(params: EditMenuRequest): Promise<void> {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
+
+      const authorization = await this.authRepository.getAuthorization();
 
       const requestData = {
+        data: params,
         authorization,
-        data: {
-          latitude,
-          longitude,
-          radius,
-        },
       };
 
-      const response =
-        await this.storeRepository.getNearbyPreferStores(requestData);
-
-      return response;
+      await this.storeRepository.editMenu(requestData);
     } catch (error) {
       throw error;
     }
   }
 
-  async getNearBySearchStores({
-    latitude,
-    longitude,
-    radius,
-    searchKeyword,
-  }: {
-    latitude: number;
-    longitude: number;
-    radius: number;
-    searchKeyword: string;
-  }): Promise<NearByStoreData[]> {
+  async deleteMenu(params: DeleteMenuRequest): Promise<void> {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
+
+      const authorization = await this.authRepository.getAuthorization();
 
       const requestData = {
-        data: {
-          latitude,
-          longitude,
-          radius,
-          searchKeyword,
-        },
+        data: params,
+        authorization,
       };
 
-      const response =
-        await this.storeRepository.getNearBySearchStores(requestData);
-
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async createMenu(
-    params: CreateMenuRequestFormData & { authorization: string },
-  ): Promise<void> {
-    try {
-      if (!this.storeRepository) {
-        throw new Error('storeRepository is not set');
-      }
-
-      const { authorization, ...rest } = params;
-      await this.storeRepository.createMenu({
-        authorization,
-        data: rest,
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async editMenu(
-    params: EditMenuRequest & { authorization: string },
-  ): Promise<void> {
-    try {
-      if (!this.storeRepository) {
-        throw new Error('storeRepository is not set');
-      }
-      const { authorization, ...rest } = params;
-      await this.storeRepository.editMenu({
-        authorization,
-        data: rest,
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async deleteMenu(
-    params: DeleteMenuRequest & { authorization: string },
-  ): Promise<void> {
-    try {
-      if (!this.storeRepository) {
-        throw new Error('storeRepository is not set');
-      }
-
-      const { authorization, ...rest } = params;
-      await this.storeRepository.deleteMenu({
-        authorization,
-        data: rest,
-      });
+      await this.storeRepository.deleteMenu(requestData);
     } catch (error) {
       throw error;
     }
@@ -497,11 +552,18 @@ export default class StoreService {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
 
-      const response = await this.storeRepository.createSavedList({
+      const authorization = await this.authRepository.getAuthorization();
+
+      const reqestData = {
         data: params,
-      });
+        authorization,
+      };
+
+      const response = await this.storeRepository.createSavedList(reqestData);
 
       return response;
     } catch (error) {
@@ -510,17 +572,23 @@ export default class StoreService {
   }
 
   async editSavedList(
-    params: EditSavedListRequest & { authorization: string },
+    params: EditSavedListRequest,
   ): Promise<EditSavedListResponse> {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
-      const { authorization, ...rest } = params;
-      const response = await this.storeRepository.editSavedList({
+
+      const authorization = await this.authRepository.getAuthorization();
+
+      const requestData = {
+        data: params,
         authorization,
-        data: rest,
-      });
+      };
+
+      const response = await this.storeRepository.editSavedList(requestData);
 
       return response;
     } catch (error) {
@@ -532,11 +600,17 @@ export default class StoreService {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
-      const { ...rest } = params;
-      await this.storeRepository.deleteSavedList({
-        data: rest,
-      });
+      const authorization = await this.authRepository.getAuthorization();
+
+      const requestData = {
+        data: params,
+        authorization,
+      };
+
+      await this.storeRepository.deleteSavedList(requestData);
     } catch (error) {
       throw error;
     }
@@ -548,11 +622,19 @@ export default class StoreService {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
-      const { ...rest } = params;
-      const response = await this.storeRepository.addStoreInSavedList({
-        data: rest,
-      });
+
+      const authorization = await this.authRepository.getAuthorization();
+
+      const requestData = {
+        data: params,
+        authorization,
+      };
+
+      const response =
+        await this.storeRepository.addStoreInSavedList(requestData);
 
       return response;
     } catch (error) {
@@ -566,11 +648,18 @@ export default class StoreService {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
-      const { ...rest } = params;
-      await this.storeRepository.deleteStoreInSavedList({
-        data: rest,
-      });
+
+      const authorization = await this.authRepository.getAuthorization();
+
+      const requestData = {
+        data: params,
+        authorization,
+      };
+
+      await this.storeRepository.deleteStoreInSavedList(requestData);
     } catch (error) {
       throw error;
     }
@@ -582,12 +671,19 @@ export default class StoreService {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
-      const { authorization, ...rest } = params;
-      const response = await this.storeRepository.getParentSavedList({
-        data: rest,
+
+      const authorization = await this.authRepository.getAuthorization();
+
+      const requestData = {
+        data: params,
         authorization,
-      });
+      };
+
+      const response =
+        await this.storeRepository.getParentSavedList(requestData);
       return response;
     } catch (error) {
       throw error;
@@ -600,12 +696,19 @@ export default class StoreService {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
-      const { authorization, ...rest } = params;
-      const response = await this.storeRepository.getStoresInSavedList({
-        data: rest,
+
+      const authorization = await this.authRepository.getAuthorization();
+
+      const requestData = {
+        data: params,
         authorization,
-      });
+      };
+
+      const response =
+        await this.storeRepository.getStoresInSavedList(requestData);
       return response;
     } catch (error) {
       throw error;
@@ -624,7 +727,6 @@ export default class StoreService {
       const result = await this.storeRepository.getStoreOnelineReviews({
         data: params,
       });
-      console.log(`가게 한줄 리뷰 조회 완료 `);
 
       return result;
     } catch (error) {
@@ -638,13 +740,20 @@ export default class StoreService {
   ): Promise<CreateOnelineReviewResponse[]> {
     if (!this.storeRepository) {
       throw new Error('storeRepository is not set');
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
     }
 
     try {
-      const result = await this.storeRepository.createOnelineReview({
+      const authorization = await this.authRepository.getAuthorization();
+
+      const requestData = {
         data: params,
-      });
-      console.log(`가게 한줄 리뷰 생성 완료 `);
+        authorization,
+      };
+
+      const result =
+        await this.storeRepository.createOnelineReview(requestData);
 
       return result;
     } catch (error) {
@@ -657,11 +766,18 @@ export default class StoreService {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
 
-      await this.storeRepository.deleteOnelineReview({
+      const authorization = await this.authRepository.getAuthorization();
+
+      const requestData = {
         data: params,
-      });
+        authorization,
+      };
+
+      await this.storeRepository.deleteOnelineReview(requestData);
     } catch (error) {
       throw error;
     }
@@ -673,11 +789,18 @@ export default class StoreService {
     try {
       if (!this.storeRepository) {
         throw new Error('storeRepository is not set');
+      } else if (!this.authRepository) {
+        throw new Error('authRepository is not set');
       }
 
-      const result = await this.storeRepository.editOnelineReview({
+      const authorization = await this.authRepository.getAuthorization();
+
+      const requestData = {
         data: params,
-      });
+        authorization,
+      };
+
+      const result = await this.storeRepository.editOnelineReview(requestData);
       return result;
     } catch (error) {
       throw error;

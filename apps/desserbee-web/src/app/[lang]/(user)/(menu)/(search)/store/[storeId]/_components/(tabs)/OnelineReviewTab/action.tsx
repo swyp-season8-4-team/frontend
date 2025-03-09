@@ -1,5 +1,12 @@
 'use server';
 
+import type {
+  CreateOnelineReviewRequestFormData,
+  EditOnelineReviewRequest,
+} from '@repo/entity/src/store';
+import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
+import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
+import StoreService from '@repo/usecase/src/storeService';
 import { cookies } from 'next/headers';
 
 export async function saveReviewPageData(storeInfo: {
@@ -19,4 +26,30 @@ export async function saveReviewPageData(storeInfo: {
 }) {
   const cookieStore = await cookies();
   cookieStore.set('reviewPageData', JSON.stringify(storeInfo));
+}
+
+const storeService = new StoreService({
+  storeRepository: new StoreAPIRepository(),
+  authRepository: new AuthNextAppRouteRepository(),
+});
+
+export async function editOnelineReview(data: EditOnelineReviewRequest) {
+  await storeService.editOnelineReview(data);
+}
+
+interface DeleteOnelineReviewProps {
+  storeUuid: string;
+  reviewUuid: string;
+}
+export async function deleteOnelineReview({
+  storeUuid,
+  reviewUuid,
+}: DeleteOnelineReviewProps) {
+  await storeService.deleteOnelineReview({ storeUuid, reviewUuid });
+}
+
+export async function createStoreOnlineReviews(
+  data: CreateOnelineReviewRequestFormData,
+) {
+  await storeService.createStoreOnlineReviews(data);
 }

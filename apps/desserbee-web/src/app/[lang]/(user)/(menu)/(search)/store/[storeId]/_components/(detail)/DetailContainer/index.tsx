@@ -75,6 +75,7 @@ export function DetailContainer({
     },
     menus: storeDetail.menus,
     mate: storeDetail.mate,
+    communityReviews: storeDetail.communityReviews,
   };
 
   return (

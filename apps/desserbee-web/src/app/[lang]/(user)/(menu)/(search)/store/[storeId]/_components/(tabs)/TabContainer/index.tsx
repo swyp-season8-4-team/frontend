@@ -1,11 +1,9 @@
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { CommunityReviewTab } from '../CommunityReviewTab';
 import { DessertMateTab } from '../DessertMateTab';
 import { MenuTab } from '../MenuTab';
 import { OnelineReviewTab } from '../OnelineReviewTab';
 import type { StoreDetailInfoData } from '@repo/entity/src/store';
-import { PortalContext } from '@repo/ui/contexts/PortalContext';
-import { CommunityIsNotReadyModal } from '../../../../../map/_modals/CommunityIsNotReadyModal';
 
 interface TabContainerProps {
   onelineReviews: Pick<
@@ -14,6 +12,7 @@ interface TabContainerProps {
   >;
   menus: StoreDetailInfoData['menus'];
   mate: StoreDetailInfoData['mate'];
+  communityReviews: StoreDetailInfoData['communityReviews'];
 }
 
 const DETAIL_TABS = [
@@ -29,21 +28,9 @@ export function TabContainer({
   onelineReviews,
   menus,
   mate,
+  communityReviews,
 }: TabContainerProps) {
   const [activeTab, setActiveTab] = useState<TabId>('menu');
-
-  // const { push, pop } = useContext(PortalContext);
-
-  // const closeModal = () => {
-  //   pop('modal');
-  // };
-
-  // const handleCommunityReviewTabClick = (id: string) => {
-  //   if (id !== 'community') return;
-  //   push('modal', {
-  //     component: <CommunityIsNotReadyModal onClose={closeModal} />,
-  //   });
-  // };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -52,7 +39,7 @@ export function TabContainer({
       case 'oneline':
         return <OnelineReviewTab onelineReviews={onelineReviews} />;
       case 'community':
-        return <CommunityReviewTab />;
+        return <CommunityReviewTab communityReviews={communityReviews} />;
       case 'mate':
         return <DessertMateTab mate={mate} />;
     }
@@ -66,7 +53,6 @@ export function TabContainer({
             key={id}
             onClick={() => {
               setActiveTab(id);
-              // handleCommunityReviewTabClick(id);
             }}
             className={`text-[10px] md:text-lg leading-3  ${
               activeTab === id
