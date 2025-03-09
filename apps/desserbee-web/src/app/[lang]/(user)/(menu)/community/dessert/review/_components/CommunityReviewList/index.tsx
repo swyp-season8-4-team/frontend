@@ -36,7 +36,7 @@ export default function CommunityReviewList() {
   }, [isLast, loadMore, isLoading]);
 
   return (
-    <section className="flex-1 overflow-y-auto relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] space-y-4">
+    <>
       {reviews.map((review) => {
         return (
           <CommunityReviewCard
@@ -46,6 +46,6 @@ export default function CommunityReviewList() {
         )
       })}
       <div ref={observerRef} />
-    </section>
+    </>
   )
 }

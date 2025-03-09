@@ -2,14 +2,17 @@ import { formatDate } from '@/app/[lang]/(user)/(menu)/(search)/store/_utils/dat
 import DefaultMaleAvatar from '@/assets/images/image-default-male-profile.png';
 import type { Review } from "@repo/entity/src/review";
 import Image from "next/image";
+import Link from 'next/link';
 import ReviewPostActions from '../ReviewPostActions';
+import { NavigationPathname } from '@repo/entity/src/navigation';
 
 interface Props {
   review: Review;
 }
 
 export default async function ReviewPostSection({ review }: Props) {
-  const { category, title, profileImage, nickname, createdAt } = review;
+  const { category, title, contents, profileImage, nickname, place, createdAt } = review;
+  
   return (
     <section className="border rounded-[10px] bg-[#ffffff] px-2 py-2">
       <div className="flex items-center justify-between px-4 py-2 gap-6">
@@ -18,7 +21,7 @@ export default async function ReviewPostSection({ review }: Props) {
             <span className="">{category}</span>
             <span className="">{'>'}</span>
           </div>
-          <span className="text-[#393939] text-[14px] font-semibold leading-normal tracking-[-0.3px]">{review.title}</span>
+          <span className="text-[#393939] text-[14px] font-semibold leading-normal tracking-[-0.3px]">{title}</span>
         </div>
       </div>
 
@@ -45,10 +48,43 @@ export default async function ReviewPostSection({ review }: Props) {
           </div> */}
         </div>
 
-        {/* <div className="mb-4">
-          <p className="mb-2">장소: {place?.placeName}</p>
-          <Link href={`${NavigationPathname.Map}?latitude=${place?.latitude}&longitude=${place?.longitude}`}>이 가게 위치 보러가기</Link>
-        </div> */}
+        {!!place?.latitude && !!place?.longitude && <div className="flex flex-col gap-[4px] mb-4">
+          <p className="text-[#393939] text-[12px] font-medium tracking-[-0.27px]">장소: {place?.name}</p>
+          <Link 
+            className="text-[#393939] text-[12px] font-medium tracking-[-0.27px] underline"
+            href={`${NavigationPathname.Map}?latitude=${place?.latitude}&longitude=${place?.longitude}&keyword=${place?.name}`}
+          >
+            이 가게 위치 보러가기
+          </Link>
+        </div>}
+
+        {/* 컨텐츠 렌더링 */}
+        <div className="text-gray-700 mb-6 space-y-4 gap-[12px]">
+          {contents.map((content, index) => {
+            if (content.type === 'text') {
+              return (
+                <p key={`text-${index}`} className="text-[#393939] text-[12px] leading-relaxed tracking-[-0.27px]">
+                  {content.value}
+                </p>
+              );
+            } else if (content.type === 'image') {
+              return (
+                <div key={`image-${content.imageId}`}>
+                  <Image
+                    src={content.imageUrl || ''}
+                    alt={`리뷰 이미지 ${content.imageIndex !== undefined ? content.imageIndex + 1 : index + 1}`}
+                    width={0}
+                    height={0}
+                    sizes="100vw"
+                    className="w-full h-auto rounded-lg"
+                    priority={index < 2}
+                  />
+                </div>
+              );
+            }
+            return null;
+          })}
+        </div>
 
         {/* 액션 버튼 */}
         <ReviewPostActions review={review} />

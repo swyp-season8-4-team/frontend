@@ -35,7 +35,7 @@ export default function CommunityMateList() {
   }, [isLast, loadMore, isLoading]);
 
   return (
-    <section className="flex-1 overflow-y-auto relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] space-y-4">
+    <>
       {mates.map((mate) => {
         return (
           <CommunityMateCard
@@ -45,6 +45,6 @@ export default function CommunityMateList() {
         )
       })}
       <div ref={observerRef} />
-    </section>
+    </>
   )
 }

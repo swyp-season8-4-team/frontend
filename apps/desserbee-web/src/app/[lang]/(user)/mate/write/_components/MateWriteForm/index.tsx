@@ -11,6 +11,7 @@ import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRep
 import MateService from '@repo/usecase/src/mateService';
 import { useRouter } from 'next/navigation';
 import type { CommunityCategory } from '@repo/entity/src/community';
+import Image from 'next/image';
 
 const CATEGORIES: CommunityCategory[] = ['친목도모', '사진맛집', '카공모임', '건강맛집', '빵지순례', '카페투어'];
 
@@ -205,7 +206,7 @@ export default function MateWriteForm({ initialMate }: Props) {
         {uploadedImage && (
           <div className="px-5 pb-5">
             <div className="relative w-full">
-              <img 
+              <Image 
                 src={uploadedImage} 
                 alt="업로드 이미지" 
                 className="w-full h-auto rounded-md"
