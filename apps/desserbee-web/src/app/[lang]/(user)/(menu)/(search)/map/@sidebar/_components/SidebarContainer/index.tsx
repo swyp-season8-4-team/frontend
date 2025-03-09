@@ -115,6 +115,7 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
       await deleteSavedList({ listId: listId });
       setSelectedListId(null);
       router.refresh();
+      handleTotalSavedList(); // 삭제 후 리스트 다시 불러오기
     } catch (error) {
       console.error('리스트 삭제 실패:', error);
       e.preventDefault();

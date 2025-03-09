@@ -229,9 +229,7 @@ export default class StoreService {
         authorization,
       };
 
-      const result = await this.storeRepository.getSavedListAll({
-        ...reqestData,
-      });
+      const result = await this.storeRepository.getSavedListAll(reqestData);
 
       return result;
     } catch (error) {
