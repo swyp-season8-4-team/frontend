@@ -6,11 +6,6 @@ import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPI
 import NotFound from '@/app/[lang]/[...not-found]/page';
 
 export default async function MapPage() {
-  // 불러올 데이터
-  // 1. 선호도 태그 카테고리
-  // 2. 유저 선호도 태그
-  // 3. 유저가 저장한 가게목록
-
   const storeService = new StoreService({
     storeRepository: new StoreAPIReopository(),
   });
@@ -24,8 +19,6 @@ export default async function MapPage() {
 
     return <NotFound />;
   }
-
-  // if (!authorization) redirect(NavigationPathname.SignIn);
 
   const kakaoMapProps = {
     preferenceCategories,
