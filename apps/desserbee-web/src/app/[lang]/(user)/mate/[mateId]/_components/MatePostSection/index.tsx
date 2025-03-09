@@ -83,7 +83,7 @@ export default async function MatePostSection({ mate, replyCount }: Props) {
           <p className="text-[#393939] text-[12px] font-medium tracking-[-0.27px]">장소: {place?.placeName}</p>
           <Link 
             className="text-[#393939] text-[12px] font-medium tracking-[-0.27px] underline"
-            href={`${NavigationPathname.Map}?latitude=${place?.latitude}&longitude=${place?.longitude}`}
+            href={`${NavigationPathname.Map}?latitude=${place?.latitude}&longitude=${place?.longitude}&keyword=${place?.placeName}`}
           >
             이 가게 위치 보러가기
           </Link>

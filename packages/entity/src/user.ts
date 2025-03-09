@@ -1,4 +1,5 @@
 import type { BaseRequestData } from "./appMetadata";
+import type { Preference } from "./preference";
 
 export enum UserType {
   USER = 'ROLE_USER',
@@ -6,8 +7,6 @@ export enum UserType {
 }
 
 export type Gender = 'MALE' | 'FEMALE';
-
-
 
 export interface User {
   id: string;
@@ -17,7 +16,7 @@ export interface User {
   phoneNumber: string;
   address: string;
   gender: string;
-  preferences: number[];
+  preferences: Preference[];
   mbti?: string;
   profileImageUrl?: string;
   createdAt?: string;
@@ -30,7 +29,7 @@ export interface TargetUser {
   gender: string | null;
   nickname: string | null;
   imageId: string | null;
-  preferences: number[];
+  preferences: Preference[];
 }
 
 export function isTargetUser(data: unknown): data is TargetUser {

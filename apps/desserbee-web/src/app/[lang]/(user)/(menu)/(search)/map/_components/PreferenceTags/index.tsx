@@ -11,6 +11,10 @@ import { MyPreferNotSignInModal } from '../../_modals/MyPreferNotSignInModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import type { PreferenceData } from '@repo/entity/src/store';
 import { UserContext } from '@/contexts/UserContext';
+import PreferenceConverter from '@repo/infrastructures/src/mappers/preferenceConverter';
+
+// FIXME: 리팩토링이 필요한데 지금 할수 없어서 임시 사용 (원래 req, res raw data 변환용)
+const preferenceConverter = new PreferenceConverter();
 
 interface PreferenceTagsProps {
   categories: PreferenceData[];
@@ -38,7 +42,7 @@ export function PreferenceTags({
   const handleMyPreferenceBtnClick = () => {
     console.log('My Preference Button Clicked');
     if (user) {
-      handleMyPreferenceTagClick(user.preferences);
+      handleMyPreferenceTagClick(preferenceConverter.convertPreferenceToRaw(user.preferences));
     } else {
       push('modal', {
         component: <MyPreferNotSignInModal onClose={closeModal} />,
