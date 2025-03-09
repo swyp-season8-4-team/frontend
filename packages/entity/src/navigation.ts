@@ -23,7 +23,10 @@ export enum NavigationPathname {
   ForgotPassword = '/sign-in/forgot-password',
   Community = '/community',
   CommunityDessertMate = '/community/dessert/mate',
+  CommunityDessertMateWrite = '/mate/write',
   CommunityDessertReview = '/community/dessert/review',
+  CommunityReviewWrite = '/review/write',
+  
   MateWrite = '/mate/write',
   
   

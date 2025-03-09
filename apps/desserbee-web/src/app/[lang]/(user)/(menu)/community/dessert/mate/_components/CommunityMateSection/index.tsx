@@ -22,9 +22,11 @@ export default async function CommunityMateSection({ q }: Props) {
   const { mates, isLast } = await mateService.getMateList({ from: 0, to: 9, ...(q && { keyword: q }) });
 
   return (
-    <CommunityMateListProvider initialIsLast={isLast} initialMates={mates}>
-      <CommunityMateList />
+    <section className="flex-1 overflow-y-auto relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] space-y-4">
+      <CommunityMateListProvider initialIsLast={isLast} initialMates={mates}>
+        <CommunityMateList />
+      </CommunityMateListProvider>
       {mates.length > 0 && <ScrollGradient />}
-    </CommunityMateListProvider>
+    </section>
   )
 }
