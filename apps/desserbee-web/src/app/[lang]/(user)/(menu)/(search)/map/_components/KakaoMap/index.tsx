@@ -94,6 +94,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     longitude: 0,
   });
 
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
 
   const [, setRetryCount] = useState(0);
@@ -124,7 +125,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     });
   }, [closeModal, push]);
 
-  // 제일 먼저 서비스 초기화
+  //  서비스 초기화
   const initializeServices = () => {
     const mapService = new MapService({
       mapController: new KakaoMapController(),
@@ -144,7 +145,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     return { mapService, geoService, storeService };
   };
 
-  // 화면 내 거리 계산
+  // 화면 내 거리 계산 (처음 500km, 이후 최소 4km 최대 화면 크기만큼의 거리)
   const calculateFetchRadius = useCallback(() => {
     if (!servicesRef.current.mapService) {
       return 4000;
@@ -184,7 +185,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     return Math.max(screenDistance, minNeighborhoodRadius) * 1000;
   }, [sessionStorageRepository]);
 
-  // 가게
+  // 가게 불러오기 메서드 (실질적인 service 사용)
   const fetchNearbyStores = useCallback(
     async (
       position: MapPosition,
@@ -234,13 +235,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     },
     [calculateFetchRadius],
   );
-
-  const handleMapCenterChange = useCallback(() => {
-    if (servicesRef.current.mapService) {
-      const center = servicesRef.current.mapService.getMapCenter();
-      setMapCenter(center);
-    }
-  }, []);
 
   // 각 마커 클릭 - 바텀시트 열리고, 클릭한 마커 storeId 업데이트
   const handleStoreMarkerClick = useCallback(
@@ -388,6 +382,39 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     return result;
   };
 
+  // 지도 중심으로 이동
+  const handleMapCenterChange = useCallback(() => {
+    if (servicesRef.current.mapService) {
+      const center = servicesRef.current.mapService.getMapCenter();
+      setMapCenter(center);
+    }
+  }, []);
+
+  // 현재 유저 위치로 이동
+  const handleMoveToCurrentPosition = useCallback(() => {
+    if (servicesRef.current.mapService && isMapLoaded) {
+      servicesRef.current.mapService.setMapCenter(currentPosition);
+    }
+  }, [isMapLoaded, currentPosition]);
+
+  const mapCenterRef = useRef(mapCenter);
+
+  useEffect(() => {
+    mapCenterRef.current = mapCenter;
+  }, [mapCenter]);
+
+  // 버튼 누르면 현재 위치로 이동하도록
+  const mapPanelProps = useMemo(
+    () => ({
+      moveToCurrentPosition: handleMoveToCurrentPosition,
+    }),
+    [handleMoveToCurrentPosition],
+  );
+
+  const handleRefetchBtnClick = () => {
+    setIsFetchRequired(true);
+  };
+
   // 지도 첫 초기화
   const loadMap = useCallback(
     async (
@@ -479,126 +506,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     ],
   );
 
-  // 현재 유저 위치로 이동
-  const handleMoveToCurrentPosition = useCallback(() => {
-    if (servicesRef.current.mapService && isMapLoaded) {
-      servicesRef.current.mapService.setMapCenter(currentPosition);
-    }
-  }, [isMapLoaded, currentPosition]);
-
-  const mapCenterRef = useRef(mapCenter);
-
-  useEffect(() => {
-    mapCenterRef.current = mapCenter;
-  }, [mapCenter]);
-
-  // 검색어 상태 추가
-  const [searchKeyword, setSearchKeyword] = useState<string>('');
-
-  // URL 해시 변경 감지
-  useEffect(() => {
-    // 초기 해시 확인
-    const checkInitialHash = () => {
-      if (typeof window !== 'undefined') {
-        const hash = window.location.hash;
-        if (hash.startsWith('#q=')) {
-          const query = hash.substring(3);
-          setSearchKeyword(query);
-          console.log('Initial hash detected, setting bottom sheet:', !!query);
-        } else {
-          setSearchKeyword('');
-        }
-      }
-    };
-
-    // 해시 변경 이벤트 핸들러
-    const handleHashChange = () => {
-      const hash = window.location.hash;
-      if (hash.startsWith('#q=')) {
-        const query = hash.substring(3);
-        setSearchKeyword(query);
-      } else {
-        setSearchKeyword('');
-      }
-    };
-
-    // 초기 해시 확인
-    checkInitialHash();
-
-    // 해시 변경 이벤트 리스너 등록
-    window.addEventListener('hashchange', handleHashChange);
-
-    // 컴포넌트 언마운트 시 이벤트 리스너 제거
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-    };
-  }, []);
-
-  // 지도 중심만 받아와서 가게 fetch
-  useEffect(() => {
-    if (isFetchRequired) {
-      const fetchAndUpdate = async () => {
-        const stores = await fetchNearbyStores(mapCenterRef.current);
-        if (stores) {
-          await updateNewClusterMarkers(stores);
-          setIsFetchRequired(false);
-        }
-      };
-      fetchAndUpdate();
-    }
-  }, [isFetchRequired, fetchNearbyStores, updateNewClusterMarkers]);
-
-  // 태그, 검색 포함 필터링 적용된 가게 fetch
-  const previousSelectedTagsRef = useRef<number[]>([]);
-  const previousSearchKeywordRef = useRef<string>('');
-
-  useEffect(() => {
-    if (
-      JSON.stringify(previousSelectedTagsRef.current) !==
-        JSON.stringify(selectedPreferenceTags) ||
-      previousSearchKeywordRef.current !== searchKeyword
-    ) {
-      const fetchAndUpdate = async () => {
-        const stores = await fetchNearbyStores(
-          mapCenterRef.current,
-          selectedPreferenceTags,
-          searchKeyword,
-        );
-
-        if (stores) {
-          await updateNewClusterMarkers(stores);
-          setIsFetchRequired(false);
-
-          // 약간의 지연을 두어 상태 업데이트가 확실히 반영되도록 함
-          setTimeout(() => {
-            setNearByStores(stores);
-          }, 100);
-        }
-      };
-      fetchAndUpdate();
-      previousSelectedTagsRef.current = selectedPreferenceTags;
-      previousSearchKeywordRef.current = searchKeyword;
-    }
-  }, [
-    selectedPreferenceTags,
-    searchKeyword,
-    fetchNearbyStores,
-    updateNewClusterMarkers,
-  ]);
-
-  // 에러 메시지
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => {
-        setError(null);
-      }, 3000);
-
-      return () => {
-        clearTimeout(timer);
-      };
-    }
-  }, [error]);
-
   // 카카오맵 초기화 로직
   useEffect(() => {
     if (isScriptLoaded && !isInitialized && mapRef.current) {
@@ -638,38 +545,98 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     }
   }, [isScriptLoaded, isInitialized, loadMap, sessionStorageRepository]);
 
-  // 컴포넌트 언마운트 시
+  // 아무 필터링 없이 가게 불러오기
   useEffect(() => {
-    return () => {
-      // 조건부 검사 없이 항상 시도
-      try {
-        if (servicesRef.current.geoService) {
-          servicesRef.current.geoService.stopWatchingPosition();
+    if (isFetchRequired) {
+      const fetchAndUpdate = async () => {
+        const stores = await fetchNearbyStores(mapCenterRef.current);
+        if (stores) {
+          await updateNewClusterMarkers(stores);
+          setIsFetchRequired(false);
         }
+      };
+      fetchAndUpdate();
+    }
+  }, [isFetchRequired, fetchNearbyStores, updateNewClusterMarkers]);
 
-        if (servicesRef.current.mapService) {
-          // 모든 리소스 정리
-          servicesRef.current.mapService.clearAllMarkers();
+  // 현재 지도 중심, 태그, 검색 포함 필터링 적용된 가게 불러오기
+  const previousSelectedTagsRef = useRef<number[]>([]);
+  const previousSearchKeywordRef = useRef<string>('');
 
-          // currentPositionMarker 참조 해제
-          if (currentPositionMarkerRef.current) {
-            servicesRef.current.mapService.removeCurrentPositionMarker();
-            currentPositionMarkerRef.current = null;
-          }
+  useEffect(() => {
+    if (
+      JSON.stringify(previousSelectedTagsRef.current) !==
+        JSON.stringify(selectedPreferenceTags) ||
+      previousSearchKeywordRef.current !== searchKeyword
+    ) {
+      const fetchAndUpdate = async () => {
+        const stores = await fetchNearbyStores(
+          mapCenterRef.current,
+          selectedPreferenceTags,
+          searchKeyword,
+        );
 
-          // 이벤트 리스너 정리
-          if (isInitialized) {
-            servicesRef.current.mapService.removeAllEventListeners();
-          }
+        if (stores) {
+          await updateNewClusterMarkers(stores);
+          setIsFetchRequired(false);
+
+          // 약간의 지연을 두어 상태 업데이트가 확실히 반영되도록 함
+          setTimeout(() => {
+            setNearByStores(stores);
+          }, 100);
         }
+      };
+      fetchAndUpdate();
+      previousSelectedTagsRef.current = selectedPreferenceTags;
+      previousSearchKeywordRef.current = searchKeyword;
+    }
+  }, [
+    selectedPreferenceTags,
+    searchKeyword,
+    fetchNearbyStores,
+    updateNewClusterMarkers,
+  ]);
 
-        console.log('모든 지도 리소스가 정리되었습니다.');
-      } catch (error) {
-        console.error('지도 리소스 정리 중 오류:', error);
+  // URL 해시 변경 감지 (검색)
+  useEffect(() => {
+    // 초기 해시 확인
+    const checkInitialHash = () => {
+      if (typeof window !== 'undefined') {
+        const hash = window.location.hash;
+        if (hash.startsWith('#q=')) {
+          const query = hash.substring(3);
+          setSearchKeyword(query);
+          console.log('Initial hash detected, setting bottom sheet:', !!query);
+        } else {
+          setSearchKeyword('');
+        }
       }
     };
-  }, [isInitialized]);
 
+    // 해시 변경 이벤트 핸들러
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash.startsWith('#q=')) {
+        const query = hash.substring(3);
+        setSearchKeyword(query);
+      } else {
+        setSearchKeyword('');
+      }
+    };
+
+    // 초기 해시 확인
+    checkInitialHash();
+
+    // 해시 변경 이벤트 리스너 등록
+    window.addEventListener('hashchange', handleHashChange);
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
+
+  // 디저트 메이트에서 지도로 이동 파라미터 불러왔을 때 (위도, 경도, keyword(가게이름))
   const moveToStore = useCallback(() => {
     if (!isMapLoaded || !servicesRef.current.mapService) return;
 
@@ -732,17 +699,50 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     ],
   );
 
-  // 버튼에 연동
-  const mapPanelProps = useMemo(
-    () => ({
-      moveToCurrentPosition: handleMoveToCurrentPosition,
-    }),
-    [handleMoveToCurrentPosition],
-  );
+  // 에러 메시지
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError(null);
+      }, 3000);
 
-  const handleRefetchBtnClick = () => {
-    setIsFetchRequired(true);
-  };
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [error]);
+
+  // 컴포넌트 언마운트 시
+  useEffect(() => {
+    return () => {
+      // 조건부 검사 없이 항상 시도
+      try {
+        if (servicesRef.current.geoService) {
+          servicesRef.current.geoService.stopWatchingPosition();
+        }
+
+        if (servicesRef.current.mapService) {
+          // 모든 리소스 정리
+          servicesRef.current.mapService.clearAllMarkers();
+
+          // currentPositionMarker 참조 해제
+          if (currentPositionMarkerRef.current) {
+            servicesRef.current.mapService.removeCurrentPositionMarker();
+            currentPositionMarkerRef.current = null;
+          }
+
+          // 이벤트 리스너 정리
+          if (isInitialized) {
+            servicesRef.current.mapService.removeAllEventListeners();
+          }
+        }
+
+        console.log('모든 지도 리소스가 정리되었습니다.');
+      } catch (error) {
+        console.error('지도 리소스 정리 중 오류:', error);
+      }
+    };
+  }, [isInitialized]);
 
   return (
     <div>
