@@ -2,7 +2,7 @@
 import { cn } from '@repo/ui/lib/utils';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { useMemo, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { SideBar } from '@repo/design-system/components/SideBar';
 
@@ -11,13 +11,15 @@ import IconLocation from '@repo/design-system/components/icons/IconLocation';
 import IconWriting from '@repo/design-system/components/icons/IconWriting';
 import IconCheck from '@repo/design-system/components/icons/IconCheck';
 import { getIconColor } from '../../../_utils/iconColor';
-import StoreService from '@repo/usecase/src/storeService';
-import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import {
   type StoresInSavedListData,
   type ParentSavedListResponse,
 } from '@repo/entity/src/store';
-import { getParentSavedList, getStoresInSavedList } from './action';
+import {
+  deleteStoreInSavedList,
+  getParentSavedList,
+  getStoresInSavedList,
+} from './action';
 
 interface StoreListContainerProps {
   listId: number;
@@ -38,14 +40,6 @@ export function StoreListContainer({
     useState<ParentSavedListResponse>();
   const [storeData, setStoreData] = useState<StoresInSavedListData[]>([]);
 
-  const storeService = useMemo(
-    () =>
-      new StoreService({
-        storeRepository: new StoreAPIRepository(),
-      }),
-    [],
-  );
-
   const handleListClose = () => {
     router.push('?sidebar=true');
   };
@@ -64,7 +58,7 @@ export function StoreListContainer({
     if (!selectedStoreUuId) return;
 
     try {
-      await storeService.deleteStoreInSavedList({
+      await deleteStoreInSavedList({
         listId,
         storeUuid: selectedStoreUuId,
       });
