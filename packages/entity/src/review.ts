@@ -1,3 +1,5 @@
+import { type RawPlace } from './../../api/src/desserbee-web/place';
+// import type { RawPlace } from '@repo/api/src/desserbee-web/place';
 import type { BaseRequestData } from './appMetadata';
 import type { CommunityDessertReviewCategory } from './community';
 import type { Place } from './place';
@@ -14,55 +16,6 @@ export interface ReviewContent {
   imageId?: number;
   imageIndex?: number;
   imageUrl?: string;
-}
-
-export function isReview(data: unknown): data is Review {
-  if (typeof data !== 'object' || data === null) {
-    return false;
-  }
-
-  const review = data as Partial<Review>;
-
-  // 필수 속성 확인
-  if (
-    typeof review.id !== 'string' ||
-    typeof review.nickname !== 'string' ||
-    typeof review.title !== 'string' ||
-    typeof review.createdAt !== 'string' ||
-    typeof review.updatedAt !== 'string' ||
-    typeof review.viewCount !== 'number' ||
-    typeof review.userId !== 'string' ||
-    typeof review.storeId !== 'number' ||
-    typeof review.saved !== 'boolean' ||
-    !Array.isArray(review.contents)
-  ) {
-    return false;
-  }
-
-  // contents 배열의 각 항목이 ReviewContent 형식인지 확인
-  if (!review.contents.every(content => 
-    typeof content === 'object' && 
-    content !== null && 
-    (content.type === 'image' || content.type === 'text')
-  )) {
-    return false;
-  }
-
-  // place 객체가 존재하는지 확인 (상세 검증은 생략)
-  if (!review.place || typeof review.place !== 'object') {
-    return false;
-  }
-
-  // 선택적으로 gender와 category 확인
-  if (review.gender !== undefined && typeof review.gender !== 'string') {
-    return false;
-  }
-
-  if (review.category !== undefined && typeof review.category !== 'string') {
-    return false;
-  }
-
-  return true;
 }
 
 export interface Review {
@@ -103,6 +56,23 @@ export interface ReviewListResponse {
   isLast: boolean;
 }
 
+export interface RawReviewWriteRequest {
+  userUuid: string;
+  title: string;
+  contents: ReviewContent[];
+  reviewCategoryId: number;
+  place: RawPlace;
+}
+
+export interface ReviewWriteData {
+  userId: string;
+  title: string;
+  contents: ReviewContent[];
+  category: CommunityDessertReviewCategory;
+  place: Place;
+  imageFiles?: File[];
+}
+
 export interface ReviewRepository {
   // 내가 쓴 리뷰 조회
   getMine(data: BaseRequestData<unknown>): Promise<unknown>;
@@ -110,8 +80,11 @@ export interface ReviewRepository {
   // 상세페이지 조회
   getDetail(data: BaseRequestData<ReviewUpdateData>): Promise<Review>;
 
+  // 리뷰 작성
+  write(data: BaseRequestData<ReviewWriteData>): Promise<Review>;
+
   // 내가 쓴 리뷰 수정
-  edit(data: BaseRequestData<ReviewUpdateData>): Promise<unknown>;
+  edit(data: BaseRequestData<ReviewWriteData & ReviewUpdateData>): Promise<unknown>;
 
   // 내가 쓴 리뷰 삭제
   delete(data: BaseRequestData<ReviewUpdateData>): Promise<unknown>;

@@ -32,6 +32,9 @@ export default function CommentForm() {
     }
     
     setIsSubmitting(true);
+
+    console.log(mate);
+
     try {
       await mateService.createReply({
         id: mate.id,

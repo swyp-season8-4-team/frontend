@@ -7,6 +7,7 @@ import type {
   MateAllListResponse,
   MateApplyRequest,
   MateCreateRequest,
+  MateEditRequest,
   MateFireRequest,
   MateListRequest,
   MateRejectRequest,
@@ -16,7 +17,6 @@ import type {
   MateSaveRequest,
   MateUpdateRequest,
   MateWriteRequest,
-  RawMate,
 } from '@repo/entity/src/mate';
 
 export default class MateService {
@@ -182,12 +182,22 @@ export default class MateService {
     return response;
   }
 
-  async write(data: MateWriteRequest, isNew: boolean): Promise<Mate> {
+  async write(data: MateWriteRequest): Promise<Mate> {
     if (!this.mateRepository) {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.write({ data, method: isNew ? 'POST' : 'PATCH' });
+    const response = await this.mateRepository.write({ data });
+
+    return response;
+  }
+
+  async edit(data: MateEditRequest): Promise<unknown> {
+    if (!this.mateRepository) {
+      throw new Error('mateRepository is not set');
+    }
+
+    const response = await this.mateRepository.edit({ data });
 
     return response;
   }

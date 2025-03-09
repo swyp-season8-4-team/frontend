@@ -7,6 +7,7 @@ import type {
   MateAllListResponse,
   MateApplyRequest,
   MateCreateRequest,
+  MateEditRequest,
   MateFireRequest,
   MateLeaveRequest,
   MateListRequest,
@@ -214,7 +215,7 @@ export default class MateAPIRepository
       throw new Error('data is required');
     }
 
-    const response = await fetch<MateRequest, any>({
+    const response = await fetch<MateRequest, RawMate>({
       ...(authorization && {
         headers: {
           Authorization: authorization,
@@ -420,13 +421,9 @@ export default class MateAPIRepository
     return response.map((mate) => this.mateConverter.convertRawToMate(mate));
   }
 
-  async write({ data, method }: BaseRequestData<MateWriteRequest>): Promise<Mate> {
+  async write({ data }: BaseRequestData<MateWriteRequest>): Promise<Mate> {
     if (!data) {
       throw new Error('data is required');
-    }
-
-    if (!method) {
-      throw new Error('method is required');
     }
 
     const { imageFile, ...rest } = data;
@@ -451,7 +448,7 @@ export default class MateAPIRepository
     }
 
     const response = await fetch<RawMateWriteReuqest, RawMate>({
-      method,
+      method: 'POST',
       url: `${this.endpoint}/mates`,
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -460,5 +457,43 @@ export default class MateAPIRepository
     });
 
     return this.mateConverter.convertRawToMate(response);
+  }
+
+  async edit({ data }: BaseRequestData<MateEditRequest>): Promise<unknown> {
+    if (!data) {
+      throw new Error('data is required');
+    }
+
+    const { id, ...rest } = data;
+
+    const { userId, title, content, recruit, mateCategoryId, place, imageFile } = rest;
+
+    const formData = new FormData();
+
+    const requestData = {
+      userUuid: userId,
+      title,
+      content,
+      recruitYn: recruit,
+      mateCategoryId,
+      place
+    }
+
+    formData.append('request', new Blob([JSON.stringify(requestData)], { type: 'application/json' }));
+
+    if (!!imageFile) {
+      formData.append('mateImage', imageFile);
+    }
+
+    const response = await fetch<RawMateWriteReuqest, unknown>({
+      method: 'PATCH',
+      url: `${this.endpoint}/mates/${id}`,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+      formData
+    });
+
+    return response;
   }
 }

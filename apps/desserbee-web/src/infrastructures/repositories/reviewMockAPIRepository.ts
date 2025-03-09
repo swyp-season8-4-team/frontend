@@ -1,8 +1,11 @@
-import type { Review, ReviewListResponse, ReviewRepository, ReviewUpdateData } from "@repo/entity/src/review";
+import type { Review, ReviewListResponse, ReviewRepository, ReviewUpdateData, ReviewWriteData } from "@repo/entity/src/review";
 import APIRepository from "@repo/infrastructures/src/repositories/apiRepository";
 import type { BaseRequestData } from "@repo/entity/src/appMetadata";
 
 export default class ReviewMockAPIRepository extends APIRepository implements ReviewRepository {
+  write(data: BaseRequestData<ReviewWriteData>): Promise<Review> {
+    throw new Error("Method not implemented.");
+  }
   
   private readonly sampleReviews: Review[] = [
     // {
