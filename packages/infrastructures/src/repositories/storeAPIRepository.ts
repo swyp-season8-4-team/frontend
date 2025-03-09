@@ -80,7 +80,6 @@ export default class StoreAPIRepository
       const preferenceTagIds =
         preferenceConverter.convertPreferenceToRaw(preferenceTagNames);
 
-      console.log(preferenceTagIds);
       url += `&preferenceTagIds=${preferenceTagIds.join(',')}`;
     }
 

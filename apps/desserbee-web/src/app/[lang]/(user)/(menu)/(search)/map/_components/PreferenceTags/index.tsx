@@ -47,7 +47,6 @@ export function PreferenceTags({
   };
 
   const handleTagClick = (categoryName: Preference) => {
-    console.log('Tag Clicked:', categoryName);
     if (user) {
       updateSelectedTag(categoryName);
     } else {
