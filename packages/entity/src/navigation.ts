@@ -13,6 +13,7 @@ export enum NavigationPathGroup {
   Store = '/store/',
   Preference = '/preference/',
   MateDetail = '/mate/',
+  ReviewDetail = '/review/',
 }
 
 export enum NavigationPathname {

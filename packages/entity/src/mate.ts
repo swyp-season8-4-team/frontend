@@ -214,7 +214,9 @@ export interface MateWriteRequest {
   imageFile?: File;
 }
 
-
+export interface MateEditRequest extends MateWriteRequest {
+  id: string;
+}
 
 export interface MateRepository {
   applyMate(data: BaseRequestData<MateApplyRequest>): Promise<unknown>; // 모임 참여
@@ -240,4 +242,5 @@ export interface MateRepository {
   getReplyList(data: BaseRequestData<GetMateReplyListRequest>): Promise<GetMateReplyListResponse>; // 모임 댓글 목록 조회
   getSavedMateList(data: BaseRequestData<MateListRequest>): Promise<Mate[]>; // 저장한 모임 목록 조회
   write(data: BaseRequestData<MateWriteRequest>): Promise<Mate>; // 모임 생성 및 수정(글쓰기)
+  edit(data: BaseRequestData<MateEditRequest>): Promise<unknown>; // 모임 수정(글쓰기)
 }

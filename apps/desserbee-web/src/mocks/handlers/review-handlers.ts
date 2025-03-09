@@ -15,14 +15,14 @@ export const reviewHandlers = [
   }),
 
   // 리뷰 수정
-  http.patch(`${API_ENDPOINT}/reviews/8b07fc58-ae7c-4e4c-9a56-1c4676f84864`, async ({ params }) => {
-    const { id } = params;
-    if (typeof id !== 'string') {
-      return HttpResponse.json({ error: 'ID is required' }, { status: 400 });
-    }
+  // http.patch(`${API_ENDPOINT}/reviews/8b07fc58-ae7c-4e4c-9a56-1c4676f84864`, async ({ params }) => {
+  //   const { id } = params;
+  //   if (typeof id !== 'string') {
+  //     return HttpResponse.json({ error: 'ID is required' }, { status: 400 });
+  //   }
 
-    return HttpResponse.json(reviewService.edit({ id }));
-  }),
+  //   return HttpResponse.json(reviewService.edit({ id, ...data }));
+  // }),
 
   // 리뷰 삭제
   http.delete(`${API_ENDPOINT}/reviews/8b07fc58-ae7c-4e4c-9a56-1c4676f84864`, ({ params }) => {

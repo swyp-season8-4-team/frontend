@@ -9,7 +9,7 @@ import AuthNextAppRouteRepository from "@repo/infrastructures/src/repositories/a
 const reviewService = new ReviewService({
   authRepository: new AuthNextAppRouteRepository(),
   reviewRepository: new ReviewAPIRepository(),
-})
+});
 
 export default async function ReviewDetailPage({ params }: WithParams) {
   const { reviewId } = await params;

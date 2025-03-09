@@ -80,7 +80,9 @@ export default function MateWriteForm({ initialMate }: Props) {
       return;
     }
 
-    const { id } = await mateService.write({
+    let id = '';
+
+    const requestData = {
       userId: user?.id,
       title,
       content,
@@ -93,7 +95,18 @@ export default function MateWriteForm({ initialMate }: Props) {
         longitude: null,
       },
       ...(uploadFile && { imageFile: uploadFile }),
-    }, !initialMate)
+    }
+
+    if (!!initialMate) {
+      await mateService.edit({
+        id: initialMate.id,
+        ...requestData,
+      });
+      id = initialMate.id;
+    } else {
+      const response = await mateService.write(requestData);
+      id = response.id;
+    }
     
     router.replace(`${NavigationPathGroup.MateDetail}${id}`);
   };

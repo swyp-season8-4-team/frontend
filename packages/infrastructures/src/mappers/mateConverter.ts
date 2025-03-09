@@ -3,6 +3,7 @@ import type { Mate, MateReply, MateWriteRequest, RawMateReply, RawMateWriteReuqe
 
 export default class MateConverter {
   convertRawToMate(rawMate: RawMate): Mate {
+    console.log(rawMate);
     const result = {
       id: rawMate.mateUuid,
       recruit: rawMate.recruitYn,

@@ -68,10 +68,31 @@
   body {
     @apply antialiased bg-background text-foreground;
   }
+  
 }
 
 @layer components {
   .text-default {
     @apply text-[#393939] tracking-[-0.03em] leading-[130%];
+  }
+  
+  .editor-placeholder:empty:before {
+    @apply content-[attr(data-placeholder)] text-gray-400 absolute pointer-events-none;
+  }
+  
+  .editor-content p {
+    @apply mb-2;
+  }
+  
+  .editor-content p:last-child {
+    @apply mb-0;
+  }
+  
+  .image-container {
+    @apply relative my-2;
+  }
+  
+  .image-container img {
+    @apply max-w-full rounded;
   }
 }

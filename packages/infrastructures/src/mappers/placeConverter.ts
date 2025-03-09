@@ -14,9 +14,9 @@ export default class PlaceConverter {
   convertPlaceToRaw(place: Place): RawPlace {
     return {
       placeName: place.name,
-      address: place.address,
-      latitude: place.latitude,
-      longitude: place.longitude,
+      address: place.address ?? null,
+      latitude: place.latitude ?? null,
+      longitude: place.longitude ?? null,
     };
   }
 }

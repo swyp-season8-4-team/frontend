@@ -37,8 +37,6 @@ export default async function MateDetailPage({ params }: WithParams) {
 
   const waitList = waitListResult.status === 'fulfilled' ? waitListResult.value : [];
 
-  console.log('wwwww', waitList);
-
   return (
     <main className="flex flex-col h-[calc(100dvh - 52px)] px-4 gap-4 bg-[#f6f6f6]">
       <MateDetailProvider mate={mate}>
@@ -49,10 +47,11 @@ export default async function MateDetailPage({ params }: WithParams) {
             <CurrentApplyList waitList={waitList} />
           </div>
         </MyMateDetailSection>
-      </MateDetailProvider>
       
-      <MateCommentListSection mateId={mateId} />
-      {mate.applyStatus === 'APPROVED' && <CommentForm />}
+      
+        <MateCommentListSection mateId={mateId} />
+        {mate.applyStatus === 'APPROVED' && <CommentForm />}
+      </MateDetailProvider>
     </main>
   );
 }
