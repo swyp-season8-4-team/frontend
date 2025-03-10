@@ -1,7 +1,6 @@
 import IconClock from '@repo/design-system/components/icons/IconClock';
 import IconX from '@repo/design-system/components/icons/IconX';
 import { deleteRecentSearchKeyword } from './action';
-import { useRouter } from 'next/navigation';
 import { useContext, useState } from 'react';
 import { UserContext } from '@/contexts/UserContext';
 
@@ -12,7 +11,6 @@ interface RecentItemProps {
 
 export function RecentItem({ keyword, createdAt }: RecentItemProps) {
   const { user } = useContext(UserContext);
-  const router = useRouter();
   const [isVisible, setIsVisible] = useState(true);
 
   //TODO: API 명세서 업데이트되면 수정
@@ -54,7 +52,10 @@ export function RecentItem({ keyword, createdAt }: RecentItemProps) {
       <div className="flex items-center gap-[6.48px] md:gap-[17px]">
         <div className="text-[8px] md:text-lg">{createdAt}</div>
         <button
-          onClick={() => handleRecentKeywordDelete()}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleRecentKeywordDelete();
+          }}
           className="w-2 h-2 md:w-5 md:h-5"
         >
           <IconX className="text-[#545454] w-full h-full" />

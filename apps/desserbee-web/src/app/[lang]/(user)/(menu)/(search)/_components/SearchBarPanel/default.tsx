@@ -216,7 +216,16 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
           </div>
           <div className="flex flex-col mt-[7px] md:mt-[22px] gap-[7px] md:gap-[22px] pb-[111px]">
             {recentSearchData.map((recentKeyword) => (
-              <RecentItem key={recentKeyword} keyword={recentKeyword} />
+              <div
+                className="cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSearch(recentKeyword);
+                }}
+                key={recentKeyword}
+              >
+                <RecentItem key={recentKeyword} keyword={recentKeyword} />
+              </div>
             ))}
           </div>
         </div>
