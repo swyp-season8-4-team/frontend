@@ -2,6 +2,8 @@ import IconClock from '@repo/design-system/components/icons/IconClock';
 import IconX from '@repo/design-system/components/icons/IconX';
 import { deleteRecentSearchKeyword } from './action';
 import { useRouter } from 'next/navigation';
+import { useContext, useState } from 'react';
+import { UserContext } from '@/contexts/UserContext';
 
 interface RecentItemProps {
   keyword: string;
@@ -9,17 +11,37 @@ interface RecentItemProps {
 }
 
 export function RecentItem({ keyword, createdAt }: RecentItemProps) {
+  const { user } = useContext(UserContext);
   const router = useRouter();
+  const [isVisible, setIsVisible] = useState(true);
+
   //TODO: API 명세서 업데이트되면 수정
   const handleRecentKeywordDelete = async () => {
     try {
-      // await deleteRecentSearchKeyword();
-      console.log('삭제');
-      router.refresh();
+      if (user) {
+        // await deleteRecentSearchKeyword();
+        setIsVisible(false);
+      } else {
+        const searchHistory = JSON.parse(
+          localStorage.getItem('searchHistory') || '[]',
+        );
+
+        const updatedHistory = searchHistory.filter((encodedTerm: string) => {
+          const decodedTerm = decodeURIComponent(atob(encodedTerm));
+          return decodedTerm !== keyword;
+        });
+
+        localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
+
+        // 현재 아이템을 UI에서 숨김 (낙관적 업데이트..?)
+        setIsVisible(false);
+      }
     } catch (err) {
-      console.log(err);
+      console.log('최근 검색어 삭제 실패:', err);
     }
   };
+
+  if (!isVisible) return null;
 
   return (
     <div className="flex justify-between items-center">

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useCallback } from 'react';
 import { formatTimeToHHMM } from './_utils/formatTime';
 import { PopularItem } from './popularItem';
 import { RecentItem } from './recentItem';
@@ -11,13 +11,14 @@ import {
 } from './action';
 import type { GetPopularSearchDataResonse } from '@repo/entity/src/search';
 import { useRouter } from 'next/navigation';
+import { UserContext } from '@/contexts/UserContext';
 
 interface DefaultPanelProps {
   onSearch: (keyword: string) => void;
 }
 
 export function DefaultPanel({ onSearch }: DefaultPanelProps) {
-  const router = useRouter();
+  const { user } = useContext(UserContext);
   // const [popularSearchData, setPopularSearchData] =
   //   useState<GetPopularSearchDataResonse>();
   const [recentSearchData, setRecentSearchData] = useState<string[]>([]);
@@ -31,28 +32,60 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
   //   }
   // };
 
-  const handleRecentSearchDataFetch = async () => {
-    try {
-      const result = await getRecentSearchKeywords();
-      setRecentSearchData(result);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const handleRecentKeywordAllDelete = useCallback(async () => {
+    // 낙관적 업데이트
+    const previousData = recentSearchData;
+    setRecentSearchData([]);
 
-  const handleRecentKeywordAllDelete = async () => {
     try {
-      // await deleteRecentSearchKeywordsAll();
-      console.log('전체 삭제');
-      router.refresh();
+      if (user) {
+        // await deleteRecentSearchKeywordsAll();
+      } else {
+        localStorage.setItem('searchHistory', '[]');
+      }
+    } catch (err) {
+      setRecentSearchData(previousData);
+      console.log('전체 삭제 실패:', err);
+    }
+  }, [user, recentSearchData]);
+
+  const getNotSignInSearchHistory = useCallback((): string[] => {
+    try {
+      const encodedHistory = JSON.parse(
+        localStorage.getItem('searchHistory') || '[]',
+      );
+      return encodedHistory
+        .map((encodedTerm: string) => {
+          try {
+            return decodeURIComponent(atob(encodedTerm));
+          } catch {
+            return '';
+          }
+        })
+        .filter(Boolean);
+    } catch (error) {
+      console.error('Failed to get search history:', error);
+      return [];
+    }
+  }, []);
+
+  const handleRecentSearchDataFetch = useCallback(async () => {
+    try {
+      if (user) {
+        const result = await getRecentSearchKeywords();
+        setRecentSearchData(result);
+      } else {
+        setRecentSearchData(getNotSignInSearchHistory());
+      }
     } catch (err) {
       console.log(err);
     }
-  };
+  }, [user, getNotSignInSearchHistory]);
 
   useEffect(() => {
     handleRecentSearchDataFetch();
-  }, []);
+  }, [handleRecentSearchDataFetch]);
+
   const popularSearchData = {
     searches: [
       {
@@ -151,12 +184,18 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
           </div>
           <div className="w-1/2 flex flex-col gap-y-[10px] md:gap-y-6">
             {popularSearchData.searches.slice(5, 10).map((popularKeyword) => (
-              <PopularItem
-                keyword={popularKeyword.keyword}
+              <button
+                onClick={() => {
+                  onSearch(popularKeyword.keyword);
+                }}
                 key={popularKeyword.keyword}
-                rank={popularKeyword.rank}
-                difference={popularKeyword.difference}
-              />
+              >
+                <PopularItem
+                  keyword={popularKeyword.keyword}
+                  rank={popularKeyword.rank}
+                  difference={popularKeyword.difference}
+                />
+              </button>
             ))}
           </div>
         </div>

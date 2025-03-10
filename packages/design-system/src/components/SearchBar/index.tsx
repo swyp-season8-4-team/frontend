@@ -1,6 +1,5 @@
 import IconSearch from '../icons/IconSearch';
-import { memo, useCallback } from 'react';
-import IconX from '../icons/IconX';
+import { memo, useCallback, useRef } from 'react';
 
 interface SearchBarProps {
   searchTerm: string;
@@ -17,6 +16,8 @@ export const SearchBar = memo(function SearchBar({
   isSearchPanelShow,
   handleSearchPanelShow,
 }: SearchBarProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
@@ -29,6 +30,7 @@ export const SearchBar = memo(function SearchBar({
     (e: React.FormEvent) => {
       e.preventDefault();
       onSearch(searchTerm);
+      inputRef.current?.blur();
     },
     [onSearch, searchTerm],
   );
@@ -36,6 +38,7 @@ export const SearchBar = memo(function SearchBar({
   return (
     <form className="relative px-4 w-full" onSubmit={handleSubmit}>
       <input
+        ref={inputRef}
         type="search"
         placeholder="원하는 디저트 메이트를 검색해보세요!"
         value={searchTerm}

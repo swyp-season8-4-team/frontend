@@ -1,9 +1,11 @@
 'use client';
 
-import { useCallback, useState, useEffect } from 'react';
+import { UserContext } from '@/contexts/UserContext';
+import { useCallback, useState, useEffect, useContext } from 'react';
 // import { debounce } from '@repo/utility/src/debounce';
 
 export function useHashSearch() {
+  const { user } = useContext(UserContext);
   const [searchTerm, setSearchTerm] = useState(''); // searchTerm은 보여주기용
   const [isSearchPanelShow, setIsSearchPanelShow] = useState(false);
 
@@ -48,14 +50,43 @@ export function useHashSearch() {
     }
   }, []);
 
-  // 엔터나 입력 완료 버튼 눌렀을 때 실행
-  const onSearch = useCallback((query: string) => {
-    setSearchTerm(query);
-    if (typeof window !== 'undefined') {
-      window.location.hash = query ? `q=${encodeURIComponent(query)}` : '';
-      handleSearchPanelShow(false);
+  const saveNotSignInSearchHistory = useCallback((query: string) => {
+    if (!query.trim()) return;
+
+    try {
+      // 검색어 sanitization 후 Base64 인코딩
+      const sanitizedQuery = query.trim().replace(/[<>]/g, '');
+      const encodedQuery = btoa(encodeURIComponent(sanitizedQuery));
+
+      const searchHistory = JSON.parse(
+        localStorage.getItem('searchHistory') || '[]',
+      );
+      const updatedHistory = [
+        encodedQuery,
+        ...searchHistory.filter((term: string) => term !== encodedQuery),
+      ];
+      const limitedHistory = updatedHistory.slice(0, 10);
+      localStorage.setItem('searchHistory', JSON.stringify(limitedHistory));
+    } catch (error) {
+      console.error('Failed to save search history:', error);
     }
   }, []);
+
+  const onSearch = useCallback(
+    (query: string) => {
+      setSearchTerm(query);
+      if (typeof window !== 'undefined') {
+        // 빈 검색어일 경우 hash를 완전히 제거
+        window.location.hash = query ? `q=${encodeURIComponent(query)}` : '';
+        handleSearchPanelShow(false);
+        if (!user && query.trim()) {
+          // 빈 문자열이 아닐 때만 저장
+          saveNotSignInSearchHistory(query);
+        }
+      }
+    },
+    [user, saveNotSignInSearchHistory],
+  );
 
   const handleSearchPanelShow = (isShow: boolean) => {
     setIsSearchPanelShow(isShow);
