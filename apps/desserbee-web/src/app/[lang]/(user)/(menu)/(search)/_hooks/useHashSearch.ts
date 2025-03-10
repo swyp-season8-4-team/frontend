@@ -1,11 +1,10 @@
 'use client';
 
 import { useCallback, useState, useEffect } from 'react';
-import { debounce } from '@repo/utility/src/debounce';
+// import { debounce } from '@repo/utility/src/debounce';
 
 export function useHashSearch() {
   const [searchTerm, setSearchTerm] = useState(''); // searchTerm은 보여주기용
-  const [, setIsSearchTermUpdated] = useState(false);
 
   // 초기 해시값 로드
   useEffect(() => {
@@ -31,6 +30,7 @@ export function useHashSearch() {
   //       }
   //     },
   //   });
+
   // }, []);
 
   const onChange = useCallback((query: string) => {

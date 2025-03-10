@@ -762,7 +762,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       />
       <div
         ref={mapRef}
-        className="relative bg-[#E8E8E8] mb-[9px] rounded-base w-full h-[calc(100dvh-295px)] overflow-x-hidden"
+        className="relative bg-[#E8E8E8] mb-[9px] rounded-base w-full h-[calc(100dvh-295px)] overflow-x-hidden z-0"
       >
         {error && (
           <div className="top-1/3  left-1/2 z-20 absolute bg-red-100 px-4 py-2 border border-red-400 rounded text-red-700 -translate-x-1/2 transform">

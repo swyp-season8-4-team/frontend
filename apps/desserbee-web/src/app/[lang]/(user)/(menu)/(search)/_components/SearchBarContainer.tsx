@@ -9,13 +9,15 @@ export const SearchBarContainer = memo(function SearchBarContainer() {
   const { searchTerm, onChange, onSearch } = useHashSearch();
 
   return (
-    <div>
+    <div className="absolute w-full bg-page z-10">
       <SearchBar
         searchTerm={searchTerm}
         onChange={onChange}
         onSearch={onSearch}
       />
-      <SearchBarPanel />
+      <div className="">
+        <SearchBarPanel />
+      </div>
     </div>
   );
 });
