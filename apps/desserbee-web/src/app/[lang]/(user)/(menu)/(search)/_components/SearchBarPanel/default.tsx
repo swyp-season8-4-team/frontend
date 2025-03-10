@@ -1,5 +1,6 @@
 import { formatTimeToHHMM } from './_utils/formatTime';
 import { PopularItem } from './popularItem';
+import { RecentItem } from './recentItem';
 export function DefaultPanel() {
   //mock
   const popularSearchData = {
@@ -103,7 +104,19 @@ export function DefaultPanel() {
         </div>
       </div>
       <div className="w-full h-[3px] md:h-[7px] bg-[#E8E8E8] my-[10px] md:my-[26px]"></div>
-      <div></div>
+      <div>
+        <div className="px-base">
+          <div className="w-full flex justify-between items-center">
+            <div className="text-xs md:text-[22px] font-semibold">
+              최근 검색어
+            </div>
+            <div className="text-[10px] md:text-lg">전체 삭제</div>
+          </div>
+          <div className="flex flex-col mt-[7px] md:mt-[22px] gap-[7px] md:gap-[22px] pb-[111px]">
+            <RecentItem />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
