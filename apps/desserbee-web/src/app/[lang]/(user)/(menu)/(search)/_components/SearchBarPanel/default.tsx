@@ -1,8 +1,53 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import { formatTimeToHHMM } from './_utils/formatTime';
 import { PopularItem } from './popularItem';
 import { RecentItem } from './recentItem';
+import {
+  deleteRecentSearchKeywordsAll,
+  getPopularSearchKeywords,
+  getRecentSearchKeywords,
+} from './action';
+import type { GetPopularSearchDataResonse } from '@repo/entity/src/search';
+import { useRouter } from 'next/navigation';
 export function DefaultPanel() {
-  //mock
+  const router = useRouter();
+  // const [popularSearchData, setPopularSearchData] =
+  //   useState<GetPopularSearchDataResonse>();
+  const [recentSearchData, setRecentSearchData] = useState<string[]>([]);
+
+  // const handlePopularSearchDataFetch = async () => {
+  //   try {
+  //     const result = await getPopularSearchKeywords();
+  //     setPopularSearchData(result);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
+
+  const handleRecentSearchDataFetch = async () => {
+    try {
+      const result = await getRecentSearchKeywords();
+      setRecentSearchData(result);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handleRecentKeywordAllDelete = async () => {
+    try {
+      // await deleteRecentSearchKeywordsAll();
+      console.log('전체 삭제');
+      router.refresh();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    handleRecentSearchDataFetch();
+  }, []);
   const popularSearchData = {
     searches: [
       {
@@ -69,6 +114,8 @@ export function DefaultPanel() {
     lastUpdatedTime: '2025-03-10T16:05:09.885259Z',
   };
 
+  if (!popularSearchData || !recentSearchData) return;
+
   return (
     <div className="w-full h-full pt-[21px] md:pt-7 pb-4">
       <div className="px-base">
@@ -110,10 +157,17 @@ export function DefaultPanel() {
             <div className="text-xs md:text-[22px] font-semibold">
               최근 검색어
             </div>
-            <div className="text-[10px] md:text-lg">전체 삭제</div>
+            <button
+              onClick={() => handleRecentKeywordAllDelete()}
+              className="text-[10px] md:text-lg"
+            >
+              전체 삭제
+            </button>
           </div>
           <div className="flex flex-col mt-[7px] md:mt-[22px] gap-[7px] md:gap-[22px] pb-[111px]">
-            <RecentItem />
+            {recentSearchData.map((recentKeyword) => (
+              <RecentItem key={recentKeyword} keyword={recentKeyword} />
+            ))}
           </div>
         </div>
       </div>
