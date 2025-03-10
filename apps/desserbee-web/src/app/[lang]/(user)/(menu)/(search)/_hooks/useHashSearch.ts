@@ -41,13 +41,7 @@ export function useHashSearch() {
   // }, []);
 
   const onChange = useCallback((query: string) => {
-    // 빈 문자열을 포함한 모든 값에 대해 searchTerm 업데이트
     setSearchTerm(query);
-
-    // 빈 문자열일 경우 해시도 제거
-    if (query === '') {
-      window.location.hash = 'q=';
-    }
   }, []);
 
   const saveNotSignInSearchHistory = useCallback((query: string) => {
@@ -74,13 +68,13 @@ export function useHashSearch() {
 
   const onSearch = useCallback(
     (query: string) => {
+      if (!query.trim()) return; // 빈 검색어 처리
+
       setSearchTerm(query);
       if (typeof window !== 'undefined') {
-        // 빈 검색어일 경우 hash를 완전히 제거
-        window.location.hash = query ? `q=${encodeURIComponent(query)}` : '';
+        window.location.hash = `q=${encodeURIComponent(query)}`;
         handleSearchPanelShow(false);
         if (!user && query.trim()) {
-          // 빈 문자열이 아닐 때만 저장
           saveNotSignInSearchHistory(query);
         }
       }

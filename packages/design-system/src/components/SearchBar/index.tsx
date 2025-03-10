@@ -30,8 +30,25 @@ export const SearchBar = memo(function SearchBar({
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      onSearch(searchTerm);
-      inputRef.current?.blur();
+      e.stopPropagation();
+      if (searchTerm.trim()) {
+        onSearch(searchTerm);
+        inputRef.current?.blur();
+      }
+    },
+    [onSearch, searchTerm],
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (searchTerm.trim()) {
+          onSearch(searchTerm);
+          inputRef.current?.blur();
+        }
+      }
     },
     [onSearch, searchTerm],
   );
@@ -48,6 +65,7 @@ export const SearchBar = memo(function SearchBar({
           'shadow-[2px_2px_5px_0px_rgba(0,0,0,0.1)] my-[9px] py-[9.17px] pl-[42.32px] rounded-[60px] w-full md:text-[15px] text-sm [&::-webkit-search-cancel-button]:appearance-none ',
         )}
         onChange={handleChange}
+        onKeyDown={handleKeyDown}
         onFocus={() => handleSearchPanelShow(true)}
         enterKeyHint="search"
       />
