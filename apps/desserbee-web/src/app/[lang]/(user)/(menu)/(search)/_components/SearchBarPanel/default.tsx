@@ -49,6 +49,33 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
     }
   }, [user, recentSearchData]);
 
+  const handleRecentKeywordDelete = async (keywordToDelete: string) => {
+    try {
+      if (user) {
+        // await deleteRecentSearchKeyword();
+        setRecentSearchData((prev) =>
+          prev.filter((keyword) => keyword !== keywordToDelete),
+        );
+      } else {
+        const searchHistory = JSON.parse(
+          localStorage.getItem('searchHistory') || '[]',
+        );
+
+        const updatedHistory = searchHistory.filter((encodedTerm: string) => {
+          const decodedTerm = decodeURIComponent(atob(encodedTerm));
+          return decodedTerm !== keywordToDelete;
+        });
+
+        localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
+        setRecentSearchData((prev) =>
+          prev.filter((keyword) => keyword !== keywordToDelete),
+        );
+      }
+    } catch (err) {
+      console.log('최근 검색어 삭제 실패:', err);
+    }
+  };
+
   const getNotSignInSearchHistory = useCallback((): string[] => {
     try {
       const encodedHistory = JSON.parse(
@@ -224,7 +251,10 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
                 }}
                 key={recentKeyword}
               >
-                <RecentItem key={recentKeyword} keyword={recentKeyword} />
+                <RecentItem
+                  keyword={recentKeyword}
+                  onDelete={() => handleRecentKeywordDelete(recentKeyword)}
+                />
               </div>
             ))}
           </div>
