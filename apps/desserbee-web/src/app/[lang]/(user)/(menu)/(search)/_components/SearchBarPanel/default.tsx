@@ -11,7 +11,12 @@ import {
 } from './action';
 import type { GetPopularSearchDataResonse } from '@repo/entity/src/search';
 import { useRouter } from 'next/navigation';
-export function DefaultPanel() {
+
+interface DefaultPanelProps {
+  onSearch: (keyword: string) => void;
+}
+
+export function DefaultPanel({ onSearch }: DefaultPanelProps) {
   const router = useRouter();
   // const [popularSearchData, setPopularSearchData] =
   //   useState<GetPopularSearchDataResonse>();
@@ -130,12 +135,18 @@ export function DefaultPanel() {
         <div className="w-full flex justify-between mt-4 gap-[16.24px] md:gap-[37px] ">
           <div className="w-1/2 flex flex-col gap-y-[10px] md:gap-y-6">
             {popularSearchData.searches.slice(0, 5).map((popularKeyword) => (
-              <PopularItem
-                keyword={popularKeyword.keyword}
+              <button
+                onClick={() => {
+                  onSearch(popularKeyword.keyword);
+                }}
                 key={popularKeyword.keyword}
-                rank={popularKeyword.rank}
-                difference={popularKeyword.difference}
-              />
+              >
+                <PopularItem
+                  keyword={popularKeyword.keyword}
+                  rank={popularKeyword.rank}
+                  difference={popularKeyword.difference}
+                />
+              </button>
             ))}
           </div>
           <div className="w-1/2 flex flex-col gap-y-[10px] md:gap-y-6">
