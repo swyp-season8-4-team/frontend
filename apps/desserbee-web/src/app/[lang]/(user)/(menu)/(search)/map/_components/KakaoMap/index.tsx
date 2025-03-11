@@ -135,6 +135,15 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
   const handleResultListClose = useCallback(() => {
     setIsResultListOpen(false);
+    if (window.location.hash) {
+      history.pushState(
+        '',
+        document.title,
+        window.location.pathname + window.location.search,
+      );
+      setSearchKeyword('');
+      setIsFetchRequired(true);
+    }
   }, []);
 
   const handleRefetchBtnClick = useCallback(() => {
