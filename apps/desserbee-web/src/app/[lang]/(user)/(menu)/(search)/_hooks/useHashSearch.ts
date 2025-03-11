@@ -72,7 +72,19 @@ export function useHashSearch() {
 
       setSearchTerm(query);
       if (typeof window !== 'undefined') {
-        window.location.hash = `q=${encodeURIComponent(query)}`;
+        // 현재 해시와 새 검색어가 같은 경우, 해시를 잠시 비웠다가 다시 설정
+        if (window.location.hash === `#q=${encodeURIComponent(query)}`) {
+          window.location.hash = '';
+
+          // 약간의 지연 후 다시 해시 설정
+          setTimeout(() => {
+            window.location.hash = `q=${encodeURIComponent(query)}`;
+          }, 10);
+        } else {
+          // 다른 검색어인 경우 바로 해시 설정
+          window.location.hash = `q=${encodeURIComponent(query)}`;
+        }
+
         handleSearchPanelShow(false);
         if (!user && query.trim()) {
           saveNotSignInSearchHistory(query);
