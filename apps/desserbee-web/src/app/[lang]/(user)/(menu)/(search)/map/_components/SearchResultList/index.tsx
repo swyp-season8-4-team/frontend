@@ -1,9 +1,9 @@
 import type { NearByStoreData } from '@repo/entity/src/store';
 import Image from 'next/image';
-import { getOperationStatus } from '../../_utils/operatingStatus';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { cn } from '@repo/ui/lib/utils';
 import IconX from '@repo/design-system/components/icons/IconX';
+import { useRouter } from 'next/navigation';
 
 interface SearchResultListProps {
   resultData: NearByStoreData[];
@@ -11,25 +11,53 @@ interface SearchResultListProps {
   onClose: () => void;
 }
 
+//TODO: 예림님 코드 머지되면 주석 풀고 데이터 잘 뿌려지는지 확인해보기
+
+// 1km 미만은 m 단위로, 1km 이상은 km 단위로 표시
+const formatDistance = (distance: number | undefined): string => {
+  if (distance === undefined) {
+    return '거리 정보 없음';
+  }
+
+  if (distance < 1) {
+    // 1km 미만은 m 단위로 표시
+    return `${Math.round(distance * 1000)}m`;
+  } else {
+    // 1km 이상은 km 단위로 표시 (소수점 한 자리)
+    return `${distance.toFixed(1)}km`;
+  }
+};
+
 export function SearchResultList({
   resultData,
   distances,
   onClose,
 }: SearchResultListProps) {
+  const router = useRouter();
+  const handleResultItemClick = (storeUuId: string) => {
+    router.replace(`?storeId=${storeUuId}&bottomsheet=true`, {
+      scroll: false,
+    });
+  };
+
   const bottomSheetRef = useRef<HTMLDivElement>(null);
+  const isOpen = resultData.length > 0;
 
   return (
     <>
-      {resultData.length > 0 && (
-        <div className="z-[1] fixed flex justify-center w-full">
+      {isOpen && (
+        <div
+          className={cn('fixed inset-0 flex justify-center w-full h-full z-10')}
+          onClick={onClose}
+        >
           <div
             ref={bottomSheetRef}
             className={cn(
-              'bottom-0 z-20 pb-4 fixed select-none w-full',
+              'bottom-0 pb-4 fixed select-none w-full',
               'left-0 right-0 mx-auto',
               'bg-white px-base pt-[10px] rounded-t-base max-w-[768px]',
               'animate-slide-up transition-transform duration-500 ease-out',
-              resultData.length > 0 ? 'translate-y-0' : 'translate-y-full',
+              isOpen ? 'translate-y-0' : 'translate-y-full',
             )}
             onClick={(e) => e.stopPropagation()}
           >
@@ -46,24 +74,14 @@ export function SearchResultList({
                   <IconX />
                 </button>
               </div>
+
               <div className="h-[30dvh] overflow-y-scroll">
                 {resultData.map((store, index) => {
-                  // const { status } = getOperationStatus(store.operatingHours);
-
-                  let distanceText = '거리 정보 없음';
-                  if (distances && distances[index] !== undefined) {
-                    const distanceValue = distances[index];
-                    if (distanceValue < 1) {
-                      // 1km 미만은 m 단위로 표시
-                      distanceText = `${Math.round(distanceValue * 1000)}m`;
-                    } else {
-                      // 1km 이상은 km 단위로 표시 (소수점 한 자리)
-                      distanceText = `${distanceValue.toFixed(1)}km`;
-                    }
-                  }
+                  const distanceText = formatDistance(distances?.[index]);
 
                   return (
                     <div
+                      onClick={() => handleResultItemClick(store.storeUuid)}
                       className="flex justify-between items-center border-b-[0.19px] border-b-[#9F9F9F] py-[9px] md:px-[23px] md:py-[37px]"
                       key={store.storeId}
                     >
