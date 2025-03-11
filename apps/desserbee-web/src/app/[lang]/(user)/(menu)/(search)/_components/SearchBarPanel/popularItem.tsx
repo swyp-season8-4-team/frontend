@@ -1,5 +1,5 @@
 import IconTriangle from '@repo/design-system/components/icons/IconTriangle';
-import { convertNegativeToPositive } from './_utils/convertNegativeToPositive';
+import { convertNegativeToPositive } from '@repo/utility/src/number';
 import { cn } from '@repo/ui/lib/utils';
 
 interface PopularItemProps {

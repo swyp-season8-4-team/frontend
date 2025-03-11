@@ -1,7 +1,7 @@
 'use client';
 
 import { useContext, useEffect, useState, useCallback } from 'react';
-import { formatTimeToHHMM } from './_utils/formatTime';
+import { formatDateToHHMM } from '@repo/utility/src/date';
 import { PopularItem } from './popularItem';
 import { RecentItem } from './recentItem';
 import {
@@ -189,7 +189,7 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
             인기 검색어
           </div>
           <div className="text-[10px] md:text-lg">
-            {formatTimeToHHMM(popularSearchData.lastUpdatedTime)} 업데이트
+            {formatDateToHHMM(popularSearchData.lastUpdatedTime)} 업데이트
           </div>
         </div>
         <div className="w-full flex justify-between mt-4 gap-[16.24px] md:gap-[37px] ">
