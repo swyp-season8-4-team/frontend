@@ -103,7 +103,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [isResultListOpen, setIsResultListOpen] = useState(false);
   const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
-  const [distances, setDistances] = useState<number[]>();
+  const [distances, setDistances] = useState<number[]>([]);
 
   const [, setRetryCount] = useState(0);
   const retryCountRef = useRef(0);
@@ -610,15 +610,11 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
             return distance;
           });
 
-          // 약간의 지연을 두어 상태 업데이트가 확실히 반영되도록 함
           setTimeout(() => {
-            if (newDistances) {
-              setDistances([]);
-              setNearByStores(stores);
-            } else {
-              setDistances(newDistances);
-              setNearByStores(stores);
-            }
+            setDistances(
+              newDistances.filter((d): d is number => d !== undefined),
+            );
+            setNearByStores(stores);
             setIsSearching(false);
           }, 100);
         } else {
