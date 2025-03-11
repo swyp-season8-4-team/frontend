@@ -21,11 +21,11 @@ export function SearchResultList({
   return (
     <>
       {resultData.length > 0 && (
-        <div className="z-bottomSheet fixed flex justify-center w-full">
+        <div className="z-[1] fixed flex justify-center w-full">
           <div
             ref={bottomSheetRef}
             className={cn(
-              'bottom-0 z-bottomSheet pb-4 fixed select-none w-full',
+              'bottom-0 z-20 pb-4 fixed select-none w-full',
               'left-0 right-0 mx-auto',
               'bg-white px-base pt-[10px] rounded-t-base max-w-[768px]',
               'animate-slide-up transition-transform duration-500 ease-out',
