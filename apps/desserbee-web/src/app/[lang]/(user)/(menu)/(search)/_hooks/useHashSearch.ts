@@ -44,6 +44,22 @@ export function useHashSearch() {
     setSearchTerm(query);
   }, []);
 
+  const isValidQuery = useCallback((query: string): boolean => {
+    // 공백이거나 두 글자 이하인 경우
+    // if (!query.trim() || query.trim().length < 2) {
+    if (!query.trim()) {
+      return false;
+    }
+
+    // 한글 자음/모음이 포함된 경우 (완성된 글자와 섞여 있어도 검출)
+    const containsKoreanConsonantsVowels = /[ㄱ-ㅎㅏ-ㅣ]/;
+    if (containsKoreanConsonantsVowels.test(query.trim())) {
+      return false;
+    }
+
+    return true;
+  }, []);
+
   const saveNotSignInSearchHistory = useCallback((query: string) => {
     if (!query.trim()) return;
 
@@ -68,7 +84,13 @@ export function useHashSearch() {
 
   const onSearch = useCallback(
     (query: string) => {
-      if (!query.trim()) return; // 빈 검색어 처리
+      // 검색어 유효성 검사
+      if (!isValidQuery(query)) {
+        alert(
+          '검색어를 확인해주세요 (*한글 자음/모음만 있는 검색어는 사용하실 수 없습니다.)',
+        );
+        return;
+      }
 
       setSearchTerm(query);
       if (typeof window !== 'undefined') {
@@ -91,7 +113,7 @@ export function useHashSearch() {
         }
       }
     },
-    [user, saveNotSignInSearchHistory],
+    [user, saveNotSignInSearchHistory, isValidQuery],
   );
 
   const onClear = () => {
@@ -110,5 +132,6 @@ export function useHashSearch() {
     onClear,
     isSearchPanelShow,
     handleSearchPanelShow,
+    isValidQuery, // 필요한 경우 외부에서도 유효성 검사 함수 사용 가능
   };
 }
