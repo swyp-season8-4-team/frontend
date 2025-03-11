@@ -20,8 +20,8 @@ export async function getRecentSearchKeywords() {
   return result;
 }
 
-export async function deleteRecentSearchKeyword() {
-  const result = await searchService.deleteRecentKeyword(); //TODO: API 명세서 업데이트 후 수정
+export async function deleteRecentSearchKeyword(searchId: number) {
+  const result = await searchService.deleteRecentKeyword({ searchId });
 
   return result;
 }
