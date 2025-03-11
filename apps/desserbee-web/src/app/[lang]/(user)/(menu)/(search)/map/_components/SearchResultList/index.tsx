@@ -43,12 +43,19 @@ export function SearchResultList({
   const bottomSheetRef = useRef<HTMLDivElement>(null);
   const isOpen = resultData.length > 0;
 
+  // 닫기 버튼 클릭 시 onClose 함수를 직접 호출하도록 수정
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
+
   return (
     <>
       {isOpen && (
         <div
           className={cn('fixed inset-0 flex justify-center w-full h-full z-10')}
-          onClick={onClose}
+          onClick={handleClose}
         >
           <div
             ref={bottomSheetRef}
@@ -68,7 +75,7 @@ export function SearchResultList({
                 </div>
                 <button
                   className="flex justify-center items-center w-8 h-8 text-gray-500 hover:text-gray-700 ml-auto"
-                  onClick={onClose}
+                  onClick={handleClose}
                   aria-label="닫기"
                 >
                   <IconX />
