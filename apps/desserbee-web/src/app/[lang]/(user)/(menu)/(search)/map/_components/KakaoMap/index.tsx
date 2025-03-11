@@ -46,6 +46,7 @@ import { calculateDistance } from '../../_utils/distance';
 import { useTag } from '../../../_hooks/useTag';
 import { getNearbyStores } from './action';
 import type { Preference } from '@repo/entity/src/preference';
+import { SearchResultList } from '../SearchResultList';
 
 interface KakaoMapProps {
   preferenceCategories: PreferenceData[];
@@ -96,6 +97,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   });
 
   const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const [isResultListOpen, setIsResultListOpen] = useState(true);
   const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
 
   const [, setRetryCount] = useState(0);
@@ -125,6 +127,10 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       component: <LocationPermissionModal onClose={closeModal} />,
     });
   }, [closeModal, push]);
+
+  const handleResultListClose = () => {
+    setIsResultListOpen(true); // TODO: 다만들고 FALSE로 수정
+  };
 
   //  서비스 초기화
   const initializeServices = () => {
@@ -776,6 +782,11 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           refetchStore={handleRefetchBtnClick}
         />
       </div>
+      <SearchResultList
+        resultData={nearByStores}
+        isResultListOpen={isResultListOpen}
+        handleResultListClose={handleResultListClose}
+      />
     </div>
   );
 }
