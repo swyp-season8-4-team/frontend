@@ -60,17 +60,9 @@ const areServicesInitialized = (services: {
 }) => {
   return services.mapService && services.geoService && services.storeService;
 };
-
-// PreferenceTags 컴포넌트 메모이제이션
 const MemoizedPreferenceTags = React.memo(PreferenceTags);
-
-// MapPanel 컴포넌트 메모이제이션
 const MemoizedMapPanel = React.memo(MapPanel);
-
-// ReFetchStoreBtn 컴포넌트 메모이제이션
 const MemoizedReFetchStoreBtn = React.memo(ReFetchStoreBtn);
-
-// SearchResultList 컴포넌트 메모이제이션
 const MemoizedSearchResultList = React.memo(SearchResultList);
 
 export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
@@ -804,11 +796,9 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           refetchStore={handleRefetchBtnClick}
         />
       </div>
-      <MemoizedSearchResultList
-        resultData={nearByStores}
-        isResultListOpen={isResultListOpen}
-        handleResultListClose={handleResultListClose}
-      />
+      {isResultListOpen && (
+        <MemoizedSearchResultList resultData={nearByStores} />
+      )}
     </div>
   );
 }

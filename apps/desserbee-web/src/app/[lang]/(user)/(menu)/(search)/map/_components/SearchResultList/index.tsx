@@ -1,13 +1,11 @@
 import type { NearByStoreData } from '@repo/entity/src/store';
 import Image from 'next/image';
 import { getOperationStatus } from '../../_utils/operatingStatus';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { cn } from '@repo/ui/lib/utils';
 import IconX from '@repo/design-system/components/icons/IconX';
 
 interface SearchResultListProps {
-  isResultListOpen: boolean;
-  handleResultListClose: () => void;
   resultData: NearByStoreData[];
 }
 
@@ -324,23 +322,17 @@ const searchResult: NearByStoreData[] = [
   },
 ];
 
-export function SearchResultList({
-  isResultListOpen,
-  handleResultListClose,
-  resultData,
-}: SearchResultListProps) {
-  console.log('SearchResultList rendered:', {
-    isResultListOpen,
-    resultDataLength: resultData?.length,
-  });
+export function SearchResultList({ resultData }: SearchResultListProps) {
   const bottomSheetRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState(resultData.length > 0);
 
-  // resultData가 비어있으면 바텀시트를 열지 않음
-  const shouldShowBottomSheet = isResultListOpen && resultData?.length > 0;
+  const handleResultListClose = () => {
+    setIsOpen(false);
+  };
 
   return (
     <>
-      {shouldShowBottomSheet && (
+      {resultData.length > 0 && (
         <div
           className="z-bottomSheet fixed flex justify-center w-full"
           onClick={handleResultListClose}
@@ -352,7 +344,7 @@ export function SearchResultList({
               'left-0 right-0 mx-auto',
               'bg-white px-base pt-[10px] rounded-t-base max-w-[768px]',
               'animate-slide-up transition-transform duration-500 ease-out',
-              shouldShowBottomSheet ? 'translate-y-0' : 'translate-y-full',
+              isOpen ? 'translate-y-0' : 'translate-y-full',
             )}
             onClick={(e) => e.stopPropagation()}
           >
