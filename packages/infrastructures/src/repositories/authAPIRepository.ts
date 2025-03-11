@@ -181,9 +181,9 @@ export default class AuthAPIRepository extends APIRepository implements AuthRepo
     }
 
     const response = await fetch<void, JWTTokens>({
-      // headers: {
-      //   authorization: `Bearer ${refreshToken}`,
-      // },
+      headers: {
+        authorization: `Bearer ${refreshToken}`,
+      },
       method: 'POST',
       url: `${this.endpoint}/auth/token/refresh`,
     });
