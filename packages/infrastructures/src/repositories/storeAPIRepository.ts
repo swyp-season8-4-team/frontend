@@ -43,6 +43,8 @@ import type {
   EditOnelineReviewRequest,
   OneLineReview,
   StoreDetailInfoRequest,
+  SavedStoresLocationData,
+  SavedStoresLocationRequest,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -51,6 +53,14 @@ export default class StoreAPIRepository
   extends APIRepository
   implements StoreRepository
 {
+  getStoresPositionInSavedList({
+    authorization,
+    data,
+  }: BaseRequestData<SavedStoresLocationRequest>): Promise<
+    SavedStoresLocationData[]
+  > {
+    throw new Error('Method not implemented.');
+  }
   private readonly preferenceConverter = new PreferenceConverter();
 
   //preference
@@ -478,6 +488,34 @@ export default class StoreAPIRepository
       }),
       method: 'GET',
       url: `${this.endpoint}/user-store/lists/${listId}/stores`,
+    });
+
+    return response;
+  }
+
+  async getStoresLocationInSavedList({
+    authorization,
+    data,
+  }: BaseRequestData<SavedStoresLocationRequest>): Promise<
+    SavedStoresLocationData[]
+  > {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { listId } = data || {};
+
+    const response = await fetch<
+      SavedStoresLocationRequest,
+      SavedStoresLocationData[]
+    >({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      method: 'GET',
+      url: `${this.endpoint}/user-store/lists/${listId}/stores/locations`,
     });
 
     return response;

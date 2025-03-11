@@ -17,7 +17,7 @@ const defaultState: State = {
 export const MobileScreenContext = createContext<State>(defaultState);
 
 interface Props extends WithChildren {
-  backgroundColor?: string
+  backgroundColor?: string;
 }
 
 export const MobileScreenProvider = (props: Props) => {
@@ -34,12 +34,13 @@ export const MobileScreenProvider = (props: Props) => {
           maxWidth: '768px',
           marginLeft: 'auto',
           marginRight: 'auto',
-          minHeight: innerHeight ?? '100vh',
+          // minHeight: innerHeight ?? '100vh',
           backgroundColor: 'white',
+          overflow: 'hidden',
         }}
       >
         {children}
       </div>
     </MobileScreenContext.Provider>
   );
-}
+};

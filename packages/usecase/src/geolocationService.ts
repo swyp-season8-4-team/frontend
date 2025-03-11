@@ -30,7 +30,6 @@ export default class GeolocationService {
     }
 
     try {
-      console.log('[GeolocationService] 위치 권한 확인 시작');
       const permissionStatus = await navigator.permissions.query({
         name: 'geolocation',
       });
