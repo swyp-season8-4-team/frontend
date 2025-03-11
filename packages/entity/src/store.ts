@@ -97,10 +97,21 @@ export interface NearByStoreSearchRequest {
   searchKeyword: string;
 }
 
-export type NearByStoreData = Pick<
-  Store,
-  'storeId' | 'storeUuid' | 'name' | 'address' | 'latitude' | 'longitude'
->;
+export interface NearByStoreData
+  extends Pick<
+    Store,
+    | 'storeId'
+    | 'storeUuid'
+    | 'name'
+    | 'address'
+    | 'latitude'
+    | 'longitude'
+    | 'operatingHours'
+    | 'tags'
+  > {
+  storeImage: string;
+  totalReviewCount: number;
+}
 
 export interface StoreSummaryInfoRequest {
   storeUuid: string;
