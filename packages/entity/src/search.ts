@@ -13,16 +13,14 @@ export interface GetPopularSearchDataResonse {
 }
 
 export interface SearchRepository {
-  getPopularSearchKeywords({
+  getPopularKeywords({
     authorization,
   }: BaseRequestData<void>): Promise<GetPopularSearchDataResonse>;
-  getRecentSearchKeywords({
+  getRecentKeywords({
     authorization,
   }: BaseRequestData<void>): Promise<string[]>; //TODO: api 명세서 업데이트 되면 추가
-  deleteRecentSearchKeyword({
-    authorization,
-  }: BaseRequestData<void>): Promise<void>; //TODO: api 명세서 업데이트 되면 추가
-  deleteRecentSearchKeywordsAll({
+  deleteRecentKeyword({ authorization }: BaseRequestData<void>): Promise<void>; //TODO: api 명세서 업데이트 되면 추가
+  deleteRecentKeywordsAll({
     authorization,
   }: BaseRequestData<void>): Promise<void>; //TODO: api 명세서 업데이트 되면 추가
 }

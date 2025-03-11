@@ -9,25 +9,25 @@ const searchService = new SearchService({
   authRepository: new AuthNextAppRouteRepository(),
 });
 export async function getPopularSearchKeywords() {
-  const result = await searchService.getPopularSearchKeywords();
+  const result = await searchService.getPopularKeywords();
 
   return result;
 }
 
 export async function getRecentSearchKeywords() {
-  const result = await searchService.getRecentSearchKeywords();
+  const result = await searchService.getRecentKeywords();
 
   return result;
 }
 
 export async function deleteRecentSearchKeyword() {
-  const result = await searchService.deleteRecentSearchKeyword(); //TODO: API 명세서 업데이트 후 수정
+  const result = await searchService.deleteRecentKeyword(); //TODO: API 명세서 업데이트 후 수정
 
   return result;
 }
 
 export async function deleteRecentSearchKeywordsAll() {
-  const result = await searchService.deleteRecentSearchKeywordsAll();
+  const result = await searchService.deleteRecentKeywordsAll();
 
   return result;
 }

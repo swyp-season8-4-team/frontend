@@ -16,7 +16,7 @@ export default class SearchService {
     this.authRepository = authRepository ?? null;
   }
 
-  async getPopularSearchKeywords() {
+  async getPopularKeywords() {
     if (!this.searchRepository) {
       throw new Error('searchRepository is not set');
     } else if (!this.authRepository) {
@@ -24,13 +24,13 @@ export default class SearchService {
     }
 
     const authorization = await this.authRepository.getAuthorization();
-    const result = await this.searchRepository.getPopularSearchKeywords({
+    const result = await this.searchRepository.getPopularKeywords({
       authorization,
     });
     return result;
   }
 
-  async getRecentSearchKeywords() {
+  async getRecentKeywords() {
     if (!this.searchRepository) {
       throw new Error('searchRepository is not set');
     } else if (!this.authRepository) {
@@ -39,7 +39,7 @@ export default class SearchService {
 
     const authorization = await this.authRepository.getAuthorization();
 
-    const result = await this.searchRepository.getRecentSearchKeywords({
+    const result = await this.searchRepository.getRecentKeywords({
       authorization,
     });
 
@@ -47,7 +47,7 @@ export default class SearchService {
   }
 
   //TODO:api 명세서 나오면 params 추가
-  async deleteRecentSearchKeyword() {
+  async deleteRecentKeyword() {
     if (!this.searchRepository) {
       throw new Error('searchRepository is not set');
     } else if (!this.authRepository) {
@@ -56,13 +56,13 @@ export default class SearchService {
 
     const authorization = await this.authRepository.getAuthorization();
 
-    const result = await this.searchRepository.deleteRecentSearchKeyword({
+    const result = await this.searchRepository.deleteRecentKeyword({
       authorization,
     });
   }
 
   //TODO:api 명세서 나오면 params 추가
-  async deleteRecentSearchKeywordsAll() {
+  async deleteRecentKeywordsAll() {
     if (!this.searchRepository) {
       throw new Error('searchRepository is not set');
     } else if (!this.authRepository) {
@@ -71,7 +71,7 @@ export default class SearchService {
 
     const authorization = await this.authRepository.getAuthorization();
 
-    const result = await this.searchRepository.deleteRecentSearchKeywordsAll({
+    const result = await this.searchRepository.deleteRecentKeywordsAll({
       authorization,
     });
   }

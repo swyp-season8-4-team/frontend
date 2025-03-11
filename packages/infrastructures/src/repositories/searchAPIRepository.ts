@@ -10,7 +10,7 @@ export default class SearchAPIRepository
   extends APIRepository
   implements SearchRepository
 {
-  async getPopularSearchKeywords({
+  async getPopularKeywords({
     authorization,
   }: BaseRequestData<void>): Promise<GetPopularSearchDataResonse> {
     const response = await fetch<void, GetPopularSearchDataResonse>({
@@ -27,7 +27,7 @@ export default class SearchAPIRepository
     return response;
   }
 
-  async getRecentSearchKeywords({
+  async getRecentKeywords({
     authorization,
   }: BaseRequestData<void>): Promise<string[]> {
     const response = await fetch<void, string[]>({
@@ -44,7 +44,7 @@ export default class SearchAPIRepository
   }
 
   //TODO: api 명세서 업데이트되면 수정
-  async deleteRecentSearchKeyword({
+  async deleteRecentKeyword({
     authorization,
   }: BaseRequestData<void>): Promise<void> {
     const response = await fetch<void, void>({
@@ -60,7 +60,7 @@ export default class SearchAPIRepository
     return response;
   }
 
-  async deleteRecentSearchKeywordsAll({
+  async deleteRecentKeywordsAll({
     authorization,
   }: BaseRequestData<void>): Promise<void> {
     const response = await fetch<void, void>({
