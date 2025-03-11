@@ -559,6 +559,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   }, [isScriptLoaded, isInitialized, loadMap, sessionStorageRepository]);
 
   // 현재 지도 중심, 태그, 검색 포함 필터링 적용된 가게 불러오기
+  const [isSearching, setIsSearching] = useState(false);
   const previousSelectedTagsRef = useRef<Preference[]>([]);
   const previousSearchKeywordRef = useRef<string>('');
 
@@ -569,6 +570,8 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       previousSearchKeywordRef.current !== searchKeyword
     ) {
       const fetchAndUpdate = async () => {
+        setIsSearching(true);
+
         const stores = await fetchNearbyStores(
           mapCenterRef.current,
           selectedPreferenceTags,
@@ -600,9 +603,17 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
           // 약간의 지연을 두어 상태 업데이트가 확실히 반영되도록 함
           setTimeout(() => {
-            setDistances(newDistances);
-            setNearByStores(stores);
+            if (newDistances) {
+              setDistances([]);
+              setNearByStores(stores);
+            } else {
+              setDistances(newDistances);
+              setNearByStores(stores);
+            }
+            setIsSearching(false);
           }, 100);
+        } else {
+          setIsSearching(false);
         }
       };
       fetchAndUpdate();
@@ -814,8 +825,13 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         className="relative bg-[#E8E8E8] mb-[9px] rounded-base w-full h-[calc(100dvh-295px)] overflow-x-hidden z-0"
       >
         {error && (
-          <div className="top-1/3  left-1/2 z-20 absolute bg-red-100 px-4 py-2 border border-red-400 rounded text-red-700 -translate-x-1/2 transform">
+          <div className="top-1/2 left-1/2 z-20 absolute bg-red-100 px-4 py-2 border border-red-400 rounded text-red-700 -translate-x-1/2 transform w-[200px] text-center">
             {error}
+          </div>
+        )}
+        {isSearching && (
+          <div className="top-1/2 left-1/2 z-20 absolute -translate-x-1/2 -translate-y-1/2 transform bg-white/80 p-2 rounded-full shadow-md flex items-center justify-center">
+            <span className="w-12 h-12 border-4 border-[#F9C22E] border-b-transparent rounded-full inline-block box-border animate-spin"></span>
           </div>
         )}
         <MemoizedPreferenceTags {...preferenceTagsProps} />
@@ -825,7 +841,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           refetchStore={handleRefetchBtnClick}
         />
       </div>
-      {isResultListOpen && (
+      {isResultListOpen && !isSearching && (
         <MemoizedSearchResultList
           distances={distances}
           resultData={nearByStores}
