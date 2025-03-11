@@ -34,6 +34,8 @@ import type {
   EditOnelineReviewRequest,
   OneLineReview,
   StoreDetailInfoRequest,
+  SavedStoresLocationRequest,
+  SavedStoresLocationData,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -189,6 +191,29 @@ export default class StoreService {
     };
 
     const result = await this.storeRepository.getStoresInSavedList({
+      authorization,
+      ...reqestData,
+    });
+
+    return result;
+  }
+
+  async getStoresLocationInSavedList(
+    params: SavedStoresLocationRequest,
+  ): Promise<SavedStoresLocationData[]> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set');
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const authorization = await this.authRepository.getAuthorization();
+
+    const reqestData = {
+      data: params,
+    };
+
+    const result = await this.storeRepository.getStoresLocationInSavedList({
       authorization,
       ...reqestData,
     });

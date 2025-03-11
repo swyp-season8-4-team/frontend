@@ -359,6 +359,20 @@ export interface SavedListData {
   storeCount: number;
 }
 
+export interface SavedStoresLocationRequest {
+  //TODO: API 추가
+  listId: number;
+}
+
+export interface SavedStoresLocationData {
+  storeId: number;
+  name: string;
+  latitude: number;
+  longitude: number;
+  listId: number;
+  colorId: number;
+}
+
 // 상세정보에서 사용
 export interface ParentSavedListRequest {
   listId: number;
@@ -643,6 +657,13 @@ export interface StoreRepository {
     data,
   }: BaseRequestData<StoresInSavedListRequest>): Promise<
     StoresInSavedListData[]
+  >;
+
+  getStoresLocationInSavedList({
+    authorization,
+    data,
+  }: BaseRequestData<SavedStoresLocationRequest>): Promise<
+    SavedStoresLocationData[]
   >;
 
   getSavedListAll({
