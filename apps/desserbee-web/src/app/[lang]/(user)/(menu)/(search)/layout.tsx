@@ -5,13 +5,13 @@ import { SearchBarContainer } from './_components/SearchBarContainer';
 
 export default function UserSearchLayout({ children }: WithChildren) {
   return (
-    <div className="h-[100dvh] bg-page">
-      <div className="relative z-[2] ">
+    <div className="h-full flex flex-col bg-page">
+      <div className="relative z-[2]">
         <HeaderContainer fontClass={recipeKorea.className}>
           <SearchBarContainer />
         </HeaderContainer>
       </div>
-      <div className="relative">{children}</div>
+      <div className="flex-1 overflow-auto">{children}</div>
     </div>
   );
 }
