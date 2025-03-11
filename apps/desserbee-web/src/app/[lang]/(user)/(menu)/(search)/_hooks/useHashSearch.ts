@@ -12,11 +12,6 @@ export function useHashSearch() {
   // 첫 로딩 시 해시값 비우기
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // 초기 해시값 로드
-      // const hash = window.location.hash;
-      // const query = hash.match(/q=([^&]*)/)?.[1] ?? '';
-      // URL 해시에서 가져온 값은 보여주기위해 디코딩 (브라우저마다 자동 디코딩 안될 수 있어서)
-      // setSearchTerm(decodeURIComponent(query));
       setSearchTerm('');
       window.location.hash = '';
     }
@@ -94,17 +89,20 @@ export function useHashSearch() {
 
       setSearchTerm(query);
       if (typeof window !== 'undefined') {
+        // 공백을 모두 제거한 검색어 생성
+        const trimmedQuery = query.replace(/\s+/g, '');
+
         // 현재 해시와 새 검색어가 같은 경우, 해시를 잠시 비웠다가 다시 설정
-        if (window.location.hash === `#q=${encodeURIComponent(query)}`) {
+        if (window.location.hash === `#q=${encodeURIComponent(trimmedQuery)}`) {
           window.location.hash = '';
 
           // 약간의 지연 후 다시 해시 설정
           setTimeout(() => {
-            window.location.hash = `q=${encodeURIComponent(query)}`;
+            window.location.hash = `q=${encodeURIComponent(trimmedQuery)}`;
           }, 10);
         } else {
           // 다른 검색어인 경우 바로 해시 설정
-          window.location.hash = `q=${encodeURIComponent(query)}`;
+          window.location.hash = `q=${encodeURIComponent(trimmedQuery)}`;
         }
 
         handleSearchPanelShow(false);
