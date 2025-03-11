@@ -7,7 +7,4 @@ module.exports = {
       rootDir: ['apps/*/'],
     },
   },
-  rules: {
-    'no-extra-boolean-cast': 'off',
-  },
 };
