@@ -12,6 +12,10 @@ export interface GetPopularSearchDataResonse {
   lastUpdatedTime: string;
 }
 
+export interface DeleteRecentKeywordRequest {
+  searchId: number;
+}
+
 export interface SearchRepository {
   getPopularKeywords({
     authorization,
@@ -19,8 +23,12 @@ export interface SearchRepository {
   getRecentKeywords({
     authorization,
   }: BaseRequestData<void>): Promise<string[]>; //TODO: api 명세서 업데이트 되면 추가
-  deleteRecentKeyword({ authorization }: BaseRequestData<void>): Promise<void>; //TODO: api 명세서 업데이트 되면 추가
-  deleteRecentKeywordsAll({
+  deleteRecentKeyword({
+    data,
     authorization,
-  }: BaseRequestData<void>): Promise<void>; //TODO: api 명세서 업데이트 되면 추가
+  }: BaseRequestData<DeleteRecentKeywordRequest>): Promise<void>;
+  deleteRecentKeywordsAll({
+    data,
+    authorization,
+  }: BaseRequestData<void>): Promise<void>;
 }
