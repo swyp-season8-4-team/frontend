@@ -103,6 +103,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const [isResultListOpen, setIsResultListOpen] = useState(false);
   const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
+  const [distances, setDistances] = useState<number[]>();
 
   const [, setRetryCount] = useState(0);
   const retryCountRef = useRef(0);
@@ -557,20 +558,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     }
   }, [isScriptLoaded, isInitialized, loadMap, sessionStorageRepository]);
 
-  // 아무 필터링 없이 가게 불러오기
-  useEffect(() => {
-    if (isFetchRequired) {
-      const fetchAndUpdate = async () => {
-        const stores = await fetchNearbyStores(mapCenterRef.current);
-        if (stores) {
-          await updateNewClusterMarkers(stores);
-          setIsFetchRequired(false);
-        }
-      };
-      fetchAndUpdate();
-    }
-  }, [isFetchRequired, fetchNearbyStores, updateNewClusterMarkers]);
-
   // 현재 지도 중심, 태그, 검색 포함 필터링 적용된 가게 불러오기
   const previousSelectedTagsRef = useRef<Preference[]>([]);
   const previousSearchKeywordRef = useRef<string>('');
@@ -592,8 +579,28 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           await updateNewClusterMarkers(stores);
           setIsFetchRequired(false);
 
+          // 각 가게와 현재 사용자 위치 간의 거리 계산
+          const newDistances = stores.map((store) => {
+            if (
+              !currentPosition ||
+              !currentPosition.latitude ||
+              !currentPosition.longitude
+            ) {
+              console.log('currentPosition is invalid:', currentPosition);
+              return undefined;
+            }
+
+            const distance = calculateDistance(currentPosition, {
+              latitude: store.latitude,
+              longitude: store.longitude,
+            });
+
+            return distance;
+          });
+
           // 약간의 지연을 두어 상태 업데이트가 확실히 반영되도록 함
           setTimeout(() => {
+            setDistances(newDistances);
             setNearByStores(stores);
           }, 100);
         }
@@ -607,6 +614,28 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     searchKeyword,
     fetchNearbyStores,
     updateNewClusterMarkers,
+    currentPosition,
+  ]);
+
+  // 아무 필터링 없이 가게 불러오기
+  useEffect(() => {
+    if (isFetchRequired) {
+      const fetchAndUpdate = async () => {
+        const stores = await fetchNearbyStores(mapCenterRef.current);
+        if (stores) {
+          await updateNewClusterMarkers(stores);
+
+          setNearByStores(stores);
+          setIsFetchRequired(false);
+        }
+      };
+      fetchAndUpdate();
+    }
+  }, [
+    isFetchRequired,
+    fetchNearbyStores,
+    updateNewClusterMarkers,
+    currentPosition,
   ]);
 
   // URL 해시 변경 감지 (검색)
@@ -797,7 +826,11 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         />
       </div>
       {isResultListOpen && (
-        <MemoizedSearchResultList resultData={nearByStores} />
+        <MemoizedSearchResultList
+          distances={distances}
+          resultData={nearByStores}
+          onClose={handleResultListClose}
+        />
       )}
     </div>
   );
