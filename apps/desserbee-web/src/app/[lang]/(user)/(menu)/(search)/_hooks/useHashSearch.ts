@@ -82,6 +82,11 @@ export function useHashSearch() {
     [user, saveNotSignInSearchHistory],
   );
 
+  const onClear = () => {
+    setSearchTerm('');
+    window.location.hash = '';
+  };
+
   const handleSearchPanelShow = (isShow: boolean) => {
     setIsSearchPanelShow(isShow);
   };
@@ -90,6 +95,7 @@ export function useHashSearch() {
     searchTerm,
     onChange,
     onSearch,
+    onClear,
     isSearchPanelShow,
     handleSearchPanelShow,
   };

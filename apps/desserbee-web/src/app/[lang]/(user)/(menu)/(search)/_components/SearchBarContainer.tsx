@@ -10,6 +10,7 @@ export const SearchBarContainer = memo(function SearchBarContainer() {
     searchTerm,
     onChange,
     onSearch,
+    onClear,
     isSearchPanelShow,
     handleSearchPanelShow,
   } = useHashSearch();
@@ -20,6 +21,7 @@ export const SearchBarContainer = memo(function SearchBarContainer() {
         searchTerm={searchTerm}
         onChange={onChange}
         onSearch={onSearch}
+        onClear={onClear}
         isSearchPanelShow={isSearchPanelShow}
         handleSearchPanelShow={handleSearchPanelShow}
       />
