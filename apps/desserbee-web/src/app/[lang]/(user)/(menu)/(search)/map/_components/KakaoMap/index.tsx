@@ -61,6 +61,18 @@ const areServicesInitialized = (services: {
   return services.mapService && services.geoService && services.storeService;
 };
 
+// PreferenceTags 컴포넌트 메모이제이션
+const MemoizedPreferenceTags = React.memo(PreferenceTags);
+
+// MapPanel 컴포넌트 메모이제이션
+const MemoizedMapPanel = React.memo(MapPanel);
+
+// ReFetchStoreBtn 컴포넌트 메모이제이션
+const MemoizedReFetchStoreBtn = React.memo(ReFetchStoreBtn);
+
+// SearchResultList 컴포넌트 메모이제이션
+const MemoizedSearchResultList = React.memo(SearchResultList);
+
 export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -97,7 +109,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   });
 
   const [searchKeyword, setSearchKeyword] = useState<string>('');
-  const [isResultListOpen, setIsResultListOpen] = useState(true);
+  const [isResultListOpen, setIsResultListOpen] = useState(false);
   const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
 
   const [, setRetryCount] = useState(0);
@@ -128,9 +140,13 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     });
   }, [closeModal, push]);
 
-  const handleResultListClose = () => {
-    setIsResultListOpen(true); // TODO: 다만들고 FALSE로 수정
-  };
+  const handleResultListClose = useCallback(() => {
+    setIsResultListOpen(false);
+  }, []);
+
+  const handleRefetchBtnClick = useCallback(() => {
+    setIsFetchRequired(true);
+  }, []);
 
   //  서비스 초기화
   const initializeServices = () => {
@@ -419,10 +435,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     [handleMoveToCurrentPosition],
   );
 
-  const handleRefetchBtnClick = () => {
-    setIsFetchRequired(true);
-  };
-
   // 지도 첫 초기화
   const loadMap = useCallback(
     async (
@@ -614,7 +626,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         if (hash.startsWith('#q=')) {
           const query = hash.substring(3);
           setSearchKeyword(query);
-          console.log('Initial hash detected, setting bottom sheet:', !!query);
+          console.log('Initial hash detected:', query);
         } else {
           setSearchKeyword('');
         }
@@ -627,8 +639,17 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       if (hash.startsWith('#q=')) {
         const query = hash.substring(3);
         setSearchKeyword(query);
+        if (nearByStores.length > 0) {
+          setIsResultListOpen(false);
+        } else {
+          setIsResultListOpen(true);
+          if (servicesRef.current.mapService) {
+            servicesRef.current.mapService.setMapLevel(10);
+          }
+        }
       } else {
         setSearchKeyword('');
+        setIsResultListOpen(false);
       }
     };
 
@@ -691,6 +712,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     }
   }, [isMapLoaded, moveToStore, searchParams]);
 
+  // preferenceTagsProps를 useMemo로 메모이제이션
   const preferenceTagsProps = useMemo(
     () => ({
       categories: preferenceCategories,
@@ -701,8 +723,8 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     }),
     [
       preferenceCategories,
-      handleMyPreferenceTagClick,
       isMyPreferSelected,
+      handleMyPreferenceTagClick,
       updateSelectedTag,
       selectedCategories,
     ],
@@ -775,14 +797,14 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
             {error}
           </div>
         )}
-        <PreferenceTags {...preferenceTagsProps} />
-        <MapPanel {...mapPanelProps} />
-        <ReFetchStoreBtn
+        <MemoizedPreferenceTags {...preferenceTagsProps} />
+        <MemoizedMapPanel {...mapPanelProps} />
+        <MemoizedReFetchStoreBtn
           clearSelectedCategories={clearSelectedCategories}
           refetchStore={handleRefetchBtnClick}
         />
       </div>
-      <SearchResultList
+      <MemoizedSearchResultList
         resultData={nearByStores}
         isResultListOpen={isResultListOpen}
         handleResultListClose={handleResultListClose}
