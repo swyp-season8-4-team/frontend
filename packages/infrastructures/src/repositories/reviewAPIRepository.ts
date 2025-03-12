@@ -10,7 +10,10 @@ import type {
   ReviewWriteData,
 } from '@repo/entity/src/review';
 import APIRepository from './apiRepository';
-import type { RawReview, RawReviewListResponse } from '@repo/api/src/desserbee-web/review';
+import type {
+  RawReview,
+  RawReviewListResponse,
+} from '@repo/api/src/desserbee-web/review';
 import ReviewConverter from '../mappers/reviewConverter';
 import PlaceConverter from '../mappers/placeConverter';
 
@@ -20,7 +23,7 @@ export default class ReviewAPIRepository
 {
   private readonly placeConverter = new PlaceConverter();
   private readonly reviewConverter = new ReviewConverter();
-  
+
   async getMine(data: BaseRequestData<unknown>): Promise<unknown> {
     if (!data) {
       throw new Error('data is not set');
@@ -36,7 +39,10 @@ export default class ReviewAPIRepository
     return response;
   }
 
-  async getDetail({ authorization, data }: BaseRequestData<ReviewUpdateData>): Promise<Review> {
+  async getDetail({
+    authorization,
+    data,
+  }: BaseRequestData<ReviewUpdateData>): Promise<Review> {
     if (!data) {
       throw new Error('data is not set');
     }
@@ -71,12 +77,16 @@ export default class ReviewAPIRepository
       place: this.placeConverter.convertPlaceToRaw(place),
     };
 
-    formData.append('request', new Blob([JSON.stringify(requestData)], { type: 'application/json' }));
-    
+    formData.append(
+      'request',
+      new Blob([JSON.stringify(requestData)], { type: 'application/json' }),
+    );
+
     if (!!imageFiles) {
       imageFiles.forEach((imageFile) => {
         formData.append('reviewImages', imageFile);
       });
+      console.log('----', formData.get('reviewImages'));
     }
 
     const response = await fetch<RawReviewWriteRequest, RawReview>({
@@ -91,7 +101,9 @@ export default class ReviewAPIRepository
     return this.reviewConverter.convertRawToReview(response);
   }
 
-  async edit({ data }: BaseRequestData<ReviewWriteData & ReviewUpdateData>): Promise<unknown> {
+  async edit({
+    data,
+  }: BaseRequestData<ReviewWriteData & ReviewUpdateData>): Promise<unknown> {
     if (!data) {
       throw new Error('data is not set');
     }
@@ -110,7 +122,10 @@ export default class ReviewAPIRepository
       place: this.placeConverter.convertPlaceToRaw(place),
     };
 
-    formData.append('request', new Blob([JSON.stringify(requestData)], { type: 'application/json' }));
+    formData.append(
+      'request',
+      new Blob([JSON.stringify(requestData)], { type: 'application/json' }),
+    );
 
     if (!!imageFiles) {
       imageFiles.forEach((imageFile) => {
@@ -147,7 +162,10 @@ export default class ReviewAPIRepository
     return response;
   }
 
-  async getAll({ authorization, data }: BaseRequestData<ReviewListRequestData>): Promise<ReviewListResponse> {
+  async getAll({
+    authorization,
+    data,
+  }: BaseRequestData<ReviewListRequestData>): Promise<ReviewListResponse> {
     if (!data) {
       throw new Error('data is not set');
     }
@@ -169,7 +187,9 @@ export default class ReviewAPIRepository
     });
 
     return {
-      reviews: response.reviews.map((review) => this.reviewConverter.convertRawToReview(review)),
+      reviews: response.reviews.map((review) =>
+        this.reviewConverter.convertRawToReview(review),
+      ),
       isLast: response.last,
     };
   }

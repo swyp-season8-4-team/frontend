@@ -1,9 +1,15 @@
-import type { CommunityCategory } from "@repo/entity/src/community";
-import type { Mate, MateReply, MateWriteRequest, RawMateReply, RawMateWriteReuqest, RawMate } from "@repo/entity/src/mate";
+import type { CommunityCategory } from '@repo/entity/src/community';
+import type {
+  Mate,
+  MateReply,
+  MateWriteRequest,
+  RawMateReply,
+  RawMateWriteReuqest,
+  RawMate,
+} from '@repo/entity/src/mate';
 
 export default class MateConverter {
   convertRawToMate(rawMate: RawMate): Mate {
-    console.log(rawMate);
     const result = {
       id: rawMate.mateUuid,
       recruit: rawMate.recruitYn,
