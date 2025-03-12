@@ -7,6 +7,11 @@ import StoreService from '@repo/usecase/src/storeService';
 
 // 토큰을 가져오는 헬퍼 함수
 
+const storeService = new StoreService({
+  storeRepository: new StoreAPIRepository(),
+  authRepository: new AuthNextAppRouteRepository(),
+});
+
 export async function getNearbyStores({
   latitude,
   longitude,
@@ -20,11 +25,6 @@ export async function getNearbyStores({
   preferenceTagNames?: Preference[];
   searchKeyword?: string;
 }) {
-  const storeService = new StoreService({
-    storeRepository: new StoreAPIRepository(),
-    authRepository: new AuthNextAppRouteRepository(),
-  });
-
   const nearByStores = storeService.getNearbyStores({
     latitude: latitude,
     longitude: longitude,
@@ -34,4 +34,18 @@ export async function getNearbyStores({
   });
 
   return nearByStores;
+}
+
+export async function getStoresLocationInSavedList({
+  listId,
+}: {
+  listId: number;
+}) {
+  const result = await storeService.getStoresLocationInSavedList({
+    listId,
+  });
+
+  console.log(result);
+
+  return result;
 }
