@@ -211,8 +211,10 @@ export class KakaoMapAdapter implements ExternalMap {
     }
   }
 
-  relayout(): void {
-    this.relayout();
+  relayout() {
+    if (this.map) {
+      this.map.relayout();
+    }
   }
 
   addDebounceListener(callback: () => void) {

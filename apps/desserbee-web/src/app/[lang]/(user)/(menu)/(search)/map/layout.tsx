@@ -8,7 +8,7 @@ export default async function MapLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="selection:bg-white ">
+    <div className="selection:bg-whte selection:text-white">
       {bottomSheet}
       {sidebar}
       {children}

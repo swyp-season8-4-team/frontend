@@ -739,6 +739,88 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     }
   }, [isMapLoaded, moveToStore, searchParams]);
 
+  // 마커 이미지 매핑
+  const markerImages = useMemo(
+    () => ({
+      1: yellowMarkerImage.src,
+      2: orangeMarkerImage.src,
+      3: greenMarkerImage.src,
+      4: blueMarkerImage.src,
+    }),
+    [],
+  );
+
+  // 저장 리스트 표시 함수
+  const displaySavedListStores = useCallback(
+    async (listId: number) => {
+      if (!areServicesInitialized(servicesRef.current)) {
+        return;
+      }
+
+      try {
+        setIsSearching(true);
+
+        // 저장 리스트의 가게 위치 정보 가져오기
+        const stores = await getStoresLocationInSavedList({ listId });
+
+        if (stores.length === 0) {
+          setError('리스트에 저장된 가게가 없습니다');
+          setIsSearching(false);
+          return;
+        }
+
+        // 서비스를 통해 저장 리스트 마커 표시
+        const success =
+          await servicesRef.current.mapService?.displaySavedListStores(
+            stores,
+            markerImages,
+          );
+
+        if (success) {
+          setShowingSavedList(true);
+        }
+
+        setIsSearching(false);
+      } catch (error) {
+        console.error('저장 리스트 마커 표시 중 오류:', error);
+        setError('저장 리스트 표시에 실패했습니다');
+        setIsSearching(false);
+      }
+    },
+    [markerImages, setError, setIsSearching],
+  );
+
+  // 저장 리스트 표시 종료 함수
+  const clearSavedListStores = useCallback(() => {
+    if (showingSavedList) {
+      setShowingSavedList(false);
+      setIsFetchRequired(true);
+    }
+  }, [showingSavedList]);
+
+  // URL 파라미터 감시
+  useEffect(() => {
+    const listIdParam = searchParams.get('listId');
+    // const sidebarParam = searchParams.get('sidebar');
+
+    if (isMapLoaded) {
+      if (listIdParam) {
+        const listId = parseInt(listIdParam, 10);
+        if (!isNaN(listId)) {
+          displaySavedListStores(listId);
+        }
+      } else if (showingSavedList) {
+        clearSavedListStores();
+      }
+    }
+  }, [
+    searchParams,
+    isMapLoaded,
+    displaySavedListStores,
+    clearSavedListStores,
+    showingSavedList,
+  ]);
+
   // preferenceTagsProps를 useMemo로 메모이제이션
   const preferenceTagsProps = useMemo(
     () => ({
@@ -801,88 +883,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       }
     };
   }, [isInitialized]);
-
-  // 마커 이미지 매핑
-  const markerImages = useMemo(
-    () => ({
-      1: yellowMarkerImage.src,
-      2: orangeMarkerImage.src,
-      3: greenMarkerImage.src,
-      4: blueMarkerImage.src,
-    }),
-    [],
-  );
-
-  // 저장 리스트 표시 함수
-  const displaySavedListStores = useCallback(
-    async (listId: number) => {
-      if (!areServicesInitialized(servicesRef.current)) {
-        return;
-      }
-
-      try {
-        setIsSearching(true);
-
-        // 저장 리스트의 가게 위치 정보 가져오기
-        const stores = await getStoresLocationInSavedList({ listId });
-
-        if (stores.length === 0) {
-          setError('리스트에 저장된 가게가 없습니다');
-          setIsSearching(false);
-          return;
-        }
-
-        // 서비스를 통해 저장 리스트 마커 표시
-        const success =
-          await servicesRef.current.mapService?.displaySavedListStores(
-            stores,
-            markerImages,
-          );
-
-        if (success) {
-          setShowingSavedList(true);
-        }
-
-        setIsSearching(false);
-      } catch (error) {
-        console.error('저장 리스트 마커 표시 중 오류:', error);
-        setError('저장 리스트 표시에 실패했습니다');
-        setIsSearching(false);
-      }
-    },
-    [markerImages, setError, setIsSearching],
-  );
-
-  // 저장 리스트 표시 종료 함수
-  const clearSavedListStores = useCallback(() => {
-    if (showingSavedList) {
-      setShowingSavedList(false);
-      setIsFetchRequired(true); // 원래 마커로 복원하기 위해 fetch 필요
-    }
-  }, [showingSavedList]);
-
-  // URL 파라미터 감시
-  useEffect(() => {
-    const listIdParam = searchParams.get('listId');
-    // const sidebarParam = searchParams.get('sidebar');
-
-    if (isMapLoaded) {
-      if (listIdParam) {
-        const listId = parseInt(listIdParam, 10);
-        if (!isNaN(listId)) {
-          displaySavedListStores(listId);
-        }
-      } else if (showingSavedList) {
-        clearSavedListStores();
-      }
-    }
-  }, [
-    searchParams,
-    isMapLoaded,
-    displaySavedListStores,
-    clearSavedListStores,
-    showingSavedList,
-  ]);
 
   return (
     <div>

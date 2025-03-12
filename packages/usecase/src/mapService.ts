@@ -84,64 +84,6 @@ export default class MapService {
     this.mapController.createCurrentPositionMarker(position, markerImageSrc);
   }
 
-  async removeCurrentPositionMarker() {
-    if (!this.mapController) {
-      throw new Error('mapController is not set');
-    }
-    this.mapController.removeCurrentPositionMarker();
-  }
-
-  async setMapCenter(position: MapPosition) {
-    if (!this.mapController) {
-      throw new Error('mapController is not set');
-    }
-    this.mapController.setMapCenter(position);
-  }
-
-  addCenterChangedListener(callback: () => void) {
-    if (!this.mapController) {
-      throw new Error('mapController is not set');
-    }
-    return this.mapController.addCenterChangedListener(callback);
-  }
-
-  getMapCenter() {
-    if (!this.mapController) {
-      throw new Error('mapController is not set');
-    }
-    return this.mapController.getMapCenter();
-  }
-
-  getMapBound() {
-    if (!this.mapController) {
-      throw new Error('mapController is not set');
-    }
-
-    return this.mapController.getMapBound();
-  }
-
-  setMapLevel(level: number) {
-    if (!this.mapController) {
-      throw new Error('mapController is not set');
-    }
-
-    return this.mapController.setMapLevel(level);
-  }
-
-  async clearAllMarkers() {
-    if (!this.mapController) {
-      throw new Error('mapController is not set');
-    }
-    this.mapController.clearAllMarkers();
-  }
-
-  removeAllEventListeners() {
-    if (!this.mapController) {
-      throw new Error('mapController is not set');
-    }
-    this.mapController.removeAllEventListeners();
-  }
-
   async addMarkerWithName(
     position: MapPosition,
     markerImageSrc: string,
@@ -201,9 +143,74 @@ export default class MapService {
     // 사이드바를 고려하여 지도 중심 이동
     this.setMapCenter({
       latitude: centerLat,
-      longitude: centerLng - 0.01, // 사이드바를 고려한 오프셋
+      longitude: centerLng,
     });
 
     return true;
+  }
+
+  async removeCurrentPositionMarker() {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+    this.mapController.removeCurrentPositionMarker();
+  }
+
+  async setMapCenter(position: MapPosition) {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+    this.mapController.setMapCenter(position);
+  }
+
+  addCenterChangedListener(callback: () => void) {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+    return this.mapController.addCenterChangedListener(callback);
+  }
+
+  getMapCenter() {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+    return this.mapController.getMapCenter();
+  }
+
+  getMapBound() {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+
+    return this.mapController.getMapBound();
+  }
+
+  setMapLevel(level: number) {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+
+    return this.mapController.setMapLevel(level);
+  }
+
+  async clearAllMarkers() {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+    this.mapController.clearAllMarkers();
+  }
+
+  removeAllEventListeners() {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+    this.mapController.removeAllEventListeners();
+  }
+
+  relayout() {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+    this.mapController.relayout();
   }
 }
