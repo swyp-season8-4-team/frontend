@@ -2,7 +2,7 @@
 
 import { UserContext } from '@/contexts/UserContext';
 import IconChevronDown from '@repo/design-system/components/icons/IconChevronDown';
-import type { Mate } from "@repo/entity/src/mate";
+import type { Mate } from '@repo/entity/src/mate';
 import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
 import MateService from '@repo/usecase/src/mateService';
 import Image from 'next/image';
@@ -29,10 +29,8 @@ export default function CurrentApplyList({ waitList }: Props) {
   const { user } = useContext(UserContext);
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log(waitList);
-
   const handleClick = () => {
-    setIsOpen(prev => !prev);
+    setIsOpen((prev) => !prev);
   };
 
   const handleClickReceive = async (mate: Mate) => {
@@ -42,18 +40,16 @@ export default function CurrentApplyList({ waitList }: Props) {
 
     const closeModal = () => {
       pop('modal');
-    }
+    };
 
     const handleAccept = async () => {
-      
       await mateService.acceptMyTeamMember({
         creatorUserId: user.id,
         userId: mate.userId,
         mateId: ownerMate.id,
       });
       closeModal();
-    }
-
+    };
 
     push('modal', {
       component: (
@@ -73,7 +69,6 @@ export default function CurrentApplyList({ waitList }: Props) {
                 돌아가기
               </Button>
             </>
-            
           }
           visible={true}
           title="참여 요청을 수락하시겠어요?"
@@ -81,8 +76,7 @@ export default function CurrentApplyList({ waitList }: Props) {
         />
       ),
     });
-
-  }
+  };
 
   const handleClickReject = async (mate: Mate) => {
     if (!user) {
@@ -91,7 +85,7 @@ export default function CurrentApplyList({ waitList }: Props) {
 
     const closeModal = () => {
       pop('modal');
-    }
+    };
 
     const handleReject = async () => {
       await mateService.rejectMyTeamMember({
@@ -100,7 +94,7 @@ export default function CurrentApplyList({ waitList }: Props) {
         mateId: ownerMate.id,
       });
       closeModal();
-    }
+    };
 
     push('modal', {
       component: (
@@ -127,41 +121,48 @@ export default function CurrentApplyList({ waitList }: Props) {
         />
       ),
     });
-  }
+  };
 
   const defaultProfileImage = (waitMate: Mate) => {
-    return waitMate.gender === 'MALE' ? defaultMaleProfileImage : defaultFemaleProfileImage;
-  }
+    return waitMate.gender === 'MALE'
+      ? defaultMaleProfileImage
+      : defaultFemaleProfileImage;
+  };
 
   return (
     <>
-      <div 
-        className="flex items-center justify-between py-4 cursor-pointer" 
+      <div
+        className="flex items-center justify-between py-4 cursor-pointer"
         onClick={handleClick}
       >
         <span className="font-semibold">요청 현황</span>
-        <IconChevronDown className={`transform transition-transform duration-200 ${isOpen ? 'rotate-[-90deg]' : ''}`} />
+        <IconChevronDown
+          className={`transform transition-transform duration-200 ${isOpen ? 'rotate-[-90deg]' : ''}`}
+        />
       </div>
 
-      <div 
+      <div
         className={`transition-all duration-200 overflow-hidden ${
           isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
         {waitList.map((wait) => (
-          <div 
-            key={wait.id} 
-            className="flex items-center justify-between py-2"
-          >
+          <div key={wait.id} className="flex items-center justify-between py-2">
             <div className="flex items-center gap-2">
               <Image
-                src={!!wait.profileImage ? wait.profileImage : defaultProfileImage(wait)}
+                src={
+                  wait.profileImage
+                    ? wait.profileImage
+                    : defaultProfileImage(wait)
+                }
                 alt="profile"
                 width={32}
                 height={32}
                 className="rounded-full"
               />
-              <span className="text-[#393939] text-[10px] font-semibold leading-normal tracking-[-0.24px]">{wait.nickname}</span>
+              <span className="text-[#393939] text-[10px] font-semibold leading-normal tracking-[-0.24px]">
+                {wait.nickname}
+              </span>
             </div>
             <div className="flex gap-2">
               <button

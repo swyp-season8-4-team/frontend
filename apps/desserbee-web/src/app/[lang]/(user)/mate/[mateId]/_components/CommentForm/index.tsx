@@ -13,7 +13,7 @@ import { RouteGroup } from '@repo/entity/src/navigation';
 
 const mateService = new MateService({
   mateRepository: new MateAPIRepository(),
-})
+});
 
 export default function CommentForm() {
   const { mate } = useContext(MateDetailContext);
@@ -30,10 +30,8 @@ export default function CommentForm() {
     if (!comment.trim()) {
       return;
     }
-    
-    setIsSubmitting(true);
 
-    console.log(mate);
+    setIsSubmitting(true);
 
     try {
       await mateService.createReply({
@@ -43,7 +41,7 @@ export default function CommentForm() {
       });
 
       await revalidatePathAction(RouteGroup.MateDetail, 'page');
-      
+
       setComment('');
     } catch (error) {
       console.error('댓글 등록 실패:', error);
@@ -62,7 +60,7 @@ export default function CommentForm() {
           height={32}
           className="rounded-full"
         />
-          
+
         <div className="flex-1">
           <textarea
             value={comment}

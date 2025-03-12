@@ -1,8 +1,8 @@
-import ReviewWriteForm from "./_components/ReviewWriteForm";
+import ReviewWriteForm from './_components/ReviewWriteForm';
 
 export default function ReviewWritePage() {
   return (
-    <main className="px-5 py-4 h-[calc(100dvh - 63px)]">
+    <main className="px-5 py-4 h-[calc(100dvh-63px)] flex flex-col">
       <ReviewWriteForm />
     </main>
   );
