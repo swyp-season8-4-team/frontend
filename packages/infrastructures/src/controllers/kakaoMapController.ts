@@ -26,7 +26,7 @@ export default class KakaoMapController implements MapController {
 
   async createMap(container: HTMLDivElement, position: MapPosition) {
     try {
-      const level = 3;
+      const level = 6;
       const kakaoMap = new kakao.maps.Map(container, {
         center: new kakao.maps.LatLng(position.latitude, position.longitude),
         level,
