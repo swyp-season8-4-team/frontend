@@ -30,7 +30,7 @@ import KakaoMapController from '@repo/infrastructures/src/controllers/kakaoMapCo
 
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
-import SessionStorageRepository from '@repo/infrastructures/src/repositories/SessionStorageRepository';
+import SessionStorageRepository from '@repo/infrastructures/src/repositories/sessionStorageRepository';
 
 import { KAKAO_MAP_API_URL } from '../../_consts/map';
 import {

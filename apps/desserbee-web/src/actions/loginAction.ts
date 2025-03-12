@@ -1,6 +1,7 @@
 'use server';
 
 import { isProd } from '@/utils/env';
+import { HTTPError } from '@repo/api/src/error';
 import type { SignInResponse } from '@repo/entity/src/auth';
 import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
 import AuthService from '@repo/usecase/src/authService';
@@ -8,14 +9,22 @@ import { cookies } from 'next/headers';
 
 const authService = new AuthService({
   authRepository: new AuthAPIRepository(),
+  // authRepository: new AuthDevAPIRepository(), // test용
 });
 
-export async function loginAction(formData: FormData): Promise<SignInResponse | null> {
+export async function loginAction(
+  formData: FormData,
+): Promise<SignInResponse | string | null> {
   const email = formData.get('email');
   const password = formData.get('password');
-  
+
   // TODO: 유효성 검사 리턴 타입
-  if (!email || !password || typeof email !== 'string' || typeof password !== 'string') {
+  if (
+    !email ||
+    !password ||
+    typeof email !== 'string' ||
+    typeof password !== 'string'
+  ) {
     return null;
   }
 
@@ -31,10 +40,10 @@ export async function loginAction(formData: FormData): Promise<SignInResponse | 
     const cookieList = await cookies();
 
     const domain =
-    process.env.NEXT_PUBLIC_APP_ENV !== 'local'
-      ? process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN
-      : '';
-    
+      process.env.NEXT_PUBLIC_APP_ENV !== 'local'
+        ? process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN
+        : '';
+
     // 토큰 저장
     cookieList.set('accessToken', accessToken, {
       httpOnly: true,
@@ -48,12 +57,15 @@ export async function loginAction(formData: FormData): Promise<SignInResponse | 
       httpOnly: true,
       secure: isProd,
       sameSite: 'strict',
-      domain
+      domain,
     });
 
     return response;
   } catch (error) {
-    console.error(error);
+    if (error instanceof HTTPError) {
+      return error.message;
+    }
+
     return null;
   }
 }

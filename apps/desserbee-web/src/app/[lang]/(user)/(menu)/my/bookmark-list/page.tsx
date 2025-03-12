@@ -9,19 +9,5 @@ const mateService = new MateService({
 });
 
 export default async function MyBookmarkListPage() {
-  
-
-  let savedDessertMate;
-  // try {
-  //   savedDessertMate = await mateService.getSavedMateList({
-  //     from: 0,
-  //     to: 4,
-  //   });
-  // } catch (err) {
-  //   console.log(err);
-  // }
-
-  if (!savedDessertMate) console.log('디저트 메이트 불러오기 오류');
-
-  return <BookMarkListContainer savedDessertMate={savedDessertMate ?? []} />;
+  return <BookMarkListContainer savedDessertMate={[]} />;
 }

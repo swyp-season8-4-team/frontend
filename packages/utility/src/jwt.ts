@@ -13,7 +13,11 @@ export function decodeJWT(token: string): JWTPayload {
  * @param token 토큰
  * @returns 만료 여부
  */
-export function isExpiredJWT(token: string): boolean {
+export function isExpiredJWT(token: string | null): boolean {
+  if (!token) {
+    return true;
+  }
+
   const { exp } = decodeJWT(token);
 
   if (!exp) {

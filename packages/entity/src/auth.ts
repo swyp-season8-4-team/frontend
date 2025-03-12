@@ -1,10 +1,13 @@
 import type { BaseRequestData } from './appMetadata';
 import type { Gender } from './user';
 
+// FIXME: sign-in entity로 이동
 export enum OAuthSocialProvider {
   KAKAO = 'kakao',
+  GOOGLE = 'google',
 }
 
+// FIXME: sign-in entity로 이동
 export function isOAuthSocialProvider(
   provider: string,
 ): provider is OAuthSocialProvider {

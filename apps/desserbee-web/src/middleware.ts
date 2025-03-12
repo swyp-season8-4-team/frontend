@@ -7,8 +7,16 @@ import AuthService from '@repo/usecase/src/authService';
 import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import NavigationService from '@repo/usecase/src/navigationService';
+import { HTTPError } from '@repo/api/src/error';
+import { isProd } from './utils/env';
 
-const savedTokens: { [key: string]: string } = {};
+interface TokenInfo {
+  token: string | null;
+  isExpired?: boolean;
+  exp?: number;
+}
+
+const savedTokens: { [key: string]: TokenInfo } = {};
 
 export async function middleware(request: NextRequest) {
   const { headers, cookies } = request;
@@ -32,7 +40,9 @@ export async function middleware(request: NextRequest) {
     requestHeaders.set('X-Email-Verification-Token', `${verificationToken}`);
   }
 
-  const token = await getToken(request);
+  const prevAccessToken = cookies.get('accessToken')?.value;
+
+  const { token, isExpired } = await getTokenInfo(request);
   if (token) {
     requestHeaders.set('authorization', `Bearer ${token}`);
   }
@@ -42,6 +52,15 @@ export async function middleware(request: NextRequest) {
       headers: requestHeaders,
     },
   });
+
+  if (isExpired && token !== prevAccessToken && token) {
+    next.cookies.set('accessToken', token, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 24 * 30,
+    });
+  }
 
   const authorization = requestHeaders.get('authorization');
 
@@ -103,30 +122,33 @@ function getLocale(request: NextRequest): SupportISO639Language {
  * @param request 요청 객체
  * @returns 토큰
  */
-async function getToken(request: NextRequest): Promise<string | null> {
+async function getTokenInfo(request: NextRequest): Promise<TokenInfo> {
   const { cookies } = request;
 
   const accessToken = cookies.get('accessToken')?.value;
   const refreshToken = cookies.get('refreshToken')?.value;
   // 둘다 없으면 로그인을 다시 해야하는것
-  if (!accessToken || !refreshToken) {
-    return null;
+
+  if (!accessToken && !refreshToken) {
+    return { token: null };
   }
 
   // 저장된 토큰이 있고 만료되지 않았다면 반환
-  const decodedAccessToken = decodeJWT(accessToken);
-  if (decodedAccessToken?.sub) {
-    const subKey = JSON.stringify(decodedAccessToken.sub);
-    const savedToken = savedTokens[subKey];
-    if (savedToken && !isExpiredJWT(savedToken)) {
-      return savedToken;
+  if (accessToken) {
+    const decodedAccessToken = decodeJWT(accessToken);
+    if (decodedAccessToken?.sub) {
+      const subKey = JSON.stringify(decodedAccessToken.sub);
+      const savedToken = savedTokens[subKey]?.token;
+      if (savedToken && !isExpiredJWT(savedToken)) {
+        return { token: savedToken };
+      }
     }
   }
 
-  const isAccessTokenExpired = isExpiredJWT(accessToken);
-  const isRefreshTokenExpired = isExpiredJWT(refreshToken);
+  const isAccessTokenExpired = isExpiredJWT(accessToken ?? null);
+  const isRefreshTokenExpired = !!refreshToken && isExpiredJWT(refreshToken);
 
-  let newAccessToken: string | null = accessToken;
+  const newAccessTokenInfo: TokenInfo = { token: accessToken ?? null };
 
   const authService = new AuthService({
     authRepository: new AuthAPIRepository(),
@@ -134,16 +156,28 @@ async function getToken(request: NextRequest): Promise<string | null> {
 
   if (isAccessTokenExpired) {
     if (isRefreshTokenExpired) {
-      return null;
+      return { token: null };
+    }
+
+    try {
+      if (refreshToken) {
+        const { accessToken: updatedAccessToken }: { accessToken: string } =
+          await authService.refreshAccessToken(refreshToken);
+        newAccessTokenInfo.token = updatedAccessToken;
+        newAccessTokenInfo.isExpired = true;
+      }
+    } catch (error) {
+      if (error instanceof HTTPError) {
+        if (error.data.statusCode === 401) {
+          return { token: null };
+        }
+      }
     }
 
     // 리프레시 토큰을 가지고 다시 accessToken 발급
-    const { accessToken: updatedAccessToken }: { accessToken: string } =
-      await authService.refreshAccessToken(refreshToken);
-    newAccessToken = updatedAccessToken;
   }
 
-  return newAccessToken;
+  return newAccessTokenInfo;
 
   // const response = await authService.getAuthorization(
   //   newAccessToken ?? accessToken,
