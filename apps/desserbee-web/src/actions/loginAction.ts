@@ -50,7 +50,7 @@ export async function loginAction(
       secure: isProd,
       sameSite: 'lax',
       domain,
-      maxAge: expiresIn,
+      expires: expiresIn,
     });
 
     cookieList.set('refreshToken', refreshToken, {

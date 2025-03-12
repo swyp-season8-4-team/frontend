@@ -1,4 +1,4 @@
-import type { MouseEvent, ReactElement } from 'react';
+import type { MouseEvent, ReactElement, SVGAttributes } from 'react';
 
 import type { WithChildren, WithClassName, WithStyle } from '@repo/ui';
 
@@ -10,7 +10,11 @@ export enum IconSize {
   xl = 40,
 }
 
-export interface SVGProps extends WithChildren, WithClassName, WithStyle {
+export interface SVGProps
+  extends WithChildren,
+    WithClassName,
+    WithStyle,
+    SVGAttributes<SVGSVGElement> {
   id?: string;
   size?: IconSize | number;
   viewBox?: string;

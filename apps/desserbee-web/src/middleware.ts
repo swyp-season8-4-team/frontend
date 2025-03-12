@@ -58,7 +58,7 @@ export async function middleware(request: NextRequest) {
       httpOnly: true,
       secure: isProd,
       sameSite: 'lax',
-      maxAge: exp,
+      expires: exp,
     });
   }
 
