@@ -1,5 +1,7 @@
 import type { AuthRepository } from '@repo/entity/src/auth';
+import type { MapPosition } from '@repo/entity/src/map';
 import type { Preference } from '@repo/entity/src/preference';
+import type { StorageRepository } from '@repo/entity/src/storage';
 import type {
   StoreDetailInfoData,
   NearByStoreData,
@@ -44,6 +46,7 @@ export default class StoreService {
   constructor({
     storeRepository,
     authRepository,
+
   }: {
     storeRepository: StoreRepository;
     authRepository?: AuthRepository;
@@ -51,6 +54,8 @@ export default class StoreService {
     this.storeRepository = storeRepository ?? null;
     this.authRepository = authRepository ?? null;
   }
+
+
 
   async getAllPreference() {
     try {

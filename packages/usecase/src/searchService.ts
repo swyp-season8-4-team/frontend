@@ -1,22 +1,27 @@
-import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import type { AuthRepository } from '@repo/entity/src/auth';
+import type { MapPosition } from '@repo/entity/src/map';
 import type {
   DeleteRecentKeywordRequest,
   SearchRepository,
 } from '@repo/entity/src/search';
+import type { StorageRepository } from '@repo/entity/src/storage';
 export default class SearchService {
   private readonly searchRepository: SearchRepository | null;
   private readonly authRepository: AuthRepository | null;
+  private readonly storageRepository: StorageRepository | null;
 
   constructor({
     searchRepository,
     authRepository,
+    storageRepository,
   }: {
     searchRepository: SearchRepository;
     authRepository?: AuthRepository;
+    storageRepository?: StorageRepository;
   }) {
     this.searchRepository = searchRepository ?? null;
     this.authRepository = authRepository ?? null;
+    this.storageRepository = storageRepository ?? null;
   }
 
   async getPopularKeywords() {

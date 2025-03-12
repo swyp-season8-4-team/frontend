@@ -31,7 +31,6 @@ import KakaoMapController from '@repo/infrastructures/src/controllers/kakaoMapCo
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import SessionStorageRepository from '@repo/infrastructures/src/repositories/sessionStorageRepository';
-import SessionStorageService from '@repo/usecase/src/sessionStorageService';
 
 import { KAKAO_MAP_API_URL } from '../../_consts/map';
 import {
@@ -79,14 +78,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     geoService: null,
     storeService: null,
   });
-
-  const sessionStorageService = useMemo(
-    () =>
-      new SessionStorageService({
-        storageRepository: new SessionStorageRepository(),
-      }),
-    [],
-  );
 
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
@@ -149,6 +140,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const initializeServices = () => {
     const mapService = new MapService({
       mapController: new KakaoMapController(),
+      storageRepository: new SessionStorageRepository(),
     });
 
     const geoService = new GeolocationService({
@@ -172,9 +164,8 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     }
 
     // sessionStorage에서 lastPosition 확인
-    const lastPosition = sessionStorageService.get(
-      'lastPosition',
-    ) as MapPosition;
+    const lastPosition =
+      servicesRef.current.mapService.getLastPosition() as MapPosition;
 
     // lastPosition이 없으면 더 넓은 반경 (500km) 반환
     if (!lastPosition) {
@@ -203,7 +194,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     const minNeighborhoodRadius = 4;
 
     return Math.max(screenDistance, minNeighborhoodRadius) * 1000;
-  }, [sessionStorageService]);
+  }, []);
 
   // 가게 불러오기 메서드 (실질적인 service 사용)
   const fetchNearbyStores = useCallback(
@@ -266,14 +257,14 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         if (servicesRef.current.mapService) {
           const currentMapCenter =
             servicesRef.current.mapService.getMapCenter();
-          sessionStorageService.set('lastPosition', currentMapCenter);
+          servicesRef.current.mapService.setLastPostion(currentMapCenter);
         }
         router.replace(`?storeId=${storeId}&bottomsheet=true`, {
           scroll: false,
         });
       }
     },
-    [router, sessionStorageService],
+    [router],
   );
 
   // 지도 중심, 반경내 상점들 받아서 마커 및 클러스터 마커 추가
@@ -526,17 +517,15 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   // 카카오맵 초기화 로직
   useEffect(() => {
     if (isScriptLoaded && !isInitialized && mapRef.current) {
-      // 초기화 전에 먼저 세션 스토리지 확인
-      const lastPosition = sessionStorageService.get(
-        'lastPosition',
-      ) as MapPosition;
+      // 서비스 초기화
+      const initializedServices = initializeServices();
+      servicesRef.current = initializedServices;
+
+      // 초기화 전에 mapService를 통해 마지막 위치 확인
+      const lastPosition = initializedServices.mapService.getLastPosition();
 
       window.kakao.maps.load(() => {
         try {
-          // 서비스 초기화
-          const initializedServices = initializeServices();
-          servicesRef.current = initializedServices;
-
           // 지도 로드 - 저장된 위치가 있으면 사용
           loadMap(initializedServices, lastPosition)
             .then(() => {
@@ -560,7 +549,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         }
       });
     }
-  }, [isScriptLoaded, isInitialized, loadMap, sessionStorageService]);
+  }, [isScriptLoaded, isInitialized, loadMap]);
 
   // 현재 지도 중심, 태그, 검색 포함 필터링 적용된 가게 불러오기
   const [isSearching, setIsSearching] = useState(false);
