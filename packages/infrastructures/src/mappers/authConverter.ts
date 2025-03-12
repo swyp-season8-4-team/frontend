@@ -1,4 +1,8 @@
-import type { SignInResponse, RawSignInResponse } from "@repo/entity/src/auth";
+import type {
+  SignInResponse,
+  RawSignInResponse,
+  SignInCodeError,
+} from '@repo/entity/src/auth';
 
 export default class AuthConverter {
   convertRawSignInResponse(raw: RawSignInResponse): SignInResponse {
@@ -12,6 +16,17 @@ export default class AuthConverter {
       email: raw.email,
       nickname: raw.nickname,
       profileImageUrl: raw.profileImageUrl,
+    };
+  }
+
+  convertCodeToErrorMessage(code: string): SignInCodeError {
+    switch (code) {
+      case 'U001':
+        return 'INVALID_EMAIL';
+      case 'A005':
+        return 'INVALID_PASSWORD';
+      default:
+        return 'INVALID_ALL';
     }
   }
 }

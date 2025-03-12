@@ -1,7 +1,7 @@
 'use server';
 
 import { isProd } from '@/utils/env';
-import { HTTPError } from '@repo/api/src/error';
+import { HTTPError, type ErrorResponseData } from '@repo/api/src/error';
 import type { SignInResponse } from '@repo/entity/src/auth';
 import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
 import AuthService from '@repo/usecase/src/authService';
@@ -14,9 +14,10 @@ const authService = new AuthService({
 
 export async function loginAction(
   formData: FormData,
-): Promise<SignInResponse | string | null> {
+): Promise<SignInResponse | ErrorResponseData | null> {
   const email = formData.get('email');
   const password = formData.get('password');
+  const keepLoggedIn = formData.get('containLogin');
 
   // TODO: 유효성 검사 리턴 타입
   if (
@@ -32,7 +33,7 @@ export async function loginAction(
     const response = await authService.signIn({
       email,
       password,
-      keepLoggedIn: false,
+      keepLoggedIn: keepLoggedIn === 'on',
     });
 
     const { accessToken, refreshToken, expiresIn } = response;
@@ -63,7 +64,7 @@ export async function loginAction(
     return response;
   } catch (error) {
     if (error instanceof HTTPError) {
-      return error.message;
+      return error.data;
     }
 
     return null;
