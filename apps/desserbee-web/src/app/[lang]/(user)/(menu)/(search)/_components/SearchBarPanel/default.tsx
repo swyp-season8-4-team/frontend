@@ -1,36 +1,40 @@
 'use client';
 
 import { useContext, useEffect, useState, useCallback } from 'react';
-import { formatDateToHHMM } from '@repo/utility/src/date';
+import { formatDateToHHMM, formatDateToMMDD } from '@repo/utility/src/date';
 import { PopularItem } from './popularItem';
 import { RecentItem } from './recentItem';
 import {
-  deleteRecentSearchKeywordsAll,
-  getPopularSearchKeywords,
-  getRecentSearchKeywords,
+  deleteRecentKeyword,
+  getPopularKeywords,
+  getRecentKeywords,
 } from './action';
-import type { GetPopularSearchDataResonse } from '@repo/entity/src/search';
-import { useRouter } from 'next/navigation';
+import type {
+  GetPopularSearchDataResonse,
+  RecentSearchData,
+} from '@repo/entity/src/search';
 import { UserContext } from '@/contexts/UserContext';
 
 interface DefaultPanelProps {
-  onSearch: (keyword: string) => void;
+  onSearchAction: (keyword: string) => void;
 }
 
-export function DefaultPanel({ onSearch }: DefaultPanelProps) {
+export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
   const { user } = useContext(UserContext);
-  // const [popularSearchData, setPopularSearchData] =
-  //   useState<GetPopularSearchDataResonse>();
-  const [recentSearchData, setRecentSearchData] = useState<string[]>([]);
+  const [popularSearchData, setPopularSearchData] =
+    useState<GetPopularSearchDataResonse>();
+  const [recentSearchData, setRecentSearchData] = useState<RecentSearchData[]>(
+    [],
+  );
 
-  // const handlePopularSearchDataFetch = async () => {
-  //   try {
-  //     const result = await getPopularSearchKeywords();
-  //     setPopularSearchData(result);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // };
+  const handlePopularSearchDataFetch = useCallback(async () => {
+    try {
+      const result = await getPopularKeywords();
+      setPopularSearchData(result);
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
 
   const handleRecentKeywordAllDelete = useCallback(async () => {
     // 낙관적 업데이트
@@ -49,26 +53,29 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
     }
   }, [user, recentSearchData]);
 
-  const handleRecentKeywordDelete = async (keywordToDelete: string) => {
+  const handleRecentKeywordDelete = async (keywordIdToDelete: number) => {
     try {
       if (user) {
-        // await deleteRecentSearchKeyword();
-        setRecentSearchData((prev) =>
-          prev.filter((keyword) => keyword !== keywordToDelete),
+        await deleteRecentKeyword(keywordIdToDelete);
+        setRecentSearchData((prev: RecentSearchData[]) =>
+          prev.filter(
+            (item: RecentSearchData) => item.id !== keywordIdToDelete,
+          ),
         );
       } else {
-        const searchHistory = JSON.parse(
+        const searchHistory: RecentSearchData[] = JSON.parse(
           localStorage.getItem('searchHistory') || '[]',
         );
 
-        const updatedHistory = searchHistory.filter((encodedTerm: string) => {
-          const decodedTerm = decodeURIComponent(atob(encodedTerm));
-          return decodedTerm !== keywordToDelete;
-        });
+        const updatedHistory = searchHistory.filter(
+          (item: RecentSearchData) => item.id !== keywordIdToDelete,
+        );
 
         localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
-        setRecentSearchData((prev) =>
-          prev.filter((keyword) => keyword !== keywordToDelete),
+        setRecentSearchData((prev: RecentSearchData[]) =>
+          prev.filter(
+            (item: RecentSearchData) => item.id !== keywordIdToDelete,
+          ),
         );
       }
     } catch (err) {
@@ -76,20 +83,18 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
     }
   };
 
-  const getNotSignInSearchHistory = useCallback((): string[] => {
+  const getNotSignInSearchHistory = useCallback((): RecentSearchData[] => {
     try {
-      const encodedHistory = JSON.parse(
+      const searchHistory = JSON.parse(
         localStorage.getItem('searchHistory') || '[]',
       );
-      return encodedHistory
-        .map((encodedTerm: string) => {
-          try {
-            return decodeURIComponent(atob(encodedTerm));
-          } catch {
-            return '';
-          }
-        })
-        .filter(Boolean);
+
+      if (!Array.isArray(searchHistory)) {
+        console.log('데이터가 배열이 아님');
+        return [];
+      }
+
+      return searchHistory;
     } catch (error) {
       console.error('Failed to get search history:', error);
       return [];
@@ -99,7 +104,7 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
   const handleRecentSearchDataFetch = useCallback(async () => {
     try {
       if (user) {
-        const result = await getRecentSearchKeywords();
+        const result = await getRecentKeywords();
         setRecentSearchData(result);
       } else {
         setRecentSearchData(getNotSignInSearchHistory());
@@ -110,123 +115,60 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
   }, [user, getNotSignInSearchHistory]);
 
   useEffect(() => {
+    handlePopularSearchDataFetch();
     handleRecentSearchDataFetch();
-  }, [handleRecentSearchDataFetch]);
-
-  const popularSearchData = {
-    searches: [
-      {
-        keyword: '디저트',
-        searchCount: 13,
-        rank: 1,
-        difference: 3,
-      },
-      {
-        keyword: 'coffee',
-        searchCount: 7,
-        rank: 2,
-        difference: 1,
-      },
-      {
-        keyword: '디저트 비',
-        searchCount: 6,
-        rank: 3,
-        difference: -5,
-      },
-      {
-        keyword: '커피',
-        searchCount: 2,
-        rank: 4,
-        difference: 1,
-      },
-      {
-        keyword: '디저트2',
-        searchCount: 13,
-        rank: 5,
-        difference: 2,
-      },
-      {
-        keyword: 'coffee2',
-        searchCount: 7,
-        rank: 6,
-        difference: 1,
-      },
-      {
-        keyword: '디저트 비2',
-        searchCount: 6,
-        rank: 7,
-        difference: -2,
-      },
-      {
-        keyword: '커피2',
-        searchCount: 2,
-        rank: 8,
-        difference: 0,
-      },
-      {
-        keyword: '디저트 비3',
-        searchCount: 6,
-        rank: 9,
-        difference: -8,
-      },
-      {
-        keyword: '커피4',
-        searchCount: 2,
-        rank: 10,
-        difference: 1,
-      },
-    ],
-    lastUpdatedTime: '2025-03-10T16:05:09.885259Z',
-  };
+  }, [handlePopularSearchDataFetch, handleRecentSearchDataFetch]);
 
   if (!popularSearchData || !recentSearchData) return;
 
   return (
     <div className="w-full h-full pt-[21px] md:pt-7 pb-4">
-      <div className="px-base">
-        <div className="w-full flex justify-between items-center">
-          <div className="text-xs md:text-[22px] font-semibold">
-            인기 검색어
+      {popularSearchData && (
+        <div className="px-base">
+          <div className="w-full flex justify-between items-center">
+            <div className="text-xs md:text-[22px] font-semibold">
+              인기 검색어
+            </div>
+            <div className="text-[10px] md:text-lg">
+              {formatDateToHHMM(popularSearchData.lastUpdatedTime)} 업데이트
+            </div>
           </div>
-          <div className="text-[10px] md:text-lg">
-            {formatDateToHHMM(popularSearchData.lastUpdatedTime)} 업데이트
+          <div className="w-full flex justify-between mt-4 gap-[16.24px] md:gap-[37px] ">
+            <div className="w-1/2 flex flex-col gap-y-[10px] md:gap-y-6">
+              {popularSearchData.searches.slice(0, 5).map((popularKeyword) => (
+                <button
+                  onClick={() => {
+                    onSearchAction(popularKeyword.keyword);
+                  }}
+                  key={popularKeyword.keyword}
+                >
+                  <PopularItem
+                    keyword={popularKeyword.keyword}
+                    rank={popularKeyword.rank}
+                    difference={popularKeyword.difference}
+                  />
+                </button>
+              ))}
+            </div>
+            <div className="w-1/2 flex flex-col gap-y-[10px] md:gap-y-6">
+              {popularSearchData.searches.slice(5, 10).map((popularKeyword) => (
+                <button
+                  onClick={() => {
+                    onSearchAction(popularKeyword.keyword);
+                  }}
+                  key={popularKeyword.keyword}
+                >
+                  <PopularItem
+                    keyword={popularKeyword.keyword}
+                    rank={popularKeyword.rank}
+                    difference={popularKeyword.difference}
+                  />
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-        <div className="w-full flex justify-between mt-4 gap-[16.24px] md:gap-[37px] ">
-          <div className="w-1/2 flex flex-col gap-y-[10px] md:gap-y-6">
-            {popularSearchData.searches.slice(0, 5).map((popularKeyword) => (
-              <button
-                onClick={() => {
-                  onSearch(popularKeyword.keyword);
-                }}
-                key={popularKeyword.keyword}
-              >
-                <PopularItem
-                  keyword={popularKeyword.keyword}
-                  rank={popularKeyword.rank}
-                  difference={popularKeyword.difference}
-                />
-              </button>
-            ))}
-          </div>
-          <div className="w-1/2 flex flex-col gap-y-[10px] md:gap-y-6">
-            {popularSearchData.searches.slice(5, 10).map((popularKeyword) => (
-              <button
-                onClick={() => {
-                  onSearch(popularKeyword.keyword);
-                }}
-                key={popularKeyword.keyword}
-              >
-                <PopularItem
-                  keyword={popularKeyword.keyword}
-                  rank={popularKeyword.rank}
-                  difference={popularKeyword.difference}
-                />
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      )}
       <div className="w-full h-[3px] md:h-[7px] bg-[#E8E8E8] my-[10px] md:my-[26px]"></div>
       <div>
         <div className="px-base">
@@ -247,13 +189,14 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
                 className="cursor-pointer"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onSearch(recentKeyword);
+                  onSearchAction(recentKeyword.keyword);
                 }}
-                key={recentKeyword}
+                key={recentKeyword.id}
               >
                 <RecentItem
-                  keyword={recentKeyword}
-                  onDelete={() => handleRecentKeywordDelete(recentKeyword)}
+                  keyword={recentKeyword.keyword}
+                  createdAt={formatDateToMMDD(recentKeyword.createdAt)}
+                  onDelete={() => handleRecentKeywordDelete(recentKeyword.id)}
                 />
               </div>
             ))}

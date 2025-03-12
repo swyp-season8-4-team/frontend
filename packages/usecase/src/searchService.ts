@@ -1,6 +1,9 @@
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import type { AuthRepository } from '@repo/entity/src/auth';
-import type { SearchRepository } from '@repo/entity/src/search';
+import type {
+  DeleteRecentKeywordRequest,
+  SearchRepository,
+} from '@repo/entity/src/search';
 export default class SearchService {
   private readonly searchRepository: SearchRepository | null;
   private readonly authRepository: AuthRepository | null;
@@ -46,8 +49,7 @@ export default class SearchService {
     return result;
   }
 
-  //TODO:api 명세서 나오면 params 추가
-  async deleteRecentKeyword() {
+  async deleteRecentKeyword(params: DeleteRecentKeywordRequest) {
     if (!this.searchRepository) {
       throw new Error('searchRepository is not set');
     } else if (!this.authRepository) {
@@ -56,12 +58,14 @@ export default class SearchService {
 
     const authorization = await this.authRepository.getAuthorization();
 
-    const result = await this.searchRepository.deleteRecentKeyword({
-      authorization,
-    });
+    const requestData = {
+      data: params,
+      ...(authorization && { authorization }),
+    };
+
+    const result = await this.searchRepository.deleteRecentKeyword(requestData);
   }
 
-  //TODO:api 명세서 나오면 params 추가
   async deleteRecentKeywordsAll() {
     if (!this.searchRepository) {
       throw new Error('searchRepository is not set');

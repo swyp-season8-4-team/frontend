@@ -46,6 +46,7 @@ import { calculateDistance } from '../../_utils/distance';
 import { useTag } from '../../../_hooks/useTag';
 import { getNearbyStores } from './action';
 import type { Preference } from '@repo/entity/src/preference';
+import { SearchResultList } from '../SearchResultList';
 
 interface KakaoMapProps {
   preferenceCategories: PreferenceData[];
@@ -59,6 +60,10 @@ const areServicesInitialized = (services: {
 }) => {
   return services.mapService && services.geoService && services.storeService;
 };
+const MemoizedPreferenceTags = React.memo(PreferenceTags);
+const MemoizedMapPanel = React.memo(MapPanel);
+const MemoizedReFetchStoreBtn = React.memo(ReFetchStoreBtn);
+const MemoizedSearchResultList = React.memo(SearchResultList);
 
 export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const router = useRouter();
@@ -96,7 +101,9 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   });
 
   const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const [isResultListOpen, setIsResultListOpen] = useState(false);
   const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
+  const [distances, setDistances] = useState<number[]>([]);
 
   const [, setRetryCount] = useState(0);
   const retryCountRef = useRef(0);
@@ -125,6 +132,23 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       component: <LocationPermissionModal onClose={closeModal} />,
     });
   }, [closeModal, push]);
+
+  const handleResultListClose = useCallback(() => {
+    setIsResultListOpen(false);
+    // if (window.location.hash) {
+    //   history.pushState(
+    //     '',
+    //     document.title,
+    //     window.location.pathname + window.location.search,
+    //   );
+    //   setSearchKeyword('');
+    //   setIsFetchRequired(true);
+    // }
+  }, []);
+
+  const handleRefetchBtnClick = useCallback(() => {
+    setIsFetchRequired(true);
+  }, []);
 
   //  서비스 초기화
   const initializeServices = () => {
@@ -413,10 +437,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     [handleMoveToCurrentPosition],
   );
 
-  const handleRefetchBtnClick = () => {
-    setIsFetchRequired(true);
-  };
-
   // 지도 첫 초기화
   const loadMap = useCallback(
     async (
@@ -547,21 +567,8 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     }
   }, [isScriptLoaded, isInitialized, loadMap, sessionStorageRepository]);
 
-  // 아무 필터링 없이 가게 불러오기
-  useEffect(() => {
-    if (isFetchRequired) {
-      const fetchAndUpdate = async () => {
-        const stores = await fetchNearbyStores(mapCenterRef.current);
-        if (stores) {
-          await updateNewClusterMarkers(stores);
-          setIsFetchRequired(false);
-        }
-      };
-      fetchAndUpdate();
-    }
-  }, [isFetchRequired, fetchNearbyStores, updateNewClusterMarkers]);
-
   // 현재 지도 중심, 태그, 검색 포함 필터링 적용된 가게 불러오기
+  const [isSearching, setIsSearching] = useState(false);
   const previousSelectedTagsRef = useRef<Preference[]>([]);
   const previousSearchKeywordRef = useRef<string>('');
 
@@ -572,6 +579,8 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       previousSearchKeywordRef.current !== searchKeyword
     ) {
       const fetchAndUpdate = async () => {
+        setIsSearching(true);
+
         const stores = await fetchNearbyStores(
           mapCenterRef.current,
           selectedPreferenceTags,
@@ -582,10 +591,34 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           await updateNewClusterMarkers(stores);
           setIsFetchRequired(false);
 
-          // 약간의 지연을 두어 상태 업데이트가 확실히 반영되도록 함
+          // 각 가게와 현재 사용자 위치 간의 거리 계산
+          const newDistances = stores.map((store) => {
+            if (
+              !currentPosition ||
+              !currentPosition.latitude ||
+              !currentPosition.longitude
+            ) {
+              console.log('currentPosition is invalid:', currentPosition);
+              return undefined;
+            }
+
+            const distance = calculateDistance(currentPosition, {
+              latitude: store.latitude,
+              longitude: store.longitude,
+            });
+
+            return distance;
+          });
+
           setTimeout(() => {
+            setDistances(
+              newDistances.filter((d): d is number => d !== undefined),
+            );
             setNearByStores(stores);
+            setIsSearching(false);
           }, 100);
+        } else {
+          setIsSearching(false);
         }
       };
       fetchAndUpdate();
@@ -597,6 +630,28 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     searchKeyword,
     fetchNearbyStores,
     updateNewClusterMarkers,
+    currentPosition,
+  ]);
+
+  // 아무 필터링 없이 가게 불러오기
+  useEffect(() => {
+    if (isFetchRequired) {
+      const fetchAndUpdate = async () => {
+        const stores = await fetchNearbyStores(mapCenterRef.current);
+        if (stores) {
+          await updateNewClusterMarkers(stores);
+
+          setNearByStores(stores);
+          setIsFetchRequired(false);
+        }
+      };
+      fetchAndUpdate();
+    }
+  }, [
+    isFetchRequired,
+    fetchNearbyStores,
+    updateNewClusterMarkers,
+    currentPosition,
   ]);
 
   // URL 해시 변경 감지 (검색)
@@ -608,7 +663,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         if (hash.startsWith('#q=')) {
           const query = hash.substring(3);
           setSearchKeyword(query);
-          console.log('Initial hash detected, setting bottom sheet:', !!query);
+          console.log('Initial hash detected:', query);
         } else {
           setSearchKeyword('');
         }
@@ -621,8 +676,17 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       if (hash.startsWith('#q=')) {
         const query = hash.substring(3);
         setSearchKeyword(query);
+        if (nearByStores.length > 0) {
+          setIsResultListOpen(false);
+        } else {
+          setIsResultListOpen(true);
+          if (servicesRef.current.mapService) {
+            servicesRef.current.mapService.setMapLevel(10);
+          }
+        }
       } else {
         setSearchKeyword('');
+        setIsResultListOpen(false);
       }
     };
 
@@ -685,6 +749,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     }
   }, [isMapLoaded, moveToStore, searchParams]);
 
+  // preferenceTagsProps를 useMemo로 메모이제이션
   const preferenceTagsProps = useMemo(
     () => ({
       categories: preferenceCategories,
@@ -695,8 +760,8 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     }),
     [
       preferenceCategories,
-      handleMyPreferenceTagClick,
       isMyPreferSelected,
+      handleMyPreferenceTagClick,
       updateSelectedTag,
       selectedCategories,
     ],
@@ -765,17 +830,29 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         className="relative bg-[#E8E8E8] mb-[9px] rounded-base w-full h-[calc(100dvh-295px)] overflow-x-hidden z-0"
       >
         {error && (
-          <div className="top-1/3  left-1/2 z-20 absolute bg-red-100 px-4 py-2 border border-red-400 rounded text-red-700 -translate-x-1/2 transform">
+          <div className="top-1/2 left-1/2 z-20 absolute bg-red-100 px-4 py-2 border border-red-400 rounded text-red-700 -translate-x-1/2 transform w-[200px] text-center">
             {error}
           </div>
         )}
-        <PreferenceTags {...preferenceTagsProps} />
-        <MapPanel {...mapPanelProps} />
-        <ReFetchStoreBtn
+        {isSearching && (
+          <div className="top-1/2 left-1/2 z-20 absolute -translate-x-1/2 -translate-y-1/2 transform bg-white/80 p-2 rounded-full shadow-md flex items-center justify-center">
+            <span className="w-12 h-12 border-4 border-[#F9C22E] border-b-transparent rounded-full inline-block box-border animate-spin"></span>
+          </div>
+        )}
+        <MemoizedPreferenceTags {...preferenceTagsProps} />
+        <MemoizedMapPanel {...mapPanelProps} />
+        <MemoizedReFetchStoreBtn
           clearSelectedCategories={clearSelectedCategories}
           refetchStore={handleRefetchBtnClick}
         />
       </div>
+      {isResultListOpen && !isSearching && (
+        <MemoizedSearchResultList
+          distances={distances}
+          resultData={nearByStores}
+          onClose={handleResultListClose}
+        />
+      )}
     </div>
   );
 }

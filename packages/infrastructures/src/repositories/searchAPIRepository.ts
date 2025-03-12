@@ -2,7 +2,9 @@ import APIRepository from './apiRepository';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
 import type {
+  DeleteRecentKeywordRequest,
   GetPopularSearchDataResonse,
+  RecentSearchData,
   SearchRepository,
 } from '@repo/entity/src/search';
 
@@ -29,8 +31,8 @@ export default class SearchAPIRepository
 
   async getRecentKeywords({
     authorization,
-  }: BaseRequestData<void>): Promise<string[]> {
-    const response = await fetch<void, string[]>({
+  }: BaseRequestData<void>): Promise<RecentSearchData[]> {
+    const response = await fetch<void, RecentSearchData[]>({
       ...(authorization && {
         headers: {
           Authorization: authorization,
@@ -43,18 +45,20 @@ export default class SearchAPIRepository
     return response;
   }
 
-  //TODO: api 명세서 업데이트되면 수정
   async deleteRecentKeyword({
+    data,
     authorization,
-  }: BaseRequestData<void>): Promise<void> {
-    const response = await fetch<void, void>({
+  }: BaseRequestData<DeleteRecentKeywordRequest>): Promise<void> {
+    const { searchId } = data || {};
+
+    const response = await fetch<DeleteRecentKeywordRequest, void>({
       ...(authorization && {
         headers: {
           Authorization: authorization,
         },
       }),
       method: 'DELETE',
-      url: `${this.endpoint}/search/recent`, //TODO: api 명세서 업데이트되면 수정
+      url: `${this.endpoint}/search/recent/${searchId}`,
     });
 
     return response;
@@ -70,7 +74,7 @@ export default class SearchAPIRepository
         },
       }),
       method: 'DELETE',
-      url: `${this.endpoint}/search/recent`, //TODO: api 명세서 업데이트되면 수정
+      url: `${this.endpoint}/search/recent/all`,
     });
 
     return response;
