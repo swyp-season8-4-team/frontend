@@ -6,6 +6,7 @@ import { PopularItem } from './popularItem';
 import { RecentItem } from './recentItem';
 import {
   deleteRecentKeyword,
+  deleteRecentKeywordsAll,
   getPopularKeywords,
   getRecentKeywords,
 } from './action';
@@ -43,7 +44,7 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
 
     try {
       if (user) {
-        // await deleteRecentSearchKeywordsAll();
+        await deleteRecentKeywordsAll();
       } else {
         localStorage.setItem('searchHistory', '[]');
       }
