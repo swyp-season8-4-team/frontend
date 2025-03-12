@@ -4,7 +4,7 @@ import { modifyDefaultHeaders, serializeQueries } from '..';
 import type { RequestData } from '../type';
 
 export const baseHTTP = async <Q, R>(
-  requestData: RequestData<Q>
+  requestData: RequestData<Q>,
 ): Promise<R> => {
   const headers = modifyDefaultHeaders(requestData.headers, true);
 
@@ -14,7 +14,7 @@ export const baseHTTP = async <Q, R>(
   if (!url) {
     // eslint-disable-next-line no-console
     console.warn(
-      'Request url is set to "localhost:3000" since request data has no url'
+      'Request url is set to "localhost:3000" since request data has no url',
     );
   }
 
@@ -29,8 +29,8 @@ export const baseHTTP = async <Q, R>(
     if (process.env.NEXT_PUBLIC_APP_ENV !== 'prod') {
       console.info(
         `Request information url: ${urlWithQuery}, body: ${JSON.stringify(
-          body
-        )}\n`
+          body,
+        )}\n`,
       );
     }
 
@@ -48,11 +48,11 @@ export const baseHTTP = async <Q, R>(
         });
 
         response.on('end', () => {
-          if ((response.statusCode ?? 0) >= 400) {
+          if ((response.status ?? 0) >= 400) {
             reject(
               new Error(
-                `API Request is not ok: ${urlWithQuery}, status: ${response.statusCode}, response: ${responseStr}`
-              )
+                `API Request is not ok: ${urlWithQuery}, status: ${response.status}, response: ${responseStr}`,
+              ),
             );
           } else {
             const contents: R =
@@ -63,7 +63,7 @@ export const baseHTTP = async <Q, R>(
 
             if (process.env.NEXT_PUBLIC_APP_ENV !== 'prod') {
               let logStr = `Response data(${urlWithQuery}):\nBody: ${JSON.stringify(
-                contents
+                contents,
               )}\n`;
 
               Object.keys(response.headers).forEach((key) => {
@@ -76,14 +76,14 @@ export const baseHTTP = async <Q, R>(
             resolve(contents);
           }
         });
-      }
+      },
     );
 
     request.on('error', (err) => {
       reject(
         new Error(
-          `API Request is not ok: ${urlWithQuery}, error message: ${err.message}`
-        )
+          `API Request is not ok: ${urlWithQuery}, error message: ${err.message}`,
+        ),
       );
     });
 

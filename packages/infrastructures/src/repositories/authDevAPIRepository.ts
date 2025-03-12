@@ -1,6 +1,8 @@
+import fetch from '@repo/api/src/fetch';
+import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import type {
   AuthRepository,
-  JWTTokens,
+  JWTRefreshTokens,
   OAuthSignInData,
   RawSignInResponse,
   ResetPasswordData,
@@ -13,17 +15,15 @@ import type {
   VerifyEmailRequestResponse,
   VerifyEmailResponse,
 } from '@repo/entity/src/auth';
-import fetch from '@repo/api/src/fetch';
-import APIRepository from './apiRepository';
-import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import AuthConverter from '../mappers/authConverter';
+import APIRepository from './apiRepository';
 
 export default class AuthDevAPIRepository
   extends APIRepository
   implements AuthRepository
 {
   private readonly authConverter = new AuthConverter();
-  
+
   async signIn({ data }: BaseRequestData<SignInData>): Promise<SignInResponse> {
     if (!data) {
       throw new Error('data is not exist');
@@ -35,7 +35,7 @@ export default class AuthDevAPIRepository
       data: {
         email,
         password,
-        keepLoggedIn
+        keepLoggedIn,
       },
       method: 'POST',
       url: `${this.endpoint}/auth/dev/login`,
@@ -44,10 +44,9 @@ export default class AuthDevAPIRepository
     return this.authConverter.convertRawSignInResponse(response);
   }
 
-  refreshAccessToken(refreshToken: string): Promise<JWTTokens> {
+  refreshAccessToken(refreshToken: string): Promise<JWTRefreshTokens> {
     throw new Error('Method not implemented.');
   }
-
   socialSignIn(
     data: BaseRequestData<OAuthSignInData>,
   ): Promise<SignInResponse> {

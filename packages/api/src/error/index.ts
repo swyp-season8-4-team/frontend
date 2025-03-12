@@ -1,17 +1,38 @@
-export interface ReponseErrorData {
-  statusCode: number;
+export interface ErrorResponseData {
+  status: number;
+  code: string;
   message?: string;
 }
 
-export class HTTPError extends Error {
-  private responseData: ReponseErrorData;
+export function isErrorResponseData(
+  error: unknown,
+): error is ErrorResponseData {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'status' in error &&
+    'code' in error &&
+    'message' in error
+  );
+}
 
-  constructor(statusCode: number, message?: string) {
+export class HTTPError extends Error {
+  private responseData: ErrorResponseData;
+
+  constructor({
+    status,
+    code,
+    message,
+  }: {
+    status: number;
+    code: string;
+    message?: string;
+  }) {
     super(message);
-    this.responseData = { statusCode, message };
+    this.responseData = { status, code, message };
   }
 
-  get data(): ReponseErrorData {
+  get data(): ErrorResponseData {
     return this.responseData;
   }
 }

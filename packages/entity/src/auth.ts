@@ -16,6 +16,12 @@ export function isOAuthSocialProvider(
   );
 }
 
+export type SignInCodeError =
+  | 'INVALID_EMAIL'
+  | 'INVALID_PASSWORD'
+  | 'INVALID_ALL'
+  | 'EMPTY';
+
 export interface JWTPayload {
   iss: string;
   iat: number;

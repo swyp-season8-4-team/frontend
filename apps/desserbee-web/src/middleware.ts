@@ -53,12 +53,12 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  if (isExpired && token !== prevAccessToken && token) {
+  if (isExpired && token !== prevAccessToken && !!token && !!prevAccessToken) {
     next.cookies.set('accessToken', token, {
       httpOnly: true,
       secure: isProd,
       sameSite: 'lax',
-      expires: exp,
+      maxAge: exp,
     });
   }
 
@@ -168,11 +168,15 @@ async function getTokenInfo(request: NextRequest): Promise<TokenInfo> {
         newAccessTokenInfo.exp = expiresIn;
       }
     } catch (error) {
-      if (error instanceof HTTPError) {
-        if (error.data.statusCode === 401) {
-          return { token: null };
-        }
+      if (!(error instanceof HTTPError)) {
+        throw error;
       }
+
+      if (error.data.status === 401) {
+        return { token: null };
+      }
+
+      throw error;
     }
 
     // 리프레시 토큰을 가지고 다시 accessToken 발급
