@@ -225,10 +225,10 @@ export default function LoginForm({
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-4">
-        <label className="flex items-center cursor-pointer">
+      <div className="flex items-center justify-between">
+        <label className="flex items-center">
           <input
-            type="radio"
+            type="checkbox"
             name="containLogin"
             checked={keepLoggedIn}
             onClick={handleRadioToggle}
