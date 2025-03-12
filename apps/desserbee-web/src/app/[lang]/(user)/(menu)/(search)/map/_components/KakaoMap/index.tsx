@@ -105,9 +105,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const [isResultListOpen, setIsResultListOpen] = useState(false);
   const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
   const [distances, setDistances] = useState<number[]>([]);
-  const [savedListStores, setSavedListStores] = useState<
-    SavedStoresLocationData[]
-  >([]);
+
   const [, setRetryCount] = useState(0);
   const retryCountRef = useRef(0);
   const MAX_RETRY = 3;
@@ -827,7 +825,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
         // 저장 리스트의 가게 위치 정보 가져오기
         const stores = await getStoresLocationInSavedList({ listId });
-        setSavedListStores(stores);
 
         if (stores.length === 0) {
           setError('리스트에 저장된 가게가 없습니다');
@@ -860,7 +857,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const clearSavedListStores = useCallback(() => {
     if (showingSavedList) {
       setShowingSavedList(false);
-      setSavedListStores([]);
       setIsFetchRequired(true); // 원래 마커로 복원하기 위해 fetch 필요
     }
   }, [showingSavedList]);
