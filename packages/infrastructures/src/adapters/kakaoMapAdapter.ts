@@ -278,13 +278,32 @@ export class KakaoMapAdapter implements ExternalMap {
 
     const overlay = new kakao.maps.CustomOverlay({
       content: content,
-      position: markerPosition,
+      position: marker.getPosition(),
       yAnchor: 0.1,
       zIndex: -1,
-      map: this.map,
     });
 
     marker.overlay = overlay;
+
+    const updateOverlayVisibility = () => {
+      const currentLevel = this.map.getLevel();
+      if (currentLevel > 4 || !marker.getMap()) {
+        overlay.setMap(null);
+      } else {
+        overlay.setMap(this.map);
+      }
+    };
+
+    updateOverlayVisibility();
+
+    // 줌 레벨 변경 시 가시성 업데이트
+    if (marker.getMap()) {
+      kakao.maps.event.addListener(
+        this.map,
+        'zoom_changed',
+        updateOverlayVisibility,
+      );
+    }
 
     // 마커 배열에 추가
     this.markers.push(marker);
