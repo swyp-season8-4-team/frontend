@@ -38,6 +38,7 @@ export default function LoginForm({
   const [isLoading, setIsLoading] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [keepLoggedIn, setKeepLoggedIn] = useState(false);
 
   // 폼 유효성 상태 업데이트
   useEffect(() => {
@@ -155,6 +156,11 @@ export default function LoginForm({
     }
   };
 
+  // 라디오 버튼 토글 핸들러
+  const handleRadioToggle = () => {
+    setKeepLoggedIn(!keepLoggedIn);
+  };
+
   return (
     <form className={className} onSubmit={handleSubmit}>
       <div className="flex flex-col gap-2">
@@ -221,26 +227,29 @@ export default function LoginForm({
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
-        <label className="flex items-center">
+      <div className="flex items-center justify-between mt-4">
+        <label className="flex items-center cursor-pointer">
           <input
-            type="checkbox"
+            type="radio"
             name="containLogin"
+            checked={keepLoggedIn}
+            onClick={handleRadioToggle}
+            onChange={() => {}}
             className="w-4 h-4 rounded-full border-gray-300"
           />
-          <span className="ml-2 text-[10px] text-gray-600">로그인 유지</span>
+          <span className="ml-2 text-[11px] text-gray-600">로그인 유지</span>
         </label>
         <div className="flex items-center gap-2">
           <Link
             href={NavigationPathname.SignUp}
-            className="text-b-400 text-[10px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font"
+            className="text-b-400 text-[11px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font"
           >
             일반 회원가입
           </Link>
           {/* <Link href={NavigationPathname.SignUp} className="text-b-400 text-[10px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font">사장님 회원가입</Link> */}
           <Link
             href={NavigationPathname.ForgotPassword}
-            className="text-b-400 text-[10px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font"
+            className="text-b-400 text-[11px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font"
           >
             비밀번호 찾기
           </Link>

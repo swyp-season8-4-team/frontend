@@ -48,7 +48,7 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
       });
     } catch (err) {
       if (err instanceof HTTPError) {
-        const statusCode = err.data.statusCode;
+        const statusCode = err.data.status;
 
         if (statusCode === 409) {
           alert('동일한 이름의 리스트는 생성할 수 없습니다.');
