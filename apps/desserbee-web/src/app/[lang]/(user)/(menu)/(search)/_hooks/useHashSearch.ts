@@ -2,13 +2,22 @@
 
 import { UserContext } from '@/contexts/UserContext';
 import type { RecentSearchData } from '@repo/entity/src/search';
-import { useCallback, useState, useEffect, useContext } from 'react';
+import { useCallback, useState, useEffect, useContext, useMemo } from 'react';
+import LocalStorageService from '@repo/usecase/src/localStorageService';
+import LocalStorageRepository from '@repo/infrastructures/src/repositories/localStorageRepository';
 // import { debounce } from '@repo/utility/src/debounce';
 
 export function useHashSearch() {
   const { user } = useContext(UserContext);
   const [searchTerm, setSearchTerm] = useState(''); // searchTerm은 보여주기용
   const [isSearchPanelShow, setIsSearchPanelShow] = useState(false);
+  const localStorageService = useMemo(
+    () =>
+      new LocalStorageService({
+        storageRepository: new LocalStorageRepository(),
+      }),
+    [],
+  );
 
   // 첫 로딩 시 해시값 비우기
   useEffect(() => {
@@ -56,41 +65,42 @@ export function useHashSearch() {
     return true;
   }, []);
 
-  const saveNotSignInSearchHistory = useCallback((query: string) => {
-    if (!query.trim()) return;
+  const saveNotSignInSearchHistory = useCallback(
+    (query: string) => {
+      if (!query.trim()) return;
 
-    try {
-      // 검색어 sanitization
-      const sanitizedQuery = query.trim().replace(/[<>]/g, '');
+      try {
+        // 검색어 sanitization
+        const sanitizedQuery = query.trim().replace(/[<>]/g, '');
+        const searchHistory =
+          localStorageService.get<RecentSearchData[]>('searchHistory') || [];
 
-      const searchHistory = JSON.parse(
-        localStorage.getItem('searchHistory') || '[]',
-      );
+        const newSearchData: RecentSearchData = {
+          id:
+            searchHistory.length > 0
+              ? Math.max(
+                  ...searchHistory.map((item: RecentSearchData) => item.id),
+                ) + 1
+              : 1,
+          keyword: sanitizedQuery,
+          createdAt: new Date().toISOString(),
+        };
 
-      const newSearchData: RecentSearchData = {
-        id:
-          searchHistory.length > 0
-            ? Math.max(
-                ...searchHistory.map((item: RecentSearchData) => item.id),
-              ) + 1
-            : 1,
-        keyword: sanitizedQuery,
-        createdAt: new Date().toISOString(),
-      };
+        const updatedHistory = [
+          newSearchData,
+          ...searchHistory.filter(
+            (item: RecentSearchData) => item.keyword !== sanitizedQuery,
+          ),
+        ];
 
-      const updatedHistory = [
-        newSearchData,
-        ...searchHistory.filter(
-          (item: RecentSearchData) => item.keyword !== sanitizedQuery,
-        ),
-      ];
-
-      const limitedHistory = updatedHistory.slice(0, 10);
-      localStorage.setItem('searchHistory', JSON.stringify(limitedHistory));
-    } catch (error) {
-      console.error('Failed to save search history:', error);
-    }
-  }, []);
+        const limitedHistory = updatedHistory.slice(0, 10);
+        localStorageService.set('searchHistory', limitedHistory);
+      } catch (error) {
+        console.error('Failed to save search history:', error);
+      }
+    },
+    [localStorageService],
+  );
 
   const onSearch = useCallback(
     (query: string) => {

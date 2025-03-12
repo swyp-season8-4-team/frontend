@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect, useState, useCallback } from 'react';
+import { useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { formatDateToHHMM, formatDateToMMDD } from '@repo/utility/src/date';
 import { PopularItem } from './popularItem';
 import { RecentItem } from './recentItem';
@@ -15,6 +15,8 @@ import type {
   RecentSearchData,
 } from '@repo/entity/src/search';
 import { UserContext } from '@/contexts/UserContext';
+import LocalStorageService from '@repo/usecase/src/localStorageService';
+import LocalStorageRepository from '@repo/infrastructures/src/repositories/localStorageRepository';
 
 interface DefaultPanelProps {
   onSearchAction: (keyword: string) => void;
@@ -25,6 +27,13 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
   const [popularSearchData, setPopularSearchData] =
     useState<GetPopularSearchDataResonse>();
   const [recentSearchData, setRecentSearchData] = useState<RecentSearchData[]>(
+    [],
+  );
+  const localStorageService = useMemo(
+    () =>
+      new LocalStorageService({
+        storageRepository: new LocalStorageRepository(),
+      }),
     [],
   );
 
@@ -38,7 +47,6 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
   }, []);
 
   const handleRecentKeywordAllDelete = useCallback(async () => {
-    // 낙관적 업데이트
     const previousData = recentSearchData;
     setRecentSearchData([]);
 
@@ -46,13 +54,13 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
       if (user) {
         await deleteRecentKeywordsAll();
       } else {
-        localStorage.setItem('searchHistory', '[]');
+        localStorageService.set<RecentSearchData[]>('searchHistory', []);
       }
     } catch (err) {
       setRecentSearchData(previousData);
       console.log('전체 삭제 실패:', err);
     }
-  }, [user, recentSearchData]);
+  }, [user, recentSearchData, localStorageService]);
 
   const handleRecentKeywordDelete = async (keywordIdToDelete: number) => {
     try {
@@ -64,15 +72,13 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
           ),
         );
       } else {
-        const searchHistory: RecentSearchData[] = JSON.parse(
-          localStorage.getItem('searchHistory') || '[]',
-        );
-
+        const searchHistory =
+          localStorageService.get<RecentSearchData[]>('searchHistory') || [];
         const updatedHistory = searchHistory.filter(
           (item: RecentSearchData) => item.id !== keywordIdToDelete,
         );
 
-        localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
+        localStorageService.set('searchHistory', updatedHistory);
         setRecentSearchData((prev: RecentSearchData[]) =>
           prev.filter(
             (item: RecentSearchData) => item.id !== keywordIdToDelete,
@@ -86,12 +92,10 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
 
   const getNotSignInSearchHistory = useCallback((): RecentSearchData[] => {
     try {
-      const searchHistory = JSON.parse(
-        localStorage.getItem('searchHistory') || '[]',
-      );
+      const searchHistory =
+        localStorageService.get<RecentSearchData[]>('searchHistory');
 
-      if (!Array.isArray(searchHistory)) {
-        console.log('데이터가 배열이 아님');
+      if (!searchHistory) {
         return [];
       }
 
@@ -100,7 +104,7 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
       console.error('Failed to get search history:', error);
       return [];
     }
-  }, []);
+  }, [localStorageService]);
 
   const handleRecentSearchDataFetch = useCallback(async () => {
     try {
