@@ -1,7 +1,7 @@
 import {
   OAuthSocialProvider,
   type AuthRepository,
-  type JWTTokens,
+  type JWTRefreshTokens,
   type OAuthSignInData,
   type ResetPasswordData,
   type ResetPasswordResponse,
@@ -11,9 +11,12 @@ import {
   type VerifyEmailData,
   type VerifyEmailRequestData,
   type VerifyEmailRequestResponse,
-  type VerifyEmailResponse
+  type VerifyEmailResponse,
 } from '@repo/entity/src/auth';
-import { NavigationLanguageGroup, NavigationPathGroup } from '@repo/entity/src/navigation';
+import {
+  NavigationLanguageGroup,
+  NavigationPathGroup,
+} from '@repo/entity/src/navigation';
 import { type StorageRepository } from '@repo/entity/src/storage';
 
 export enum VerifyEmailPurpose {
@@ -43,7 +46,7 @@ export interface EmailAuthSession {
 
 export default class AuthService {
   private readonly authRepository: AuthRepository | null = null;
-  private readonly storageRepository: StorageRepository | null = null;  
+  private readonly storageRepository: StorageRepository | null = null;
 
   constructor({
     authRepository,
@@ -68,7 +71,7 @@ export default class AuthService {
     switch (provider) {
       case OAuthSocialProvider.KAKAO:
         return `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_SOCIAL_LOGIN_REST_API_KEY}&redirect_uri=${this.getRedirectUri(provider)}&state=${state}&response_type=code`;
-        // return `${process.env.NEXT_PUBLIC_SERVICE_API_URL}/api/oauth2/authorization?provider=${provider}`;
+      // return `${process.env.NEXT_PUBLIC_SERVICE_API_URL}/api/oauth2/authorization?provider=${provider}`;
       default:
         throw new Error('Invalid provider');
     }
@@ -84,7 +87,7 @@ export default class AuthService {
     return response;
   }
 
-  async refreshAccessToken(refreshToken: string): Promise<JWTTokens> {
+  async refreshAccessToken(refreshToken: string): Promise<JWTRefreshTokens> {
     if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }
@@ -119,7 +122,10 @@ export default class AuthService {
       throw new Error('authRepository is not set');
     }
 
-    const response = await this.authRepository.signUp({ data, authorization: verificationToken });
+    const response = await this.authRepository.signUp({
+      data,
+      authorization: verificationToken,
+    });
 
     return response;
   }
@@ -129,7 +135,9 @@ export default class AuthService {
       throw new Error('authRepository is not set');
     }
 
-    const response = await this.authRepository.signOut({ data: { authorization } });
+    const response = await this.authRepository.signOut({
+      data: { authorization },
+    });
 
     return response;
   }
@@ -144,7 +152,9 @@ export default class AuthService {
     return response;
   }
 
-  async verifyEmailRequest(data: VerifyEmailRequestData): Promise<VerifyEmailRequestResponse> {
+  async verifyEmailRequest(
+    data: VerifyEmailRequestData,
+  ): Promise<VerifyEmailRequestResponse> {
     if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }

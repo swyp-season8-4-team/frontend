@@ -42,7 +42,7 @@ export async function middleware(request: NextRequest) {
 
   const prevAccessToken = cookies.get('accessToken')?.value;
 
-  const { token, isExpired } = await getTokenInfo(request);
+  const { token, isExpired, exp } = await getTokenInfo(request);
   if (token) {
     requestHeaders.set('authorization', `Bearer ${token}`);
   }
@@ -58,7 +58,7 @@ export async function middleware(request: NextRequest) {
       httpOnly: true,
       secure: isProd,
       sameSite: 'lax',
-      maxAge: 60 * 60 * 24 * 30,
+      maxAge: exp,
     });
   }
 
@@ -161,10 +161,11 @@ async function getTokenInfo(request: NextRequest): Promise<TokenInfo> {
 
     try {
       if (refreshToken) {
-        const { accessToken: updatedAccessToken }: { accessToken: string } =
+        const { accessToken: updatedAccessToken, expiresIn } =
           await authService.refreshAccessToken(refreshToken);
         newAccessTokenInfo.token = updatedAccessToken;
         newAccessTokenInfo.isExpired = true;
+        newAccessTokenInfo.exp = expiresIn;
       }
     } catch (error) {
       if (error instanceof HTTPError) {

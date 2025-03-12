@@ -3,6 +3,7 @@ import fetch from '@repo/api/src/fetch';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import type {
   AuthRepository,
+  JWTRefreshTokens,
   JWTTokens,
   OAuthSignInData,
   RawSignInResponse,
@@ -15,15 +16,20 @@ import type {
   VerifyEmailData,
   VerifyEmailRequestData,
   VerifyEmailRequestResponse,
-  VerifyEmailResponse
+  VerifyEmailResponse,
 } from '@repo/entity/src/auth';
 import APIRepository from './apiRepository';
 import AuthConverter from '../mappers/authConverter';
 
-export default class AuthAPIRepository extends APIRepository implements AuthRepository {
+export default class AuthAPIRepository
+  extends APIRepository
+  implements AuthRepository
+{
   private readonly authConverter = new AuthConverter();
 
-  async socialSignIn({ data }: BaseRequestData<OAuthSignInData>): Promise<SignInResponse> {
+  async socialSignIn({
+    data,
+  }: BaseRequestData<OAuthSignInData>): Promise<SignInResponse> {
     if (!data) {
       throw new Error('data is not exist');
     }
@@ -37,7 +43,9 @@ export default class AuthAPIRepository extends APIRepository implements AuthRepo
     return this.authConverter.convertRawSignInResponse(response);
   }
 
-  async resetPassword({ data }: BaseRequestData<ResetPasswordData>): Promise<ResetPasswordResponse> {
+  async resetPassword({
+    data,
+  }: BaseRequestData<ResetPasswordData>): Promise<ResetPasswordResponse> {
     if (!data) {
       throw new Error('data is not exist');
     }
@@ -51,7 +59,9 @@ export default class AuthAPIRepository extends APIRepository implements AuthRepo
     return response;
   }
 
-  async findPassword(data: BaseRequestData<{ email: string; }>): Promise<unknown> {
+  async findPassword(
+    data: BaseRequestData<{ email: string }>,
+  ): Promise<unknown> {
     const response = await fetch<void, void>({
       method: 'POST',
       url: `${this.endpoint}/auth/password/reset/request`,
@@ -60,7 +70,9 @@ export default class AuthAPIRepository extends APIRepository implements AuthRepo
     return response;
   }
 
-  async validateResetPasswordToken(data: BaseRequestData<{ email: string; token: string; }>): Promise<unknown> {
+  async validateResetPasswordToken(
+    data: BaseRequestData<{ email: string; token: string }>,
+  ): Promise<unknown> {
     const response = await fetch<void, JWTTokens>({
       method: 'POST',
       url: `${this.endpoint}/auth/password/reset/validate`,
@@ -80,7 +92,7 @@ export default class AuthAPIRepository extends APIRepository implements AuthRepo
       data: {
         email,
         password,
-        keepLoggedIn
+        keepLoggedIn,
       },
       method: 'POST',
       url: `${this.endpoint}/auth/login`,
@@ -89,7 +101,10 @@ export default class AuthAPIRepository extends APIRepository implements AuthRepo
     return this.authConverter.convertRawSignInResponse(response);
   }
 
-  async signUp({ data, authorization }: BaseRequestData<SignUpData>): Promise<unknown> {
+  async signUp({
+    data,
+    authorization,
+  }: BaseRequestData<SignUpData>): Promise<unknown> {
     if (!data) {
       throw new Error('data is not exist');
     }
@@ -134,7 +149,9 @@ export default class AuthAPIRepository extends APIRepository implements AuthRepo
     return response;
   }
 
-  async verifyEmail({ data }: BaseRequestData<VerifyEmailData>): Promise<VerifyEmailResponse> {
+  async verifyEmail({
+    data,
+  }: BaseRequestData<VerifyEmailData>): Promise<VerifyEmailResponse> {
     if (!data) {
       throw new Error('data is not exist');
     }
@@ -154,15 +171,19 @@ export default class AuthAPIRepository extends APIRepository implements AuthRepo
     return response;
   }
 
-
-  async verifyEmailRequest({ data }: BaseRequestData<VerifyEmailRequestData>): Promise<VerifyEmailRequestResponse> {
+  async verifyEmailRequest({
+    data,
+  }: BaseRequestData<VerifyEmailRequestData>): Promise<VerifyEmailRequestResponse> {
     if (!data) {
       throw new Error('data is not exist');
     }
 
     const { email, purpose } = data;
 
-    const response = await fetch<VerifyEmailRequestData, VerifyEmailRequestResponse>({
+    const response = await fetch<
+      VerifyEmailRequestData,
+      VerifyEmailRequestResponse
+    >({
       data: {
         email,
         purpose,
@@ -174,13 +195,13 @@ export default class AuthAPIRepository extends APIRepository implements AuthRepo
     return response;
   }
 
-  async refreshAccessToken(refreshToken: string): Promise<JWTTokens> {
+  async refreshAccessToken(refreshToken: string): Promise<JWTRefreshTokens> {
     if (!isServer) {
       // 서버 사이드에서만 refreshToken 접근 가능
       throw new Error('This method is only available on the server side.');
     }
 
-    const response = await fetch<void, JWTTokens>({
+    const response = await fetch<void, JWTRefreshTokens>({
       headers: {
         authorization: `Bearer ${refreshToken}`,
       },

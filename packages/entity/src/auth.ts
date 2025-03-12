@@ -33,6 +33,11 @@ export interface JWTTokens {
   refreshToken: string;
 }
 
+export interface JWTRefreshTokens extends Omit<JWTTokens, 'refreshToken'> {
+  tokenType: string;
+  expiresIn: number;
+}
+
 export interface RawSignInResponse extends JWTTokens {
   userUuid: string;
   email: string;
@@ -121,5 +126,5 @@ export interface AuthRepository {
     data: BaseRequestData<VerifyEmailData>,
   ): Promise<VerifyEmailResponse>; // 이메일 검증
   getAuthorization(accessToken?: string): Promise<string | null>;
-  refreshAccessToken(refreshToken: string): Promise<JWTTokens>;
+  refreshAccessToken(refreshToken: string): Promise<JWTRefreshTokens>;
 }
