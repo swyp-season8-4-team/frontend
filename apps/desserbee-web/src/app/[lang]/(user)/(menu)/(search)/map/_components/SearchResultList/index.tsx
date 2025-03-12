@@ -4,14 +4,13 @@ import { useRef } from 'react';
 import { cn } from '@repo/ui/lib/utils';
 import IconX from '@repo/design-system/components/icons/IconX';
 import { useRouter } from 'next/navigation';
+import { getOperationStatus } from '../../_utils/operatingStatus';
 
 interface SearchResultListProps {
   resultData: NearByStoreData[];
   distances?: number[];
   onClose: () => void;
 }
-
-//TODO: 예림님 코드 머지되면 주석 풀고 데이터 잘 뿌려지는지 확인해보기
 
 // 1km 미만은 m 단위로, 1km 이상은 km 단위로 표시
 const formatDistance = (distance: number | undefined): string => {
@@ -85,11 +84,12 @@ export function SearchResultList({
               <div className="h-[30dvh] overflow-y-scroll">
                 {resultData.map((store, index) => {
                   const distanceText = formatDistance(distances?.[index]);
+                  const { status } = getOperationStatus(store.operatingHours);
 
                   return (
                     <div
                       onClick={() => handleResultItemClick(store.storeUuid)}
-                      className="flex justify-between items-center border-b-[0.19px] border-b-[#9F9F9F] py-[9px] md:px-[23px] md:py-[37px]"
+                      className="cursor-pointer flex justify-between items-center border-b-[0.19px] border-b-[#9F9F9F] py-[9px] md:px-[23px] md:py-[37px]"
                       key={store.storeId}
                     >
                       <div className="w-full flex flex-col justify-center gap-[px] md:gap-[11px] ">
@@ -98,7 +98,7 @@ export function SearchResultList({
                             {store.name}
                           </div>
                           <div>
-                            {/* {store.tags.map((tag, index) => (
+                            {store.tags.map((tag, index) => (
                               <span
                                 className="font-medium text-[#898989] text-[10px] md:text-base"
                                 key={tag}
@@ -106,38 +106,40 @@ export function SearchResultList({
                                 {tag}
                                 {index < store.tags.length - 1 && ', '}&nbsp;
                               </span>
-                            ))} */}
+                            ))}
                           </div>
                         </div>
                         <div className="flex gap-[18px] items-center">
-                          <div className="text-xs md:text-xl font-semibold">
-                            {distanceText}
+                          <div className="flex flex-col items-end leading-none">
+                            <div className="text-xs md:text-xl font-semibold">
+                              {distanceText}
+                            </div>
+                            <div className="text-xs md:text-xl font-semibold">
+                              {status === 'BEFORE_OPEN' && '오픈 전'}
+                              {status === 'OPEN' && '영업중'}
+                              {status === 'CLOSED' && '영업 종료'}
+                              {status === 'DAY_OFF' && '휴무일'}
+                            </div>
                           </div>
-                          <div className="text-[10px] md:text-xl">
-                            {store.address}
-                          </div>
-                        </div>
-                        <div className="flex gap-[18px] items-center">
-                          {/* <div className="text-xs md:text-xl font-semibold">
-                            {status === 'BEFORE_OPEN' && '오픈 전'}
-                            {status === 'OPEN' && '영업중'}
-                            {status === 'CLOSED' && '영업 종료'}
-                            {status === 'DAY_OFF' && '휴무일'}
-                          </div> */}
-                          <div className="text-[10px] md:text-xl">
-                            한 줄 리뷰 &nbsp;{store.totalReviewCount}
+                          <div className="flex flex-col items-start leading-none gap-1">
+                            <div className="text-[10px] md:text-xl">
+                              {store.address}
+                            </div>
+                            <div className="text-[10px] md:text-xl">
+                              한 줄 리뷰 &nbsp;{store.shortReviewCount}
+                            </div>
                           </div>
                         </div>
                       </div>
                       <div>
                         <div className="bg-[#c9c9c9] rounded-sm w-[47px] h-[47px] md:w-[98px] md:h-[98px] aspect-square overflow-hidden">
-                          {/* <Image
+                          <Image
                             src={store.storeImage}
                             className="w-full h-full object-cover"
                             width={98}
                             height={98}
                             alt={store.name}
-                          /> */}
+                          />
                         </div>
                       </div>
                     </div>
