@@ -4,6 +4,7 @@ import fetch from '@repo/api/src/fetch';
 import type {
   DeleteRecentKeywordRequest,
   GetPopularSearchDataResonse,
+  RecentSearchData,
   SearchRepository,
 } from '@repo/entity/src/search';
 
@@ -30,8 +31,8 @@ export default class SearchAPIRepository
 
   async getRecentKeywords({
     authorization,
-  }: BaseRequestData<void>): Promise<string[]> {
-    const response = await fetch<void, string[]>({
+  }: BaseRequestData<void>): Promise<RecentSearchData[]> {
+    const response = await fetch<void, RecentSearchData[]>({
       ...(authorization && {
         headers: {
           Authorization: authorization,

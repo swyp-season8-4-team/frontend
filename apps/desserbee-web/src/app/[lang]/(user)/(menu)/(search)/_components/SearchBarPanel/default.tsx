@@ -1,37 +1,40 @@
 'use client';
 
 import { useContext, useEffect, useState, useCallback } from 'react';
-import { formatDateToHHMM } from '@repo/utility/src/date';
+import { formatDateToHHMM, formatDateToMMDD } from '@repo/utility/src/date';
 import { PopularItem } from './popularItem';
 import { RecentItem } from './recentItem';
 import {
-  deleteRecentSearchKeywordsAll,
-  getPopularSearchKeywords,
-  getRecentSearchKeywords,
+  deleteRecentKeyword,
+  getPopularKeywords,
+  getRecentKeywords,
 } from './action';
-import type { GetPopularSearchDataResonse } from '@repo/entity/src/search';
+import type {
+  GetPopularSearchDataResonse,
+  RecentSearchData,
+} from '@repo/entity/src/search';
 import { UserContext } from '@/contexts/UserContext';
 
 interface DefaultPanelProps {
-  onSearch: (keyword: string) => void;
+  onSearchAction: (keyword: string) => void;
 }
 
-export function DefaultPanel({ onSearch }: DefaultPanelProps) {
+export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
   const { user } = useContext(UserContext);
   const [popularSearchData, setPopularSearchData] =
     useState<GetPopularSearchDataResonse>();
-  const [recentSearchData, setRecentSearchData] = useState<string[]>([]);
+  const [recentSearchData, setRecentSearchData] = useState<RecentSearchData[]>(
+    [],
+  );
 
   const handlePopularSearchDataFetch = useCallback(async () => {
-    if (user) {
-      try {
-        const result = await getPopularSearchKeywords();
-        setPopularSearchData(result);
-      } catch (err) {
-        console.log(err);
-      }
+    try {
+      const result = await getPopularKeywords();
+      setPopularSearchData(result);
+    } catch (err) {
+      console.log(err);
     }
-  }, [user]);
+  }, []);
 
   const handleRecentKeywordAllDelete = useCallback(async () => {
     // 낙관적 업데이트
@@ -50,12 +53,14 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
     }
   }, [user, recentSearchData]);
 
-  const handleRecentKeywordDelete = async (keywordToDelete: string) => {
+  const handleRecentKeywordDelete = async (keywordIdToDelete: number) => {
     try {
       if (user) {
-        // await deleteRecentSearchKeyword();
-        setRecentSearchData((prev) =>
-          prev.filter((keyword) => keyword !== keywordToDelete),
+        await deleteRecentKeyword(keywordIdToDelete);
+        setRecentSearchData((prev: RecentSearchData[]) =>
+          prev.filter(
+            (item: RecentSearchData) => item.id !== keywordIdToDelete,
+          ),
         );
       } else {
         const searchHistory = JSON.parse(
@@ -64,12 +69,14 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
 
         const updatedHistory = searchHistory.filter((encodedTerm: string) => {
           const decodedTerm = decodeURIComponent(atob(encodedTerm));
-          return decodedTerm !== keywordToDelete;
+          return Number(decodedTerm) !== keywordIdToDelete;
         });
 
         localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
-        setRecentSearchData((prev) =>
-          prev.filter((keyword) => keyword !== keywordToDelete),
+        setRecentSearchData((prev: RecentSearchData[]) =>
+          prev.filter(
+            (item: RecentSearchData) => item.id !== keywordIdToDelete,
+          ),
         );
       }
     } catch (err) {
@@ -77,7 +84,7 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
     }
   };
 
-  const getNotSignInSearchHistory = useCallback((): string[] => {
+  const getNotSignInSearchHistory = useCallback((): RecentSearchData[] => {
     try {
       const encodedHistory = JSON.parse(
         localStorage.getItem('searchHistory') || '[]',
@@ -100,7 +107,7 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
   const handleRecentSearchDataFetch = useCallback(async () => {
     try {
       if (user) {
-        const result = await getRecentSearchKeywords();
+        const result = await getRecentKeywords();
         setRecentSearchData(result);
       } else {
         setRecentSearchData(getNotSignInSearchHistory());
@@ -134,7 +141,7 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
               {popularSearchData.searches.slice(0, 5).map((popularKeyword) => (
                 <button
                   onClick={() => {
-                    onSearch(popularKeyword.keyword);
+                    onSearchAction(popularKeyword.keyword);
                   }}
                   key={popularKeyword.keyword}
                 >
@@ -150,7 +157,7 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
               {popularSearchData.searches.slice(5, 10).map((popularKeyword) => (
                 <button
                   onClick={() => {
-                    onSearch(popularKeyword.keyword);
+                    onSearchAction(popularKeyword.keyword);
                   }}
                   key={popularKeyword.keyword}
                 >
@@ -185,13 +192,14 @@ export function DefaultPanel({ onSearch }: DefaultPanelProps) {
                 className="cursor-pointer"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onSearch(recentKeyword);
+                  onSearchAction(recentKeyword.keyword);
                 }}
-                key={recentKeyword}
+                key={recentKeyword.id}
               >
                 <RecentItem
-                  keyword={recentKeyword}
-                  onDelete={() => handleRecentKeywordDelete(recentKeyword)}
+                  keyword={recentKeyword.keyword}
+                  createdAt={formatDateToMMDD(recentKeyword.createdAt)}
+                  onDelete={() => handleRecentKeywordDelete(recentKeyword.id)}
                 />
               </div>
             ))}

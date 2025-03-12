@@ -7,6 +7,12 @@ export interface PopularSearchData {
   difference: number;
 }
 
+export interface RecentSearchData {
+  id: number;
+  keyword: string;
+  createdAt: string;
+}
+
 export interface GetPopularSearchDataResonse {
   searches: PopularSearchData[];
   lastUpdatedTime: string;
@@ -22,7 +28,7 @@ export interface SearchRepository {
   }: BaseRequestData<void>): Promise<GetPopularSearchDataResonse>;
   getRecentKeywords({
     authorization,
-  }: BaseRequestData<void>): Promise<string[]>; //TODO: api 명세서 업데이트 되면 추가
+  }: BaseRequestData<void>): Promise<RecentSearchData[]>;
   deleteRecentKeyword({
     data,
     authorization,

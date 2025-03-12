@@ -46,3 +46,23 @@ export const formatDateToHHMM = (dateString: string) => {
     return '00:00';
   }
 };
+
+export const formatDateToMMDD = (dateString: string): string => {
+  if (!dateString) return '';
+
+  try {
+    const date = new Date(dateString);
+
+    if (isNaN(date.getTime())) {
+      return '';
+    }
+
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${month}.${day}`;
+  } catch (error) {
+    console.error('날짜 포맷팅 오류:', error);
+    return '';
+  }
+};
