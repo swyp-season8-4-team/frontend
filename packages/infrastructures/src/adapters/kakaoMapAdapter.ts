@@ -289,7 +289,7 @@ export class KakaoMapAdapter implements ExternalMap {
 
     const updateOverlayVisibility = () => {
       const currentLevel = this.map.getLevel();
-      if (currentLevel > 4 || !marker.getMap()) {
+      if (currentLevel > 10 || !marker.getMap()) {
         overlay.setMap(null);
       } else {
         overlay.setMap(this.map);

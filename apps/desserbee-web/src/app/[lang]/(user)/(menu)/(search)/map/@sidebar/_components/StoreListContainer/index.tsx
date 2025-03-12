@@ -195,7 +195,7 @@ export function StoreListContainer({
                       onClick={() => handleStoreSelectBtnClick(store.storeUuid)}
                       key={store.storeName}
                       className={cn(
-                        'flex items-center justify-between px-base py-[5.52px] md:py-[22.96px] ',
+                        'flex items-center justify-between px-base py-[5.52px] md:py-[22.96px] cursor-pointer',
                         index !== 0 && 'border-t-[#BABABA] border-t-[0.5px] ',
                       )}
                     >
