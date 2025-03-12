@@ -9,6 +9,7 @@ interface CustomMarker extends kakao.maps.Marker {
     name: string;
     address: string;
   };
+  overlay?: kakao.maps.CustomOverlay;
 }
 
 export default class KakaoMapController implements MapController {
@@ -287,6 +288,32 @@ export default class KakaoMapController implements MapController {
         error,
       );
       return null;
+    }
+  }
+
+  addMarkerWithName(
+    position: MapPosition,
+    markerImageSrc: string,
+    name: string,
+  ): void {
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      this.map.addMarkerWithName(position, markerImageSrc, name);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  getKakaoMap(): kakao.maps.Map | null {
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      return this.map.getNativeMap();
+    } catch (error) {
+      throw error;
     }
   }
 }

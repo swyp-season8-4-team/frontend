@@ -1,5 +1,8 @@
 import type { ExternalMap, MapPosition } from '@repo/entity/src/map';
-import type { NearByStoreData } from '@repo/entity/src/store';
+import type {
+  NearByStoreData,
+  SavedStoresLocationData,
+} from '@repo/entity/src/store';
 
 interface CustomMarker extends kakao.maps.Marker {
   storeData?: {
@@ -232,5 +235,58 @@ export class KakaoMapAdapter implements ExternalMap {
       this.clusterer.clear();
       this.clusterer = null;
     }
+  }
+
+  addMarkerWithName(
+    position: MapPosition,
+    markerImageSrc: string,
+    name: string,
+  ): void {
+    const markerPosition = new kakao.maps.LatLng(
+      position.latitude,
+      position.longitude,
+    );
+
+    // 마커 이미지 생성
+    const imageSize = new kakao.maps.Size(24, 24);
+    const markerImage = new kakao.maps.MarkerImage(markerImageSrc, imageSize);
+
+    // 마커 생성
+    const marker = new kakao.maps.Marker({
+      position: markerPosition,
+      image: markerImage,
+      map: this.map,
+    }) as CustomMarker;
+
+    // 커스텀 오버레이 생성
+    const content = `<div style="
+                      padding: 1px 2px;
+                      background-color: white;
+                      border-radius: 8px;
+                      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+                      font-size: 13px;
+                      font-weight: 600;
+                      color: #333;
+                      text-align: center;
+                      white-space: nowrap;
+                      transform: translateY(-5px);
+                      border: 1px solid #eee;
+                      max-width: 150px;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                    ">${name}</div>`;
+
+    const overlay = new kakao.maps.CustomOverlay({
+      content: content,
+      position: markerPosition,
+      yAnchor: 0.1,
+      zIndex: -1,
+      map: this.map,
+    });
+
+    marker.overlay = overlay;
+
+    // 마커 배열에 추가
+    this.markers.push(marker);
   }
 }

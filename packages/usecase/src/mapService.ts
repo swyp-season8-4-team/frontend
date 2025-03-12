@@ -140,4 +140,16 @@ export default class MapService {
     }
     this.mapController.removeAllEventListeners();
   }
+
+  async addMarkerWithName(
+    position: MapPosition,
+    markerImageSrc: string,
+    name: string,
+  ) {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+
+    this.mapController.addMarkerWithName(position, markerImageSrc, name);
+  }
 }
