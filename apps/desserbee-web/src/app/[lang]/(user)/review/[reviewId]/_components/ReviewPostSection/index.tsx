@@ -22,7 +22,7 @@ export default async function ReviewPostSection({ review }: Props) {
   } = review;
 
   return (
-    <section className="border rounded-[10px] bg-[#ffffff] px-2 py-2">
+    <section className="border rounded-[10px] bg-[#ffffff] px-2 py-2 h-full">
       <div className="flex items-center justify-between px-4 py-2 gap-6">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2 text-[#9F9F9F] text-[14px] font-semibold tracking-[-0.3px]">

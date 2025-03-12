@@ -1,10 +1,10 @@
-import type { WithParams } from "@/app";
-import ReviewAPIRepository from "@repo/infrastructures/src/repositories/reviewAPIRepository";
-import ReviewService from "@repo/usecase/src/reviewService";
-import { notFound } from "next/navigation";
-import ReviewPostSection from "./_components/ReviewPostSection";
-import { ReviewDetailProvider } from "./_contexts/ReviewDetailContext";
-import AuthNextAppRouteRepository from "@repo/infrastructures/src/repositories/authNextAppRouteRepository";
+import type { WithParams } from '@/app';
+import ReviewAPIRepository from '@repo/infrastructures/src/repositories/reviewAPIRepository';
+import ReviewService from '@repo/usecase/src/reviewService';
+import { notFound } from 'next/navigation';
+import ReviewPostSection from './_components/ReviewPostSection';
+import { ReviewDetailProvider } from './_contexts/ReviewDetailContext';
+import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 
 const reviewService = new ReviewService({
   authRepository: new AuthNextAppRouteRepository(),
@@ -23,9 +23,11 @@ export default async function ReviewDetailPage({ params }: WithParams) {
   // }
 
   return (
-    <main className="flex flex-col h-[calc(100dvh - 52px)] px-4 gap-4 bg-[#f6f6f6]">
+    <main className="flex flex-col h-[calc(100dvh - 52px)] px-4 gap-4 bg-[#f6f6f6] overflow-hidden">
       <ReviewDetailProvider review={review}>
-        <ReviewPostSection review={review} />
+        <div className="flex-1 overflow-y-auto">
+          <ReviewPostSection review={review} />
+        </div>
       </ReviewDetailProvider>
     </main>
   );
