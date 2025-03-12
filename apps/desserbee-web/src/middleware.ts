@@ -53,12 +53,12 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  if (isExpired && token !== prevAccessToken && token) {
+  if (isExpired && token !== prevAccessToken && !!token && !!prevAccessToken) {
     next.cookies.set('accessToken', token, {
       httpOnly: true,
       secure: isProd,
       sameSite: 'lax',
-      expires: exp,
+      maxAge: exp,
     });
   }
 

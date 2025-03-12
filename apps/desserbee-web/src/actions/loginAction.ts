@@ -4,13 +4,15 @@ import { isProd } from '@/utils/env';
 import { HTTPError, type ErrorResponseData } from '@repo/api/src/error';
 import type { SignInResponse } from '@repo/entity/src/auth';
 import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
-// import AuthDevAPIRepository from '@repo/infrastructures/src/repositories/authDevAPIRepository';
+import AuthDevAPIRepository from '@repo/infrastructures/src/repositories/authDevAPIRepository';
 import AuthService from '@repo/usecase/src/authService';
 import { cookies } from 'next/headers';
 
 const authService = new AuthService({
-  authRepository: new AuthAPIRepository(),
-  // authRepository: new AuthDevAPIRepository(), // test용
+  authRepository:
+    process.env.NEXT_PUBLIC_APP_ENV === 'dev_local'
+      ? new AuthDevAPIRepository()
+      : new AuthAPIRepository(),
 });
 
 export async function loginAction(
@@ -52,7 +54,7 @@ export async function loginAction(
       secure: isProd,
       sameSite: 'lax',
       domain,
-      expires: expiresIn,
+      maxAge: expiresIn,
     });
 
     cookieList.set('refreshToken', refreshToken, {
