@@ -3,17 +3,19 @@
 import { UserContext } from '@/contexts/UserContext';
 import type { RecentSearchData } from '@repo/entity/src/search';
 import { useCallback, useState, useEffect, useContext, useMemo } from 'react';
-import LocalStorageService from '@repo/usecase/src/localStorageService';
 import LocalStorageRepository from '@repo/infrastructures/src/repositories/localStorageRepository';
+import SearchService from '@repo/usecase/src/searchService';
+import SearchAPIRepository from '@repo/infrastructures/src/repositories/searchAPIRepository';
 // import { debounce } from '@repo/utility/src/debounce';
 
 export function useHashSearch() {
   const { user } = useContext(UserContext);
   const [searchTerm, setSearchTerm] = useState(''); // searchTerm은 보여주기용
   const [isSearchPanelShow, setIsSearchPanelShow] = useState(false);
-  const localStorageService = useMemo(
+  const searchService = useMemo(
     () =>
-      new LocalStorageService({
+      new SearchService({
+        searchRepository: new SearchAPIRepository(),
         storageRepository: new LocalStorageRepository(),
       }),
     [],
@@ -72,8 +74,7 @@ export function useHashSearch() {
       try {
         // 검색어 sanitization
         const sanitizedQuery = query.trim().replace(/[<>]/g, '');
-        const searchHistory =
-          localStorageService.get<RecentSearchData[]>('searchHistory') || [];
+        const searchHistory = searchService.getRecentKeywordIfNotSignIn();
 
         const newSearchData: RecentSearchData = {
           id:
@@ -94,12 +95,12 @@ export function useHashSearch() {
         ];
 
         const limitedHistory = updatedHistory.slice(0, 10);
-        localStorageService.set('searchHistory', limitedHistory);
+        searchService.setRecentKeywordIfNotSignIn(limitedHistory);
       } catch (error) {
         console.error('Failed to save search history:', error);
       }
     },
-    [localStorageService],
+    [searchService],
   );
 
   const onSearch = useCallback(
