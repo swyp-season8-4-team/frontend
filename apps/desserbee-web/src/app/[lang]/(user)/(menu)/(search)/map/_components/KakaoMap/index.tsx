@@ -897,28 +897,29 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     [setError, setIsSearching],
   );
 
-  // 저장 리스트 표시 종료 시 원래 마커로 복원
+  // 저장 리스트 표시 종료 함수
   const clearSavedListStores = useCallback(() => {
     if (showingSavedList) {
       setShowingSavedList(false);
       setSavedListStores([]);
-      setIsFetchRequired(true);
+      setIsFetchRequired(true); // 원래 마커로 복원하기 위해 fetch 필요
     }
   }, [showingSavedList]);
 
   // URL 파라미터 감시
   useEffect(() => {
     const listIdParam = searchParams.get('listId');
-    const sidebarParam = searchParams.get('sidebar');
+    // const sidebarParam = searchParams.get('sidebar');
 
-    if (listIdParam && isMapLoaded) {
-      const listId = parseInt(listIdParam, 10);
-      if (!isNaN(listId)) {
-        displaySavedListStores(listId);
+    if (isMapLoaded) {
+      if (listIdParam) {
+        const listId = parseInt(listIdParam, 10);
+        if (!isNaN(listId)) {
+          displaySavedListStores(listId);
+        }
+      } else if (showingSavedList) {
+        clearSavedListStores();
       }
-    } else if (sidebarParam === 'true' && showingSavedList) {
-      // 사이드바만 표시되고 listId가 없는 경우 (리스트 닫힘)
-      clearSavedListStores();
     }
   }, [
     searchParams,
