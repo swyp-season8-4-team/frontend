@@ -1,6 +1,7 @@
 import type { MapController, MapPosition } from '@repo/entity/src/map';
 import type { StorageRepository } from '@repo/entity/src/storage';
 import type { NearByStoreData } from '@repo/entity/src/store';
+import type { SavedStoresLocationData } from '@repo/entity/src/store';
 
 export default class MapService {
   private readonly mapController: MapController | null;
@@ -151,5 +152,58 @@ export default class MapService {
     }
 
     this.mapController.addMarkerWithName(position, markerImageSrc, name);
+  }
+
+  async displaySavedListStores(
+    stores: SavedStoresLocationData[],
+    markerImages: Record<number, string>,
+  ) {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+
+    // 기존 마커 제거
+    this.clearAllMarkers();
+
+    if (stores.length === 0) {
+      return false;
+    }
+
+    // 각 가게마다 마커 생성
+    for (const store of stores) {
+      const position = {
+        latitude: store.latitude,
+        longitude: store.longitude,
+      };
+
+      // 마커 이미지 선택
+      const markerImageSrc = markerImages[store.iconColorId] || markerImages[1];
+
+      // 마커 생성 및 오버레이 추가
+      this.addMarkerWithName(position, markerImageSrc, store.name);
+    }
+
+    // 지도 레벨 조정
+    this.setMapLevel(13);
+
+    // 스토어 위치의 중심점 계산
+    let sumLat = 0;
+    let sumLng = 0;
+
+    stores.forEach((store) => {
+      sumLat += store.latitude;
+      sumLng += store.longitude;
+    });
+
+    const centerLat = sumLat / stores.length;
+    const centerLng = sumLng / stores.length;
+
+    // 사이드바를 고려하여 지도 중심 이동
+    this.setMapCenter({
+      latitude: centerLat,
+      longitude: centerLng - 0.01, // 사이드바를 고려한 오프셋
+    });
+
+    return true;
   }
 }

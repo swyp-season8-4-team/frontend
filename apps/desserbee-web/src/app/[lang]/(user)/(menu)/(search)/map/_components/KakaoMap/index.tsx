@@ -88,6 +88,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isFetchRequired, setIsFetchRequired] = useState(false);
+  const [showingSavedList, setShowingSavedList] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -104,7 +105,9 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const [isResultListOpen, setIsResultListOpen] = useState(false);
   const [nearByStores, setNearByStores] = useState<NearByStoreData[]>([]);
   const [distances, setDistances] = useState<number[]>([]);
-
+  const [savedListStores, setSavedListStores] = useState<
+    SavedStoresLocationData[]
+  >([]);
   const [, setRetryCount] = useState(0);
   const retryCountRef = useRef(0);
   const MAX_RETRY = 3;
@@ -801,12 +804,18 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     };
   }, [isInitialized]);
 
-  const [savedListStores, setSavedListStores] = useState<
-    SavedStoresLocationData[]
-  >([]);
-  const [showingSavedList, setShowingSavedList] = useState(false);
+  // 마커 이미지 매핑
+  const markerImages = useMemo(
+    () => ({
+      1: yellowMarkerImage.src,
+      2: orangeMarkerImage.src,
+      3: greenMarkerImage.src,
+      4: blueMarkerImage.src,
+    }),
+    [],
+  );
 
-  // 저장 리스트의 가게들을 지도에 표시하는 함수
+  // 저장 리스트 표시 함수
   const displaySavedListStores = useCallback(
     async (listId: number) => {
       if (!areServicesInitialized(servicesRef.current)) {
@@ -815,9 +824,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
       try {
         setIsSearching(true);
-
-        // 기존 마커 제거
-        await servicesRef.current.mapService?.clearAllMarkers();
 
         // 저장 리스트의 가게 위치 정보 가져오기
         const stores = await getStoresLocationInSavedList({ listId });
@@ -829,64 +835,17 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
           return;
         }
 
-        // 바운드 객체 생성
-        const bounds = new window.kakao.maps.LatLngBounds();
-
-        // 각 가게마다 마커 생성
-        for (const store of stores) {
-          const position = {
-            latitude: store.latitude,
-            longitude: store.longitude,
-          };
-
-          // 마커 이미지 선택
-          let markerImageSrc;
-          switch (store.iconColorId) {
-            case 1:
-              markerImageSrc = yellowMarkerImage.src;
-              break;
-            case 2:
-              markerImageSrc = orangeMarkerImage.src;
-              break;
-            case 3:
-              markerImageSrc = greenMarkerImage.src;
-              break;
-            case 4:
-              markerImageSrc = blueMarkerImage.src;
-              break;
-          }
-
-          // 마커 생성 및 오버레이 추가
-          const markerPosition = new window.kakao.maps.LatLng(
-            position.latitude,
-            position.longitude,
+        // 서비스를 통해 저장 리스트 마커 표시
+        const success =
+          await servicesRef.current.mapService?.displaySavedListStores(
+            stores,
+            markerImages,
           );
-          bounds.extend(markerPosition);
 
-          // 마커 생성 로직은 서비스를 통해 처리
-          await servicesRef.current.mapService?.addMarkerWithName(
-            position,
-            markerImageSrc,
-            store.name,
-          );
+        if (success) {
+          setShowingSavedList(true);
         }
 
-        // 모든 마커가 보이도록 지도 범위 설정
-        if (stores.length > 0) {
-          // 지도 레벨 조정
-          servicesRef.current.mapService?.setMapLevel(10);
-
-          // 사이드바를 고려하여 지도 중심 왼쪽으로 이동
-          const center = servicesRef.current.mapService?.getMapCenter();
-          if (center) {
-            servicesRef.current.mapService?.setMapCenter({
-              latitude: center.latitude,
-              longitude: center.longitude - 0.01,
-            });
-          }
-        }
-
-        setShowingSavedList(true);
         setIsSearching(false);
       } catch (error) {
         console.error('저장 리스트 마커 표시 중 오류:', error);
@@ -894,7 +853,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         setIsSearching(false);
       }
     },
-    [setError, setIsSearching],
+    [markerImages, setError, setIsSearching],
   );
 
   // 저장 리스트 표시 종료 함수
