@@ -110,7 +110,7 @@ export interface NearByStoreData
     | 'tags'
   > {
   storeImage: string;
-  totalReviewCount: number;
+  shortReviewCount: number;
 }
 
 export interface StoreSummaryInfoRequest {

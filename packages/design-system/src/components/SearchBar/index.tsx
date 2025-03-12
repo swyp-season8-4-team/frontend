@@ -34,24 +34,9 @@ export const SearchBar = memo(function SearchBar({
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
       e.preventDefault();
-      e.stopPropagation();
       if (searchTerm.trim()) {
         onSearch(searchTerm);
         inputRef.current?.blur();
-      }
-    },
-    [onSearch, searchTerm],
-  );
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        e.stopPropagation();
-        if (searchTerm.trim()) {
-          onSearch(searchTerm);
-          inputRef.current?.blur();
-        }
       }
     },
     [onSearch, searchTerm],
@@ -66,10 +51,12 @@ export const SearchBar = memo(function SearchBar({
         value={searchTerm}
         className="shadow-[2px_2px_5px_0px_rgba(0,0,0,0.1)] pr-8 my-[9px] py-[9.17px] pl-[42.32px] rounded-[60px] w-full md:text-[15px] text-xs [&::-ms-clear]:hidden [&::-ms-reveal]:hidden [&::-webkit-search-cancel-button]:appearance-none "
         onChange={handleChange}
-        onKeyDown={handleKeyDown}
         onFocus={() => handleSearchPanelShow(true)}
         enterKeyHint="search"
       />
+      <button type="submit" className="hidden">
+        검색
+      </button>
       {isSearchPanelShow && (
         <div
           onClick={() => handleSearchPanelShow(false)}
@@ -91,14 +78,6 @@ export const SearchBar = memo(function SearchBar({
               <IconX className="w-4 md:w-6 h-4 md:h-6 text-[#B4B4B4]" />
             </button>
           )}
-          {/* <button
-            onClick={() => handleSearchPanelShow(false)}
-            className="top-1/2 right-8 absolute -translate-y-1/2"
-          >
-            <div className="text-[#B4B4B4] md:text-[13px] text-[10px]">
-              검색어 추천 닫기
-            </div>
-          </button> */}
         </div>
       )}
     </form>
