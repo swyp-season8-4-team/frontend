@@ -1,5 +1,5 @@
-import type { BaseRequestData } from "./appMetadata";
-import type { Preference } from "./preference";
+import type { BaseRequestData } from './appMetadata';
+import type { Preference } from './preference';
 
 export enum UserType {
   USER = 'ROLE_USER',
@@ -33,11 +33,7 @@ export interface TargetUser {
 }
 
 export function isTargetUser(data: unknown): data is TargetUser {
-  return (
-    typeof data === 'object' &&
-    data !== null &&
-    'userUuid' in data
-  );
+  return typeof data === 'object' && data !== null && 'userUuid' in data;
 }
 
 export interface NicknameValidationRequestData {
@@ -62,6 +58,8 @@ export interface UserRepository {
   getMe(data: BaseRequestData<void>): Promise<User>;
   updateMe(data: BaseRequestData<User>): Promise<User>;
   getTarget(data: BaseRequestData<{ id: string }>): Promise<TargetUser>;
-  validateNickname(data: BaseRequestData<NicknameValidationRequestData>): Promise<NicknameValidationResponse>;
+  validateNickname(
+    data: BaseRequestData<NicknameValidationRequestData>,
+  ): Promise<NicknameValidationResponse>;
   uploadProfileImage(data: BaseRequestData<{ image: File }>): Promise<User>;
 }

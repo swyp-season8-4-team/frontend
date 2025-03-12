@@ -1,17 +1,21 @@
 'use client';
 
-import { Button } from "@repo/ui/components/button";
-import { useContext, useState } from "react";
-import { SignUpContext } from "../../_contexts/SignUpContext";
-import AuthService, { EmailAuthSessionKey, SignUpStep, VerifyEmailPurpose } from "@repo/usecase/src/authService";
-import SignUpTimer from "../SignUpTimer";
-import SessionStorageRepository from "@repo/infrastructures/src/repositories/SessionStorageRepository";
-import { validateEmailCode } from "@repo/utility/src/regex";
-import AuthAPIRepository from "@repo/infrastructures/src/repositories/authAPIRepository";
-import { PortalContext } from "@repo/ui/contexts/PortalContext";
-import dynamic from "next/dynamic";
-import { verifyTokenAction } from "@/actions/verfiyTokenAction";
-import Link from "next/link";
+import { Button } from '@repo/ui/components/button';
+import { useContext, useState } from 'react';
+import { SignUpContext } from '../../_contexts/SignUpContext';
+import AuthService, {
+  EmailAuthSessionKey,
+  SignUpStep,
+  VerifyEmailPurpose,
+} from '@repo/usecase/src/authService';
+import SignUpTimer from '../SignUpTimer';
+import SessionStorageRepository from '@repo/infrastructures/src/repositories/sessionStorageRepository';
+import { validateEmailCode } from '@repo/utility/src/regex';
+import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
+import { PortalContext } from '@repo/ui/contexts/PortalContext';
+import dynamic from 'next/dynamic';
+import { verifyTokenAction } from '@/actions/verfiyTokenAction';
+import Link from 'next/link';
 
 const Modal = dynamic(() => import('@repo/design-system/components/Modal'));
 
@@ -25,11 +29,11 @@ interface Props {
 }
 
 export default function SignUpEmailCodeForm({ updateStep }: Props) {
-  const { push, pop } = useContext(PortalContext); 
+  const { push, pop } = useContext(PortalContext);
   const { email } = useContext(SignUpContext);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  
+
   const [isDisabled, setDisabled] = useState(true);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +61,7 @@ export default function SignUpEmailCodeForm({ updateStep }: Props) {
 
       const closeModal = () => {
         pop('modal');
-      }
+      };
 
       push('modal', {
         component: (
@@ -85,11 +89,11 @@ export default function SignUpEmailCodeForm({ updateStep }: Props) {
 
   const handleContinueClick = () => {
     updateStep(SignUpStep.PASSWORD);
-  }
+  };
 
   const handleExpire = () => {
     authService.clearEmailAuthSession(EmailAuthSessionKey.SIGNUP);
-  }
+  };
 
   return (
     <>
@@ -121,20 +125,24 @@ export default function SignUpEmailCodeForm({ updateStep }: Props) {
 
         <div className="flex justify-between">
           <p className="text-[10px] text-gray-500 mt-2">
-            인증번호는 5분 이내 입력하여 해요.<br />
+            인증번호는 5분 이내 입력하여 해요.
+            <br />
             제한 시간이 지났을 경우 인증번호를 다시 받아주세요.
           </p>
 
           <div className="text-right mt-2">
-            <Link href="" className="text-[10px] text-gray-500">이메일을 받지 못하셨나요?</Link>
+            <Link href="" className="text-[10px] text-gray-500">
+              이메일을 받지 못하셨나요?
+            </Link>
           </div>
         </div>
-        
+
         <Button
           className={`w-full py-3 text-white rounded-[100px] font-medium transition-colors mt-6
-            ${message.trim() && !error
-              ? 'bg-[#FFB700] hover:bg-[#FFB700]/90' 
-              : 'bg-gray-400 cursor-not-allowed opacity-50'
+            ${
+              message.trim() && !error
+                ? 'bg-[#FFB700] hover:bg-[#FFB700]/90'
+                : 'bg-gray-400 cursor-not-allowed opacity-50'
             }`}
           disabled={isDisabled}
           onClick={handleContinueClick}

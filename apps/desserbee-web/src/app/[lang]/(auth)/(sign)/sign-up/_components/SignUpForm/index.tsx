@@ -2,9 +2,12 @@
 
 import { HTTPError } from '@repo/api/src/error';
 import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
-import SessionStorageRepository from '@repo/infrastructures/src/repositories/SessionStorageRepository';
+import SessionStorageRepository from '@repo/infrastructures/src/repositories/sessionStorageRepository';
 import { Button } from '@repo/ui/components/button';
-import AuthService, { EmailAuthSessionKey, VerifyEmailPurpose } from '@repo/usecase/src/authService';
+import AuthService, {
+  EmailAuthSessionKey,
+  VerifyEmailPurpose,
+} from '@repo/usecase/src/authService';
 import { validateEmail } from '@repo/utility/src/regex';
 import { useCallback, useState } from 'react';
 
@@ -42,7 +45,6 @@ export default function SignUpForm() {
         email: message,
         expirationTimes: expirationMinutes * 60,
       });
-
     } catch (error) {
       if (error instanceof HTTPError) {
         setError(error.message);
@@ -53,7 +55,8 @@ export default function SignUpForm() {
   return (
     <>
       <h2 className="text-lg font-medium">
-        디저비에 오신걸 환영합니다!<br />
+        디저비에 오신걸 환영합니다!
+        <br />
         회원가입을 시작해볼까요?
       </h2>
       <div className="flex flex-col gap-1.5">
@@ -76,11 +79,27 @@ export default function SignUpForm() {
               }}
               className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="12" fill="#D9D9D9"/>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle cx="12" cy="12" r="12" fill="#D9D9D9" />
                 <g transform="translate(7, 7)">
-                  <path d="M1 9L9 1" stroke="#393939" strokeWidth="2" strokeLinecap="round"/>
-                  <path d="M9 9L1 1" stroke="#393939" strokeWidth="2" strokeLinecap="round"/>
+                  <path
+                    d="M1 9L9 1"
+                    stroke="#393939"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M9 9L1 1"
+                    stroke="#393939"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
                 </g>
               </svg>
             </button>
@@ -92,9 +111,10 @@ export default function SignUpForm() {
 
         <Button
           className={`w-full py-3 text-white rounded-lg font-medium transition-colors mt-6
-            ${message.trim() && !error
-              ? 'bg-[#FFB700] hover:bg-[#FFB700]/90' 
-              : 'bg-gray-400 cursor-not-allowed opacity-50'
+            ${
+              message.trim() && !error
+                ? 'bg-[#FFB700] hover:bg-[#FFB700]/90'
+                : 'bg-gray-400 cursor-not-allowed opacity-50'
             }`}
           disabled={!message.trim() || !!error}
           onClick={handleClick}

@@ -6,7 +6,7 @@ export default class SessionStorageRepository implements StorageRepository {
     if (isServer) {
       return;
     }
-    
+
     sessionStorage.removeItem(key);
   }
 

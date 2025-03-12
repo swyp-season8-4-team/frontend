@@ -1,10 +1,13 @@
 import type { BaseRequestData } from './appMetadata';
 import type { Gender } from './user';
 
+// FIXME: sign-in entity로 이동
 export enum OAuthSocialProvider {
   KAKAO = 'kakao',
+  GOOGLE = 'google',
 }
 
+// FIXME: sign-in entity로 이동
 export function isOAuthSocialProvider(
   provider: string,
 ): provider is OAuthSocialProvider {
@@ -28,6 +31,11 @@ export interface JWTPayload {
 export interface JWTTokens {
   accessToken: string;
   refreshToken: string;
+}
+
+export interface JWTRefreshTokens extends Omit<JWTTokens, 'refreshToken'> {
+  tokenType: string;
+  expiresIn: number;
 }
 
 export interface RawSignInResponse extends JWTTokens {
@@ -118,5 +126,5 @@ export interface AuthRepository {
     data: BaseRequestData<VerifyEmailData>,
   ): Promise<VerifyEmailResponse>; // 이메일 검증
   getAuthorization(accessToken?: string): Promise<string | null>;
-  refreshAccessToken(refreshToken: string): Promise<JWTTokens>;
+  refreshAccessToken(refreshToken: string): Promise<JWTRefreshTokens>;
 }

@@ -62,13 +62,6 @@ export async function httpHandler(request: Request): Promise<Response> {
   // Check if the response is JSON
   const jsonData = JSON.parse(responseText);
 
-  if (endpoint.endsWith('/auth/login') && response.ok && jsonData.userUuid) {
-    headers.append(
-      'set-cookie',
-      `userUuid=${jsonData.userUuid}; Path=/; HttpOnly; Secure; SameSite=Strict`,
-    );
-  }
-
   return NextResponse.json(jsonData, {
     status: response.status,
     headers,
