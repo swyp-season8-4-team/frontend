@@ -1,6 +1,7 @@
 'use client';
 
 import { UserContext } from '@/contexts/UserContext';
+import type { RecentSearchData } from '@repo/entity/src/search';
 import { useCallback, useState, useEffect, useContext } from 'react';
 // import { debounce } from '@repo/utility/src/debounce';
 
@@ -59,17 +60,31 @@ export function useHashSearch() {
     if (!query.trim()) return;
 
     try {
-      // 검색어 sanitization 후 Base64 인코딩
+      // 검색어 sanitization
       const sanitizedQuery = query.trim().replace(/[<>]/g, '');
-      const encodedQuery = btoa(encodeURIComponent(sanitizedQuery));
 
       const searchHistory = JSON.parse(
         localStorage.getItem('searchHistory') || '[]',
       );
+
+      const newSearchData: RecentSearchData = {
+        id:
+          searchHistory.length > 0
+            ? Math.max(
+                ...searchHistory.map((item: RecentSearchData) => item.id),
+              ) + 1
+            : 1,
+        keyword: sanitizedQuery,
+        createdAt: new Date().toISOString(),
+      };
+
       const updatedHistory = [
-        encodedQuery,
-        ...searchHistory.filter((term: string) => term !== encodedQuery),
+        newSearchData,
+        ...searchHistory.filter(
+          (item: RecentSearchData) => item.keyword !== sanitizedQuery,
+        ),
       ];
+
       const limitedHistory = updatedHistory.slice(0, 10);
       localStorage.setItem('searchHistory', JSON.stringify(limitedHistory));
     } catch (error) {

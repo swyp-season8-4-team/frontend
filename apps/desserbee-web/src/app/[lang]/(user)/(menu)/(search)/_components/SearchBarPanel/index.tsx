@@ -9,7 +9,7 @@ export function SearchBarPanel({ onChange, onSearch }: SearchBarPanelProps) {
   return (
     <div className="fixed top-[105px] left-1/2 -translate-x-1/2 right-0 bg-page max-w-[768px] w-full h-[calc(100vh-110px)]">
       <div className="h-full overflow-y-auto">
-        <DefaultPanel onSearch={onSearch} />
+        <DefaultPanel onSearchAction={onSearch} />
       </div>
     </div>
   );

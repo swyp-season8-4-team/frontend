@@ -63,14 +63,13 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
           ),
         );
       } else {
-        const searchHistory = JSON.parse(
+        const searchHistory: RecentSearchData[] = JSON.parse(
           localStorage.getItem('searchHistory') || '[]',
         );
 
-        const updatedHistory = searchHistory.filter((encodedTerm: string) => {
-          const decodedTerm = decodeURIComponent(atob(encodedTerm));
-          return Number(decodedTerm) !== keywordIdToDelete;
-        });
+        const updatedHistory = searchHistory.filter(
+          (item: RecentSearchData) => item.id !== keywordIdToDelete,
+        );
 
         localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
         setRecentSearchData((prev: RecentSearchData[]) =>
@@ -86,18 +85,16 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
 
   const getNotSignInSearchHistory = useCallback((): RecentSearchData[] => {
     try {
-      const encodedHistory = JSON.parse(
+      const searchHistory = JSON.parse(
         localStorage.getItem('searchHistory') || '[]',
       );
-      return encodedHistory
-        .map((encodedTerm: string) => {
-          try {
-            return decodeURIComponent(atob(encodedTerm));
-          } catch {
-            return '';
-          }
-        })
-        .filter(Boolean);
+
+      if (!Array.isArray(searchHistory)) {
+        console.log('데이터가 배열이 아님');
+        return [];
+      }
+
+      return searchHistory;
     } catch (error) {
       console.error('Failed to get search history:', error);
       return [];
@@ -120,9 +117,9 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
   useEffect(() => {
     handlePopularSearchDataFetch();
     handleRecentSearchDataFetch();
-  }, []);
+  }, [handlePopularSearchDataFetch, handleRecentSearchDataFetch]);
 
-  if (!recentSearchData) return;
+  if (!popularSearchData || !recentSearchData) return;
 
   return (
     <div className="w-full h-full pt-[21px] md:pt-7 pb-4">
