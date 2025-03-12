@@ -46,7 +46,6 @@ export default class StoreService {
   constructor({
     storeRepository,
     authRepository,
-
   }: {
     storeRepository: StoreRepository;
     authRepository?: AuthRepository;
@@ -54,8 +53,6 @@ export default class StoreService {
     this.storeRepository = storeRepository ?? null;
     this.authRepository = authRepository ?? null;
   }
-
-
 
   async getAllPreference() {
     try {
@@ -199,50 +196,6 @@ export default class StoreService {
       authorization,
       ...reqestData,
     });
-
-    return result;
-  }
-
-  async getStoresLocationInSavedList(
-    params: SavedStoresLocationRequest,
-  ): Promise<SavedStoresLocationData[]> {
-    if (!this.storeRepository) {
-      throw new Error('storeRepository is not set');
-    } else if (!this.authRepository) {
-      throw new Error('authRepository is not set');
-    }
-
-    const authorization = await this.authRepository.getAuthorization();
-
-    const reqestData = {
-      data: params,
-    };
-
-    const result = await this.storeRepository.getStoresLocationInSavedList({
-      authorization,
-      ...reqestData,
-    });
-
-    return result;
-  }
-
-  async getSavedListAll(userUuid: string) {
-    if (!this.storeRepository) {
-      throw new Error('storeRepository is not set');
-    } else if (!this.authRepository) {
-      throw new Error('authRepository is not set');
-    }
-
-    const authorization = await this.authRepository.getAuthorization();
-
-    const reqestData = {
-      data: {
-        userUuid,
-      },
-      authorization,
-    };
-
-    const result = await this.storeRepository.getSavedListAll(reqestData);
 
     return result;
   }
@@ -551,6 +504,50 @@ export default class StoreService {
     const response =
       await this.storeRepository.getStoresInSavedList(requestData);
     return response;
+  }
+
+  async getStoresLocationInSavedList(
+    params: SavedStoresLocationRequest,
+  ): Promise<SavedStoresLocationData[]> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set');
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const authorization = await this.authRepository.getAuthorization();
+
+    const reqestData = {
+      data: params,
+    };
+
+    const result = await this.storeRepository.getStoresLocationInSavedList({
+      authorization,
+      ...reqestData,
+    });
+
+    return result;
+  }
+
+  async getSavedListAll(userUuid: string) {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set');
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const authorization = await this.authRepository.getAuthorization();
+
+    const reqestData = {
+      data: {
+        userUuid,
+      },
+      authorization,
+    };
+
+    const result = await this.storeRepository.getSavedListAll(reqestData);
+
+    return result;
   }
 
   // store oneline review
