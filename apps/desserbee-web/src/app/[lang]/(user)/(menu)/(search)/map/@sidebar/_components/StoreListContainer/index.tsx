@@ -19,10 +19,7 @@ import {
   getParentSavedList,
   getStoresInSavedList,
 } from './action';
-import { PortalContext } from '@repo/ui/contexts/PortalContext';
-import { UserContext } from '@/contexts/UserContext';
 import { NavigationPathGroup } from '@repo/entity/src/navigation';
-import { BeforeDetailJoinNowModal } from '../../../_modals/BeforeDetailJoinNowModal';
 
 interface StoreListContainerProps {
   listId: number;

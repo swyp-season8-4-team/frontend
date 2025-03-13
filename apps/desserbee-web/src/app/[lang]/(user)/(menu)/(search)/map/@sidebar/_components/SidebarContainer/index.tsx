@@ -77,7 +77,8 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
     });
   };
 
-  const handleListClick = (listId: number) => {
+  const handleListClick = (listId: number, storeCount: number) => {
+    if (storeCount === 0) return;
     router.push(`${NavigationPathGroup.Map + '?listId=' + listId}`);
   };
 
@@ -125,7 +126,7 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
     <SideBar
       {...{
         className:
-          'absolute top-[105px] md:top-[110px] md:w-[370px] right-4 h-[calc(100dvh-287px)] cursor-pointer',
+          'absolute top-[105px] md:top-[110px] md:w-[370px] right-4 h-[calc(100dvh-287px)] ',
         isSideBarOpen: showSidebar,
         handleSideBarClose,
       }}
@@ -156,10 +157,13 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
         <div className="[&::-webkit-scrollbar]:hidden flex-grow pr-1 [-ms-overflow-style:none] overflow-y-auto [scrollbar-width:none]">
           {totalSavedList.map((saveListItem, index) => (
             <div
-              onClick={() => handleListClick(saveListItem.listId)}
+              onClick={() =>
+                handleListClick(saveListItem.listId, saveListItem.storeCount)
+              }
               key={saveListItem.listName}
               className={cn(
                 index !== 0 && 'border-t-[#6F6F6F] border-t-[0.5px]',
+                saveListItem.storeCount !== 0 ? 'cursor-pointer' : '',
                 'relative py-[11.97px] md:py-[22px]',
               )}
             >
@@ -188,14 +192,16 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
                   </div>
                 </div>
                 <div className="relative">
-                  <button
-                    onClick={(e) => handleDotsClick(saveListItem.listId, e)}
-                    className="flex flex-col gap-[4.35px] md:gap-2"
-                  >
-                    <div className="bg-[#6F6F6F] rounded-full w-0.5 md:w-1 h-0.5 md:h-1"></div>
-                    <div className="bg-[#6F6F6F] rounded-full w-0.5 md:w-1 h-0.5 md:h-1"></div>
-                    <div className="bg-[#6F6F6F] rounded-full w-0.5 md:w-1 h-0.5 md:h-1"></div>
-                  </button>
+                  <div className="group">
+                    <button
+                      onClick={(e) => handleDotsClick(saveListItem.listId, e)}
+                      className="flex flex-col gap-[4.35px] md:gap-2 p-2"
+                    >
+                      <div className="bg-[#6F6F6F] group-hover:bg-[#F9C22E] rounded-full w-0.5 md:w-1 h-0.5 md:h-1"></div>
+                      <div className="bg-[#6F6F6F] group-hover:bg-[#F9C22E] rounded-full w-0.5 md:w-1 h-0.5 md:h-1"></div>
+                      <div className="bg-[#6F6F6F] group-hover:bg-[#F9C22E] rounded-full w-0.5 md:w-1 h-0.5 md:h-1"></div>
+                    </button>
+                  </div>
                   {selectedListId === saveListItem.listId && (
                     <div
                       ref={modalRef}
