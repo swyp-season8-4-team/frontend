@@ -54,21 +54,14 @@ export function BookMarkListContainer({
                 {savedStoreList.map((list) => (
                   <div
                     key={list.listId}
-                    className="bg-[#D9D9D9] rounded-[4.01px] w-full aspect-square flex justify-center items-center"
+                    className="bg-white rounded-[4.01px] w-full aspect-square flex justify-center items-center"
                   >
-                    <div className="w-1/2">
-                      {/* <Image
-                    src={mapImg}
-                    alt="저장한 가게"
-                    className="w-full h-full object-cover rounded-[4.01px]"
-                  /> */}
-                      <IconFlower
-                        className={cn(
-                          getIconColor(list.iconColorId),
-                          'w-full h-full',
-                        )}
-                      />
-                    </div>
+                    <IconFlower
+                      className={cn(
+                        getIconColor(list.iconColorId),
+                        'w-2/3 h-2/3',
+                      )}
+                    />
                   </div>
                 ))}
               </div>
@@ -98,20 +91,34 @@ export function BookMarkListContainer({
             <div className="flex flex-col gap-[7.25px] md:gap-[14px]">
               <div className="flex flex-col gap-[7.25px] md:gap-[14px]">
                 <div className="grid grid-cols-4 gap-[6.42px] md:gap-4">
-                  {Array.from([1, 2, 3, 4]).map((store) => (
-                    <div
-                      key={store}
-                      className="bg-[#D9D9D9] rounded-[4.01px] w-full aspect-square flex justify-center items-center"
-                    >
-                      <div className="w-1/2">
-                        <Image
-                          src={houseImg}
-                          alt="저장한 리뷰"
-                          className="w-full h-full object-cover rounded-[4.01px]"
-                        />
+                  {Array.from([1, 2, 3, 4]).map(
+                    (
+                      store,
+                      index, //TODO: API 완성되면 이미지 여부에 따라
+                    ) => (
+                      <div
+                        key={store}
+                        className="bg-[#D9D9D9] rounded-[4.01px] w-full overflow-hidden aspect-square relative flex items-center justify-center"
+                      >
+                        <div
+                          className={
+                            index === 0 //TODO: API 완성되면 이미지 여부에 따라
+                              ? 'w-full h-full relative'
+                              : 'w-1/2 h-1/2 relative'
+                          }
+                        >
+                          <Image
+                            src={store ? houseImg : houseImg} //TODO: API 완성되면 이미지 여부에 따라
+                            fill
+                            alt="저장한 디저트 메이트"
+                            className={
+                              index === 0 ? 'object-cover' : 'object-contain' //TODO: API 완성되면 이미지 여부에 따라
+                            }
+                          />
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ),
+                  )}
                 </div>
                 <div className="w-full flex justify-end">
                   <button
@@ -141,13 +148,22 @@ export function BookMarkListContainer({
                 {mateList.map((mate) => (
                   <div
                     key={mate.mateUuid}
-                    className="bg-[#D9D9D9] rounded-[4.01px] w-full aspect-square flex justify-center items-center"
+                    className="bg-[#D9D9D9] rounded-[4.01px] w-full overflow-hidden aspect-square relative flex items-center justify-center"
                   >
-                    <div className="w-1/2">
+                    <div
+                      className={
+                        mate.mateImage
+                          ? 'w-full h-full relative'
+                          : 'w-1/2 h-1/2 relative'
+                      }
+                    >
                       <Image
-                        src={beeImg}
+                        src={mate.mateImage ? mate.mateImage : beeImg}
+                        fill
                         alt="저장한 디저트 메이트"
-                        className="w-full h-full object-cover rounded-[4.01px]"
+                        className={
+                          mate.mateImage ? 'object-cover' : 'object-contain'
+                        }
                       />
                     </div>
                   </div>
