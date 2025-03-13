@@ -15,16 +15,6 @@ interface DessertMateTabProps {
 }
 
 export function DessertMateTab({ mate }: DessertMateTabProps) {
-  // mate: {
-  //   mateUuid: string;
-  //   mateCategory: string;
-  //   thumbnail: string;
-  //   title: string;
-  //   content: string;
-  //   nickname: string;
-  //   recruitYn: boolean;
-  // saved:boolean
-
   const mateService = new MateService({
     mateRepository: new MateAPIRepository(),
   });
@@ -48,12 +38,12 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
         router.replace('/sign-in');
       } else {
         addOptimistic(index);
-        setIsSaved((prev) => !prev);
-        if (!isSaved) {
-          await mateService.save({ id: uuid, userId: user.id });
-        } else {
+        if (isSaved) {
           await mateService.cancelSave({ id: uuid, userId: user.id });
+        } else {
+          await mateService.save({ id: uuid, userId: user.id });
         }
+        setIsSaved((prev) => !prev);
       }
     });
   };

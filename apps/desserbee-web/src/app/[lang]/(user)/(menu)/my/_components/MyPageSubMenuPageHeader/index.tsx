@@ -17,7 +17,7 @@ export function MyPageSubMenuPageHeader({ title }: Props) {
           <IconDirection className="w-full h-full rotate-90" />
         </div>
       </button>
-      <span className="font-semibold text-[14px] md:text-3xl">{title}</span>
+      <span className="font-semibold text-[14px] md:text-xl">{title}</span>
     </header>
   );
 }
