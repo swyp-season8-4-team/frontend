@@ -622,11 +622,13 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   useEffect(() => {
     if (isFetchRequired) {
       const fetchAndUpdate = async () => {
+        setIsSearching(true);
         const stores = await fetchNearbyStores(mapCenterRef.current);
         if (stores) {
           await updateNewClusterMarkers(stores);
 
           setNearByStores(stores);
+          setIsSearching(false);
           setIsFetchRequired(false);
         }
       };
@@ -759,6 +761,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         const stores = await getStoresLocationInSavedList({ listId });
 
         if (stores.length === 0) {
+          setIsResultListOpen(false);
           setError('리스트에 저장된 가게가 없습니다');
           setIsSearching(false);
           return;

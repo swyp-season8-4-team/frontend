@@ -19,10 +19,7 @@ import {
   getParentSavedList,
   getStoresInSavedList,
 } from './action';
-import { PortalContext } from '@repo/ui/contexts/PortalContext';
-import { UserContext } from '@/contexts/UserContext';
 import { NavigationPathGroup } from '@repo/entity/src/navigation';
-import { BeforeDetailJoinNowModal } from '../../../_modals/BeforeDetailJoinNowModal';
 
 interface StoreListContainerProps {
   listId: number;
@@ -50,7 +47,7 @@ export function StoreListContainer({
   };
 
   const handleListClose = () => {
-    router.push('?sidebar=true');
+    router.replace('?sidebar=true');
   };
 
   const handleStoreSelectBtnClick = (storeUuid: string) => {
