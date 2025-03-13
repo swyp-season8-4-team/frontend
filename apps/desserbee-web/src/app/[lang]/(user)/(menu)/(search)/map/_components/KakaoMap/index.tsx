@@ -40,7 +40,6 @@ import { KAKAO_MAP_API_URL } from '../../_consts/map';
 import {
   type NearByStoreData,
   type PreferenceData,
-  type SavedStoresLocationData,
 } from '@repo/entity/src/store';
 
 import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';

@@ -1,12 +1,25 @@
+import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
 import { MyPageSubMenuPageHeader } from '../../_components/MyPageSubMenuPageHeader';
+import MateService from '@repo/usecase/src/mateService';
+import { MateSavedListContainer } from './_components/MateSavedListContainer';
+import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 
-export default function SavedDessertMatePage() {
+export default async function SavedDessertMatePage() {
+  const mateService = new MateService({
+    authRepository: new AuthNextAppRouteRepository(),
+    mateRepository: new MateAPIRepository(),
+  });
+
+  const { mates, last } = await mateService.getSavedMateList({});
+
   return (
     <>
-      <div>
+      <div className="bg-page flex flex-col min-h-screen">
         <MyPageSubMenuPageHeader title="저장한 디저트 메이트" />
+        <div className="px-base flex-1 flex flex-col justify-start pt-[10%]">
+          <MateSavedListContainer mates={mates} isLast={last} />
+        </div>
       </div>
-      <div className="px-base">저장된 디저트메이트 목록</div>
     </>
   );
 }
