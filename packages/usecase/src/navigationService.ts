@@ -16,7 +16,7 @@ export default class NavigationService {
    * @param pathname
    * @returns
    */
-  getHref(pathname: string): string {
+  getHref(pathname: NavigationPathname): string {
     return `${NavigationLanguageGroup.ko}${pathname}`;
   }
 

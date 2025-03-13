@@ -16,9 +16,11 @@ import IconEye from '@repo/design-system/components/icons/IconEye';
 import { isErrorResponseData } from '@repo/api/src/error';
 import type { SignInCodeError } from '@repo/entity/src/signIn';
 import AuthConverter from '@repo/infrastructures/src/mappers/authConverter';
+import NavigationService from '@repo/usecase/src/navigationService';
 
 // FIXME: 컨버터를 구현체 안에서만 사용할수 있도록 변경
 const authConverter = new AuthConverter();
+const navigationService = new NavigationService({});
 
 interface LoginFormProps extends WithClassName {
   defaultEmail?: string;
@@ -239,14 +241,14 @@ export default function LoginForm({
         </label>
         <div className="flex items-center gap-2">
           <Link
-            href={NavigationPathname.SignUp}
+            href={navigationService.getHref(NavigationPathname.SignUp)}
             className="text-b-400 text-[11px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font"
           >
             일반 회원가입
           </Link>
           {/* <Link href={NavigationPathname.SignUp} className="text-b-400 text-[10px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font">사장님 회원가입</Link> */}
           <Link
-            href={NavigationPathname.ForgotPassword}
+            href={navigationService.getHref(NavigationPathname.ForgotPassword)}
             className="text-b-400 text-[11px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font"
           >
             비밀번호 찾기
