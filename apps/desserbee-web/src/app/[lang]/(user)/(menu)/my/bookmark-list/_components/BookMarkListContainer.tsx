@@ -4,19 +4,23 @@ import Image from 'next/image';
 import mapImg from '../_assets/svg/map.svg';
 import houseImg from '../_assets/svg/house.svg';
 import beeImg from '../_assets/svg/bee.svg';
-import type { Mate, SavedMate } from '@repo/entity/src/mate';
+import type { SavedMate } from '@repo/entity/src/mate';
 import { MyPageSubMenuPageHeader } from '../../_components/MyPageSubMenuPageHeader';
 import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
+import type { SavedListData } from '@repo/entity/src/store';
+import IconFlower from '@repo/design-system/components/icons/IconFlower';
+import { getIconColor } from '../../../(search)/map/_utils/iconColor';
+import { cn } from '@repo/ui/lib/utils';
 
 interface BookMarkListContainerProps {
-  initialMates: SavedMate[];
-  initialIsLast: boolean;
+  mateList: SavedMate[];
+  savedList: SavedListData[];
 }
 
 export function BookMarkListContainer({
-  initialMates,
-  initialIsLast,
+  mateList,
+  savedList,
 }: BookMarkListContainerProps) {
   const router = useRouter();
   const handleMoreSavedStoreBtnClick = () => {
@@ -32,23 +36,31 @@ export function BookMarkListContainer({
   };
   return (
     <>
-      <MyPageSubMenuPageHeader title="저장 목록" />
-      <div className="flex flex-col gap-6 md:gap-[61px]">
+      <div>
+        <MyPageSubMenuPageHeader title="저장 목록" />
+      </div>
+      <div className="flex flex-col gap-6 md:gap-[61px] px-base">
         <div className="flex flex-col gap-[7.25px] md:gap-[14px]">
           <div className="text-[10px] md:text-[22px] font-semibold">
-            저장한 가게
+            저장한 가게 리스트
           </div>
           <div className="grid grid-cols-4 gap-[6.42px] md:gap-4">
-            {Array.from([1, 2, 3, 4]).map((store) => (
+            {savedList.map((list) => (
               <div
-                key={store}
+                key={list.listId}
                 className="bg-[#D9D9D9] rounded-[4.01px] w-full aspect-square flex justify-center items-center"
               >
                 <div className="w-1/2">
-                  <Image
+                  {/* <Image
                     src={mapImg}
                     alt="저장한 가게"
                     className="w-full h-full object-cover rounded-[4.01px]"
+                  /> */}
+                  <IconFlower
+                    className={cn(
+                      getIconColor(list.iconColorId),
+                      'w-full h-full',
+                    )}
                   />
                 </div>
               </div>
@@ -97,7 +109,7 @@ export function BookMarkListContainer({
             저장한 디저트 메이트
           </div>
           <div className="grid grid-cols-4 gap-[6.42px] md:gap-4">
-            {initialMates.map((mate) => (
+            {mateList.map((mate) => (
               <div
                 key={mate.mateUuid}
                 className="bg-[#D9D9D9] rounded-[4.01px] w-full aspect-square flex justify-center items-center"
