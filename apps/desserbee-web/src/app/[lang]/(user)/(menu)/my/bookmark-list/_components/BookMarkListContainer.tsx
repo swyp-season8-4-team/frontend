@@ -82,8 +82,10 @@ export function BookMarkListContainer({
               </div>
             </div>
           ) : (
-            <div className="text-center text-[10px] md:text-base">
-              저장한 가게 리스트가 없습니다.
+            <div className="text-center text-[10px] md:text-base  flex items-center justify-center">
+              <div className="w-1/4 aspect-square text-nowrap flex items-center">
+                저장한 가게 리스트가 없습니다.
+              </div>
             </div>
           )}
         </div>
@@ -122,8 +124,10 @@ export function BookMarkListContainer({
               </div>
             </div>
           ) : (
-            <div className="text-center text-[10px] md:text-base">
-              저장한 커뮤니티 리뷰가 없습니다.
+            <div className="text-center text-[10px] md:text-base  flex items-center justify-center">
+              <div className="w-1/4 aspect-square text-nowrap flex items-center">
+                저장한 커뮤니티 리뷰가 없습니다.
+              </div>
             </div>
           )}
         </div>
@@ -159,8 +163,10 @@ export function BookMarkListContainer({
               </div>
             </div>
           ) : (
-            <div className="text-center text-[10px] md:text-base">
-              저장한 디저트메이트가 없습니다.
+            <div className="text-center text-[10px] md:text-base  flex items-center justify-center">
+              <div className="w-1/4 aspect-square text-nowrap flex items-center">
+                저장한 디저트 메이트가 없습니다.
+              </div>
             </div>
           )}
         </div>
