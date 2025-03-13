@@ -1,12 +1,26 @@
-import type { Review, ReviewListResponse, ReviewRepository, ReviewUpdateData, ReviewWriteData } from "@repo/entity/src/review";
-import APIRepository from "@repo/infrastructures/src/repositories/apiRepository";
-import type { BaseRequestData } from "@repo/entity/src/appMetadata";
+import type {
+  CancelSaveRequest,
+  Review,
+  ReviewListResponse,
+  ReviewRepository,
+  ReviewUpdateData,
+  ReviewWriteData,
+  SavedReviewListRequest,
+  SavedReviewListResponse,
+  SaveReviewRequest,
+  SaveReviewResponse,
+} from '@repo/entity/src/review';
+import APIRepository from '@repo/infrastructures/src/repositories/apiRepository';
+import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 
-export default class ReviewMockAPIRepository extends APIRepository implements ReviewRepository {
+export default class ReviewMockAPIRepository
+  extends APIRepository
+  implements ReviewRepository
+{
   write(data: BaseRequestData<ReviewWriteData>): Promise<Review> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
-  
+
   private readonly sampleReviews: Review[] = [
     // {
     //   id: '8b07fc58-ae7c-4e4c-9a56-1c4676f84864',
@@ -432,9 +446,11 @@ export default class ReviewMockAPIRepository extends APIRepository implements Re
     //   }
     // },
   ];
-  
+
   async getMine(data: BaseRequestData<unknown>): Promise<unknown> {
-    return this.sampleReviews.filter(review => review.userId === 'user-a1b2c3d4-e5f6-7890-abcd-ef1234567890');
+    return this.sampleReviews.filter(
+      (review) => review.userId === 'user-a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+    );
   }
 
   async edit({ data }: BaseRequestData<ReviewUpdateData>): Promise<Review> {
@@ -442,11 +458,13 @@ export default class ReviewMockAPIRepository extends APIRepository implements Re
       throw new Error('Review not found');
     }
 
-    const reviewIndex = this.sampleReviews.findIndex(review => review.id === data.id);
-    
+    const reviewIndex = this.sampleReviews.findIndex(
+      (review) => review.id === data.id,
+    );
+
     if (reviewIndex === -1 || !this.sampleReviews[reviewIndex]) {
       throw new Error('Review not found');
-    }    
+    }
 
     return this.sampleReviews[reviewIndex];
   }
@@ -456,7 +474,9 @@ export default class ReviewMockAPIRepository extends APIRepository implements Re
       throw new Error('Review not found');
     }
 
-    const reviewIndex = this.sampleReviews.findIndex(review => review.id === data.id);
+    const reviewIndex = this.sampleReviews.findIndex(
+      (review) => review.id === data.id,
+    );
 
     if (reviewIndex === -1 || !this.sampleReviews[reviewIndex]) {
       throw new Error('Review not found');
@@ -473,6 +493,19 @@ export default class ReviewMockAPIRepository extends APIRepository implements Re
   }
 
   getDetail(data: BaseRequestData<ReviewUpdateData>): Promise<Review> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
+  }
+
+  cancelSave(data: BaseRequestData<CancelSaveRequest>): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+
+  save(data: BaseRequestData<SaveReviewRequest>): Promise<SaveReviewResponse> {
+    throw new Error('Method not implemented.');
+  }
+  getSaved(
+    data: BaseRequestData<SavedReviewListRequest>,
+  ): Promise<SavedReviewListResponse> {
+    throw new Error('Method not implemented.');
   }
 }
