@@ -1,9 +1,9 @@
 'use client';
 
-import socialLoginAction from "@/actions/socialLoginAction";
-import { HTTPError } from "@repo/api/src/error";
-import type { OAuthSocialProvider } from "@repo/entity/src/auth";
-import { useEffect } from "react";
+import socialLoginAction from '@/actions/socialLoginAction';
+import { HTTPError } from '@repo/api/src/error';
+import type { OAuthSocialProvider } from '@repo/entity/src/signIn';
+import { useEffect } from 'react';
 
 interface Props {
   code: string;
@@ -12,12 +12,10 @@ interface Props {
 }
 
 export default function OAuthCallbackLoader({ code, next, provider }: Props) {
-
   useEffect(() => {
     (async () => {
       try {
         await socialLoginAction({ code, provider, next });
-        
       } catch (error) {
         if (error instanceof HTTPError) {
           console.error(error);

@@ -1,8 +1,6 @@
-import type {
-  SignInResponse,
-  RawSignInResponse,
-  SignInCodeError,
-} from '@repo/entity/src/auth';
+import type { SignInResponse, RawSignInResponse } from '@repo/entity/src/auth';
+
+import type { SignInCodeError } from '@repo/entity/src/signIn';
 
 export default class AuthConverter {
   convertRawSignInResponse(raw: RawSignInResponse): SignInResponse {

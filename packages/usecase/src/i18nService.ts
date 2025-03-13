@@ -17,10 +17,10 @@ interface FontVariables {
 }
 
 export default class I18nService extends WithStore {
-  private readonly repository: I18NRepository | null;
+  private readonly i18nRepository: I18NRepository | null;
 
   constructor({
-    i18nRepository: repository,
+    i18nRepository,
     store,
   }: {
     i18nRepository?: I18NRepository;
@@ -28,7 +28,7 @@ export default class I18nService extends WithStore {
   }) {
     super(store);
 
-    this.repository = repository ?? null;
+    this.i18nRepository = i18nRepository ?? null;
   }
 
   getLang(): SupportISO639Language {

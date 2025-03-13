@@ -79,7 +79,10 @@ export enum SupportISOLocale {
 }
 
 export function isSupportLang(lang?: string): lang is SupportISO639Language {
-  return Object.keys(SupportISO639Language).find((key: string) => key === lang) !== undefined
+  return (
+    Object.keys(SupportISO639Language).find((key: string) => key === lang) !==
+    undefined
+  );
 }
 
 export function isSupportLocale(locale?: string): locale is SupportLocale {
@@ -92,6 +95,7 @@ export interface I18NDictionaryData {
 }
 
 export interface I18NRepository {
+  getLang(): Promise<SupportISO639Language>;
   getDictionary(data: {
     lang: SupportISO639Language;
     namespace: DictionaryNamespace;
