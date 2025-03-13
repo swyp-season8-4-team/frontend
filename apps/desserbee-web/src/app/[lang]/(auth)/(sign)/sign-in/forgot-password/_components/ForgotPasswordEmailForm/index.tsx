@@ -1,22 +1,27 @@
 'use client';
 
-import { useState } from "react";
-import { useContext } from "react";
-import { useCallback } from "react";
-import { ForgotPasswordStep, type ForgotPasswordStepProps } from "../../_types";
-import { ForgotPasswordContext } from "../../_contexts/ForgotPasswordContext";
-import { validateEmail } from "@repo/utility/src/regex";
-import { EmailAuthSessionKey, VerifyEmailPurpose } from "@repo/usecase/src/authService";
-import AuthService from "@repo/usecase/src/authService";
-import { HTTPError } from "@repo/api/src/error";
-import AuthAPIRepository from "@repo/infrastructures/src/repositories/authAPIRepository";
-import { Button } from "@repo/ui/components/button";
+import { useState } from 'react';
+import { useContext } from 'react';
+import { useCallback } from 'react';
+import { ForgotPasswordStep, type ForgotPasswordStepProps } from '../../_types';
+import { ForgotPasswordContext } from '../../_contexts/ForgotPasswordContext';
+import { validateEmail } from '@repo/utility/src/regex';
+import {
+  EmailAuthSessionKey,
+  VerifyEmailPurpose,
+} from '@repo/usecase/src/authService';
+import AuthService from '@repo/usecase/src/authService';
+import { HTTPError } from '@repo/api/src/error';
+import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
+import { Button } from '@repo/ui/components/button';
 
 const authService = new AuthService({
   authRepository: new AuthAPIRepository(),
 });
 
-export function ForgotPasswordEmailForm({ onNextStep }: ForgotPasswordStepProps) {
+export function ForgotPasswordEmailForm({
+  onNextStep,
+}: ForgotPasswordStepProps) {
   const { updateEmail } = useContext(ForgotPasswordContext);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -48,20 +53,19 @@ export function ForgotPasswordEmailForm({ onNextStep }: ForgotPasswordStepProps)
         email: message,
         expirationTimes: expirationMinutes * 60,
       });
-
-      
     } catch (error) {
       if (error instanceof HTTPError) {
-        setError(error.message);
+        setError(error.data.message ?? '');
       }
     }
   }, [message, onNextStep, updateEmail]);
 
   return (
     <>
-      <h2 className="text-lg font-medium">
-        디저비에 오신걸 환영합니다!<br />
-        회원가입을 시작해볼까요?
+      <h2 className="text-[#393939] text-[18px] font-semibold leading-[130%] tracking-[-0.9px]">
+        가입하셨던 이메일을
+        <br />
+        알려주세요.
       </h2>
       <div className="flex flex-col gap-1.5">
         <div className="relative">
@@ -69,7 +73,7 @@ export function ForgotPasswordEmailForm({ onNextStep }: ForgotPasswordStepProps)
             type="email"
             value={message}
             onChange={handleChange}
-            placeholder="이메일을 입력해주세요"
+            placeholder="이메일을 입력해주세요."
             className={`w-full py-[10px] border-b ${
               error ? 'border-red-500' : 'border-gray-200'
             } focus:outline-none placeholder:text-[#BABABA]`}
@@ -83,11 +87,27 @@ export function ForgotPasswordEmailForm({ onNextStep }: ForgotPasswordStepProps)
               }}
               className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <circle cx="12" cy="12" r="12" fill="#D9D9D9"/>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <circle cx="12" cy="12" r="12" fill="#D9D9D9" />
                 <g transform="translate(7, 7)">
-                  <path d="M1 9L9 1" stroke="#393939" strokeWidth="2" strokeLinecap="round"/>
-                  <path d="M9 9L1 1" stroke="#393939" strokeWidth="2" strokeLinecap="round"/>
+                  <path
+                    d="M1 9L9 1"
+                    stroke="#393939"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <path
+                    d="M9 9L1 1"
+                    stroke="#393939"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
                 </g>
               </svg>
             </button>
@@ -99,9 +119,10 @@ export function ForgotPasswordEmailForm({ onNextStep }: ForgotPasswordStepProps)
 
         <Button
           className={`w-full py-3 text-white rounded-[100px] font-medium transition-colors mt-6
-            ${message.trim() && !error
-              ? 'bg-[#FFB700] hover:bg-[#FFB700]/90' 
-              : 'bg-gray-400 cursor-not-allowed opacity-50'
+            ${
+              message.trim() && !error
+                ? 'bg-[#FFB700] hover:bg-[#FFB700]/90'
+                : 'bg-gray-400 cursor-not-allowed opacity-50'
             }`}
           disabled={!message.trim() || !!error}
           onClick={handleClick}

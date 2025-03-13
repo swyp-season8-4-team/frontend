@@ -30,14 +30,12 @@ export const MobileScreenProvider = (props: Props) => {
     <MobileScreenContext.Provider value={{ width }}>
       <div
         ref={ref}
-        style={{
-          maxWidth: '768px',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          // minHeight: innerHeight ?? '100vh',
-          backgroundColor: 'white',
-          overflow: 'hidden',
-        }}
+        className="max-w-[768px] mx-auto bg-white overflow-hidden"
+        style={
+          {
+            // minHeight: innerHeight ?? '100dvh',
+          }
+        }
       >
         {children}
       </div>

@@ -132,7 +132,7 @@ export default function SignUpEmailForm({ updateStep }: Props) {
                 ? 'bg-[#FFB700] hover:bg-[#FFB700]/90'
                 : 'bg-gray-400 cursor-not-allowed opacity-50'
             }`}
-          disabled={!message.trim() || !!error}
+          disabled={!message.trim() || !!error || isLoading}
           isLoading={isLoading}
           onClick={handleClick}
         >

@@ -1,14 +1,12 @@
-import { getVerifyTokenAction } from "@/actions/getVerifyTokenAction";
-import SignUpController from "./_components/SignUpController";
+import { getVerifyTokenAction } from '@/actions/getVerifyTokenAction';
+import SignUpController from './_components/SignUpController';
 
 export default async function SignUpPage() {
   const verifyToken = await getVerifyTokenAction();
 
   return (
-    <main className="px-4 pt-8 overflow-hidden h-[100dvh]">
-      <div className="flex flex-col mt-[48px] gap-6 h-full">        
-        <SignUpController token={verifyToken ?? null}/>
-      </div>
+    <main className="px-4 flex flex-col flex-1 mt-[56px] gap-[12px] overflow-hidden">
+      <SignUpController token={verifyToken ?? null} />
     </main>
   );
 }
