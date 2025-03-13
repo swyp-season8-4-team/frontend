@@ -1,5 +1,8 @@
 import { CustomModal } from '@repo/design-system/components/Modal/custom';
-import { NavigationPathGroup } from '@repo/entity/src/navigation';
+import {
+  NavigationPathGroup,
+  NavigationPathname,
+} from '@repo/entity/src/navigation';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -28,16 +31,16 @@ export function BeforeDetailJoinNowModal({
               이 가게, 내 취향이랑 잘 맞을까?
             </div>
             <div className="mb-[15px] md:text-[26px] text-lg">
-              회원가입하고 확인해보기!
+              로그인 하고 확인해보기!
             </div>
           </div>
           <div className="flex flex-col gap-[9.6px] md:gap-[13px] px-[13.2px] w-full">
             <Link
               onClick={onClose}
-              href={'/sign-up'}
+              href={`${NavigationPathname.SignIn}`}
               className="bg-primary py-1 md:py-3 rounded-[100px] w-full text-white md:text-[22px] text-sm text-center"
             >
-              회원가입하기
+              로그인 하기
             </Link>
             <button
               onClick={handleLaterBtnClick}

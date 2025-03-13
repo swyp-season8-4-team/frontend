@@ -10,14 +10,14 @@ export const BANNERS = [
     bgColor: 'bg-[#FFE7A3]',
     btnContent: '디저트 메이트 찾기',
     imgSrc: bee,
-    path: '/community',
+    path: `${NavigationPathname.CommunityDessertMate}`,
   },
   {
     content: '로그인 시 나의 취향에 딱 맞는\n디저트샵을 추천해줘요!',
     bgColor: 'bg-[#FFDB75]',
     btnContent: '로그인 하기',
     imgSrc: store,
-    path: '/sign-in',
+    path: `${NavigationPathname.SignIn}`,
   },
   {
     content: '우리 동네 디저트 쿠폰\n받으러 갈까요?',
