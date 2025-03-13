@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect, useState, useCallback } from 'react';
+import { useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { formatDateToHHMM, formatDateToMMDD } from '@repo/utility/src/date';
 import { PopularItem } from './popularItem';
 import { RecentItem } from './recentItem';
@@ -15,10 +15,18 @@ import type {
   RecentSearchData,
 } from '@repo/entity/src/search';
 import { UserContext } from '@/contexts/UserContext';
+import LocalStorageRepository from '@repo/infrastructures/src/repositories/localStorageRepository';
+import SearchService from '@repo/usecase/src/searchService';
+import SearchAPIRepository from '@repo/infrastructures/src/repositories/searchAPIRepository';
 
 interface DefaultPanelProps {
   onSearchAction: (keyword: string) => void;
 }
+
+const searchService = new SearchService({
+  searchRepository: new SearchAPIRepository(),
+  storageRepository: new LocalStorageRepository(),
+});
 
 export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
   const { user } = useContext(UserContext);
@@ -38,7 +46,6 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
   }, []);
 
   const handleRecentKeywordAllDelete = useCallback(async () => {
-    // 낙관적 업데이트
     const previousData = recentSearchData;
     setRecentSearchData([]);
 
@@ -46,7 +53,7 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
       if (user) {
         await deleteRecentKeywordsAll();
       } else {
-        localStorage.setItem('searchHistory', '[]');
+        searchService.deleteRecentKeywordsAllIfNotSignIn();
       }
     } catch (err) {
       setRecentSearchData(previousData);
@@ -64,15 +71,12 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
           ),
         );
       } else {
-        const searchHistory: RecentSearchData[] = JSON.parse(
-          localStorage.getItem('searchHistory') || '[]',
-        );
-
+        const searchHistory = searchService.getRecentKeywordIfNotSignIn() || [];
         const updatedHistory = searchHistory.filter(
           (item: RecentSearchData) => item.id !== keywordIdToDelete,
         );
 
-        localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
+        searchService.deleteRecentKeywordIfNotSignIn(updatedHistory);
         setRecentSearchData((prev: RecentSearchData[]) =>
           prev.filter(
             (item: RecentSearchData) => item.id !== keywordIdToDelete,
@@ -86,12 +90,9 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
 
   const getNotSignInSearchHistory = useCallback((): RecentSearchData[] => {
     try {
-      const searchHistory = JSON.parse(
-        localStorage.getItem('searchHistory') || '[]',
-      );
+      const searchHistory = searchService.getRecentKeywordIfNotSignIn();
 
-      if (!Array.isArray(searchHistory)) {
-        console.log('데이터가 배열이 아님');
+      if (!searchHistory) {
         return [];
       }
 
@@ -105,6 +106,7 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
   const handleRecentSearchDataFetch = useCallback(async () => {
     try {
       if (user) {
+        // const result = await getRecentKeywords();
         const result = await getRecentKeywords();
         setRecentSearchData(result);
       } else {

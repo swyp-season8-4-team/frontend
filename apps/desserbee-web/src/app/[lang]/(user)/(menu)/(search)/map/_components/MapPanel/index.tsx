@@ -5,6 +5,7 @@ import { SaveListNotSignInModal } from '../../_modals/SaveListNotSignInModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
 import { UserContext } from '@/contexts/UserContext';
+import { NavigationPathname } from '@repo/entity/src/navigation';
 
 interface MapPanelProps {
   moveToCurrentPosition: () => void;
@@ -23,7 +24,7 @@ export function MapPanel({ moveToCurrentPosition }: MapPanelProps) {
 
   const handleOpenSideBarBtnClick = () => {
     if (user) {
-      router.push(`/map?sidebar=true`);
+      router.push(`${NavigationPathname.Map}?sidebar=true`);
     } else {
       push('modal', {
         component: <SaveListNotSignInModal onClose={closeModal} />,

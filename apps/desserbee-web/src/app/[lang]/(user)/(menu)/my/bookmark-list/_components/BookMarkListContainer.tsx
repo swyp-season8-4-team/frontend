@@ -6,6 +6,8 @@ import houseImg from '../_assets/svg/house.svg';
 import beeImg from '../_assets/svg/bee.svg';
 import type { Mate } from '@repo/entity/src/mate';
 import { MyPageSubMenuPageHeader } from '../../_components/MyPageSubMenuPageHeader';
+import { useRouter } from 'next/navigation';
+import { NavigationPathname } from '@repo/entity/src/navigation';
 
 interface BookMarkListContainerProps {
   savedDessertMate: Mate[];
@@ -14,6 +16,10 @@ interface BookMarkListContainerProps {
 export function BookMarkListContainer({
   savedDessertMate,
 }: BookMarkListContainerProps) {
+  const router = useRouter();
+  const handleMoreSavedStoreBtnClick = () => {
+    router.push(`${NavigationPathname.Map}?sidebar=true`);
+  };
   return (
     <>
       <MyPageSubMenuPageHeader title="저장 목록" />
@@ -39,7 +45,12 @@ export function BookMarkListContainer({
             ))}
           </div>
           <div className="w-full flex justify-end">
-            <button className="text-[10px] md:text-lg">더보기</button>
+            <button
+              onClick={handleMoreSavedStoreBtnClick}
+              className="text-[10px] md:text-lg"
+            >
+              더보기
+            </button>
           </div>
         </div>
         <div className="flex flex-col gap-[7.25px] md:gap-[14px]">

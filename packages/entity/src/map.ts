@@ -10,6 +10,11 @@ export interface ExternalMap {
   setLevel(level: number): void;
   getCenter(): MapPosition;
   getLevel(): number;
+  addMarkerWithName(
+    position: MapPosition,
+    markerImageSrc: string,
+    name: string,
+  ): void;
 }
 
 export interface MapController {
@@ -35,4 +40,9 @@ export interface MapController {
   getMapCenter(): MapPosition;
   relayout(): void;
   removeAllEventListeners(): void;
+  addMarkerWithName(
+    position: MapPosition,
+    markerImageSrc: string,
+    name: string,
+  ): void;
 }

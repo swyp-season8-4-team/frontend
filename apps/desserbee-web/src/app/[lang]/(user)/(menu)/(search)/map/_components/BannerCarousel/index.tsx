@@ -17,11 +17,13 @@ import Link from 'next/link';
 
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { CouponIsNotReadyModal } from '../../_modals/CouponIsNotReadyModal';
+import { UserContext } from '@/contexts/UserContext';
 
 export function BannerCarousel() {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const { push, pop } = useContext(PortalContext);
+  const { user } = useContext(UserContext);
 
   const closeModal = () => {
     pop('modal');
@@ -84,14 +86,16 @@ export function BannerCarousel() {
                   {banner.content}
                 </div>
               </div>
-              <Link
-                onClick={(e) => handleDessertReviewBtnClick(e, index)}
-                href={banner.path}
-                // className="right-[15px] bottom-[15px] absolute flex justify-center items-center bg-[#AA6120] px-[12.88px] md:px-[27px] py-[3.68px] md:py-[9px] rounded-[100px] font-semibold text-[10.12px] text-white md:text-[22px] text-nowrap"
-                className="right-[15px] bottom-[15px] absolute flex justify-center items-center bg-[#AA6120] px-[12.88px] py-[3.68px] rounded-[100px] font-semibold text-[10.12px] text-white text-nowrap"
-              >
-                {banner.btnContent}
-              </Link>
+              {!(index === 1 && user) && (
+                <Link
+                  onClick={(e) => handleDessertReviewBtnClick(e, index)}
+                  href={banner.path}
+                  // className="right-[15px] bottom-[15px] absolute flex justify-center items-center bg-[#AA6120] px-[12.88px] md:px-[27px] py-[3.68px] md:py-[9px] rounded-[100px] font-semibold text-[10.12px] text-white md:text-[22px] text-nowrap"
+                  className="right-[15px] bottom-[15px] absolute flex justify-center items-center bg-[#AA6120] px-[12.88px] py-[3.68px] rounded-[100px] font-semibold text-[10.12px] text-white text-nowrap"
+                >
+                  {banner.btnContent}
+                </Link>
+              )}
             </CarouselItem>
           ))}
         </CarouselContent>

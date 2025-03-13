@@ -9,6 +9,7 @@ interface CustomMarker extends kakao.maps.Marker {
     name: string;
     address: string;
   };
+  overlay?: kakao.maps.CustomOverlay;
 }
 
 export default class KakaoMapController implements MapController {
@@ -26,7 +27,7 @@ export default class KakaoMapController implements MapController {
 
   async createMap(container: HTMLDivElement, position: MapPosition) {
     try {
-      const level = 3;
+      const level = 6;
       const kakaoMap = new kakao.maps.Map(container, {
         center: new kakao.maps.LatLng(position.latitude, position.longitude),
         level,
@@ -287,6 +288,32 @@ export default class KakaoMapController implements MapController {
         error,
       );
       return null;
+    }
+  }
+
+  addMarkerWithName(
+    position: MapPosition,
+    markerImageSrc: string,
+    name: string,
+  ): void {
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      this.map.addMarkerWithName(position, markerImageSrc, name);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  getKakaoMap(): kakao.maps.Map | null {
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      return this.map.getNativeMap();
+    } catch (error) {
+      throw error;
     }
   }
 }

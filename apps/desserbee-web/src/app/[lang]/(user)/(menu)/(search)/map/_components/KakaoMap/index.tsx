@@ -14,6 +14,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 import storeMarkerImage from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/icon-marker.svg';
 import userMarkerImage from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/icon-current-marker.svg';
+import yellowMarkerImage from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/yellow-marker.svg';
+import orangeMarkerImage from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/orange-marker.svg';
+import greenMarkerImage from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/green-marker.svg';
+import blueMarkerImage from '@/app/[lang]/(user)/(menu)/(search)/map/_assets/svg/blue-marker.svg';
 
 import { PreferenceTags } from '../PreferenceTags';
 import { MapPanel } from '../MapPanel';
@@ -36,6 +40,7 @@ import { KAKAO_MAP_API_URL } from '../../_consts/map';
 import {
   type NearByStoreData,
   type PreferenceData,
+  type SavedStoresLocationData,
 } from '@repo/entity/src/store';
 
 import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';
@@ -44,7 +49,7 @@ import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService
 import { ReFetchStoreBtn } from '../ReFetchStoreBtn';
 import { calculateDistance } from '../../_utils/distance';
 import { useTag } from '../../../_hooks/useTag';
-import { getNearbyStores } from './action';
+import { getNearbyStores, getStoresLocationInSavedList } from './action';
 import type { Preference } from '@repo/entity/src/preference';
 import { SearchResultList } from '../SearchResultList';
 
@@ -79,15 +84,11 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     storeService: null,
   });
 
-  const sessionStorageRepository = useMemo(
-    () => new SessionStorageRepository(),
-    [],
-  );
-
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isFetchRequired, setIsFetchRequired] = useState(false);
+  const [showingSavedList, setShowingSavedList] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -135,15 +136,6 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
   const handleResultListClose = useCallback(() => {
     setIsResultListOpen(false);
-    // if (window.location.hash) {
-    //   history.pushState(
-    //     '',
-    //     document.title,
-    //     window.location.pathname + window.location.search,
-    //   );
-    //   setSearchKeyword('');
-    //   setIsFetchRequired(true);
-    // }
   }, []);
 
   const handleRefetchBtnClick = useCallback(() => {
@@ -154,6 +146,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   const initializeServices = () => {
     const mapService = new MapService({
       mapController: new KakaoMapController(),
+      storageRepository: new SessionStorageRepository(),
     });
 
     const geoService = new GeolocationService({
@@ -177,9 +170,8 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     }
 
     // sessionStorage에서 lastPosition 확인
-    const lastPosition = sessionStorageRepository.get(
-      'lastPosition',
-    ) as MapPosition;
+    const lastPosition =
+      servicesRef.current.mapService.getLastPosition() as MapPosition;
 
     // lastPosition이 없으면 더 넓은 반경 (500km) 반환
     if (!lastPosition) {
@@ -208,7 +200,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     const minNeighborhoodRadius = 4;
 
     return Math.max(screenDistance, minNeighborhoodRadius) * 1000;
-  }, [sessionStorageRepository]);
+  }, []);
 
   // 가게 불러오기 메서드 (실질적인 service 사용)
   const fetchNearbyStores = useCallback(
@@ -271,14 +263,14 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         if (servicesRef.current.mapService) {
           const currentMapCenter =
             servicesRef.current.mapService.getMapCenter();
-          sessionStorageRepository.set('lastPosition', currentMapCenter);
+          servicesRef.current.mapService.setLastPostion(currentMapCenter);
         }
         router.replace(`?storeId=${storeId}&bottomsheet=true`, {
           scroll: false,
         });
       }
     },
-    [router, sessionStorageRepository],
+    [router],
   );
 
   // 지도 중심, 반경내 상점들 받아서 마커 및 클러스터 마커 추가
@@ -531,17 +523,15 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   // 카카오맵 초기화 로직
   useEffect(() => {
     if (isScriptLoaded && !isInitialized && mapRef.current) {
-      // 초기화 전에 먼저 세션 스토리지 확인
-      const lastPosition = sessionStorageRepository.get(
-        'lastPosition',
-      ) as MapPosition;
+      // 서비스 초기화
+      const initializedServices = initializeServices();
+      servicesRef.current = initializedServices;
+
+      // 초기화 전에 mapService를 통해 마지막 위치 확인
+      const lastPosition = initializedServices.mapService.getLastPosition();
 
       window.kakao.maps.load(() => {
         try {
-          // 서비스 초기화
-          const initializedServices = initializeServices();
-          servicesRef.current = initializedServices;
-
           // 지도 로드 - 저장된 위치가 있으면 사용
           loadMap(initializedServices, lastPosition)
             .then(() => {
@@ -565,7 +555,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         }
       });
     }
-  }, [isScriptLoaded, isInitialized, loadMap, sessionStorageRepository]);
+  }, [isScriptLoaded, isInitialized, loadMap]);
 
   // 현재 지도 중심, 태그, 검색 포함 필터링 적용된 가게 불러오기
   const [isSearching, setIsSearching] = useState(false);
@@ -748,6 +738,88 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       moveToStore();
     }
   }, [isMapLoaded, moveToStore, searchParams]);
+
+  // 마커 이미지 매핑
+  const markerImages = useMemo(
+    () => ({
+      1: yellowMarkerImage.src,
+      2: orangeMarkerImage.src,
+      3: greenMarkerImage.src,
+      4: blueMarkerImage.src,
+    }),
+    [],
+  );
+
+  // 저장 리스트 표시 함수
+  const displaySavedListStores = useCallback(
+    async (listId: number) => {
+      if (!areServicesInitialized(servicesRef.current)) {
+        return;
+      }
+
+      try {
+        setIsSearching(true);
+
+        // 저장 리스트의 가게 위치 정보 가져오기
+        const stores = await getStoresLocationInSavedList({ listId });
+
+        if (stores.length === 0) {
+          setError('리스트에 저장된 가게가 없습니다');
+          setIsSearching(false);
+          return;
+        }
+
+        // 서비스를 통해 저장 리스트 마커 표시
+        const success =
+          await servicesRef.current.mapService?.displaySavedListStores(
+            stores,
+            markerImages,
+          );
+
+        if (success) {
+          setShowingSavedList(true);
+        }
+
+        setIsSearching(false);
+      } catch (error) {
+        console.error('저장 리스트 마커 표시 중 오류:', error);
+        setError('저장 리스트 표시에 실패했습니다');
+        setIsSearching(false);
+      }
+    },
+    [markerImages, setError, setIsSearching],
+  );
+
+  // 저장 리스트 표시 종료 함수
+  const clearSavedListStores = useCallback(() => {
+    if (showingSavedList) {
+      setShowingSavedList(false);
+      setIsFetchRequired(true);
+    }
+  }, [showingSavedList]);
+
+  // URL 파라미터 감시
+  useEffect(() => {
+    const listIdParam = searchParams.get('listId');
+    // const sidebarParam = searchParams.get('sidebar');
+
+    if (isMapLoaded) {
+      if (listIdParam) {
+        const listId = parseInt(listIdParam, 10);
+        if (!isNaN(listId)) {
+          displaySavedListStores(listId);
+        }
+      } else if (showingSavedList) {
+        clearSavedListStores();
+      }
+    }
+  }, [
+    searchParams,
+    isMapLoaded,
+    displaySavedListStores,
+    clearSavedListStores,
+    showingSavedList,
+  ]);
 
   // preferenceTagsProps를 useMemo로 메모이제이션
   const preferenceTagsProps = useMemo(

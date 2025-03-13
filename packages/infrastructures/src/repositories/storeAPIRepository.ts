@@ -53,14 +53,6 @@ export default class StoreAPIRepository
   extends APIRepository
   implements StoreRepository
 {
-  getStoresPositionInSavedList({
-    authorization,
-    data,
-  }: BaseRequestData<SavedStoresLocationRequest>): Promise<
-    SavedStoresLocationData[]
-  > {
-    throw new Error('Method not implemented.');
-  }
   private readonly preferenceConverter = new PreferenceConverter();
 
   //preference
@@ -539,6 +531,36 @@ export default class StoreAPIRepository
       }),
       method: 'GET',
       url: `${this.endpoint}/user-store/${userUuid}/lists`,
+    });
+
+    return response;
+  }
+
+  async getStoresPositionInSavedList({
+    authorization,
+    data,
+  }: BaseRequestData<SavedStoresLocationRequest>): Promise<
+    SavedStoresLocationData[]
+  > {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { listId } = data || {};
+
+    const url = `${this.endpoint}/user-store/lists/${listId}/stores/locations`;
+
+    const response = await fetch<
+      SavedStoresLocationRequest,
+      SavedStoresLocationData[]
+    >({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      method: 'GET',
+      url,
     });
 
     return response;

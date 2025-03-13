@@ -1,22 +1,69 @@
-import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import type { AuthRepository } from '@repo/entity/src/auth';
 import type {
   DeleteRecentKeywordRequest,
+  RecentSearchData,
   SearchRepository,
 } from '@repo/entity/src/search';
+import type { StorageRepository } from '@repo/entity/src/storage';
 export default class SearchService {
   private readonly searchRepository: SearchRepository | null;
   private readonly authRepository: AuthRepository | null;
+  private readonly storageRepository: StorageRepository | null;
 
   constructor({
     searchRepository,
     authRepository,
+    storageRepository,
   }: {
     searchRepository: SearchRepository;
     authRepository?: AuthRepository;
+    storageRepository?: StorageRepository;
   }) {
     this.searchRepository = searchRepository ?? null;
     this.authRepository = authRepository ?? null;
+    this.storageRepository = storageRepository ?? null;
+  }
+
+  setRecentKeywordIfNotSignIn(updatedHistory: RecentSearchData[]) {
+    if (!this.searchRepository) {
+      throw new Error('searchRepository is not set');
+    } else if (!this.storageRepository) {
+      throw new Error('storageRepository is not set');
+    }
+
+    this.storageRepository.set('searchHistory', updatedHistory);
+  }
+
+  getRecentKeywordIfNotSignIn() {
+    if (!this.searchRepository) {
+      throw new Error('searchRepository is not set');
+    } else if (!this.storageRepository) {
+      throw new Error('storageRepository is not set');
+    }
+
+    return (
+      this.storageRepository.get<RecentSearchData[]>('searchHistory') || []
+    );
+  }
+
+  deleteRecentKeywordIfNotSignIn(updatedHistory: RecentSearchData[]) {
+    if (!this.searchRepository) {
+      throw new Error('searchRepository is not set');
+    } else if (!this.storageRepository) {
+      throw new Error('storageRepository is not set');
+    }
+
+    this.storageRepository.set('searchHistory', updatedHistory);
+  }
+
+  deleteRecentKeywordsAllIfNotSignIn() {
+    if (!this.searchRepository) {
+      throw new Error('searchRepository is not set');
+    } else if (!this.storageRepository) {
+      throw new Error('storageRepository is not set');
+    }
+
+    this.storageRepository.set<RecentSearchData[]>('searchHistory', []);
   }
 
   async getPopularKeywords() {

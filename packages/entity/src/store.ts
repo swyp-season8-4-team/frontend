@@ -371,17 +371,16 @@ export interface SavedListData {
 }
 
 export interface SavedStoresLocationRequest {
-  //TODO: API 추가
   listId: number;
 }
 
 export interface SavedStoresLocationData {
+  listId: number;
+  iconColorId: number;
   storeId: number;
   name: string;
   latitude: number;
   longitude: number;
-  listId: number;
-  colorId: number;
 }
 
 // 상세정보에서 사용
