@@ -18,6 +18,12 @@ import Link from 'next/link';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { CouponIsNotReadyModal } from '../../_modals/CouponIsNotReadyModal';
 import { UserContext } from '@/contexts/UserContext';
+import StoreService from '@repo/usecase/src/storeService';
+import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
+
+const storeService = new StoreService({
+  storeRepository: new StoreAPIRepository(),
+});
 
 export function BannerCarousel() {
   const [api, setApi] = useState<CarouselApi>();
@@ -29,12 +35,16 @@ export function BannerCarousel() {
     pop('modal');
   };
 
-  const handleDessertReviewBtnClick = (e: React.MouseEvent, index: number) => {
+  const handleDessertReviewBtnClick = async (
+    e: React.MouseEvent,
+    index: number,
+  ) => {
     if (index === 2) {
       e.preventDefault();
       push('modal', {
         component: <CouponIsNotReadyModal onClose={closeModal} />,
       });
+      await storeService.updateCouponCount();
     }
   };
 

@@ -15,6 +15,7 @@ import { NavigationPathGroup } from '@repo/entity/src/navigation';
 import { UserContext } from '@/contexts/UserContext';
 import { HTTPError } from '@repo/api/src/error';
 import { createSavedList, deleteSavedList, getSavedListAll } from './action';
+import { getIconColor } from '../../../_utils/iconColor';
 
 interface SideBarContainerProps {
   showSidebar: boolean;
@@ -92,19 +93,6 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
       !modalRef.current.contains(e.target as Node)
     ) {
       setSelectedListId(null);
-    }
-  };
-
-  const getIconColor = (colorId: number) => {
-    switch (colorId) {
-      case 1:
-        return 'text-[#FFC803]';
-      case 2:
-        return 'text-[#FF8803]';
-      case 3:
-        return 'text-[#05D352]';
-      case 4:
-        return 'text-[#00C6D8]';
     }
   };
 

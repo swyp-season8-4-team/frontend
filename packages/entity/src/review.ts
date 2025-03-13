@@ -73,6 +73,28 @@ export interface ReviewWriteData {
   imageFiles?: File[];
 }
 
+export interface SaveReviewRequest {
+  reviewUuid: string;
+  // TODO: API 아직 안됨
+}
+
+export interface CancelSaveRequest {
+  reviewUuid: string;
+  // TODO: API 아직 안됨
+}
+
+export interface SaveReviewResponse {
+  // TODO: API 아직 안됨
+}
+
+export interface SavedReviewListRequest {
+  // TODO: API 아직 안됨
+}
+
+export interface SavedReviewListResponse {
+  // TODO: API 아직 안됨
+}
+
 export interface ReviewRepository {
   // 내가 쓴 리뷰 조회
   getMine(data: BaseRequestData<unknown>): Promise<unknown>;
@@ -84,11 +106,23 @@ export interface ReviewRepository {
   write(data: BaseRequestData<ReviewWriteData>): Promise<Review>;
 
   // 내가 쓴 리뷰 수정
-  edit(data: BaseRequestData<ReviewWriteData & ReviewUpdateData>): Promise<unknown>;
+  edit(
+    data: BaseRequestData<ReviewWriteData & ReviewUpdateData>,
+  ): Promise<unknown>;
 
   // 내가 쓴 리뷰 삭제
   delete(data: BaseRequestData<ReviewUpdateData>): Promise<unknown>;
 
   // 모든 리뷰 조회
-  getAll(data: BaseRequestData<ReviewListRequestData>): Promise<ReviewListResponse>;
+  getAll(
+    data: BaseRequestData<ReviewListRequestData>,
+  ): Promise<ReviewListResponse>;
+
+  save(data: BaseRequestData<SaveReviewRequest>): Promise<SaveReviewResponse>;
+
+  cancelSave(data: BaseRequestData<CancelSaveRequest>): Promise<void>;
+
+  getSaved(
+    data: BaseRequestData<SavedReviewListRequest>,
+  ): Promise<SavedReviewListResponse>;
 }

@@ -1,12 +1,30 @@
 import type { AuthRepository } from '@repo/entity/src/auth';
 import type { CommunityDessertReviewCategory } from '@repo/entity/src/community';
-import type { Review, ReviewListRequestData, ReviewListResponse, ReviewRepository, ReviewUpdateData, ReviewWriteData } from '@repo/entity/src/review';
+import type {
+  CancelSaveRequest,
+  Review,
+  ReviewListRequestData,
+  ReviewListResponse,
+  ReviewRepository,
+  ReviewUpdateData,
+  ReviewWriteData,
+  SavedReviewListRequest,
+  SavedReviewListResponse,
+  SaveReviewRequest,
+  SaveReviewResponse,
+} from '@repo/entity/src/review';
 
 export default class ReviewService {
   private readonly authRepository: AuthRepository | null;
   private readonly reviewRepository: ReviewRepository | null;
 
-  constructor({ authRepository, reviewRepository }: { authRepository?: AuthRepository, reviewRepository?: ReviewRepository }) {
+  constructor({
+    authRepository,
+    reviewRepository,
+  }: {
+    authRepository?: AuthRepository;
+    reviewRepository?: ReviewRepository;
+  }) {
     this.authRepository = authRepository ?? null;
     this.reviewRepository = reviewRepository ?? null;
   }
@@ -28,7 +46,10 @@ export default class ReviewService {
     }
 
     const authorization = await this.authRepository?.getAuthorization();
-    const response = await this.reviewRepository.getDetail({ data, authorization });
+    const response = await this.reviewRepository.getDetail({
+      data,
+      authorization,
+    });
 
     return response;
   }
@@ -39,7 +60,7 @@ export default class ReviewService {
     }
 
     const response = await this.reviewRepository.getMine({ data });
-    
+
     return response;
   }
 
@@ -79,7 +100,54 @@ export default class ReviewService {
     }
 
     const authorization = await this.authRepository?.getAuthorization();
-    const response = await this.reviewRepository.getAll({ data, authorization });
+    const response = await this.reviewRepository.getAll({
+      data,
+      authorization,
+    });
+
+    return response;
+  }
+
+  async save(data: SaveReviewRequest): Promise<SaveReviewResponse> {
+    if (!this.reviewRepository) {
+      throw new Error('ReviewRepository is not set');
+    }
+
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.reviewRepository.save({
+      data,
+      authorization,
+    });
+
+    return response;
+  }
+
+  async cancelSave(data: CancelSaveRequest): Promise<void> {
+    if (!this.reviewRepository) {
+      throw new Error('ReviewRepository is not set');
+    }
+
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.reviewRepository.cancelSave({
+      data,
+      authorization,
+    });
+
+    return response;
+  }
+
+  async getSaved(
+    data: SavedReviewListRequest,
+  ): Promise<SavedReviewListResponse> {
+    if (!this.reviewRepository) {
+      throw new Error('ReviewRepository is not set');
+    }
+
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.reviewRepository.getSaved({
+      data,
+      authorization,
+    });
 
     return response;
   }

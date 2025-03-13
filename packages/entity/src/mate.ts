@@ -1,8 +1,13 @@
-import type { BaseRequestData } from "./appMetadata";
-import type { CommunityCategory } from "./community";
-import type { Gender } from "./user";
+import type { BaseRequestData } from './appMetadata';
+import type { CommunityCategory } from './community';
+import type { Gender } from './user';
 
-export type MateApplyStatus = 'PENDING' | 'NONE' | 'APPROVED' | 'REJECTED' | 'BANNED';
+export type MateApplyStatus =
+  | 'PENDING'
+  | 'NONE'
+  | 'APPROVED'
+  | 'REJECTED'
+  | 'BANNED';
 
 // FIXME: Raw Data 파일 분리
 export interface RawMate {
@@ -29,13 +34,11 @@ export interface RawMate {
   updatedAt: string;
 }
 
-export interface Mate extends Omit<RawMate,
-  'mateUuid' |
-  'userUuid' |
-  'mateImage' |
-  'recruitYn' |
-  'appliedYn'
-> {
+export interface Mate
+  extends Omit<
+    RawMate,
+    'mateUuid' | 'userUuid' | 'mateImage' | 'recruitYn' | 'appliedYn'
+  > {
   id: string;
   userId: string;
   mateImage: string;
@@ -218,15 +221,50 @@ export interface MateEditRequest extends MateWriteRequest {
   id: string;
 }
 
+export interface SavedMate {
+  mateUuid: string;
+  storeId: number;
+  userUuid: string;
+  nickname: string;
+  title: string;
+  content: string;
+  recruitYn: true;
+  mateImage: string;
+  profileImage: string;
+  place: {
+    placeName: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+  };
+  createdAt: string;
+  updatedAt: string;
+  saved: boolean;
+  applyStatus: string; //  'NONE'
+  gender: string; //'MALE';
+  mateCategory: string;
+}
+
+export interface SavedMateListResponse {
+  mates: SavedMate[];
+  last: boolean;
+}
+
 export interface MateRepository {
   applyMate(data: BaseRequestData<MateApplyRequest>): Promise<unknown>; // 모임 참여
   cancelApplyMate(data: BaseRequestData<MateApplyRequest>): Promise<unknown>; // 모임 참여 취소
   leave(data: BaseRequestData<MateLeaveRequest>): Promise<unknown>; // 모임 탈퇴
-  acceptMyTeamMember(data: BaseRequestData<MateAcceptRequest>): Promise<unknown>; // 팀 멤버 수락
-  rejectMyTeamMember(data: BaseRequestData<MateRejectRequest>): Promise<unknown>; // 팀 멤버 거절
+  acceptMyTeamMember(
+    data: BaseRequestData<MateAcceptRequest>,
+  ): Promise<unknown>; // 팀 멤버 수락
+  rejectMyTeamMember(
+    data: BaseRequestData<MateRejectRequest>,
+  ): Promise<unknown>; // 팀 멤버 거절
   fireMyTeamMember(data: BaseRequestData<MateFireRequest>): Promise<unknown>; // 팀 멤버 추방
   getWaitList(data: BaseRequestData<MateRequest>): Promise<Mate[]>; // 모임 대기 목록 조회
-  getMateList(data: BaseRequestData<MateListRequest>): Promise<MateAllListResponse>; // 모임 목록 조회
+  getMateList(
+    data: BaseRequestData<MateListRequest>,
+  ): Promise<MateAllListResponse>; // 모임 목록 조회
   getMyTeamMembers(data: BaseRequestData<MateRequest>): Promise<Mate[]>; // 내 팀 멤버들 조회
   getDetails(data: BaseRequestData<MateRequest>): Promise<Mate>; // 모임 상세 페이지
   create(data: BaseRequestData<MateCreateRequest>): Promise<Mate>; // 모임 생성
@@ -234,13 +272,20 @@ export interface MateRepository {
   update(data: BaseRequestData<MateUpdateRequest>): Promise<void>; // 모임 수정
   save(data: BaseRequestData<MateSaveRequest>): Promise<unknown>; // 모임 저장
   cancelSave(data: BaseRequestData<MateSaveRequest>): Promise<unknown>; // 모임 저장 취소
-  getSavedMateList(data: BaseRequestData<MateListRequest>): Promise<Mate[]>; // 저장한 모임 목록 조회
+  // getSavedMateList(data: BaseRequestData<MateListRequest>): Promise<Mate[]>; // 저장한 모임 목록 조회
   createReply(data: BaseRequestData<MateReplyRequest>): Promise<unknown>; // 모임 댓글 생성
-  deleteReply(data: BaseRequestData<Omit<MateReplyUpdateRequest, 'content'>>): Promise<unknown>; // 모임 댓글 삭제
+  deleteReply(
+    data: BaseRequestData<Omit<MateReplyUpdateRequest, 'content'>>,
+  ): Promise<unknown>; // 모임 댓글 삭제
   editReply(data: BaseRequestData<MateReplyUpdateRequest>): Promise<unknown>; // 모임 댓글 수정
   getReply(data: BaseRequestData<MateReplyUpdateRequest>): Promise<MateReply>; // 모임 댓글 조회
-  getReplyList(data: BaseRequestData<GetMateReplyListRequest>): Promise<GetMateReplyListResponse>; // 모임 댓글 목록 조회
-  getSavedMateList(data: BaseRequestData<MateListRequest>): Promise<Mate[]>; // 저장한 모임 목록 조회
+  getReplyList(
+    data: BaseRequestData<GetMateReplyListRequest>,
+  ): Promise<GetMateReplyListResponse>; // 모임 댓글 목록 조회
+  getSavedMateList({
+    data,
+    authorization,
+  }: BaseRequestData<MateListRequest>): Promise<SavedMateListResponse>; // 저장한 모임 목록 조회  // TODO: 일단 임의로 고쳤는데 확인받아야함
   write(data: BaseRequestData<MateWriteRequest>): Promise<Mate>; // 모임 생성 및 수정(글쓰기)
   edit(data: BaseRequestData<MateEditRequest>): Promise<unknown>; // 모임 수정(글쓰기)
 }

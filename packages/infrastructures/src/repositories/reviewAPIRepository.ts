@@ -1,6 +1,7 @@
 import fetch from '@repo/api/src/fetch';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import type {
+  CancelSaveRequest,
   RawReviewWriteRequest,
   Review,
   ReviewListRequestData,
@@ -8,6 +9,10 @@ import type {
   ReviewRepository,
   ReviewUpdateData,
   ReviewWriteData,
+  SavedReviewListRequest,
+  SavedReviewListResponse,
+  SaveReviewRequest,
+  SaveReviewResponse,
 } from '@repo/entity/src/review';
 import APIRepository from './apiRepository';
 import type {
@@ -192,5 +197,70 @@ export default class ReviewAPIRepository
       ),
       isLast: response.last,
     };
+  }
+
+  async save({
+    data,
+    authorization,
+  }: BaseRequestData<SaveReviewRequest>): Promise<SaveReviewResponse> {
+    if (!data) {
+      throw new Error('data is not set');
+    }
+
+    const { reviewUuid } = data;
+
+    const url = `${this.endpoint}/review/saved/${reviewUuid}`;
+
+    const response = await fetch<SaveReviewRequest, SaveReviewResponse>({
+      ...(authorization && { headers: { Authorization: authorization } }),
+      method: 'POST',
+      url: url,
+    });
+
+    return response;
+  }
+
+  async cancelSave({
+    data,
+    authorization,
+  }: BaseRequestData<CancelSaveRequest>): Promise<void> {
+    if (!data) {
+      throw new Error('data is not set');
+    }
+
+    const { reviewUuid } = data;
+
+    const url = `${this.endpoint}/review/saved/${reviewUuid}`;
+
+    const response = await fetch<CancelSaveRequest, void>({
+      ...(authorization && { headers: { Authorization: authorization } }),
+      method: 'DELETE',
+      url: url,
+    });
+
+    return response;
+  }
+
+  async getSaved({
+    data,
+    authorization,
+  }: BaseRequestData<SavedReviewListRequest>): Promise<SavedReviewListResponse> {
+    if (!data) {
+      throw new Error('data is not set');
+    }
+    const {} = data;
+
+    const url = `${this.endpoint}/review/saved`;
+
+    const response = await fetch<
+      SavedReviewListRequest,
+      SavedReviewListResponse
+    >({
+      ...(authorization && { headers: { Authorization: authorization } }),
+      method: 'GET',
+      url: url,
+    });
+
+    return response;
   }
 }
