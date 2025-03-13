@@ -73,7 +73,7 @@ export function MateSavedListContainer({ mates }: DessertMateTabProps) {
     },
   );
 
-  const handleToggleSaved = (uuid: string, index: number) => {
+  const handleCancelSaved = (uuid: string, index: number) => {
     startTransition(async () => {
       if (!user) {
         router.replace('/sign-in');
@@ -94,13 +94,13 @@ export function MateSavedListContainer({ mates }: DessertMateTabProps) {
     });
   };
 
-  const handleGoCommunityMateBtnClick = () => {
-    if (!user) {
-      router.replace('/sign-in');
-    } else {
-      router.replace(`${NavigationPathname.CommunityDessertMate}`);
-    }
-  };
+  // const handleGoCommunityMateBtnClick = () => {
+  //   if (!user) {
+  //     router.replace('/sign-in');
+  //   } else {
+  //     router.replace(`${NavigationPathname.CommunityDessertMate}`);
+  //   }
+  // };
 
   return (
     <Carousel setApi={setApi} className="w-full h-full text-xs md:text-xl">
@@ -148,7 +148,7 @@ export function MateSavedListContainer({ mates }: DessertMateTabProps) {
                             <button
                               className="w-[10.46px] h-[10.46px] md:w-[20px] md:h-[20px] flex justify-center items-center"
                               onClick={() =>
-                                handleToggleSaved(
+                                handleCancelSaved(
                                   mateUuid,
                                   page * itemsToShow + index,
                                 )
@@ -190,7 +190,7 @@ export function MateSavedListContainer({ mates }: DessertMateTabProps) {
                       </div>
                       <button
                         className={cn(
-                          'absolute text-[6px] md:text-[10px] bottom-2 right-4 text-white px-2 py-1 md:py-[6px] leading-none h-fit rounded-base',
+                          'absolute text-[6px] md:text-[10px] bottom-2 right-3 text-white px-2 py-1 md:py-[6px] leading-none h-fit rounded-base',
                           recruitYn ? 'bg-primary' : 'bg-[#545454]',
                         )}
                       >
@@ -203,7 +203,7 @@ export function MateSavedListContainer({ mates }: DessertMateTabProps) {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <div className="top-1/2 left-[-5px] md:left-[-10px] z-modal absolute -translate-y-1/2">
+      <div className="top-1/2 left-[-5px] md:left-[-10px] z-modal absolute translate-y-1/2">
         <div
           onClick={() => api?.scrollPrev()}
           className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
@@ -211,7 +211,7 @@ export function MateSavedListContainer({ mates }: DessertMateTabProps) {
           <IconDirection className="w-full h-full text-[#9F9F9F] rotate-90 transfrom" />
         </div>
       </div>
-      <div className="top-1/2 right-[-5px] md:right-[-10px] z-modal absolute -translate-y-1/2">
+      <div className="top-1/2 right-[-5px] md:right-[-10px] z-modal absolute translate-y-1/2">
         <div
           onClick={() => api?.scrollNext()}
           className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"

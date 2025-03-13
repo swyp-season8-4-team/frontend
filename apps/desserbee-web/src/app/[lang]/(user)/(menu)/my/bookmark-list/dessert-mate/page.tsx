@@ -17,7 +17,13 @@ export default async function SavedDessertMatePage() {
       <div className="bg-page flex flex-col min-h-screen">
         <MyPageSubMenuPageHeader title="저장한 디저트 메이트" />
         <div className="px-base flex-1 flex flex-col justify-start pt-[10%]">
-          <MateSavedListContainer mates={mates} isLast={last} />
+          {mates.length !== 0 ? (
+            <MateSavedListContainer mates={mates} isLast={last} />
+          ) : (
+            <div className="w-full text-center">
+              아직 저장된 디저트 메이트가 없습니다.
+            </div>
+          )}
         </div>
       </div>
     </>
