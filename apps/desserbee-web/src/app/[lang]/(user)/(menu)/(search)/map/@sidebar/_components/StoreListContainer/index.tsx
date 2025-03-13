@@ -125,7 +125,7 @@ export function StoreListContainer({
             ref={bottomSheetRef}
             className={cn(
               'w-full max-w-[768px] bg-white rounded-t-base',
-              'h-[50vh] pb-4 pt-[10px] px-base',
+              'h-[40vh] md:h-[50dvh] pb-4 pt-[10px] px-base',
               'animate-slide-up transition-transform duration-500 ease-out',
               showStoreList ? 'translate-y-0' : 'translate-y-full',
             )}

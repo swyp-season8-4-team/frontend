@@ -102,6 +102,10 @@ export function MateSavedListContainer({ mates }: DessertMateTabProps) {
   //   }
   // };
 
+  const handlePaticipateBtnClick = (recruitYn: boolean, mateUuid: string) => {
+    if (recruitYn === false) return;
+    router.push(`/mate/${mateUuid}`);
+  };
   return (
     <Carousel setApi={setApi} className="w-full h-full text-xs md:text-xl">
       <div className="text-xs md:text-[26px] font-semibold mb-4 md:leading-7">
@@ -189,6 +193,9 @@ export function MateSavedListContainer({ mates }: DessertMateTabProps) {
                         </div>
                       </div>
                       <button
+                        onClick={() =>
+                          handlePaticipateBtnClick(recruitYn, mateUuid)
+                        }
                         className={cn(
                           'absolute text-[6px] md:text-[10px] bottom-2 right-3 text-white px-2 py-1 md:py-[6px] leading-none h-fit rounded-base',
                           recruitYn ? 'bg-primary' : 'bg-[#545454]',
