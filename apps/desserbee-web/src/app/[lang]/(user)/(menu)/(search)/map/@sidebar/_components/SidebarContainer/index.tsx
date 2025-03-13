@@ -32,7 +32,7 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
 
   const handleSideBarClose = () => {
     const currentPath = window.location.pathname;
-    router.push(currentPath);
+    router.replace(currentPath);
   };
 
   const handleCreateListComplete = async (

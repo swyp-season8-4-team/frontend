@@ -47,7 +47,7 @@ export function StoreListContainer({
   };
 
   const handleListClose = () => {
-    router.push('?sidebar=true');
+    router.replace('?sidebar=true');
   };
 
   const handleStoreSelectBtnClick = (storeUuid: string) => {
