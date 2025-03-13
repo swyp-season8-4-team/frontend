@@ -14,7 +14,7 @@ import LoginButtons from './LoginButtons';
 import IconEyeBan from '@repo/design-system/components/icons/IconEyeBan';
 import IconEye from '@repo/design-system/components/icons/IconEye';
 import { isErrorResponseData } from '@repo/api/src/error';
-import type { SignInCodeError } from '@repo/entity/src/auth';
+import type { SignInCodeError } from '@repo/entity/src/signIn';
 import AuthConverter from '@repo/infrastructures/src/mappers/authConverter';
 
 // FIXME: 컨버터를 구현체 안에서만 사용할수 있도록 변경
@@ -164,19 +164,17 @@ export default function LoginForm({
   return (
     <form className={className} onSubmit={handleSubmit}>
       <div className="flex flex-col gap-2">
-        <div>
-          <input
-            name="email"
-            value={email}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              setError(null); // 입력 시 에러 메시지 초기화
-            }}
-            placeholder="이메일을 입력 해주세요."
-            className={`w-full px-4 py-3 rounded-lg border ${error?.code === 'INVALID_EMAIL' ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-400`}
-            disabled={isLoading}
-          />
-        </div>
+        <input
+          name="email"
+          value={email}
+          onChange={(e) => {
+            setEmail(e.target.value);
+            setError(null); // 입력 시 에러 메시지 초기화
+          }}
+          placeholder="이메일을 입력 해주세요."
+          className={`w-full px-4 py-3 rounded-lg border ${error?.code === 'INVALID_EMAIL' ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-400`}
+          disabled={isLoading}
+        />
 
         <div className="relative">
           <input

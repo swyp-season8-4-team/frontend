@@ -3,6 +3,7 @@ import {
   DictionaryNamespace,
   type I18NDictionaryData,
   type I18NRepository,
+  SupportISO639Language,
 } from '@repo/entity/src/i18n';
 
 export default class I18NModuleRepository implements I18NRepository {
@@ -14,11 +15,15 @@ export default class I18NModuleRepository implements I18NRepository {
     this.dictionaries = {
       en: {
         [DictionaryNamespace.error]: () =>
-          import('@repo/locale/src/en/error.json').then((module) => module.default),
+          import('@repo/locale/src/en/error.json').then(
+            (module) => module.default,
+          ),
       },
       ko: {
         [DictionaryNamespace.error]: () =>
-          import('@repo/locale/src/ko/error.json').then((module) => module.default),
+          import('@repo/locale/src/ko/error.json').then(
+            (module) => module.default,
+          ),
       },
     };
   }
@@ -30,5 +35,9 @@ export default class I18NModuleRepository implements I18NRepository {
     const dictionary = await this.dictionaries[lang][namespace]();
 
     return dictionary;
+  }
+
+  getLang(): Promise<SupportISO639Language> {
+    throw new Error('Method not implemented.');
   }
 }

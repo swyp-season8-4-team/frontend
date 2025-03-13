@@ -5,7 +5,10 @@ import { SupportISO639Language } from '@repo/entity/src/i18n';
 import { decodeJWT, isExpiredJWT } from '@repo/utility/src/jwt';
 import AuthService from '@repo/usecase/src/authService';
 import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
-import { NavigationPathname } from '@repo/entity/src/navigation';
+import {
+  NavigationLanguageGroup,
+  NavigationPathname,
+} from '@repo/entity/src/navigation';
 import NavigationService from '@repo/usecase/src/navigationService';
 import { HTTPError } from '@repo/api/src/error';
 import { isProd } from './utils/env';
@@ -65,7 +68,7 @@ export async function middleware(request: NextRequest) {
   const authorization = requestHeaders.get('authorization');
 
   // 로그인 여부에 따른 페이지 접근 권한 체크
-  const navigationService = new NavigationService();
+  const navigationService = new NavigationService({});
 
   const isSignInServicePath = navigationService.isSignInServicePath(pathname);
   if (!isSignInServicePath && !authorization) {
@@ -77,7 +80,7 @@ export async function middleware(request: NextRequest) {
     const redirectURL = request.nextUrl.clone();
 
     const originalSearchParam = redirectURL.search;
-    redirectURL.pathname = `ko${NavigationPathname.SignIn}`;
+    redirectURL.pathname = `${NavigationLanguageGroup.ko}${NavigationPathname.SignIn}`; // FIXME: ko
     redirectURL.search = '';
     redirectURL.searchParams.set('next', `${pathname}${originalSearchParam}`);
 

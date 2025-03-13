@@ -7,10 +7,16 @@ interface HeaderProp extends WithChildren, WithClassName {
   title: string;
   fontClass: string;
   backButton?: ReactNode;
-  searchIcon?: ReactNode; 
+  searchIcon?: ReactNode;
 }
 
-export function Header({ title, fontClass, children, backButton, searchIcon }: HeaderProp) {
+export function Header({
+  title,
+  fontClass,
+  children,
+  backButton,
+  searchIcon,
+}: HeaderProp) {
   return (
     <header className="top-0 sticky">
       <div className="flex justify-between items-center bg-primary px-[16px] py-[21px] pt-[13px] pb-3 w-full text-[22px]">

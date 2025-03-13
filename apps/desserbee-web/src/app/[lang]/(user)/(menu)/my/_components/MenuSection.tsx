@@ -1,20 +1,16 @@
 'use client';
 
-import signOutAction from '@/actions/signOutAction';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import MyMenuPanel from './MyMenuPanel';
 
 interface MenuItem {
   label: string;
   href: string;
+  replace?: boolean;
   onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 }
 
 export default function MenuSection() {
-  const handleLogout = async (e: React.MouseEvent<HTMLAnchorElement>) => {
-    await signOutAction();
-  };
-  
   const menuItems: MenuItem[] = [
     {
       label: '약관보기',
@@ -23,9 +19,10 @@ export default function MenuSection() {
     {
       label: '로그아웃',
       href: NavigationPathname.SignOut,
+      replace: true,
     },
   ];
-  
+
   return (
     <div className="space-y-4">
       {menuItems.map((item) => (
@@ -33,4 +30,4 @@ export default function MenuSection() {
       ))}
     </div>
   );
-} 
+}

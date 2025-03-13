@@ -10,7 +10,7 @@ import { cookies } from 'next/headers';
 
 const authService = new AuthService({
   authRepository:
-    process.env.NEXT_PUBLIC_APP_ENV === 'dev_local'
+    process.env.NEXT_PUBLIC_APP_ENV === 'dev_local' // test용
       ? new AuthDevAPIRepository()
       : new AuthAPIRepository(),
 });

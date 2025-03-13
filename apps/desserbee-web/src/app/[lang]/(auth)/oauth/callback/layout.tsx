@@ -1,11 +1,11 @@
-import type { WithChildren } from "@repo/ui/index";
+import { recipeKorea } from '@/app/fonts';
+import { Header } from '@repo/design-system/components/Header';
+import type { WithChildren } from '@repo/ui/index';
 
 export default async function OAuthCallbackLayout({ children }: WithChildren) {
   return (
-    <div className="flex flex-col h-screen">
-      <header className="flex items-center h-14 px-4 bg-white">
-        <h1 className="text-lg font-medium">디저비</h1>
-      </header>
+    <div className="min-h-screen bg-white">
+      <Header title="디저비" fontClass={recipeKorea.className} />
       {children}
     </div>
   );

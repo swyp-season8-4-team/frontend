@@ -3,7 +3,8 @@ import 'server-only';
 import type {
   Dictionary,
   I18NDictionaryData,
-  I18NRepository
+  I18NRepository,
+  SupportISO639Language,
 } from '@repo/entity/src/i18n';
 import fs from 'fs';
 
@@ -25,7 +26,7 @@ export default class I18NLocalFileRepository implements I18NRepository {
       fs.readFile(`${path}/${lang}/${namespace}.json`, (error, data) => {
         if (!error && data) {
           cachedDictionaries[`${lang}:${namespace}`] = JSON.parse(
-            data.toString()
+            data.toString(),
           );
           resolve(cachedDictionaries[`${lang}:${namespace}`] as Dictionary);
         } else {
@@ -35,5 +36,9 @@ export default class I18NLocalFileRepository implements I18NRepository {
     });
 
     return promise;
+  }
+
+  getLang(): Promise<SupportISO639Language> {
+    throw new Error('Method not implemented.');
   }
 }
