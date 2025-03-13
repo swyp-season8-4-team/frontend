@@ -2,7 +2,7 @@ import type { StoreDetailInfoData } from '@repo/entity/src/store';
 import IconBookmark from '@repo/design-system/components/icons/IconBookmark';
 import Image from 'next/image';
 import { cn } from '@repo/ui/lib/utils';
-import { useContext, useOptimistic, useState } from 'react';
+import { useContext, useOptimistic } from 'react';
 import { startTransition } from 'react';
 import MateService from '@repo/usecase/src/mateService';
 import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
@@ -22,7 +22,6 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
   const { user } = useContext(UserContext);
   const displayedMates = mate.slice(0, 3);
 
-  const [isSaved, setIsSaved] = useState(false);
   const [optimisticState, addOptimistic] = useOptimistic(
     displayedMates,
     (state, index) => {
@@ -37,13 +36,13 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
       if (!user) {
         router.replace('/sign-in');
       } else {
+        const currentSaved = optimisticState[index].saved;
         addOptimistic(index);
-        if (isSaved) {
+        if (currentSaved) {
           await mateService.cancelSave({ id: uuid, userId: user.id });
         } else {
           await mateService.save({ id: uuid, userId: user.id });
         }
-        setIsSaved((prev) => !prev);
       }
     });
   };
