@@ -4,21 +4,31 @@ import Image from 'next/image';
 import mapImg from '../_assets/svg/map.svg';
 import houseImg from '../_assets/svg/house.svg';
 import beeImg from '../_assets/svg/bee.svg';
-import type { Mate } from '@repo/entity/src/mate';
+import type { Mate, SavedMate } from '@repo/entity/src/mate';
 import { MyPageSubMenuPageHeader } from '../../_components/MyPageSubMenuPageHeader';
 import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 
 interface BookMarkListContainerProps {
-  savedDessertMate: Mate[];
+  initialMates: SavedMate[];
+  initialIsLast: boolean;
 }
 
 export function BookMarkListContainer({
-  savedDessertMate,
+  initialMates,
+  initialIsLast,
 }: BookMarkListContainerProps) {
   const router = useRouter();
   const handleMoreSavedStoreBtnClick = () => {
     router.push(`${NavigationPathname.Map}?sidebar=true`);
+  };
+
+  const handleMoreSavedReviewBtnClick = () => {
+    router.push(`${NavigationPathname.MySavedReview}`);
+  };
+
+  const hanleMoreDessertMateBtnClick = () => {
+    router.push(`${NavigationPathname.MySavedDesssertMate}`);
   };
   return (
     <>
@@ -74,7 +84,12 @@ export function BookMarkListContainer({
             ))}
           </div>
           <div className="w-full flex justify-end">
-            <button className="text-[10px] md:text-lg">더보기</button>
+            <button
+              onClick={handleMoreSavedReviewBtnClick}
+              className="text-[10px] md:text-lg"
+            >
+              더보기
+            </button>
           </div>
         </div>
         <div className="flex flex-col gap-[7.25px] md:gap-[14px]">
@@ -82,10 +97,9 @@ export function BookMarkListContainer({
             저장한 디저트 메이트
           </div>
           <div className="grid grid-cols-4 gap-[6.42px] md:gap-4">
-            {Array.from([1, 2, 3, 4]).map((mate) => (
+            {initialMates.map((mate) => (
               <div
-                // key={mate.id}
-                key={mate}
+                key={mate.mateUuid}
                 className="bg-[#D9D9D9] rounded-[4.01px] w-full aspect-square flex justify-center items-center"
               >
                 <div className="w-1/2">
@@ -99,7 +113,12 @@ export function BookMarkListContainer({
             ))}
           </div>
           <div className="w-full flex justify-end">
-            <button className="text-[10px] md:text-lg">더보기</button>
+            <button
+              onClick={hanleMoreDessertMateBtnClick}
+              className="text-[10px] md:text-lg"
+            >
+              더보기
+            </button>
           </div>
         </div>
       </div>

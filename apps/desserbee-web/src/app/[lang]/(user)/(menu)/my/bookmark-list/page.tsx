@@ -9,5 +9,10 @@ const mateService = new MateService({
 });
 
 export default async function MyBookmarkListPage() {
-  return <BookMarkListContainer savedDessertMate={[]} />;
+  const { mates, last } = await mateService.getSavedMateList({
+    from: 0,
+    to: 4,
+  });
+
+  return <BookMarkListContainer initialMates={mates} initialIsLast={last} />;
 }

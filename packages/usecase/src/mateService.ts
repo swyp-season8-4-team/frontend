@@ -17,6 +17,7 @@ import type {
   MateSaveRequest,
   MateUpdateRequest,
   MateWriteRequest,
+  SavedMateListResponse,
 } from '@repo/entity/src/mate';
 
 export default class MateService {
@@ -224,12 +225,21 @@ export default class MateService {
     return response;
   }
 
-  async getSavedMateList(data: MateListRequest): Promise<Mate[]> {
+  async getSavedMateList(
+    data: MateListRequest,
+  ): Promise<SavedMateListResponse> {
     if (!this.mateRepository) {
+      throw new Error('mateRepository is not set');
+    } else if (!this.authRepository) {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.getSavedMateList({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+
+    const response = await this.mateRepository.getSavedMateList({
+      data,
+      authorization,
+    });
 
     return response;
   }
