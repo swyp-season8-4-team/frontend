@@ -523,22 +523,18 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   // 카카오맵 초기화 로직
   useEffect(() => {
     if (isScriptLoaded && !isInitialized && mapRef.current) {
-      // 서비스 초기화
       const initializedServices = initializeServices();
       servicesRef.current = initializedServices;
 
-      // 초기화 전에 mapService를 통해 마지막 위치 확인
       const lastPosition = initializedServices.mapService.getLastPosition();
 
-      window.kakao.maps.load(() => {
+      window.kakao?.maps?.load?.(() => {
         try {
-          // 지도 로드 - 저장된 위치가 있으면 사용
           loadMap(initializedServices, lastPosition)
             .then(() => {
               setIsMapLoaded(true);
               setIsInitialized(true);
 
-              // 위치가 있었으면 해당 위치 중심으로 가게 정보 가져오기
               if (lastPosition) {
                 setMapCenter(lastPosition);
               }
