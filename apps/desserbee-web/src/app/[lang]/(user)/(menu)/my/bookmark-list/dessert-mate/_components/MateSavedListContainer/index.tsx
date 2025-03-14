@@ -113,34 +113,17 @@ export function MateSavedListContainer({
     loadSavedMates();
   }, [fromTo]);
 
-  const [optimisticState, addOptimistic] = useOptimistic(
-    savedMates,
-    (state, index) => {
-      const newState = [...state];
-      newState[index as number].saved = !newState[index as number].saved;
-      return newState;
-    },
-  );
+  const handleCancelSaved = (uuid: string) => {
+    if (!user) {
+      router.replace('/sign-in');
+      return;
+    }
 
-  const handleCancelSaved = (uuid: string, index: number) => {
-    startTransition(async () => {
-      if (!user) {
-        router.replace('/sign-in');
-      } else {
-        const currentSaved = optimisticState[index].saved;
-        if (currentSaved) {
-          const confirmed = confirm('해당 게시글 저장을 취소하시겠습니까?');
-          if (confirmed) {
-            addOptimistic(index);
-            await cancelSaveMate({ id: uuid, userId: user.id });
-            router.refresh();
-          }
-        } else {
-          addOptimistic(index);
-          await saveMate({ id: uuid, userId: user.id });
-        }
-      }
-    });
+    if (confirm('해당 게시글 저장을 취소하시겠습니까?')) {
+      cancelSaveMate({ id: uuid, userId: user.id }).then(() => {
+        router.refresh();
+      });
+    }
   };
 
   const handlePaticipateBtnClick = (recruitYn: boolean, mateUuid: string) => {
@@ -168,26 +151,23 @@ export function MateSavedListContainer({
       </div>
       <CarouselContent>
         {Array.from({
-          length: Math.ceil(optimisticState.length / itemsToShow),
+          length: Math.ceil(savedMates.length / itemsToShow),
         }).map((_, page) => (
           <CarouselItem key={page}>
             <div className="grid grid-cols-1 md:grid-cols-2 px-[34px] md:gap-x-3 gap-y-[5px] md:gap-y-3">
-              {optimisticState
+              {savedMates
                 .slice(page * itemsToShow, (page + 1) * itemsToShow)
                 .map(
-                  (
-                    {
-                      mateImage,
-                      mateCategory,
-                      title,
-                      content,
-                      nickname,
-                      recruitYn,
-                      saved,
-                      mateUuid,
-                    },
-                    index,
-                  ) => (
+                  ({
+                    mateImage,
+                    mateCategory,
+                    title,
+                    content,
+                    nickname,
+                    recruitYn,
+                    saved,
+                    mateUuid,
+                  }) => (
                     <div
                       className="bg-white rounded-[4.02px] p-[13px] relative"
                       key={mateUuid}
@@ -205,12 +185,7 @@ export function MateSavedListContainer({
                           <div className="border-[#714115] rounded-full aspect-square border">
                             <button
                               className="w-[10.46px] h-[10.46px] md:w-[20px] md:h-[20px] flex justify-center items-center"
-                              onClick={() =>
-                                handleCancelSaved(
-                                  mateUuid,
-                                  page * itemsToShow + index,
-                                )
-                              }
+                              onClick={() => handleCancelSaved(mateUuid)}
                             >
                               <IconBookmark
                                 className={cn(
