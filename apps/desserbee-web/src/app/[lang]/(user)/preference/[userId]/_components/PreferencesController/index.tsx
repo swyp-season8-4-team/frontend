@@ -1,13 +1,16 @@
 'use client';
 
-import submitPreferencesAction from "@/actions/submitPreferencesAction";
-import { UserContext } from "@/contexts/UserContext";
-import { NavigationLanguageGroup, NavigationPathname } from "@repo/entity/src/navigation";
-import { useRouter } from "next/navigation";
-import { useContext } from "react";
-import { PreferencesContext } from "../../_contexts/PreferencesContext";
-import PreferencesIntro from "../PreferencesIntro";
-import PreferencesQnA from "../PreferencesQnA";
+import submitPreferencesAction from '@/actions/submitPreferencesAction';
+import { UserContext } from '@/contexts/UserContext';
+import {
+  NavigationLanguageGroup,
+  NavigationPathname,
+} from '@repo/entity/src/navigation';
+import { useRouter } from 'next/navigation';
+import { useContext } from 'react';
+import { PreferencesContext } from '../../_contexts/PreferencesContext';
+import PreferencesIntro from '../PreferencesIntro';
+import PreferencesQnA from '../PreferencesQnA';
 
 export default function PreferencesController() {
   const router = useRouter();
@@ -37,11 +40,11 @@ export default function PreferencesController() {
           }}
         />
       )}
-      {typeof currentQuestion === 'number' && 
+      {typeof currentQuestion === 'number' &&
         qnaList.map((qna, index) => {
           if (index === currentQuestion) {
             return (
-              <PreferencesQnA 
+              <PreferencesQnA
                 {...qna}
                 key={`qna-${index}`}
                 onClickA={async () => {
@@ -52,7 +55,9 @@ export default function PreferencesController() {
                       user,
                       preferences,
                     });
-                    router.replace(`${NavigationLanguageGroup.ko}${NavigationPathname.Map}`);
+                    router.replace(
+                      `${NavigationLanguageGroup.ko}${NavigationPathname.Map}`,
+                    );
                     return;
                   }
                 }}
@@ -62,7 +67,9 @@ export default function PreferencesController() {
                       user,
                       preferences,
                     });
-                    router.replace(`${NavigationLanguageGroup.ko}${NavigationPathname.Map}`);
+                    router.replace(
+                      `${NavigationLanguageGroup.ko}${NavigationPathname.Map}`,
+                    );
                     return;
                   }
                   updateCurrentQuestion(index + 1);
@@ -71,11 +78,23 @@ export default function PreferencesController() {
             );
           }
         })}
-        {currentQuestion === 'none' && <PreferencesQnA {...noneMBTI} onClickA={() => {
-          router.replace(`${NavigationLanguageGroup.ko}${NavigationPathname.Map}`);
-        }} onClickB={() => {
-          updateCurrentQuestion(null);
-        }}/>}
+      {currentQuestion === 'none' && (
+        <PreferencesQnA
+          {...noneMBTI}
+          onClickA={async () => {
+            await submitPreferencesAction({
+              user,
+              preferences,
+            });
+            router.replace(
+              `${NavigationLanguageGroup.ko}${NavigationPathname.Map}`,
+            );
+          }}
+          onClickB={() => {
+            updateCurrentQuestion(null);
+          }}
+        />
+      )}
     </>
-  )
+  );
 }

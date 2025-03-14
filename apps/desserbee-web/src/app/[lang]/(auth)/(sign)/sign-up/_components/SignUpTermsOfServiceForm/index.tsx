@@ -1,17 +1,22 @@
 'use client';
 
 import signUpAction from '@/actions/signUpAction';
-import updateProfileImageAction from '@/actions/updateProfileImageAction';
 import { NavigationPathname } from '@repo/entity/src/navigation';
+import UserAPIRepository from '@repo/infrastructures/src/repositories/userAPIRepository';
 import { Button } from '@repo/ui/components/button';
+import UserService from '@repo/usecase/src/userService';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useContext, useState } from 'react';
 import { SignUpContext } from '../../_contexts/SignUpContext';
 
+const userService = new UserService({
+  userRepository: new UserAPIRepository(),
+});
 
 export default function SignUpTermsOfServiceForm() {
-  const { email, password, nickname, confirmPassword, gender, profileImage } = useContext(SignUpContext);
+  const { email, password, nickname, confirmPassword, gender, profileImage } =
+    useContext(SignUpContext);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [agreements, setAgreements] = useState({
@@ -36,16 +41,16 @@ export default function SignUpTermsOfServiceForm() {
 
   const handleSingleCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, checked } = e.target;
-    setAgreements(prev => {
+    setAgreements((prev) => {
       const newAgreements = {
         ...prev,
         [name]: checked,
       };
-      
+
       const allChecked = Object.entries(newAgreements)
         .filter(([k]) => k !== 'all')
         .every(([, value]) => value);
-      
+
       return {
         ...newAgreements,
         all: allChecked,
@@ -67,10 +72,9 @@ export default function SignUpTermsOfServiceForm() {
           gender,
         });
 
-        if (!!profileImage) {
-          await updateProfileImageAction(profileImage);
+        if (profileImage) {
+          await userService.uploadProfileImage(profileImage);
         }
-        
       } catch (error) {
         console.error('회원가입 오류:', error);
       } finally {
@@ -98,11 +102,17 @@ export default function SignUpTermsOfServiceForm() {
               onChange={handleAllCheck}
               className="sr-only"
             />
-            <div className={`w-6 h-6 rounded-full border ${
-              agreements.all ? 'bg-[#F5B01C] border-[#F5B01C]' : 'border-gray-300'
-            }`}>
+            <div
+              className={`w-6 h-6 rounded-full border ${
+                agreements.all
+                  ? 'bg-[#F5B01C] border-[#F5B01C]'
+                  : 'border-gray-300'
+              }`}
+            >
               {agreements.all && (
-                <span className="text-white flex items-center justify-center h-full">✓</span>
+                <span className="text-white flex items-center justify-center h-full">
+                  ✓
+                </span>
               )}
             </div>
           </div>
@@ -112,22 +122,24 @@ export default function SignUpTermsOfServiceForm() {
         <div className="space-y-4">
           <label className="flex items-center justify-between w-full cursor-pointer">
             <div>
-              <Link 
-                href={NavigationPathname.TermsOfService} 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <Link
+                href={NavigationPathname.TermsOfService}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="underline"
               >
                 이용약관
-              </Link> 및 
-              <Link 
-                href={NavigationPathname.PrivacyPolicy} 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              </Link>{' '}
+              및
+              <Link
+                href={NavigationPathname.PrivacyPolicy}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="underline"
               >
                 개인정보처리방침
-              </Link> (필수)
+              </Link>{' '}
+              (필수)
             </div>
             <div className="relative">
               <input
@@ -137,11 +149,17 @@ export default function SignUpTermsOfServiceForm() {
                 onChange={handleSingleCheck}
                 className="sr-only"
               />
-              <div className={`w-6 h-6 rounded-full border ${
-                agreements.terms ? 'bg-[#F5B01C] border-[#F5B01C]' : 'border-gray-300'
-              }`}>
+              <div
+                className={`w-6 h-6 rounded-full border ${
+                  agreements.terms
+                    ? 'bg-[#F5B01C] border-[#F5B01C]'
+                    : 'border-gray-300'
+                }`}
+              >
                 {agreements.terms && (
-                  <span className="text-white flex items-center justify-center h-full">✓</span>
+                  <span className="text-white flex items-center justify-center h-full">
+                    ✓
+                  </span>
                 )}
               </div>
             </div>
@@ -149,14 +167,15 @@ export default function SignUpTermsOfServiceForm() {
 
           <label className="flex items-center justify-between w-full cursor-pointer">
             <div>
-              <Link 
-                href={NavigationPathname.LocationBasedFeaturesTermsOfService} 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <Link
+                href={NavigationPathname.LocationBasedFeaturesTermsOfService}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="underline"
               >
                 위치기반서비스
-              </Link> 이용약관 (필수)
+              </Link>{' '}
+              이용약관 (필수)
             </div>
             <div className="relative">
               <input
@@ -166,11 +185,17 @@ export default function SignUpTermsOfServiceForm() {
                 onChange={handleSingleCheck}
                 className="sr-only"
               />
-              <div className={`w-6 h-6 rounded-full border ${
-                agreements.location ? 'bg-[#F5B01C] border-[#F5B01C]' : 'border-gray-300'
-              }`}>
+              <div
+                className={`w-6 h-6 rounded-full border ${
+                  agreements.location
+                    ? 'bg-[#F5B01C] border-[#F5B01C]'
+                    : 'border-gray-300'
+                }`}
+              >
                 {agreements.location && (
-                  <span className="text-white flex items-center justify-center h-full">✓</span>
+                  <span className="text-white flex items-center justify-center h-full">
+                    ✓
+                  </span>
                 )}
               </div>
             </div>
@@ -178,14 +203,15 @@ export default function SignUpTermsOfServiceForm() {
 
           <label className="flex items-center justify-between w-full cursor-pointer">
             <div>
-              <Link 
+              <Link
                 href={NavigationPathname.MarketingTermsOfService}
-                target="_blank" 
-                rel="noopener noreferrer" 
+                target="_blank"
+                rel="noopener noreferrer"
                 className="underline"
               >
                 마케팅 활용
-              </Link> 동의 (선택)
+              </Link>{' '}
+              동의 (선택)
             </div>
             <div className="relative">
               <input
@@ -195,11 +221,17 @@ export default function SignUpTermsOfServiceForm() {
                 onChange={handleSingleCheck}
                 className="sr-only"
               />
-              <div className={`w-6 h-6 rounded-full border ${
-                agreements.marketing ? 'bg-[#F5B01C] border-[#F5B01C]' : 'border-gray-300'
-              }`}>
+              <div
+                className={`w-6 h-6 rounded-full border ${
+                  agreements.marketing
+                    ? 'bg-[#F5B01C] border-[#F5B01C]'
+                    : 'border-gray-300'
+                }`}
+              >
                 {agreements.marketing && (
-                  <span className="text-white flex items-center justify-center h-full">✓</span>
+                  <span className="text-white flex items-center justify-center h-full">
+                    ✓
+                  </span>
                 )}
               </div>
             </div>

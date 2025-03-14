@@ -20,23 +20,23 @@ export default function PreferencesQnA({
   onClickB,
 }: Props) {
   return (
-    <main className="flex flex-col items-center justify-center px-4 py-8 text-center gap-8 w-full max-w-md">
-      <h2 className="text-[#393939] text-center font-pretendard text-[22px] font-semibold leading-[130%] tracking-[-0.66px]">
+    <main className="flex flex-col items-center px-4 py-6 text-center gap-3 w-full max-w-[90%]">
+      <h2 className="text-[#393939] text-center font-pretendard text-[18px] font-semibold leading-[130%] tracking-[-0.66px]">
         {question}
       </h2>
       {illust && (
-        <div className="my-4">
+        <div className="my-2">
           <Image
             src={illust}
             alt="preference illustration"
-            width={300}
-            height={200}
+            width={280}
+            height={180}
             priority
-            className="mx-auto"
+            className="mx-auto w-auto h-auto max-h-[180px]"
           />
         </div>
       )}
-      <div className="w-full mt-4">
+      <div className="flex flex-col items-center w-full mt-2">
         <SignInButtons
           firstButtonText={answerA}
           secondButtonText={answerB}
