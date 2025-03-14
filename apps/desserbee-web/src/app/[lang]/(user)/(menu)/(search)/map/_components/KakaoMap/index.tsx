@@ -568,7 +568,9 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
 
         const stores = await fetchNearbyStores(
           mapCenterRef.current,
-          selectedPreferenceTags,
+          selectedPreferenceTags.length > 0
+            ? selectedPreferenceTags
+            : undefined,
           searchKeyword,
         );
 
