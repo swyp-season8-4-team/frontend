@@ -573,11 +573,17 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
         );
 
         if (stores) {
-          await updateNewClusterMarkers(stores);
+          // 중복 제거: storeId를 기준으로 유니크한 가게들만 필터링
+          const uniqueStores = stores.filter(
+            (store, index, self) =>
+              index === self.findIndex((s) => s.storeId === store.storeId),
+          );
+
+          await updateNewClusterMarkers(uniqueStores);
           setIsFetchRequired(false);
 
           // 각 가게와 현재 사용자 위치 간의 거리 계산
-          const newDistances = stores.map((store) => {
+          const newDistances = uniqueStores.map((store) => {
             if (
               !currentPosition ||
               !currentPosition.latitude ||
@@ -599,7 +605,7 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
             setDistances(
               newDistances.filter((d): d is number => d !== undefined),
             );
-            setNearByStores(stores);
+            setNearByStores(uniqueStores);
             setIsSearching(false);
           }, 100);
         } else {
