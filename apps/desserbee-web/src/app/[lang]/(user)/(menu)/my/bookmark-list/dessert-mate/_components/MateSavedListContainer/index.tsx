@@ -22,16 +22,6 @@ interface DessertMateTabProps {
   isLast: boolean;
 }
 
-const fetchSavedMates = async (currentPage: number, itemsToShow: number) => {
-  const from = currentPage * itemsToShow;
-  const to = from + itemsToShow;
-  const response = await getSavedMateList({ from, to });
-
-  if (response.mates.length === 0) return null;
-
-  return response;
-};
-
 export function MateSavedListContainer({
   mates: initialMates,
 }: DessertMateTabProps) {
@@ -145,6 +135,9 @@ export function MateSavedListContainer({
   };
 
   const handleNextPage = () => {
+    if (!api) return;
+
+    api.scrollNext();
     setFromTo((prev) => ({
       from: prev.from + itemsToShow,
       to: prev.to + itemsToShow,
@@ -153,6 +146,9 @@ export function MateSavedListContainer({
   };
 
   const handlePrevPage = () => {
+    if (!api) return;
+
+    api.scrollPrev();
     setFromTo((prev) => ({
       from: Math.max(prev.from - itemsToShow, 0),
       to: prev.to - itemsToShow,
@@ -264,7 +260,7 @@ export function MateSavedListContainer({
           </CarouselItem>
         ))}
       </CarouselContent>
-      {currentPage !== 0 && (
+      {fromTo.from !== 0 && (
         <div className="top-1/2 left-[-5px] md:left-[-10px] z-modal absolute translate-y-1/2">
           <div
             onClick={handlePrevPage}
