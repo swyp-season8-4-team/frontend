@@ -17,6 +17,7 @@ import IconDirection from '@repo/design-system/components/icons/IconDirection';
 import { cancelSave, getSavedReviewList, saveReview } from './action';
 import type { SavedReview } from '@repo/entity/src/review';
 import { formatDateToHHMM } from '@repo/utility/src/date';
+import { NavigationPathname } from '@repo/entity/src/navigation';
 
 interface ReviewSavedListContainerProps {
   reviews: SavedReview[];
@@ -127,6 +128,10 @@ export function ReviewSavedListContainer({
     }
   };
 
+  const handleGoReviewBtn = (reviewUuid: string) => {
+    router.push(`/review/${reviewUuid}`);
+  };
+
   const handleSaveMate = async (uuid: string) => {
     if (!user) {
       router.replace('/sign-in');
@@ -191,14 +196,14 @@ export function ReviewSavedListContainer({
                             <button
                               className="w-[10.46px] h-[10.46px] md:w-[20px] md:h-[20px] flex justify-center items-center"
                               onClick={() =>
-                                !saved
+                                saved
                                   ? handleCancelSaved(reviewUuid)
                                   : handleSaveMate(reviewUuid)
                               }
                             >
                               <IconBookmark
                                 className={cn(
-                                  !saved ? 'text-[#AA6120]' : 'text-page',
+                                  saved ? 'text-[#AA6120]' : 'text-page',
                                   'md:w-3 md:h-3 w-2 h-2',
                                 )}
                               />
@@ -248,7 +253,10 @@ export function ReviewSavedListContainer({
                               </div>
                             </div>
                           </div>
-                          <button className="absolute bg-primary text-[8px] md:text-[10px] bottom-1 right-1 text-white px-2 py-1 md:py-[6px] leading-none h-fit rounded-base">
+                          <button
+                            onClick={() => handleGoReviewBtn(reviewUuid)}
+                            className="absolute bg-primary text-[8px] md:text-[10px] bottom-1 right-1 text-white px-2 py-1 md:py-[6px] leading-none h-fit rounded-base"
+                          >
                             보러가기
                           </button>
                         </div>
