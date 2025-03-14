@@ -67,11 +67,11 @@ export function PreferenceTags({
         }}
       >
         <CarouselContent className="-ml-1">
-          <div className="px-1 py-1">
+          <div className="px-1 py-1 text-nowrap flex-shrink-0">
             <Tag
               className={cn(
                 // 'text-3 md:text-lg py-[6px] md:py-2 md:px-3 font-medium select-none text-nowrap text-[#DE8332]',
-                'text-3 py-[6px] font-medium select-none text-nowrap text-[#DE8332]',
+                `basis-1/${categories.length} text-3 py-[6px] font-medium select-none text-nowrap text-[#DE8332]`,
                 isMyPreferSelected && 'text-white bg-[#DE8332]',
               )}
               onClick={() => {
@@ -84,7 +84,7 @@ export function PreferenceTags({
           {categories.map((category) => (
             <CarouselItem
               key={category.id}
-              className={`pl-2 basis-1/${categories.length} text-nowrap`}
+              className={`pl-2 basis-1/${categories.length} text-nowrap flex-shrink-0`}
             >
               <div className="px-1 py-1">
                 <Tag

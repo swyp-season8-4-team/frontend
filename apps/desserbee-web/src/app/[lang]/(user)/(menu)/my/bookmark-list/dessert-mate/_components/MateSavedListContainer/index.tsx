@@ -6,11 +6,8 @@ import { cn } from '@repo/ui/lib/utils';
 import { useContext, useEffect, useOptimistic, useState } from 'react';
 import { startTransition } from 'react';
 import { UserContext } from '@/contexts/UserContext';
-import { NavigationPathname } from '@repo/entity/src/navigation';
 import { useRouter } from 'next/navigation';
 import type { SavedMate } from '@repo/entity/src/mate';
-import MateService from '@repo/usecase/src/mateService';
-import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
 import {
   Carousel,
   CarouselContent,
@@ -18,32 +15,43 @@ import {
   type CarouselApi,
 } from '@repo/ui/components/carousel';
 import IconDirection from '@repo/design-system/components/icons/IconDirection';
+import { cancelSaveMate, getSavedMateList, saveMate } from './action';
 
 interface DessertMateTabProps {
   mates: SavedMate[];
   isLast: boolean;
 }
 
-//TODO: 토큰 없이 요청 보내지면 ACTION으로 빼기
-const mateService = new MateService({
-  mateRepository: new MateAPIRepository(),
-});
+const fetchSavedMates = async (currentPage: number, itemsToShow: number) => {
+  const from = currentPage * itemsToShow;
+  const to = from + itemsToShow;
+  const response = await getSavedMateList({ from, to });
 
-export function MateSavedListContainer({ mates }: DessertMateTabProps) {
+  if (response.mates.length === 0) return null;
+
+  return response;
+};
+
+export function MateSavedListContainer({
+  mates: initialMates,
+}: DessertMateTabProps) {
   const router = useRouter();
   const { user } = useContext(UserContext);
   const [itemsToShow, setItemsToShow] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [savedMates, setSavedMates] = useState<SavedMate[]>(initialMates);
+  const [isLast, setIsLast] = useState(false);
 
   const [api, setApi] = useState<CarouselApi>();
-  const [, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(0);
 
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
       if (width < 768) {
-        setItemsToShow(3); // 여기서 세로로 몇 개 보여줄지 정하고 아래에서 grid-cols 해주면 원하는대로 정렬 가능
+        setItemsToShow(4); // 여기서 세로로 몇 개 보여줄지 정하고 아래에서 grid-cols 해주면 원하는대로 정렬 가능
       } else {
-        setItemsToShow(6);
+        setItemsToShow(8);
       }
     };
 
@@ -51,6 +59,18 @@ export function MateSavedListContainer({ mates }: DessertMateTabProps) {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  useEffect(() => {
+    const loadSavedMates = async () => {
+      const response = await fetchSavedMates(currentPage, itemsToShow);
+      if (!response) return;
+
+      setSavedMates(response.mates);
+      setIsLast(response.last);
+    };
+
+    loadSavedMates();
+  }, [currentPage, itemsToShow]);
 
   useEffect(() => {
     if (!api) {
@@ -65,7 +85,7 @@ export function MateSavedListContainer({ mates }: DessertMateTabProps) {
   }, [api]);
 
   const [optimisticState, addOptimistic] = useOptimistic(
-    mates,
+    savedMates,
     (state, index) => {
       const newState = [...state];
       newState[index as number].saved = !newState[index as number].saved;
@@ -83,29 +103,30 @@ export function MateSavedListContainer({ mates }: DessertMateTabProps) {
           const confirmed = confirm('해당 게시글 저장을 취소하시겠습니까?');
           if (confirmed) {
             addOptimistic(index);
-            await mateService.cancelSave({ id: uuid, userId: user.id });
+            await cancelSaveMate({ id: uuid, userId: user.id });
             router.refresh();
           }
         } else {
           addOptimistic(index);
-          await mateService.save({ id: uuid, userId: user.id });
+          await saveMate({ id: uuid, userId: user.id });
         }
       }
     });
   };
 
-  // const handleGoCommunityMateBtnClick = () => {
-  //   if (!user) {
-  //     router.replace('/sign-in');
-  //   } else {
-  //     router.replace(`${NavigationPathname.CommunityDessertMate}`);
-  //   }
-  // };
-
   const handlePaticipateBtnClick = (recruitYn: boolean, mateUuid: string) => {
     if (recruitYn === false) return;
     router.push(`/mate/${mateUuid}`);
   };
+
+  const handleNextPage = () => {
+    setCurrentPage((prev) => prev + 1);
+  };
+
+  const handlePrevPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 0));
+  };
+
   return (
     <Carousel setApi={setApi} className="w-full h-full text-xs md:text-xl">
       <div className="text-xs md:text-[26px] font-semibold mb-4 md:leading-7">
@@ -210,22 +231,26 @@ export function MateSavedListContainer({ mates }: DessertMateTabProps) {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <div className="top-1/2 left-[-5px] md:left-[-10px] z-modal absolute translate-y-1/2">
-        <div
-          onClick={() => api?.scrollPrev()}
-          className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
-        >
-          <IconDirection className="w-full h-full text-[#9F9F9F] rotate-90 transfrom" />
+      {currentPage !== 0 && (
+        <div className="top-1/2 left-[-5px] md:left-[-10px] z-modal absolute translate-y-1/2">
+          <div
+            onClick={handlePrevPage}
+            className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
+          >
+            <IconDirection className="w-full h-full text-[#9F9F9F] rotate-90 transfrom" />
+          </div>
         </div>
-      </div>
-      <div className="top-1/2 right-[-5px] md:right-[-10px] z-modal absolute translate-y-1/2">
-        <div
-          onClick={() => api?.scrollNext()}
-          className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
-        >
-          <IconDirection className="top-0 right-0 absolute w-full h-full text-[#9F9F9F] -rotate-90 transfrom" />
+      )}
+      {!isLast && (
+        <div className="top-1/2 right-[-5px] md:right-[-10px] z-modal absolute translate-y-1/2">
+          <div
+            onClick={handleNextPage}
+            className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
+          >
+            <IconDirection className="top-0 right-0 absolute w-full h-full text-[#9F9F9F] -rotate-90 transfrom" />
+          </div>
         </div>
-      </div>
+      )}
     </Carousel>
   );
 }
