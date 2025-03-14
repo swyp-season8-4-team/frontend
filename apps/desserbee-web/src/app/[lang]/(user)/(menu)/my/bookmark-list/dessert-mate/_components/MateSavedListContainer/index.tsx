@@ -60,40 +60,54 @@ export function MateSavedListContainer({
       return;
     }
 
-    setCurrent(api.selectedScrollSnap());
-
-    api.on('select', () => {
+    const handleSelect = () => {
       const currentSlide = api.selectedScrollSnap();
       setCurrent(currentSlide);
 
-      // 드래그로 인한 슬라이드 변경 시에도 데이터 로드
       const newFrom = currentSlide * itemsToShow;
       const newTo = (currentSlide + 1) * itemsToShow;
 
-      // 현재 savedMates에 없는 범위의 데이터만 로드
-      if (newFrom >= savedMates.length || newTo > savedMates.length) {
-        setFromTo({
-          from: newFrom,
-          to: newTo,
-        });
-      }
-    });
-  }, [api, itemsToShow, savedMates.length]);
+      // 드래그 동작에서도 항상 fromTo 업데이트
+      setFromTo({
+        from: newFrom,
+        to: newTo,
+      });
+    };
+
+    // 초기 위치 설정
+    setCurrent(api.selectedScrollSnap());
+
+    // select 이벤트 리스너 등록
+    api.on('select', handleSelect);
+
+    return () => {
+      api.off('select', handleSelect);
+    };
+  }, [api, itemsToShow]);
 
   useEffect(() => {
     const loadSavedMates = async () => {
-      const response = await getSavedMateList(fromTo);
-      if (!response) return;
+      try {
+        const response = await getSavedMateList(fromTo);
 
-      // 기존 데이터와 새로운 데이터를 병합
-      setSavedMates((prev) => {
-        const newMates = [...prev];
-        response.mates.forEach((mate, index) => {
-          newMates[fromTo.from + index] = mate;
+        if (!response) {
+          console.warn('서버 응답 없음');
+          return;
+        }
+
+        setSavedMates((prev) => {
+          const newMates = [...prev];
+          response.mates.forEach((mate, index) => {
+            newMates[fromTo.from + index] = mate;
+          });
+          return newMates;
         });
-        return newMates;
-      });
-      setIsLast(response.last);
+
+        // last 상태 업데이트 전후 로깅
+        setIsLast(response.last);
+      } catch (error) {
+        console.error('데이터 로딩 중 에러:', error);
+      }
     };
 
     loadSavedMates();
@@ -138,22 +152,12 @@ export function MateSavedListContainer({
     if (!api) return;
 
     api.scrollNext();
-    setFromTo((prev) => ({
-      from: prev.from + itemsToShow,
-      to: prev.to + itemsToShow,
-    }));
-    setCurrentPage((prev) => prev + 1);
   };
 
   const handlePrevPage = () => {
     if (!api) return;
 
     api.scrollPrev();
-    setFromTo((prev) => ({
-      from: Math.max(prev.from - itemsToShow, 0),
-      to: prev.to - itemsToShow,
-    }));
-    setCurrentPage((prev) => Math.max(prev - 1, 0));
   };
 
   return (
@@ -260,26 +264,22 @@ export function MateSavedListContainer({
           </CarouselItem>
         ))}
       </CarouselContent>
-      {fromTo.from !== 0 && (
-        <div className="top-1/2 left-[-5px] md:left-[-10px] z-modal absolute translate-y-1/2">
-          <div
-            onClick={handlePrevPage}
-            className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
-          >
-            <IconDirection className="w-full h-full text-[#9F9F9F] rotate-90 transfrom" />
-          </div>
+      <div className="top-1/2 left-[-5px] md:left-[-10px] z-modal absolute translate-y-1/2">
+        <div
+          onClick={handlePrevPage}
+          className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
+        >
+          <IconDirection className="w-full h-full text-[#9F9F9F] rotate-90 transfrom" />
         </div>
-      )}
-      {!isLast && (
-        <div className="top-1/2 right-[-5px] md:right-[-10px] z-modal absolute translate-y-1/2">
-          <div
-            onClick={handleNextPage}
-            className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
-          >
-            <IconDirection className="top-0 right-0 absolute w-full h-full text-[#9F9F9F] -rotate-90 transfrom" />
-          </div>
+      </div>
+      <div className="top-1/2 right-[-5px] md:right-[-10px] z-modal absolute translate-y-1/2">
+        <div
+          onClick={handleNextPage}
+          className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
+        >
+          <IconDirection className="top-0 right-0 absolute w-full h-full text-[#9F9F9F] -rotate-90 transfrom" />
         </div>
-      )}
+      </div>
     </Carousel>
   );
 }
