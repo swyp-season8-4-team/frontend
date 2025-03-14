@@ -519,37 +519,59 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
     ],
   );
 
-  // 카카오맵 초기화 로직
-  useEffect(() => {
-    if (isScriptLoaded && !isInitialized && mapRef.current) {
-      const initializedServices = initializeServices();
-      servicesRef.current = initializedServices;
-
-      const lastPosition = initializedServices.mapService.getLastPosition();
-
-      window.kakao?.maps?.load?.(() => {
-        try {
-          loadMap(initializedServices, lastPosition)
-            .then(() => {
-              setIsMapLoaded(true);
-              setIsInitialized(true);
-
-              if (lastPosition) {
-                setMapCenter(lastPosition);
-              }
-
-              setIsFetchRequired(true);
-            })
-            .catch((err) => {
-              console.error('지도 로드 실패:', err);
-              setError('지도 초기화에 실패했습니다.');
-            });
-        } catch (error) {
-          console.error('서비스 초기화 실패:', error);
-          setError('지도 초기화 중 오류가 발생했습니다.');
+  const waitForKakaoMap = () => {
+    return new Promise<void>((resolve) => {
+      const checkKakaoMap = () => {
+        if (window.kakao) {
+          resolve();
+        } else {
+          requestAnimationFrame(checkKakaoMap);
         }
-      });
-    }
+      };
+      checkKakaoMap();
+    });
+  };
+
+  useEffect(() => {
+    const initializeKakaoMap = async () => {
+      if (isScriptLoaded && !isInitialized && mapRef.current) {
+        const initializedServices = initializeServices();
+        servicesRef.current = initializedServices;
+
+        const lastPosition = initializedServices.mapService.getLastPosition();
+
+        try {
+          // 카카오맵이 로드될 때까지 대기
+          await waitForKakaoMap();
+
+          window.kakao.maps.load(() => {
+            try {
+              loadMap(initializedServices, lastPosition)
+                .then(() => {
+                  setIsMapLoaded(true);
+                  setIsInitialized(true);
+                  if (lastPosition) {
+                    setMapCenter(lastPosition);
+                  }
+                  setIsFetchRequired(true);
+                })
+                .catch((err) => {
+                  console.error('지도 로드 실패:', err);
+                  setError('지도 초기화에 실패했습니다.');
+                });
+            } catch (error) {
+              console.error('서비스 초기화 실패:', error);
+              setError('지도 초기화 중 오류가 발생했습니다.');
+            }
+          });
+        } catch (error) {
+          console.error('카카오맵 로드 대기 중 오류:', error);
+          setError('지도를 불러오는데 실패했습니다.');
+        }
+      }
+    };
+
+    initializeKakaoMap();
   }, [isScriptLoaded, isInitialized, loadMap]);
 
   // 현재 지도 중심, 태그, 검색 포함 필터링 적용된 가게 불러오기

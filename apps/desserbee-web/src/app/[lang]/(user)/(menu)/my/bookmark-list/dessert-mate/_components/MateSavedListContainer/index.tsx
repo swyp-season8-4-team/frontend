@@ -3,8 +3,7 @@
 import IconBookmark from '@repo/design-system/components/icons/IconBookmark';
 import Image from 'next/image';
 import { cn } from '@repo/ui/lib/utils';
-import { useContext, useEffect, useOptimistic, useState } from 'react';
-import { startTransition } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '@/contexts/UserContext';
 import { useRouter } from 'next/navigation';
 import type { SavedMate } from '@repo/entity/src/mate';
@@ -112,34 +111,27 @@ export function MateSavedListContainer({
     loadSavedMates();
   }, [fromTo]);
 
-  const [optimisticState, addOptimistic] = useOptimistic(
-    savedMates,
-    (state, index) => {
-      const newState = [...state];
-      newState[index as number].saved = !newState[index as number].saved;
-      return newState;
-    },
-  );
+  const handleCancelSaved = async (uuid: string) => {
+    if (!user) {
+      router.replace('/sign-in');
+      return;
+    }
 
-  const handleCancelSaved = (uuid: string, index: number) => {
-    startTransition(async () => {
-      if (!user) {
-        router.replace('/sign-in');
-      } else {
-        const currentSaved = optimisticState[index].saved;
-        if (currentSaved) {
-          const confirmed = confirm('해당 게시글 저장을 취소하시겠습니까?');
-          if (confirmed) {
-            addOptimistic(index);
-            await cancelSaveMate({ id: uuid, userId: user.id });
-            router.refresh();
-          }
-        } else {
-          addOptimistic(index);
-          await saveMate({ id: uuid, userId: user.id });
-        }
-      }
-    });
+    const confirmed = confirm('해당 게시글 저장을 취소하시겠습니까?');
+    if (confirmed) {
+      await cancelSaveMate({ id: uuid, userId: user.id });
+      router.refresh();
+    }
+  };
+
+  const handleSaveMate = async (uuid: string) => {
+    if (!user) {
+      router.replace('/sign-in');
+      return;
+    }
+
+    await saveMate({ id: uuid, userId: user.id });
+    router.refresh();
   };
 
   const handlePaticipateBtnClick = (recruitYn: boolean, mateUuid: string) => {
@@ -167,26 +159,23 @@ export function MateSavedListContainer({
       </div>
       <CarouselContent>
         {Array.from({
-          length: Math.ceil(optimisticState.length / itemsToShow),
+          length: Math.ceil(savedMates.length / itemsToShow),
         }).map((_, page) => (
           <CarouselItem key={page}>
             <div className="grid grid-cols-1 md:grid-cols-2 px-[34px] md:gap-x-3 gap-y-[5px] md:gap-y-3">
-              {optimisticState
+              {savedMates
                 .slice(page * itemsToShow, (page + 1) * itemsToShow)
                 .map(
-                  (
-                    {
-                      mateImage,
-                      mateCategory,
-                      title,
-                      content,
-                      nickname,
-                      recruitYn,
-                      saved,
-                      mateUuid,
-                    },
-                    index,
-                  ) => (
+                  ({
+                    mateImage,
+                    mateCategory,
+                    title,
+                    content,
+                    nickname,
+                    recruitYn,
+                    saved,
+                    mateUuid,
+                  }) => (
                     <div
                       className="bg-white rounded-[4.02px] p-[13px] relative"
                       key={mateUuid}
@@ -205,16 +194,15 @@ export function MateSavedListContainer({
                             <button
                               className="w-[10.46px] h-[10.46px] md:w-[20px] md:h-[20px] flex justify-center items-center"
                               onClick={() =>
-                                handleCancelSaved(
-                                  mateUuid,
-                                  page * itemsToShow + index,
-                                )
+                                saved
+                                  ? handleCancelSaved(mateUuid)
+                                  : handleSaveMate(mateUuid)
                               }
                             >
                               <IconBookmark
                                 className={cn(
                                   saved ? 'text-[#AA6120]' : 'text-page',
-                                  'md:w-3 md:h-3 w-2 h-2 ',
+                                  'md:w-3 md:h-3 w-2 h-2',
                                 )}
                               />
                             </button>
