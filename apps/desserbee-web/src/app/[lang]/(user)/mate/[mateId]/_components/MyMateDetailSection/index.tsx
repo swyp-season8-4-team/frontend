@@ -1,9 +1,9 @@
 'use client';
 
-import { UserContext } from "@/contexts/UserContext";
-import type { Mate } from "@repo/entity/src/mate";
-import type { WithChildren } from "@repo/ui";
-import { useContext } from "react";
+import { UserContext } from '@/contexts/UserContext';
+import type { Mate } from '@repo/entity/src/mate';
+import type { WithChildren } from '@repo/ui';
+import { useContext } from 'react';
 
 interface Props extends WithChildren {
   mate: Mate;
@@ -21,5 +21,5 @@ export default function MyMateDetailSection({ children, mate }: Props) {
     <section className="border rounded-[10px] bg-white px-2 py-2">
       {children}
     </section>
-  )
+  );
 }
