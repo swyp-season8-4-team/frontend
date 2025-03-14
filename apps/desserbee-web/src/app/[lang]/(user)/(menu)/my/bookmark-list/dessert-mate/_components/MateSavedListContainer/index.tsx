@@ -75,19 +75,34 @@ export function MateSavedListContainer({
     api.on('select', () => {
       const currentSlide = api.selectedScrollSnap();
       setCurrent(currentSlide);
-      setFromTo({
-        from: currentSlide * itemsToShow,
-        to: (currentSlide + 1) * itemsToShow,
-      });
+
+      // 드래그로 인한 슬라이드 변경 시에도 데이터 로드
+      const newFrom = currentSlide * itemsToShow;
+      const newTo = (currentSlide + 1) * itemsToShow;
+
+      // 현재 savedMates에 없는 범위의 데이터만 로드
+      if (newFrom >= savedMates.length || newTo > savedMates.length) {
+        setFromTo({
+          from: newFrom,
+          to: newTo,
+        });
+      }
     });
-  }, [api, itemsToShow]);
+  }, [api, itemsToShow, savedMates.length]);
 
   useEffect(() => {
     const loadSavedMates = async () => {
       const response = await getSavedMateList(fromTo);
       if (!response) return;
 
-      setSavedMates(response.mates);
+      // 기존 데이터와 새로운 데이터를 병합
+      setSavedMates((prev) => {
+        const newMates = [...prev];
+        response.mates.forEach((mate, index) => {
+          newMates[fromTo.from + index] = mate;
+        });
+        return newMates;
+      });
       setIsLast(response.last);
     };
 
