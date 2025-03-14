@@ -33,6 +33,16 @@ export function SearchResultList({
   onClose,
 }: SearchResultListProps) {
   const router = useRouter();
+
+  // 중복 제거된 결과 데이터
+  const uniqueResultData = resultData.filter(
+    (store, index, self) =>
+      index === self.findIndex((s) => s.storeId === store.storeId),
+  );
+
+  // isOpen 체크를 위해 uniqueResultData 사용
+  const isOpen = uniqueResultData.length > 0;
+
   const handleResultItemClick = (storeUuId: string) => {
     router.replace(`?storeId=${storeUuId}&bottomsheet=true`, {
       scroll: false,
@@ -40,7 +50,6 @@ export function SearchResultList({
   };
 
   const bottomSheetRef = useRef<HTMLDivElement>(null);
-  const isOpen = resultData.length > 0;
 
   // 닫기 버튼 클릭 시 onClose 함수를 직접 호출하도록 수정
   const handleClose = () => {
@@ -82,7 +91,7 @@ export function SearchResultList({
               </div>
 
               <div className="h-[30dvh] overflow-y-scroll">
-                {resultData.map((store, index) => {
+                {uniqueResultData.map((store, index) => {
                   const distanceText = formatDistance(distances?.[index]);
                   const { status } = getOperationStatus(store.operatingHours);
 
