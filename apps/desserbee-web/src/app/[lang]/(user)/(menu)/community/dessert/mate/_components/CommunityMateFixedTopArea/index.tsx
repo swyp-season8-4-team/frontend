@@ -1,8 +1,8 @@
 'use client';
 
-import type { WithChildren } from "@repo/ui/index";
-import SearchBar from "../../../_components/SearchBar";
-import useSearchView from "../../../_hooks/useSearchView";
+import type { WithChildren } from '@repo/ui/index';
+import DessertSearchBar from '../../../_components/SearchBar';
+import useSearchView from '../../../_hooks/useSearchView';
 
 export default function CommunityMateFixedTopArea({ children }: WithChildren) {
   const { isViewSearchBar } = useSearchView();
@@ -11,11 +11,15 @@ export default function CommunityMateFixedTopArea({ children }: WithChildren) {
   return (
     <div className="relative">
       {/* 검색바와 기존 콘텐츠를 절대 위치로 배치하여 같은 공간을 차지하도록 함 */}
-      <div className={`absolute top-0 left-0 w-full transition-opacity duration-300 ${isViewSearchBar ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
-        <SearchBar />
+      <div
+        className={`absolute top-0 left-0 w-full transition-opacity duration-300 ${isViewSearchBar ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}
+      >
+        <DessertSearchBar searchType="dessert-mate-search" />
       </div>
-      
-      <div className={`transition-opacity duration-300 ${isViewSearchBar ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+
+      <div
+        className={`transition-opacity duration-300 ${isViewSearchBar ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+      >
         {children}
       </div>
     </div>

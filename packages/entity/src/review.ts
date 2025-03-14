@@ -1,7 +1,10 @@
 import { type RawPlace } from './../../api/src/desserbee-web/place';
 // import type { RawPlace } from '@repo/api/src/desserbee-web/place';
 import type { BaseRequestData } from './appMetadata';
-import type { CommunityDessertReviewCategory } from './community';
+import type {
+  CommunityCategory,
+  CommunityDessertReviewCategory,
+} from './community';
 import type { Place } from './place';
 import type { Gender } from './user';
 
@@ -48,7 +51,7 @@ export interface ReviewListRequestData {
   from?: number;
   to?: number;
   keyword?: string;
-  reviewCategoryId?: CommunityDessertReviewCategory;
+  categoryId?: CommunityCategory;
 }
 
 export interface ReviewListResponse {

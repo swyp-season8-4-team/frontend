@@ -175,7 +175,7 @@ export default class ReviewAPIRepository
       throw new Error('data is not set');
     }
 
-    const { from, to, keyword, reviewCategoryId } = data;
+    const { from, to, keyword, categoryId } = data;
 
     const url = `${this.endpoint}/review`;
 
@@ -187,7 +187,7 @@ export default class ReviewAPIRepository
         ...(typeof from === 'number' && { from: from.toString() }),
         ...(typeof to === 'number' && { to: to.toString() }),
         ...(!!keyword && { keyword: encodeURIComponent(keyword) }),
-        ...(!!reviewCategoryId && { reviewCategoryId }),
+        ...(!!categoryId && { reviewCategoryId: categoryId }),
       },
     });
 
