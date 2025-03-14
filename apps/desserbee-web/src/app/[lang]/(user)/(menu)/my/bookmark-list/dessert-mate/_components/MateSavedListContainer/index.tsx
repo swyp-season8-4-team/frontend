@@ -28,12 +28,11 @@ export function MateSavedListContainer({
   const router = useRouter();
   const { user } = useContext(UserContext);
   const [itemsToShow, setItemsToShow] = useState(1);
-  const [currentPage, setCurrentPage] = useState(0);
   const [savedMates, setSavedMates] = useState<SavedMate[]>(initialMates);
-  const [isLast, setIsLast] = useState(false);
+  const [, setIsLast] = useState(false);
 
   const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
+  const [, setCurrent] = useState(0);
   const [fromTo, setFromTo] = useState({ from: 0, to: itemsToShow });
 
   useEffect(() => {

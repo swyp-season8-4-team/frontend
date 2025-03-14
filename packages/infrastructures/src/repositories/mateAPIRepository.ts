@@ -303,7 +303,10 @@ export default class MateAPIRepository
     return response;
   }
 
-  async save({ data }: BaseRequestData<MateSaveRequest>): Promise<unknown> {
+  async save({
+    data,
+    authorization,
+  }: BaseRequestData<MateSaveRequest>): Promise<unknown> {
     if (!data) {
       throw new Error('data is required');
     }
@@ -311,6 +314,11 @@ export default class MateAPIRepository
     const { id, userId } = data;
 
     const response = await fetch<{ userUuid: string }, unknown>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       data: {
         userUuid: userId,
       },
@@ -323,6 +331,7 @@ export default class MateAPIRepository
 
   async cancelSave({
     data,
+    authorization,
   }: BaseRequestData<MateSaveRequest>): Promise<unknown> {
     if (!data) {
       throw new Error('data is required');
@@ -331,6 +340,11 @@ export default class MateAPIRepository
     const { id, userId } = data;
 
     const response = await fetch<{ userUuid: string }, unknown>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       data: {
         userUuid: userId,
       },
