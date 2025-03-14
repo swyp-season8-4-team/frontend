@@ -45,7 +45,7 @@ export default function MyIconMenu() {
       href: navigationService.getHref(NavigationPathname.MyPoints),
     },
     {
-      icon: <IconCoupon size={18} viewBox={'0 0 18 18'} />,
+      icon: <IconCoupon size={18} viewBox={'0 0 27 27'} />,
       label: '쿠폰',
       href: navigationService.getHref(NavigationPathname.MyCoupon),
     },
