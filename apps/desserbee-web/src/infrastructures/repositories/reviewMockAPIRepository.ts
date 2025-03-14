@@ -1,7 +1,12 @@
 import type {
   CancelSaveRequest,
+  GetReviewReplyListRequest,
+  GetReviewReplyListResponse,
   Review,
   ReviewListResponse,
+  ReviewReply,
+  ReviewReplyRequest,
+  ReviewReplyUpdateRequest,
   ReviewRepository,
   ReviewUpdateData,
   ReviewWriteData,
@@ -17,10 +22,6 @@ export default class ReviewMockAPIRepository
   extends APIRepository
   implements ReviewRepository
 {
-  write(data: BaseRequestData<ReviewWriteData>): Promise<Review> {
-    throw new Error('Method not implemented.');
-  }
-
   private readonly sampleReviews: Review[] = [
     // {
     //   id: '8b07fc58-ae7c-4e4c-9a56-1c4676f84864',
@@ -493,6 +494,31 @@ export default class ReviewMockAPIRepository
   }
 
   getDetail(data: BaseRequestData<ReviewUpdateData>): Promise<Review> {
+    throw new Error('Method not implemented.');
+  }
+
+  createReply(data: BaseRequestData<ReviewReplyRequest>): Promise<ReviewReply> {
+    throw new Error('Method not implemented.');
+  }
+  deleteReply(
+    data: BaseRequestData<Omit<ReviewReplyUpdateRequest, 'content'>>,
+  ): Promise<unknown> {
+    throw new Error('Method not implemented.');
+  }
+  editReply(data: BaseRequestData<ReviewReplyUpdateRequest>): Promise<unknown> {
+    throw new Error('Method not implemented.');
+  }
+  getReply(
+    data: BaseRequestData<ReviewReplyUpdateRequest>,
+  ): Promise<ReviewReply> {
+    throw new Error('Method not implemented.');
+  }
+  getReplyList(
+    data: BaseRequestData<GetReviewReplyListRequest>,
+  ): Promise<GetReviewReplyListResponse> {
+    throw new Error('Method not implemented.');
+  }
+  write(data: BaseRequestData<ReviewWriteData>): Promise<Review> {
     throw new Error('Method not implemented.');
   }
 
