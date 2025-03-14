@@ -1,4 +1,4 @@
-import { type RawPlace } from './../../api/src/desserbee-web/place';
+import { type RawPlace } from './../../api/src/desserbee-web/place'; // FIXME:
 // import type { RawPlace } from '@repo/api/src/desserbee-web/place';
 import type { BaseRequestData } from './appMetadata';
 import type {
@@ -38,6 +38,25 @@ export interface Review {
   category: CommunityDessertReviewCategory;
 }
 
+export interface RawReviewReply {
+  reviewUuid: string;
+  userUuid: string;
+  replyUuid: string;
+  content: string;
+  nickname: string;
+  profileImage: string;
+  gender: Gender;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReviewReply
+  extends Omit<RawReviewReply, 'reviewUuid' | 'userUuid' | 'replyUuid'> {
+  id: string;
+  userId: string;
+  replyId: string;
+}
+
 export interface ReviewTag {
   id: number;
   name: string;
@@ -74,6 +93,37 @@ export interface ReviewWriteData {
   category: CommunityDessertReviewCategory;
   place: Place;
   imageFiles?: File[];
+}
+
+export interface RawReviewReplyRequest {
+  userUuid: string;
+  content: string;
+}
+
+export interface ReviewReplyRequest {
+  id: string;
+  userId: string;
+  content: string;
+}
+
+export interface ReviewReplyUpdateRequest extends ReviewReplyRequest {
+  replyId: string;
+}
+
+export interface RawGetReviewReplyListResponse {
+  reviews: RawReviewReply[];
+  last: boolean;
+}
+
+export interface GetReviewReplyListRequest {
+  id: string;
+  from?: number;
+  to?: number;
+}
+
+export interface GetReviewReplyListResponse {
+  replyList: ReviewReply[];
+  isLast: boolean;
 }
 
 export interface SaveReviewRequest {
@@ -120,6 +170,18 @@ export interface ReviewRepository {
   getAll(
     data: BaseRequestData<ReviewListRequestData>,
   ): Promise<ReviewListResponse>;
+
+  createReply(data: BaseRequestData<ReviewReplyRequest>): Promise<ReviewReply>; // 리뷰 댓글 생성
+  deleteReply(
+    data: BaseRequestData<Omit<ReviewReplyUpdateRequest, 'content'>>,
+  ): Promise<unknown>; // 리뷰 댓글 삭제
+  editReply(data: BaseRequestData<ReviewReplyUpdateRequest>): Promise<unknown>; // 리뷰 댓글 수정
+  getReply(
+    data: BaseRequestData<ReviewReplyUpdateRequest>,
+  ): Promise<ReviewReply>; // 리뷰 댓글 조회
+  getReplyList(
+    data: BaseRequestData<GetReviewReplyListRequest>,
+  ): Promise<GetReviewReplyListResponse>; // 리뷰 댓글 목록 조회
 
   save(data: BaseRequestData<SaveReviewRequest>): Promise<SaveReviewResponse>;
 

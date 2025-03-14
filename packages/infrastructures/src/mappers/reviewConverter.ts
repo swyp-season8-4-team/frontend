@@ -1,7 +1,9 @@
 import type {
+  RawReviewReply,
   Review,
   ReviewContent,
   ReviewImage,
+  ReviewReply,
 } from '@repo/entity/src/review';
 import type {
   RawReview,
@@ -44,6 +46,34 @@ export default class ReviewConverter {
       imageId: reviewContent.imageId ?? null,
       imageIndex: reviewContent.imageIndex ?? null,
       imageUrl: reviewContent.imageUrl ?? null,
+    };
+  }
+
+  convertRawToReviewReply(raw: RawReviewReply): ReviewReply {
+    return {
+      id: raw.reviewUuid,
+      userId: raw.userUuid,
+      replyId: raw.replyUuid,
+      content: raw.content,
+      nickname: raw.nickname,
+      profileImage: raw.profileImage,
+      gender: raw.gender,
+      createdAt: raw.createdAt,
+      updatedAt: raw.updatedAt,
+    };
+  }
+
+  convertReviewReplyToRaw(reviewReply: ReviewReply): RawReviewReply {
+    return {
+      reviewUuid: reviewReply.id,
+      userUuid: reviewReply.userId,
+      replyUuid: reviewReply.replyId,
+      content: reviewReply.content,
+      nickname: reviewReply.nickname,
+      profileImage: reviewReply.profileImage,
+      gender: reviewReply.gender,
+      createdAt: reviewReply.createdAt,
+      updatedAt: reviewReply.updatedAt,
     };
   }
 

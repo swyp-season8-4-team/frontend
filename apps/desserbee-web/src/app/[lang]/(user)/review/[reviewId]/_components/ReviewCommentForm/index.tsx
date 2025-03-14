@@ -1,21 +1,21 @@
 'use client';
 
-import { useContext, useState } from 'react';
-import { Button } from '@repo/ui/components/button';
-import { UserContext } from '@/contexts/UserContext';
-import Image from 'next/image';
-import MateService from '@repo/usecase/src/mateService';
-import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
-import { MateDetailContext } from '../../_contexts/MateDetailContext';
 import { revalidatePathAction } from '@/actions/revalidatePathAction';
+import { UserContext } from '@/contexts/UserContext';
 import { RouteGroup } from '@repo/entity/src/navigation';
+import ReviewAPIRepository from '@repo/infrastructures/src/repositories/reviewAPIRepository';
+import { Button } from '@repo/ui/components/button';
+import ReviewService from '@repo/usecase/src/reviewService';
+import Image from 'next/image';
+import { useContext, useState } from 'react';
+import { ReviewDetailContext } from '../../_contexts/ReviewDetailContext';
 
-const mateService = new MateService({
-  mateRepository: new MateAPIRepository(),
+const reviewService = new ReviewService({
+  reviewRepository: new ReviewAPIRepository(),
 });
 
-export default function MateCommentForm() {
-  const { mate } = useContext(MateDetailContext);
+export default function ReviewCommentForm() {
+  const { review } = useContext(ReviewDetailContext);
   const { user, realProfileImageUrl } = useContext(UserContext);
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,13 +33,13 @@ export default function MateCommentForm() {
     setIsSubmitting(true);
 
     try {
-      await mateService.createReply({
-        id: mate.id,
+      await reviewService.createReply({
+        id: review.id,
         userId: user?.id,
         content: comment,
       });
 
-      await revalidatePathAction(RouteGroup.MateDetail, 'page');
+      await revalidatePathAction(RouteGroup.ReviewDetail, 'page');
 
       setComment('');
     } catch (error) {
