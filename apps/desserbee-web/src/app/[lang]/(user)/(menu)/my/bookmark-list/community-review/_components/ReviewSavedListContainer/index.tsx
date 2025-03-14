@@ -1,12 +1,12 @@
 'use client';
 
 import IconBookmark from '@repo/design-system/components/icons/IconBookmark';
+import defaultImage from '@/assets/svg/image-default-mate.svg';
 import Image from 'next/image';
 import { cn } from '@repo/ui/lib/utils';
 import { useContext, useEffect, useState } from 'react';
 import { UserContext } from '@/contexts/UserContext';
 import { useRouter } from 'next/navigation';
-import type { SavedMate } from '@repo/entity/src/mate';
 import {
   Carousel,
   CarouselContent,
@@ -14,20 +14,22 @@ import {
   type CarouselApi,
 } from '@repo/ui/components/carousel';
 import IconDirection from '@repo/design-system/components/icons/IconDirection';
-import { cancelSaveMate, getSavedMateList, saveMate } from './action';
+import { cancelSave, getSavedReviewList, saveReview } from './action';
+import type { SavedReview } from '@repo/entity/src/review';
+import { formatDateToHHMM } from '@repo/utility/src/date';
 
-interface MateSavedListContainerProps {
-  mates: SavedMate[];
+interface ReviewSavedListContainerProps {
+  reviews: SavedReview[];
   isLast: boolean;
 }
 
-export function MateSavedListContainer({
-  mates: initialMates,
-}: MateSavedListContainerProps) {
+export function ReviewSavedListContainer({
+  reviews: initialMates,
+}: ReviewSavedListContainerProps) {
   const router = useRouter();
   const { user } = useContext(UserContext);
   const [itemsToShow, setItemsToShow] = useState(1);
-  const [savedMates, setSavedMates] = useState<SavedMate[]>(initialMates);
+  const [savedReviews, setSavedReviews] = useState<SavedReview[]>(initialMates);
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [isLast, setIsLast] = useState(false);
@@ -85,19 +87,19 @@ export function MateSavedListContainer({
   useEffect(() => {
     const loadSavedMates = async () => {
       try {
-        const response = await getSavedMateList(fromTo);
+        const response = await getSavedReviewList(fromTo);
 
         if (!response) {
           console.warn('서버 응답 없음');
           return;
         }
 
-        setSavedMates((prev) => {
-          const newMates = [...prev];
-          response.mates.forEach((mate, index) => {
-            newMates[fromTo.from + index] = mate;
+        setSavedReviews((prev) => {
+          const newReviews = [...prev];
+          response.reviews.forEach((review, index) => {
+            newReviews[fromTo.from + index] = review;
           });
-          return newMates;
+          return newReviews;
         });
 
         setIsLast(response.last);
@@ -117,8 +119,10 @@ export function MateSavedListContainer({
 
     const confirmed = confirm('해당 게시글 저장을 취소하시겠습니까?');
     if (confirmed) {
-      await cancelSaveMate({ id: uuid, userId: user.id });
-      setSavedMates((prev) => prev.filter((mate) => mate.mateUuid !== uuid));
+      await cancelSave({ reviewUuid: uuid });
+      setSavedReviews((prev) =>
+        prev.filter((review) => review.reviewUuid !== uuid),
+      );
       router.refresh();
     }
   };
@@ -129,13 +133,8 @@ export function MateSavedListContainer({
       return;
     }
 
-    await saveMate({ id: uuid, userId: user.id });
+    await saveReview({ reviewUuid: uuid });
     router.refresh();
-  };
-
-  const handlePaticipateBtnClick = (recruitYn: boolean, mateUuid: string) => {
-    if (recruitYn === false) return;
-    router.push(`/mate/${mateUuid}`);
   };
 
   const handleNextPage = () => {
@@ -153,54 +152,53 @@ export function MateSavedListContainer({
   return (
     <Carousel setApi={setApi} className="w-full h-full text-xs md:text-xl">
       <div className="text-xs md:text-[26px] font-semibold mb-4 md:leading-7">
-        <div>{user?.nickname}님께서 저장한 디저트 </div>
-        <div>메이트입니다!</div>
+        <div>{user?.nickname}님께서 저장한 리뷰 입니다! </div>
       </div>
       <CarouselContent>
         {Array.from({
-          length: Math.ceil(savedMates.length / itemsToShow),
+          length: Math.ceil(savedReviews.length / itemsToShow),
         }).map((_, page) => (
           <CarouselItem key={page}>
             <div className="grid grid-cols-1 md:grid-cols-2 px-[34px] md:gap-x-3 gap-y-[5px] md:gap-y-3">
-              {savedMates
+              {savedReviews
                 .slice(page * itemsToShow, (page + 1) * itemsToShow)
                 .map(
-                  ({
-                    mateImage,
-                    mateCategory,
-                    title,
-                    content,
-                    nickname,
-                    recruitYn,
-                    saved,
-                    mateUuid,
-                  }) => (
+                  (
+                    {
+                      reviewUuid,
+                      nickname,
+                      contents,
+                      title,
+                      reviewCategory,
+                      createdAt,
+                      saved,
+                      views,
+                    },
+                    index,
+                  ) => (
                     <div
-                      className="bg-white rounded-[4.02px] p-[13px] relative"
-                      key={mateUuid}
+                      className="bg-white rounded-[4.02px] p-1 relative"
+                      key={`${reviewUuid}-${index}`}
                     >
                       <div className="flex justify-between items-center">
                         <div className="text-[10px] px-1 md:px-2  md:text-[14px] h-fit border rounded-[40.24px] md:rounded-[60px] border-[#6F6F6F] text-[#6F6F6F]">
                           <div className="text-[8px] md:text-[12px]">
-                            {mateCategory}
+                            {reviewCategory}
                           </div>
                         </div>
                         <div className="flex gap-x-[4.83px] items-center text-[10px] md:text-[14px]">
-                          <div className="text-[10px] md:text-[14px]">
-                            {recruitYn ? '모집중' : '마감'}
-                          </div>
                           <div className="border-[#714115] rounded-full aspect-square border">
                             <button
                               className="w-[10.46px] h-[10.46px] md:w-[20px] md:h-[20px] flex justify-center items-center"
                               onClick={() =>
-                                saved
-                                  ? handleCancelSaved(mateUuid)
-                                  : handleSaveMate(mateUuid)
+                                !saved
+                                  ? handleCancelSaved(reviewUuid)
+                                  : handleSaveMate(reviewUuid)
                               }
                             >
                               <IconBookmark
                                 className={cn(
-                                  saved ? 'text-[#AA6120]' : 'text-page',
+                                  !saved ? 'text-[#AA6120]' : 'text-page',
                                   'md:w-3 md:h-3 w-2 h-2',
                                 )}
                               />
@@ -209,40 +207,52 @@ export function MateSavedListContainer({
                         </div>
                       </div>
                       <div className="flex items-center">
-                        {mateImage && (
-                          <div className="w-[45px] h-[45px] flex-shrink-0 m-1 aspect-square bg-[#D9D9D9] overflow-hidden  md:w-[70px] md:h-[70px] rounded-sm">
-                            <Image
-                              className="w-full h-full"
-                              src={mateImage}
-                              width={50}
-                              height={50}
-                              alt={nickname}
-                            />
-                          </div>
-                        )}
-                        <div className="flex flex-col leading-3">
-                          <div className="font-semibold text-[10px] md:text-base line-clamp-1">
+                        <div className="flex justify-center items-center w-[39px] h-[39px] md:w-[67px] md:h-[67px] flex-shrink-0 m-1 aspect-square bg-[#D9D9D9] overflow-hidden">
+                          <Image
+                            className={cn(
+                              contents[0]?.imageUrl
+                                ? 'w-full h-full'
+                                : 'w-1/2 h-1/2',
+                            )}
+                            src={
+                              contents[0]?.imageUrl
+                                ? contents[0]?.imageUrl
+                                : defaultImage.src
+                            }
+                            width={50}
+                            height={50}
+                            alt={nickname}
+                          />
+                        </div>
+                        <div className="flex flex-col h-[39px] md:h-[67px] justify-between items-start">
+                          <div className="font-semibold text-[12px] md:text-base line-clamp-1">
                             {title}
                           </div>
-                          <div className="text-[10px] md:text-[14px] font-medium line-clamp-1">
-                            {content}
+                          <div className="text-[10px] md:text-[14px] line-clamp-1">
+                            {contents.map((content, cIndex) => (
+                              <div key={`${content.type}-${cIndex}`}>
+                                {content.value}
+                              </div>
+                            ))}
                           </div>
-                          <div className="text-[10px] md:text-[14px] font-medium md:mt-[25px]">
-                            {nickname}님
+                          <div className="flex items-center gap-1 md:gap-[9px]">
+                            <div className="text-[10px] md:text-[14px] font-medium">
+                              {nickname}님
+                            </div>
+                            <div className="flex items-center gap-1 text-[#9F9F9F] ">
+                              <div className="text-[9px] md:text-xs">
+                                {formatDateToHHMM(createdAt)}
+                              </div>
+                              <div className="text-[9px] md:text-xs">
+                                조회&nbsp;{views}
+                              </div>
+                            </div>
                           </div>
+                          <button className="absolute bg-primary text-[8px] md:text-[10px] bottom-1 right-1 text-white px-2 py-1 md:py-[6px] leading-none h-fit rounded-base">
+                            보러가기
+                          </button>
                         </div>
                       </div>
-                      <button
-                        onClick={() =>
-                          handlePaticipateBtnClick(recruitYn, mateUuid)
-                        }
-                        className={cn(
-                          'absolute text-[6px] md:text-[10px] bottom-2 right-3 text-white px-2 py-1 md:py-[6px] leading-none h-fit rounded-base',
-                          recruitYn ? 'bg-primary' : 'bg-[#545454]',
-                        )}
-                      >
-                        {recruitYn ? '참여하기' : '모집마감'}
-                      </button>
                     </div>
                   ),
                 )}

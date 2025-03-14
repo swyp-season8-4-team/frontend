@@ -22,6 +22,7 @@ const storeService = new StoreService({
 });
 
 const reviewService = new ReviewService({
+  authRepository: new AuthNextAppRouteRepository(),
   reviewRepository: new ReviewAPIRepository(),
 });
 
@@ -42,8 +43,7 @@ export default async function MyBookmarkListPage() {
     to: 4,
   });
 
-  // const savedReview = await reviewService.getSaved({});
-  const savedReview = [] as any[]; //TODO: API 완성되면 수정
+  const savedReview = await reviewService.getSaved({ from: 0, to: 4 });
 
   return (
     <BookMarkListContainer

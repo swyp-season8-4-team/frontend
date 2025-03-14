@@ -326,7 +326,7 @@ export default class ReviewAPIRepository
     if (!data) {
       throw new Error('data is not set');
     }
-    const {} = data;
+    const { from, to } = data;
 
     const url = `${this.endpoint}/review/saved`;
 
@@ -337,6 +337,10 @@ export default class ReviewAPIRepository
       ...(authorization && { headers: { Authorization: authorization } }),
       method: 'GET',
       url: url,
+      query: {
+        ...(typeof from === 'number' && { from: from.toString() }),
+        ...(typeof to === 'number' && { to: to.toString() }),
+      },
     });
 
     return response;

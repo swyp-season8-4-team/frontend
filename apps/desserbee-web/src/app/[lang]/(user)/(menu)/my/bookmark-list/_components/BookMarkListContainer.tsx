@@ -1,7 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-// import mapImg from '../_assets/svg/map.svg';
 import houseImg from '../_assets/svg/house.svg';
 import beeImg from '../_assets/svg/bee.svg';
 import type { SavedMate } from '@repo/entity/src/mate';
@@ -16,14 +15,13 @@ import type { SavedReviewListResponse } from '@repo/entity/src/review';
 
 interface BookMarkListContainerProps {
   savedStoreList: SavedListData[];
-  // savedReview: SavedReviewListResponse;
-  savedReview: any[];
+  savedReview: SavedReviewListResponse;
   mateList: SavedMate[];
 }
 
 export function BookMarkListContainer({
   savedStoreList,
-  savedReview = [],
+  savedReview,
   mateList,
 }: BookMarkListContainerProps) {
   const router = useRouter();
@@ -87,38 +85,39 @@ export function BookMarkListContainer({
           <div className="text-[10px] md:text-[22px] font-semibold">
             저장한 리뷰
           </div>
-          {savedReview.length !== 0 ? (
+          {savedReview.reviews.length !== 0 ? (
             <div className="flex flex-col gap-[7.25px] md:gap-[14px]">
               <div className="flex flex-col gap-[7.25px] md:gap-[14px]">
                 <div className="grid grid-cols-4 gap-[6.42px] md:gap-4">
-                  {Array.from([1, 2, 3, 4]).map(
-                    (
-                      store,
-                      index, //TODO: API 완성되면 이미지 여부에 따라
-                    ) => (
+                  {savedReview.reviews.map((review) => (
+                    <div
+                      key={review.reviewUuid}
+                      className="bg-[#D9D9D9] rounded-[4.01px] w-full overflow-hidden aspect-square relative flex items-center justify-center"
+                    >
                       <div
-                        key={store}
-                        className="bg-[#D9D9D9] rounded-[4.01px] w-full overflow-hidden aspect-square relative flex items-center justify-center"
+                        className={
+                          review.contents[0]?.imageUrl
+                            ? 'w-full h-full relative'
+                            : 'w-1/2 h-1/2 relative'
+                        }
                       >
-                        <div
-                          className={
-                            index === 0 //TODO: API 완성되면 이미지 여부에 따라
-                              ? 'w-full h-full relative'
-                              : 'w-1/2 h-1/2 relative'
+                        <Image
+                          src={
+                            review.contents[0]?.imageUrl
+                              ? review.contents[0]?.imageUrl
+                              : houseImg
                           }
-                        >
-                          <Image
-                            src={store ? houseImg : houseImg} //TODO: API 완성되면 이미지 여부에 따라
-                            fill
-                            alt="저장한 디저트 메이트"
-                            className={
-                              index === 0 ? 'object-cover' : 'object-contain' //TODO: API 완성되면 이미지 여부에 따라
-                            }
-                          />
-                        </div>
+                          fill
+                          alt="저장한 디저트 메이트"
+                          className={
+                            review.contents[0]?.imageUrl
+                              ? 'object-cover'
+                              : 'object-contain' //TODO: API 완성되면 이미지 여부에 따라
+                          }
+                        />
                       </div>
-                    ),
-                  )}
+                    </div>
+                  ))}
                 </div>
                 <div className="w-full flex justify-end">
                   <button
