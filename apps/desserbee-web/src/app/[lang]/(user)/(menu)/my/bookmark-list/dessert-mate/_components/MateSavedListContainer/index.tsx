@@ -22,6 +22,16 @@ interface DessertMateTabProps {
   isLast: boolean;
 }
 
+const fetchSavedMates = async (currentPage: number, itemsToShow: number) => {
+  const from = currentPage * itemsToShow;
+  const to = from + itemsToShow;
+  const response = await getSavedMateList({ from, to });
+
+  if (response.mates.length === 0) return null;
+
+  return response;
+};
+
 export function MateSavedListContainer({
   mates: initialMates,
 }: DessertMateTabProps) {
@@ -51,18 +61,15 @@ export function MateSavedListContainer({
   }, []);
 
   useEffect(() => {
-    const fetchSavedMates = async () => {
-      const from = currentPage * itemsToShow;
-      const to = from + itemsToShow;
-      const response = await getSavedMateList({ from, to });
-
-      if (response.mates.length === 0) return;
+    const loadSavedMates = async () => {
+      const response = await fetchSavedMates(currentPage, itemsToShow);
+      if (!response) return;
 
       setSavedMates(response.mates);
       setIsLast(response.last);
     };
 
-    fetchSavedMates();
+    loadSavedMates();
   }, [currentPage, itemsToShow]);
 
   useEffect(() => {
@@ -106,14 +113,6 @@ export function MateSavedListContainer({
       }
     });
   };
-
-  // const handleGoCommunityMateBtnClick = () => {
-  //   if (!user) {
-  //     router.replace('/sign-in');
-  //   } else {
-  //     router.replace(`${NavigationPathname.CommunityDessertMate}`);
-  //   }
-  // };
 
   const handlePaticipateBtnClick = (recruitYn: boolean, mateUuid: string) => {
     if (recruitYn === false) return;
