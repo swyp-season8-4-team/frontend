@@ -2,9 +2,13 @@ import type { AuthRepository } from '@repo/entity/src/auth';
 import type { CommunityDessertReviewCategory } from '@repo/entity/src/community';
 import type {
   CancelSaveRequest,
+  GetReviewReplyListRequest,
+  GetReviewReplyListResponse,
   Review,
   ReviewListRequestData,
   ReviewListResponse,
+  ReviewReply,
+  ReviewReplyRequest,
   ReviewRepository,
   ReviewUpdateData,
   ReviewWriteData,
@@ -60,6 +64,28 @@ export default class ReviewService {
     }
 
     const response = await this.reviewRepository.getMine({ data });
+
+    return response;
+  }
+
+  async createReply(data: ReviewReplyRequest): Promise<ReviewReply> {
+    if (!this.reviewRepository) {
+      throw new Error('ReviewRepository is not set');
+    }
+
+    const response = await this.reviewRepository.createReply({ data });
+
+    return response;
+  }
+
+  async getReplyList(
+    data: GetReviewReplyListRequest,
+  ): Promise<GetReviewReplyListResponse> {
+    if (!this.reviewRepository) {
+      throw new Error('ReviewRepository is not set');
+    }
+
+    const response = await this.reviewRepository.getReplyList({ data });
 
     return response;
   }

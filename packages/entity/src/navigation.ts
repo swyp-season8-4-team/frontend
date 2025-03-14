@@ -1,5 +1,6 @@
 export enum RouteGroup {
   MateDetail = '[lang]/(user)/mate/[mateId]',
+  ReviewDetail = '[lang]/(user)/review/[reviewId]',
 }
 
 export enum NavigationLanguageGroup {

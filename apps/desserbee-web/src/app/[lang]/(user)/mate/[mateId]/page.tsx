@@ -2,7 +2,7 @@ import type { WithParams } from '@/app';
 import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
 import MateService from '@repo/usecase/src/mateService';
 import { notFound } from 'next/navigation';
-import CommentForm from './_components/CommentForm';
+import MateCommentForm from './_components/CommentForm';
 import CurrentApplyList from './_components/CurrentApplyList';
 import MatePostSection from './_components/MatePostSection';
 import MyMateDetailSection from './_components/MyMateDetailSection';
@@ -46,7 +46,7 @@ export default async function MateDetailPage({ params }: WithParams) {
     replyListResult.status === 'fulfilled' ? replyListResult.value : null;
 
   return (
-    <main className="flex flex-col h-[calc(100dvh - 52px)] px-4 gap-4 bg-[#f6f6f6] overflow-y-auto ">
+    <main className="flex flex-col h-[calc(100dvh - 52px)] px-4 py-4 gap-4 bg-[#f6f6f6] overflow-y-auto ">
       <MateDetailProvider mate={mate}>
         <MatePostSection
           mate={mate}
@@ -65,7 +65,7 @@ export default async function MateDetailPage({ params }: WithParams) {
             isLast={replyListResponse.isLast}
           />
         )}
-        {mate.applyStatus === 'APPROVED' && <CommentForm />}
+        {mate.applyStatus === 'APPROVED' && <MateCommentForm />}
       </MateDetailProvider>
     </main>
   );

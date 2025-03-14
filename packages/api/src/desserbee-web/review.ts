@@ -1,5 +1,5 @@
-import type { RawPlace } from "./place";
-import type { CommunityDessertReviewCategory } from "@repo/entity/src/community";
+import type { RawPlace } from './place';
+import type { CommunityDessertReviewCategory } from '@repo/entity/src/community';
 export interface RawReviewImage {
   reviewImages: string;
   reviewImageId: string;

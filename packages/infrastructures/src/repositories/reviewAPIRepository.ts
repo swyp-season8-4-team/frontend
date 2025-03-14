@@ -2,10 +2,18 @@ import fetch from '@repo/api/src/fetch';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import type {
   CancelSaveRequest,
+  GetReviewReplyListRequest,
+  GetReviewReplyListResponse,
+  RawGetReviewReplyListResponse,
+  RawReviewReply,
+  RawReviewReplyRequest,
   RawReviewWriteRequest,
   Review,
   ReviewListRequestData,
   ReviewListResponse,
+  ReviewReply,
+  ReviewReplyRequest,
+  ReviewReplyUpdateRequest,
   ReviewRepository,
   ReviewUpdateData,
   ReviewWriteData,
@@ -202,6 +210,71 @@ export default class ReviewAPIRepository
       ),
       isLast: response.last,
     };
+  }
+
+  async createReply({
+    data,
+  }: BaseRequestData<ReviewReplyRequest>): Promise<ReviewReply> {
+    if (!data) {
+      throw new Error('data is not set');
+    }
+
+    const { id, userId, content } = data;
+
+    const response = await fetch<RawReviewReplyRequest, RawReviewReply>({
+      data: {
+        userUuid: userId,
+        content,
+      },
+      method: 'POST',
+      url: `${this.endpoint}/review/${id}/reply`,
+    });
+
+    return this.reviewConverter.convertRawToReviewReply(response);
+  }
+
+  async getReplyList({
+    data,
+  }: BaseRequestData<GetReviewReplyListRequest>): Promise<GetReviewReplyListResponse> {
+    if (!data) {
+      throw new Error('data is not set');
+    }
+
+    const { id, from, to } = data;
+
+    const url = `${this.endpoint}/review/${id}/reply`;
+
+    const response = await fetch<void, RawGetReviewReplyListResponse>({
+      method: 'GET',
+      url,
+      query: {
+        ...(typeof from === 'number' && { from: from.toString() }),
+        ...(typeof to === 'number' && { to: to.toString() }),
+      },
+    });
+
+    return {
+      replyList: response.reviews.map((reply) =>
+        this.reviewConverter.convertRawToReviewReply(reply),
+      ),
+      isLast: response.last,
+    };
+  }
+
+  getReply(
+    data: BaseRequestData<ReviewReplyUpdateRequest>,
+  ): Promise<ReviewReply> {
+    throw new Error('Method not implemented.');
+  }
+
+  deleteReply(
+    data: BaseRequestData<Omit<unknown, 'content'>>,
+  ): Promise<unknown> {
+    throw new Error('Method not implemented.');
+  }
+
+  editReply(data: BaseRequestData<unknown>): Promise<unknown> {
+    throw new Error('Method not implemented.');
   }
 
   async save({
