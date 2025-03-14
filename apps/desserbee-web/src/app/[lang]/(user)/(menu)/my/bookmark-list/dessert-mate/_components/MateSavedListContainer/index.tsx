@@ -44,6 +44,7 @@ export function MateSavedListContainer({
 
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const [fromTo, setFromTo] = useState({ from: 0, to: itemsToShow });
 
   useEffect(() => {
     const handleResize = () => {
@@ -61,16 +62,8 @@ export function MateSavedListContainer({
   }, []);
 
   useEffect(() => {
-    const loadSavedMates = async () => {
-      const response = await fetchSavedMates(currentPage, itemsToShow);
-      if (!response) return;
-
-      setSavedMates(response.mates);
-      setIsLast(response.last);
-    };
-
-    loadSavedMates();
-  }, [currentPage, itemsToShow]);
+    setFromTo({ from: 0, to: itemsToShow });
+  }, [itemsToShow]);
 
   useEffect(() => {
     if (!api) {
@@ -80,9 +73,26 @@ export function MateSavedListContainer({
     setCurrent(api.selectedScrollSnap());
 
     api.on('select', () => {
-      setCurrent(api.selectedScrollSnap());
+      const currentSlide = api.selectedScrollSnap();
+      setCurrent(currentSlide);
+      setFromTo({
+        from: currentSlide * itemsToShow,
+        to: (currentSlide + 1) * itemsToShow,
+      });
     });
-  }, [api]);
+  }, [api, itemsToShow]);
+
+  useEffect(() => {
+    const loadSavedMates = async () => {
+      const response = await getSavedMateList(fromTo);
+      if (!response) return;
+
+      setSavedMates(response.mates);
+      setIsLast(response.last);
+    };
+
+    loadSavedMates();
+  }, [fromTo]);
 
   const [optimisticState, addOptimistic] = useOptimistic(
     savedMates,
@@ -120,10 +130,18 @@ export function MateSavedListContainer({
   };
 
   const handleNextPage = () => {
+    setFromTo((prev) => ({
+      from: prev.from + itemsToShow,
+      to: prev.to + itemsToShow,
+    }));
     setCurrentPage((prev) => prev + 1);
   };
 
   const handlePrevPage = () => {
+    setFromTo((prev) => ({
+      from: Math.max(prev.from - itemsToShow, 0),
+      to: prev.to - itemsToShow,
+    }));
     setCurrentPage((prev) => Math.max(prev - 1, 0));
   };
 
