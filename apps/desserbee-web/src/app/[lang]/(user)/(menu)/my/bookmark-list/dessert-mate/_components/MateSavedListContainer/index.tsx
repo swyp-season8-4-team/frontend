@@ -28,10 +28,9 @@ export function MateSavedListContainer({
   const { user } = useContext(UserContext);
   const [itemsToShow, setItemsToShow] = useState(1);
   const [savedMates, setSavedMates] = useState<SavedMate[]>(initialMates);
-  const [, setIsLast] = useState(false);
-
   const [api, setApi] = useState<CarouselApi>();
-  const [, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(0);
+  const [isLast, setIsLast] = useState(false);
   const [fromTo, setFromTo] = useState({ from: 0, to: itemsToShow });
 
   useEffect(() => {
@@ -101,7 +100,6 @@ export function MateSavedListContainer({
           return newMates;
         });
 
-        // last 상태 업데이트 전후 로깅
         setIsLast(response.last);
       } catch (error) {
         console.error('데이터 로딩 중 에러:', error);
@@ -120,6 +118,7 @@ export function MateSavedListContainer({
     const confirmed = confirm('해당 게시글 저장을 취소하시겠습니까?');
     if (confirmed) {
       await cancelSaveMate({ id: uuid, userId: user.id });
+      setSavedMates((prev) => prev.filter((mate) => mate.mateUuid !== uuid));
       router.refresh();
     }
   };
@@ -251,22 +250,26 @@ export function MateSavedListContainer({
           </CarouselItem>
         ))}
       </CarouselContent>
-      <div className="top-1/2 left-[-5px] md:left-[-10px] z-modal absolute translate-y-1/2">
-        <div
-          onClick={handlePrevPage}
-          className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
-        >
-          <IconDirection className="w-full h-full text-[#9F9F9F] rotate-90 transfrom" />
+      {current > 0 && (
+        <div className="top-1/2 left-[-5px] md:left-[-10px] z-modal absolute translate-y-1/2">
+          <div
+            onClick={handlePrevPage}
+            className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
+          >
+            <IconDirection className="w-full h-full text-[#9F9F9F] rotate-90 transfrom" />
+          </div>
         </div>
-      </div>
-      <div className="top-1/2 right-[-5px] md:right-[-10px] z-modal absolute translate-y-1/2">
-        <div
-          onClick={handleNextPage}
-          className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
-        >
-          <IconDirection className="top-0 right-0 absolute w-full h-full text-[#9F9F9F] -rotate-90 transfrom" />
+      )}
+      {!isLast && (
+        <div className="top-1/2 right-[-5px] md:right-[-10px] z-modal absolute translate-y-1/2">
+          <div
+            onClick={handleNextPage}
+            className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
+          >
+            <IconDirection className="top-0 right-0 absolute w-full h-full text-[#9F9F9F] -rotate-90 transfrom" />
+          </div>
         </div>
-      </div>
+      )}
     </Carousel>
   );
 }
