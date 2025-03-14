@@ -1,18 +1,19 @@
-import defaultImage from '@/assets/svg/image-default-mate.svg';
 import Chip from '@repo/design-system/components/Chip';
 import type { Review } from '@repo/entity/src/review';
-import { cn } from '@repo/ui/lib/utils';
-import { formatRelativeTime } from '@repo/utility/src/date';
 import Image from 'next/image';
-import Link from 'next/link';
 import CommunityReviewBookmarkButton from '../CommunityReviewBookmarkButton';
+import defaultImage from '@/assets/svg/image-default-mate.svg';
+import { cn } from '@repo/ui/lib/utils';
+import { formatDate } from '@repo/utility/src/date';
+import Link from 'next/link';
 
 interface Props {
   review: Review;
 }
 
 export default function CommunityReviewCard({ review }: Props) {
-  const { title, contents, nickname, category, updatedAt, viewCount } = review;
+  const { title, contents, nickname, category, updatedAt, viewCount, saved } =
+    review;
 
   const thumbnailImage = contents.find(
     (content) => content.type === 'image',
@@ -26,7 +27,7 @@ export default function CommunityReviewCard({ review }: Props) {
           className="rounded-[44.317px] border-[0.443px] border-[#6F6F6F] text-[12px] w-[70px]"
           text={category}
         />
-        <CommunityReviewBookmarkButton reviewId={review.id} />
+        <CommunityReviewBookmarkButton saved={saved} reviewId={review.id} />
       </div>
       <div className="flex items-center gap-[9.515px] self-stretch">
         <div
@@ -58,7 +59,7 @@ export default function CommunityReviewCard({ review }: Props) {
                 {nickname}
               </span>
               <span className="text-[#9F9F9F] text-[11.467px] font-medium tracking-[-0.344px]">
-                {formatRelativeTime(updatedAt)} 조회:{viewCount}
+                {formatDate(updatedAt)} 조회:{viewCount}
               </span>
             </div>
             <Link href={`/review/${review.id}`}>

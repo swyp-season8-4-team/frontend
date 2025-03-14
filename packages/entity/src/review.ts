@@ -128,24 +128,58 @@ export interface GetReviewReplyListResponse {
 
 export interface SaveReviewRequest {
   reviewUuid: string;
-  // TODO: API 아직 안됨
 }
 
 export interface CancelSaveRequest {
   reviewUuid: string;
-  // TODO: API 아직 안됨
 }
 
-export interface SaveReviewResponse {
-  // TODO: API 아직 안됨
-}
+export interface SaveReviewResponse {}
+// {
+//   "additionalProp1": "string",
+//   "additionalProp2": "string",
+//   "additionalProp3": "string"
+// }
 
 export interface SavedReviewListRequest {
-  // TODO: API 아직 안됨
+  from?: number;
+  to?: number;
+}
+
+export interface SavedReviewContents {
+  id: number;
+  type: string;
+  value: string;
+  imageId: number;
+  imageUuid: string;
+  imageUrl: string;
+}
+
+export interface SavedReview {
+  reviewUuid: string;
+  storeId: number;
+  userUuid: string;
+  nickname: string;
+  profileImage: string;
+  contents: SavedReviewContents[];
+  title: string;
+  place: {
+    placeName: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+  };
+  reviewCategory: string;
+  createdAt: string;
+  updatedAt: string;
+  saved: boolean;
+  gender: string;
+  views: number;
 }
 
 export interface SavedReviewListResponse {
-  // TODO: API 아직 안됨
+  reviews: SavedReview[];
+  last: boolean;
 }
 
 export interface ReviewRepository {
