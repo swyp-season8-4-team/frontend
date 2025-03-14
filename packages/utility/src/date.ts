@@ -66,3 +66,50 @@ export const formatDateToMMDD = (dateString: string): string => {
     return '';
   }
 };
+
+/**
+ * 주어진 날짜와 현재 시간의 차이를 상대적인 시간 문자열로 변환합니다.
+ * ex) '방금 전', '5분 전', '3시간 전', '1일 전', '7일 전', '한달 전' 등
+ * @param dateString ISO 형식의 날짜 문자열
+ * @returns 상대적 시간을 나타내는 문자열
+ */
+export function formatRelativeTime(dateString: string): string {
+  if (!dateString) return '';
+
+  try {
+    const date = new Date(dateString);
+
+    // 유효한 날짜인지 확인
+    if (isNaN(date.getTime())) {
+      return '';
+    }
+
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInSec = Math.floor(diffInMs / 1000);
+    const diffInMin = Math.floor(diffInSec / 60);
+    const diffInHour = Math.floor(diffInMin / 60);
+    const diffInDay = Math.floor(diffInHour / 24);
+    const diffInMonth = Math.floor(diffInDay / 30);
+    const diffInYear = Math.floor(diffInMonth / 12);
+
+    if (diffInSec < 60) {
+      return '방금전';
+    } else if (diffInMin < 60) {
+      return `${diffInMin}분전`;
+    } else if (diffInHour < 24) {
+      return `${diffInHour}시간전`;
+    } else if (diffInDay < 7) {
+      return `${diffInDay}일전`;
+    } else if (diffInDay < 30) {
+      return `${Math.floor(diffInDay / 7)}주전`;
+    } else if (diffInMonth < 12) {
+      return `${diffInMonth}달전`;
+    } else {
+      return `${diffInYear}년전`;
+    }
+  } catch (error) {
+    console.error('상대 시간 포맷팅 오류:', error);
+    return '';
+  }
+}
