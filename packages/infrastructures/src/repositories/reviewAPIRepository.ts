@@ -21,6 +21,7 @@ import type {
 } from '@repo/api/src/desserbee-web/review';
 import ReviewConverter from '../mappers/reviewConverter';
 import PlaceConverter from '../mappers/placeConverter';
+import type { CommunityDessertReviewCategory } from '@repo/entity/src/community';
 
 export default class ReviewAPIRepository
   extends APIRepository
@@ -187,7 +188,11 @@ export default class ReviewAPIRepository
         ...(typeof from === 'number' && { from: from.toString() }),
         ...(typeof to === 'number' && { to: to.toString() }),
         ...(!!keyword && { keyword: encodeURIComponent(keyword) }),
-        ...(!!categoryId && { reviewCategoryId: categoryId }),
+        ...(!!categoryId && {
+          reviewCategoryId: this.reviewConverter
+            .convertCategoryToRaw(categoryId as CommunityDessertReviewCategory)
+            .toString(),
+        }),
       },
     });
 

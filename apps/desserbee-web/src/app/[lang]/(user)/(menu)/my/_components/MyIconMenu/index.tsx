@@ -13,12 +13,15 @@ import { useRouter } from 'next/navigation';
 import { PointIsNotReadyModal } from '../../_modals/PointIsNotReadyModal';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
+import NavigationService from '@repo/usecase/src/navigationService';
 
 interface IconMenuItem {
   icon: ReactNode;
   label: string;
   href: string;
 }
+
+const navigationService = new NavigationService({});
 
 const storeService = new StoreService({
   storeRepository: new StoreAPIRepository(),
@@ -29,22 +32,22 @@ export default function MyIconMenu() {
     {
       icon: <IconSetting size={18} viewBox={'0 0 18 18'} />,
       label: '프로필 설정',
-      href: NavigationPathname.MySetting,
+      href: navigationService.getHref(NavigationPathname.MySetting),
     },
     {
       icon: <IconBookmarkList size={18} viewBox={'0 0 18 18'} />,
       label: '저장 목록',
-      href: NavigationPathname.MyBookmarkList,
+      href: navigationService.getHref(NavigationPathname.MyBookmarkList),
     },
     {
       icon: <IconPoint size={18} viewBox={'0 0 18 18'} />,
       label: '포인트',
-      href: NavigationPathname.MyPoints,
+      href: navigationService.getHref(NavigationPathname.MyPoints),
     },
     {
       icon: <IconCoupon size={18} viewBox={'0 0 18 18'} />,
       label: '쿠폰',
-      href: NavigationPathname.MyCoupon,
+      href: navigationService.getHref(NavigationPathname.MyCoupon),
     },
   ];
 
