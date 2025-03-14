@@ -66,8 +66,8 @@ export interface MateReply extends Omit<RawMateReply, 'mateUuid' | 'userUuid'> {
 
 export interface GetMateReplyListRequest {
   id: string;
-  from: number;
-  to: number;
+  from?: number;
+  to?: number;
 }
 
 export interface RawGetMateReplyListResponse {

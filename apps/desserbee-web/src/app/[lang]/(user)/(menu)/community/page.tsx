@@ -1,26 +1,19 @@
-import { NavigationPathname } from "@repo/entity/src/navigation";
-import Link from "next/link";
-import CommunityNickName from "./_components/CommunityNickName";
-import AuthService from "@repo/usecase/src/authService";
-import AuthNextAppRouteRepository from "@repo/infrastructures/src/repositories/authNextAppRouteRepository";
-import { redirect } from "next/navigation";
-import Image from "next/image";
-import CommunityDessertMateSVG from "./_assets/svgs/icon-dessert-mate.svg";
-import CommunityDessertReviewSVG from "./_assets/svgs/icon-dessert-review.svg";
-
-const authService = new AuthService({
-  authRepository: new AuthNextAppRouteRepository(),
-})
+import { NavigationPathname } from '@repo/entity/src/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import CommunityDessertMateSVG from './_assets/svgs/icon-dessert-mate.svg';
+import CommunityDessertReviewSVG from './_assets/svgs/icon-dessert-review.svg';
+import CommunityNickName from './_components/CommunityNickName';
 
 export default async function CommunityIntroPage() {
-  const authorization = await authService.getAuthorization();
-  
   return (
     <main className="flex flex-col px-5 py-6 bg-[#F6F6F6] h-[100dvh]">
       <h1 className="text-xl text-gray-600 mb-4">커뮤니티</h1>
-      
+
       <h2 className="text-center text-lg mt-8 mb-8">
-        <CommunityNickName />님, 디저비의 커뮤니티<br />
+        <CommunityNickName />
+        님, 디저비의 커뮤니티
+        <br />
         서비스를 탐색해보세요!
       </h2>
 
@@ -32,10 +25,11 @@ export default async function CommunityIntroPage() {
             alt="community-dessert-mate"
             width={96}
             height={96}
+            priority
           />
           <p className="text-center text-sm mb-3">
-            <CommunityNickName />에게 딱 맞는<br />
-            디저트 메이트를 찾아볼까요?
+            <CommunityNickName />
+            님에게 딱 맞는 디저트 메이트를 찾아볼까요?
           </p>
           <Link
             href={NavigationPathname.CommunityDessertMate}
@@ -52,9 +46,11 @@ export default async function CommunityIntroPage() {
             alt="community-dessert-review"
             width={96}
             height={96}
+            priority
           />
           <p className="text-center text-sm mb-3">
-            다양한 디저트 가게의<br />
+            다양한 디저트 가게의
+            <br />
             리뷰를 알아볼까요?
           </p>
           <Link

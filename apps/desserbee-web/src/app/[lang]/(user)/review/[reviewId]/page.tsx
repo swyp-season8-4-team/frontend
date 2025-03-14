@@ -23,7 +23,7 @@ export default async function ReviewDetailPage({ params }: WithParams) {
   // }
 
   return (
-    <main className="flex flex-col h-[calc(100dvh - 52px)] px-4 gap-4 bg-[#f6f6f6] overflow-hidden">
+    <main className="flex flex-col h-[calc(100dvh - 52px)] px-4 py-4 gap-4 bg-[#f6f6f6] overflow-hidden">
       <ReviewDetailProvider review={review}>
         <div className="flex-1 overflow-y-auto">
           <ReviewPostSection review={review} />

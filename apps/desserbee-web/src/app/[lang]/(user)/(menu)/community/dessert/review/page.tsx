@@ -24,7 +24,7 @@ export default function CommunityDessertReviewPage() {
         <CommunityReviewListSection />
       </CommunityDessertCategorySearchProvider>
       <Link
-        className="flex gap-[4px] absolute bottom-[144px] right-[29px] bg-[#DE8332] hover:bg-[#DE8332]/90 text-[#393939] h-[43px] rounded-[100px] mx-auto text-[16px] text-white font-semibold leading-normal tracking-[-0.3px] px-4 py-2"
+        className="flex gap-[4px] absolute bottom-[132px] right-[29px] bg-[#DE8332] hover:bg-[#DE8332]/90 text-[#393939] h-[43px] rounded-[100px] mx-auto text-[16px] text-white font-semibold leading-normal tracking-[-0.3px] px-4 py-2"
         href={NavigationPathname.CommunityReviewWrite}
       >
         <IconPencil className="text-white" size={22} />

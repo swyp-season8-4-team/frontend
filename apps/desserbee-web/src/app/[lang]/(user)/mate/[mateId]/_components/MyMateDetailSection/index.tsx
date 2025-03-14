@@ -18,8 +18,6 @@ export default function MyMateDetailSection({ children, mate }: Props) {
   }
 
   return (
-    <section className="border rounded-[10px] bg-white px-2 py-2">
-      {children}
-    </section>
+    <section className="border rounded-[10px] bg-white">{children}</section>
   );
 }

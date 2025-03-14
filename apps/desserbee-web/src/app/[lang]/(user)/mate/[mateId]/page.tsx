@@ -21,14 +21,18 @@ export default async function MateDetailPage({ params }: WithParams) {
     notFound();
   }
 
-  const [mateResult, waitListResult] = await Promise.allSettled([
-    mateService.getDetails({
-      id: mateId,
-    }),
-    mateService.getWaitList({
-      id: mateId,
-    }),
-  ]);
+  const [mateResult, waitListResult, replyListResult] =
+    await Promise.allSettled([
+      mateService.getDetails({
+        id: mateId,
+      }),
+      mateService.getWaitList({
+        id: mateId,
+      }),
+      mateService.getReplyList({
+        id: mateId,
+      }),
+    ]);
 
   const mate = mateResult.status === 'fulfilled' ? mateResult.value : null;
   if (!mate) {
@@ -38,10 +42,16 @@ export default async function MateDetailPage({ params }: WithParams) {
   const waitList =
     waitListResult.status === 'fulfilled' ? waitListResult.value : [];
 
+  const replyListResponse =
+    replyListResult.status === 'fulfilled' ? replyListResult.value : null;
+
   return (
     <main className="flex flex-col h-[calc(100dvh - 52px)] px-4 gap-4 bg-[#f6f6f6] overflow-y-auto ">
       <MateDetailProvider mate={mate}>
-        <MatePostSection mate={mate} replyCount={waitList.length} />
+        <MatePostSection
+          mate={mate}
+          replyCount={replyListResponse?.replyList.length ?? 0}
+        />
 
         <MyMateDetailSection mate={mate}>
           <div className="px-4">
@@ -49,7 +59,12 @@ export default async function MateDetailPage({ params }: WithParams) {
           </div>
         </MyMateDetailSection>
 
-        <MateCommentListSection mateId={mateId} />
+        {replyListResponse && replyListResponse.replyList.length > 0 && (
+          <MateCommentListSection
+            replyList={replyListResponse.replyList}
+            isLast={replyListResponse.isLast}
+          />
+        )}
         {mate.applyStatus === 'APPROVED' && <CommentForm />}
       </MateDetailProvider>
     </main>
