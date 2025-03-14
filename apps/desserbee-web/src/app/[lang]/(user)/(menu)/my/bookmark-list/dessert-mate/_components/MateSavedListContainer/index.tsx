@@ -22,16 +22,6 @@ interface DessertMateTabProps {
   isLast: boolean;
 }
 
-const fetchSavedMates = async (currentPage: number, itemsToShow: number) => {
-  const from = currentPage * itemsToShow;
-  const to = from + itemsToShow;
-  const response = await getSavedMateList({ from, to });
-
-  if (response.mates.length === 0) return null;
-
-  return response;
-};
-
 export function MateSavedListContainer({
   mates: initialMates,
 }: DessertMateTabProps) {
@@ -44,6 +34,7 @@ export function MateSavedListContainer({
 
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
+  const [fromTo, setFromTo] = useState({ from: 0, to: itemsToShow });
 
   useEffect(() => {
     const handleResize = () => {
@@ -61,28 +52,66 @@ export function MateSavedListContainer({
   }, []);
 
   useEffect(() => {
-    const loadSavedMates = async () => {
-      const response = await fetchSavedMates(currentPage, itemsToShow);
-      if (!response) return;
-
-      setSavedMates(response.mates);
-      setIsLast(response.last);
-    };
-
-    loadSavedMates();
-  }, [currentPage, itemsToShow]);
+    setFromTo({ from: 0, to: itemsToShow });
+  }, [itemsToShow]);
 
   useEffect(() => {
     if (!api) {
       return;
     }
 
+    const handleSelect = () => {
+      const currentSlide = api.selectedScrollSnap();
+      setCurrent(currentSlide);
+
+      const newFrom = currentSlide * itemsToShow;
+      const newTo = (currentSlide + 1) * itemsToShow;
+
+      // 드래그 동작에서도 항상 fromTo 업데이트
+      setFromTo({
+        from: newFrom,
+        to: newTo,
+      });
+    };
+
+    // 초기 위치 설정
     setCurrent(api.selectedScrollSnap());
 
-    api.on('select', () => {
-      setCurrent(api.selectedScrollSnap());
-    });
-  }, [api]);
+    // select 이벤트 리스너 등록
+    api.on('select', handleSelect);
+
+    return () => {
+      api.off('select', handleSelect);
+    };
+  }, [api, itemsToShow]);
+
+  useEffect(() => {
+    const loadSavedMates = async () => {
+      try {
+        const response = await getSavedMateList(fromTo);
+
+        if (!response) {
+          console.warn('서버 응답 없음');
+          return;
+        }
+
+        setSavedMates((prev) => {
+          const newMates = [...prev];
+          response.mates.forEach((mate, index) => {
+            newMates[fromTo.from + index] = mate;
+          });
+          return newMates;
+        });
+
+        // last 상태 업데이트 전후 로깅
+        setIsLast(response.last);
+      } catch (error) {
+        console.error('데이터 로딩 중 에러:', error);
+      }
+    };
+
+    loadSavedMates();
+  }, [fromTo]);
 
   const [optimisticState, addOptimistic] = useOptimistic(
     savedMates,
@@ -120,11 +149,15 @@ export function MateSavedListContainer({
   };
 
   const handleNextPage = () => {
-    setCurrentPage((prev) => prev + 1);
+    if (!api) return;
+
+    api.scrollNext();
   };
 
   const handlePrevPage = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 0));
+    if (!api) return;
+
+    api.scrollPrev();
   };
 
   return (
@@ -231,26 +264,22 @@ export function MateSavedListContainer({
           </CarouselItem>
         ))}
       </CarouselContent>
-      {currentPage !== 0 && (
-        <div className="top-1/2 left-[-5px] md:left-[-10px] z-modal absolute translate-y-1/2">
-          <div
-            onClick={handlePrevPage}
-            className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
-          >
-            <IconDirection className="w-full h-full text-[#9F9F9F] rotate-90 transfrom" />
-          </div>
+      <div className="top-1/2 left-[-5px] md:left-[-10px] z-modal absolute translate-y-1/2">
+        <div
+          onClick={handlePrevPage}
+          className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
+        >
+          <IconDirection className="w-full h-full text-[#9F9F9F] rotate-90 transfrom" />
         </div>
-      )}
-      {!isLast && (
-        <div className="top-1/2 right-[-5px] md:right-[-10px] z-modal absolute translate-y-1/2">
-          <div
-            onClick={handleNextPage}
-            className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
-          >
-            <IconDirection className="top-0 right-0 absolute w-full h-full text-[#9F9F9F] -rotate-90 transfrom" />
-          </div>
+      </div>
+      <div className="top-1/2 right-[-5px] md:right-[-10px] z-modal absolute translate-y-1/2">
+        <div
+          onClick={handleNextPage}
+          className="w-6 md:w-10 h-7 md:h-10 cursor-pointer"
+        >
+          <IconDirection className="top-0 right-0 absolute w-full h-full text-[#9F9F9F] -rotate-90 transfrom" />
         </div>
-      )}
+      </div>
     </Carousel>
   );
 }
