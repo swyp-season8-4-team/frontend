@@ -148,7 +148,9 @@ export default class MateService {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.save({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+
+    const response = await this.mateRepository.save({ data, authorization });
 
     return response;
   }
@@ -158,7 +160,12 @@ export default class MateService {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.cancelSave({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+
+    const response = await this.mateRepository.cancelSave({
+      data,
+      authorization,
+    });
 
     return response;
   }
