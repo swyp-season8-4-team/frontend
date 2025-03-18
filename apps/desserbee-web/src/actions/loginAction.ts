@@ -7,6 +7,7 @@ import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRep
 import AuthDevAPIRepository from '@repo/infrastructures/src/repositories/authDevAPIRepository';
 import AuthService from '@repo/usecase/src/authService';
 import { cookies } from 'next/headers';
+import { decodeJWT } from '@repo/utility/src/jwt';
 
 const authService = new AuthService({
   authRepository:
@@ -57,11 +58,22 @@ export async function loginAction(
       maxAge: expiresIn,
     });
 
+    // 리프레시 토큰의 만료 시간 계산
+    const decodedRefreshToken = decodeJWT(refreshToken);
+    // 기본값으로 10일 설정 (디코딩 실패 시 백업)
+    let refreshTokenMaxAge = 10 * 24 * 60 * 60;
+
+    if (decodedRefreshToken && decodedRefreshToken.exp) {
+      const now = Math.floor(Date.now() / 1000);
+      refreshTokenMaxAge = Math.max(0, decodedRefreshToken.exp - now);
+    }
+
     cookieList.set('refreshToken', refreshToken, {
       httpOnly: true,
       secure: isProd,
       sameSite: 'strict',
       domain,
+      maxAge: refreshTokenMaxAge,
     });
 
     return response;
