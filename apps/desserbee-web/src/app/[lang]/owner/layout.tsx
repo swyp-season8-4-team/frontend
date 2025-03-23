@@ -3,5 +3,7 @@ export default function OwnerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="h-[100dvh]">{children}</div>;
+  return (
+    <div className="flex h-screen min-h-[100dvh] flex-col">{children}</div>
+  );
 }

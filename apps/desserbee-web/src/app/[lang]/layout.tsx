@@ -14,6 +14,7 @@ import { MockProvider } from '@/mocks/MockProvider';
 import { PortalProvider } from '@repo/ui/contexts/PortalContext';
 import { fontVariables } from '../fonts';
 import { MobileScreenProvider } from './_contexts/MobileScreenProvider';
+import { cn } from '@repo/ui/lib/utils';
 
 const metadataService = new MetadataService();
 
@@ -50,7 +51,7 @@ export default async function LangLayout({
 
   return (
     <html lang={lang} className={fontCofig.variable}>
-      <body className={fontCofig.className}>
+      <body className={cn(fontCofig.className)}>
         {/* <MobileScreenProvider> */}
         <Wrapper>
           <PortalProvider>{children}</PortalProvider>
