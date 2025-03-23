@@ -47,5 +47,9 @@ export enum NavigationPathname {
 
   Owner = '/owner',
   OwnerRegister = '/owner/register',
+  OwnerRegisterBasicInfo = '/owner/register/basic-info',
+  OwnerRegisterMenu = '/owner/register/menu',
+  OwnerRegisterCheck = '/owner/register/check',
+  OwnerRegisterComplete = '/owner/register/complete',
   OwnerDashboard = '/owner/dashboard',
 }
