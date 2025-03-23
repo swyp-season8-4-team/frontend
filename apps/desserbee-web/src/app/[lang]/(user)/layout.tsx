@@ -4,6 +4,7 @@ import UserAPIRepository from '@repo/infrastructures/src/repositories/userAPIRep
 import UserService from '@repo/usecase/src/userService';
 import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 import AuthService from '@repo/usecase/src/authService';
+import { MobileScreenProvider } from '../_contexts/MobileScreenProvider';
 
 const authRepository = new AuthNextAppRouteRepository();
 
@@ -21,12 +22,12 @@ export default async function UserLayout({ children }: WithChildren) {
   if (!auth) {
     return children;
   }
-  
+
   const user = await userService.getMe();
 
   return (
-    <UserProvider user={user}>
-      {children}
-    </UserProvider>
+    <MobileScreenProvider>
+      <UserProvider user={user}>{children}</UserProvider>
+    </MobileScreenProvider>
   );
 }

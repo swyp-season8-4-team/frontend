@@ -51,13 +51,11 @@ export default async function LangLayout({
   return (
     <html lang={lang} className={fontCofig.variable}>
       <body className={fontCofig.className}>
-        <MobileScreenProvider>
-          <Wrapper>
-            <PortalProvider>
-              {children}
-            </PortalProvider>
-          </Wrapper>
-        </MobileScreenProvider>
+        {/* <MobileScreenProvider> */}
+        <Wrapper>
+          <PortalProvider>{children}</PortalProvider>
+        </Wrapper>
+        {/* </MobileScreenProvider> */}
       </body>
     </html>
   );
