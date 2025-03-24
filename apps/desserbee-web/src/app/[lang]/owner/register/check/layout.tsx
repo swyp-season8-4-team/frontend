@@ -1,6 +1,5 @@
 import StepIndicator from '../_components/StepIndicator';
 import { StoreRegisterHeader } from '../_components/StoreRegisterHeader';
-import { RegisterStep } from '../_contexts/RegisterContext';
 
 export default function CheckLayout({
   children,
@@ -10,8 +9,8 @@ export default function CheckLayout({
   return (
     <div>
       <StoreRegisterHeader title="내용 확인" />
-      <StepIndicator currentSegment={RegisterStep.CHECK} />
-      <div className="mt-8">{children}</div>
+      <StepIndicator />
+      <div>{children}</div>
     </div>
   );
 }

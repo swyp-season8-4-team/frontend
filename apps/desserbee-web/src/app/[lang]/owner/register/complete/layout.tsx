@@ -1,6 +1,5 @@
 import StepIndicator from '../_components/StepIndicator';
 import { StoreRegisterHeader } from '../_components/StoreRegisterHeader';
-import { RegisterStep } from '../_contexts/RegisterContext';
 
 export default function CompleteLayout({
   children,
@@ -10,8 +9,8 @@ export default function CompleteLayout({
   return (
     <div>
       <StoreRegisterHeader title="등록 완료" />
-      <StepIndicator currentSegment={RegisterStep.COMPLETE} />
-      <div className="mt-8">{children}</div>
+      <StepIndicator />
+      <div>{children}</div>
     </div>
   );
 }

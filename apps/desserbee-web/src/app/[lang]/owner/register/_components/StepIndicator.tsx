@@ -1,8 +1,6 @@
 'use client';
 
-import IconCheck from '@repo/design-system/components/icons/IconCheck';
 import { useRegister, RegisterStep } from '../_contexts/RegisterContext';
-import Link from 'next/link';
 import { useEffect } from 'react';
 import { cn } from '@repo/ui/lib/utils';
 
