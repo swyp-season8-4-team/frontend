@@ -28,6 +28,13 @@ export interface Store {
   ownerPickImages?: string[];
 }
 
+export interface Tag {
+  parentTagId?: number;
+  parentTagName: string;
+  tagName: string;
+  tagId: number;
+}
+
 export interface Menu {
   menuUuid?: string;
   name: string;
@@ -224,7 +231,7 @@ export interface RegisterStoreRequest
   > {
   userUuid: string;
   menus: Menu[];
-  ImageFileKey?: string;
+  ImageFileKey?: string[]; // 메뉴 파일명
   storeImageFiles?: File[];
   ownerPickImageFiles?: File[];
   menuImageFiles?: File[];

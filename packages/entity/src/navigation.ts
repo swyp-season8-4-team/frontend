@@ -44,4 +44,12 @@ export enum NavigationPathname {
   TermsOfService = '/terms-of-service',
   LocationBasedFeaturesTermsOfService = '/terms-of-service/location-based-features',
   MarketingTermsOfService = '/terms-of-service/marketing',
+
+  Owner = '/owner',
+  OwnerRegister = '/owner/register',
+  OwnerRegisterBasicInfo = '/owner/register/basic-info',
+  OwnerRegisterMenu = '/owner/register/menu',
+  OwnerRegisterCheck = '/owner/register/check',
+  OwnerRegisterComplete = '/owner/register/complete',
+  OwnerDashboard = '/owner/dashboard',
 }

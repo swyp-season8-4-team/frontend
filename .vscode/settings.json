@@ -1,16 +1,16 @@
-{
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "typescript.enablePromptUseWorkspaceTsdk": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "editor.formatOnSave": true,
-  "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "vscode.json-language-features"
-  },
-  "editor.tabSize": 2,
-  "[feature]": {
-    "editor.defaultFormatter": "alexkrechik.cucumberautocomplete"
-  }
-}
+// {
+//   "typescript.tsdk": "node_modules/typescript/lib",
+//   "typescript.enablePromptUseWorkspaceTsdk": true,
+//   "editor.defaultFormatter": "esbenp.prettier-vscode",
+//   "editor.formatOnSave": true,
+//   "editor.codeActionsOnSave": {
+//     "source.fixAll": "explicit"
+//   },
+//   "[jsonc]": {
+//     "editor.defaultFormatter": "vscode.json-language-features"
+//   },
+//   "editor.tabSize": 2,
+//   "[feature]": {
+//     "editor.defaultFormatter": "alexkrechik.cucumberautocomplete"
+//   }
+// }
