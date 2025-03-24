@@ -464,10 +464,12 @@ export default function RegisterBasicInfoPage() {
       </div>
 
       <button
-        type="submit"
+        type="button"
         className={cn(
           'flex w-full items-center justify-center rounded-[99px] p-[10px] font-semibold text-[#393939]',
-          isFormValid ? 'bg-primary' : 'bg-[#BBB6AA] opacity-50',
+          isFormValid
+            ? 'bg-primary cursor-pointer'
+            : 'cursor-not-allowed bg-[#BBB6AA] opacity-50',
         )}
       >
         다음
