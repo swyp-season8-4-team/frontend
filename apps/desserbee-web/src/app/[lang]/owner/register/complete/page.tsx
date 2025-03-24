@@ -1,16 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRegister } from '../_contexts/RegisterContext';
 
 export default function RegisterCompletePage() {
-  const { setIsFormDirty, updateBasicInfo } = useRegister();
-
-  // 폼 입력 시작 시 dirty 상태로 설정
-  const handleInputChange = () => {
-    // setIsFormDirty(true);
-  };
-
   // 컴포넌트 마운트 시 초기화
   useEffect(() => {
     return () => {
@@ -19,8 +11,15 @@ export default function RegisterCompletePage() {
   }, []);
 
   return (
-    <form onChange={handleInputChange}>
-      <input type="text" />
+    <form className="mx-auto max-w-md p-4">
+      <div className="mt-6 flex justify-end">
+        <button
+          type="submit"
+          className="rounded-md bg-blue-500 px-6 py-2 text-white transition-colors hover:bg-blue-600"
+        >
+          지도로 이동
+        </button>
+      </div>
     </form>
   );
 }

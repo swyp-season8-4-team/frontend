@@ -1,14 +1,23 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRegister } from '../_contexts/RegisterContext';
+import { useRegister, RegisterStep } from '../_contexts/RegisterContext';
 
-export default function RegisterMenuPage() {
-  const { setIsFormDirty, updateBasicInfo } = useRegister();
+export default function RegisterCheckPage() {
+  const { completeStep, goToNextStep, redirectToStep } = useRegister();
 
-  // 폼 입력 시작 시 dirty 상태로 설정
-  const handleInputChange = () => {
-    setIsFormDirty(true);
+  // 다음 단계로 이동
+  const handleNextStep = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // 확인 단계 완료 표시
+    completeStep(RegisterStep.MENU);
+
+    // 내부 상태 업데이트
+    goToNextStep();
+
+    // 다음 단계로 이동
+    redirectToStep(RegisterStep.CHECK);
   };
 
   // 컴포넌트 마운트 시 초기화
@@ -19,8 +28,15 @@ export default function RegisterMenuPage() {
   }, []);
 
   return (
-    <form onChange={handleInputChange}>
-      <input type="text" />
+    <form onSubmit={handleNextStep} className="mx-auto max-w-md p-4">
+      <div className="mt-6 flex justify-end">
+        <button
+          type="submit"
+          className="rounded-md bg-blue-500 px-6 py-2 text-white transition-colors hover:bg-blue-600"
+        >
+          다음 단계
+        </button>
+      </div>
     </form>
   );
 }
