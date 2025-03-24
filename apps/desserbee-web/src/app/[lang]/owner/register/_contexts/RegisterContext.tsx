@@ -14,8 +14,6 @@ import type {
   HolidaysItem,
 } from '@repo/entity/src/store';
 import { useRouter, usePathname } from 'next/navigation';
-import NavigationService from '@repo/usecase/src/navigationService';
-import { NavigationPathname } from '@repo/entity/src/navigation';
 
 // 등록 단계 정의 (기존 코드 상단에 추가)
 export enum RegisterStep {
@@ -66,7 +64,7 @@ const initialStoreData: RegisterStoreRequest = {
 
   // 평점 및 태그
   averageRating: 0,
-  tagIds: [],
+  tagIds: [], // TODO: 이렇게 보내도 되는게 맞나?
 
   // 상태 정보
   status: 'ACTIVE', // 기본값

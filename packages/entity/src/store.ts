@@ -28,6 +28,13 @@ export interface Store {
   ownerPickImages?: string[];
 }
 
+export interface Tag {
+  parentTagId?: number;
+  parentTagName: string;
+  tagName: string;
+  tagId: number;
+}
+
 export interface Menu {
   menuUuid?: string;
   name: string;
