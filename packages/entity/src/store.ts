@@ -224,7 +224,7 @@ export interface RegisterStoreRequest
   > {
   userUuid: string;
   menus: Menu[];
-  ImageFileKey?: string;
+  ImageFileKey?: string[]; // 메뉴 파일명
   storeImageFiles?: File[];
   ownerPickImageFiles?: File[];
   menuImageFiles?: File[];

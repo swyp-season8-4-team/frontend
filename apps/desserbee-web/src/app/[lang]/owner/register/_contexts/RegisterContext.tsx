@@ -85,7 +85,7 @@ const initialStoreData: RegisterStoreRequest = {
   // 메뉴 정보
   menus: [],
 
-  // 이미지 파일 (클라이언트에서만 사용)
+  // 이미지 파일
   storeImageFiles: [],
   ownerPickImageFiles: [],
   menuImageFiles: [],
@@ -112,12 +112,12 @@ type RegisterContextType = {
 
   // 기본 정보 업데이트
   updateBasicInfo: (data: {
-    name?: string;
-    phone?: string;
-    address?: string;
+    name: string;
+    phone: string;
+    address: string;
+    latitude: number;
+    longitude: number;
     storeLink?: string;
-    latitude?: number;
-    longitude?: number;
     description?: string;
   }) => void;
 
@@ -152,6 +152,11 @@ type RegisterContextType = {
   updateNoticeItem: (index: number, item: string) => void;
   removeNoticeItem: (index: number) => void;
 
+  // 이미지 파일 관리
+  updateStoreImages: (files: File[]) => void;
+  updateOwnerPickImages: (files: File[]) => void;
+  updateMenuImages: (files: File[]) => void;
+
   // 메뉴 관리
   updateMenus: (menus: Menu[]) => void;
   addMenu: (menu: Omit<Menu, 'menuUuid' | 'images'>) => void;
@@ -160,11 +165,6 @@ type RegisterContextType = {
     menu: Partial<Omit<Menu, 'menuUuid' | 'images'>>,
   ) => void;
   removeMenu: (index: number) => void;
-
-  // 이미지 파일 관리
-  updateStoreImages: (files: File[]) => void;
-  updateOwnerPickImages: (files: File[]) => void;
-  updateMenuImages: (files: File[]) => void;
 
   // 메뉴 이미지 연결
   setMenuImageFile: (menuIndex: number, file: File) => void;
@@ -183,9 +183,6 @@ type RegisterContextType = {
   // 데이터 변경 추적
   isFormDirty: boolean;
   setIsFormDirty: (isDirty: boolean) => void;
-
-  // 경고 메시지 설정
-  setWarningMessage: (message: string) => void;
 
   // 단계별 경로 가져오기 (언어 포함)
   getStepPath: (step: RegisterStep) => string;
@@ -215,33 +212,9 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
   // 폼 데이터 변경 여부 추적
   const [isFormDirty, setIsFormDirty] = useState(false);
 
-  // 경고 메시지
-  const [warningMessage, setWarningMessage] = useState(
-    '주의: 페이지를 새로고침하거나 닫으면 현재까지 입력한 내용이 모두 사라집니다.',
-  );
-
   // 라우터
   const router = useRouter();
   const pathname = usePathname();
-  const navigationService = new NavigationService({});
-
-  // beforeunload 이벤트 리스너 등록 (새로고침/탭 닫기 감지)
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isFormDirty) {
-        // 표준 메시지 (브라우저마다 다르게 표시될 수 있음)
-        e.preventDefault();
-        e.returnValue = warningMessage;
-        return warningMessage;
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [isFormDirty, warningMessage]);
 
   // 데이터 변경 시 isFormDirty 설정
   useEffect(() => {
@@ -714,7 +687,6 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
 
         isFormDirty,
         setIsFormDirty,
-        setWarningMessage,
       }}
     >
       {children}
