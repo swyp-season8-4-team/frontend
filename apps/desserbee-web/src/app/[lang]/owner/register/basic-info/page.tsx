@@ -60,7 +60,7 @@ export default function RegisterBasicInfoPage() {
   const [name, setName] = useState(storeData.name);
   const [phone, setPhone] = useState(storeData.phone);
   const [address, setAddress] = useState(storeData.address);
-  const [detailAddress, setDetailAddress] = useState('');
+  const [detailAddress, setDetailAddress] = useState(storeData.detailAddress);
   const [storeLink, setStoreLink] = useState(storeData.storeLink);
   const [description, setDescription] = useState(storeData.description);
 
@@ -96,43 +96,8 @@ export default function RegisterBasicInfoPage() {
     setPhone(e.target.value);
   };
 
-  const openAddressModal = () => {
-    // Daum 우편번호 서비스 호출
-    new (window as any).daum.Postcode({
-      oncomplete: function (data: any) {
-        const addr = data.roadAddress || data.jibunAddress;
-
-        // 주소 정보 설정
-        setAddress(addr);
-      },
-    }).open();
-  };
-
-  const closeAddressModal = (address: string) => {
-    setAddress(address);
-  };
-
-  // const handleAddressChange = (address: string) => {
-  //   setAddress(address);
-  // };
-
   const handleDetailAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
     setDetailAddress(e.target.value);
-  };
-
-  const openOperatingHoursModal = () => {};
-
-  const closeOperatingHoursModal = (operationHours: OperatingHoursItem[]) => {
-    setOperationHours(operationHours);
-  };
-  // const handleOperationHoursChange = (operationHours: OperatingHoursItem[]) => {
-  //   setOperationHours(operationHours);
-  // };
-
-  const openTagModal = () => {};
-
-  const closeTagModal = (tags: Tag[]) => {
-    setTags(tags);
   };
 
   const handleStoreLinkChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -163,18 +128,46 @@ export default function RegisterBasicInfoPage() {
     }));
   };
 
+  // 모달
+  const openAddressModal = () => {
+    // Daum 우편번호 서비스 호출
+    new (window as any).daum.Postcode({
+      oncomplete: function (data: any) {
+        const addr = data.roadAddress || data.jibunAddress;
+
+        // 주소 정보 설정
+        setAddress(addr);
+      },
+    }).open();
+  };
+
+  const closeAddressModal = (address: string) => {
+    setAddress(address);
+  };
+
+  const openOperatingHoursModal = () => {};
+
+  const closeOperatingHoursModal = (operationHours: OperatingHoursItem[]) => {
+    setOperationHours(operationHours);
+  };
+
+  const openTagModal = () => {};
+
+  const closeTagModal = (tags: Tag[]) => {
+    setTags(tags);
+  };
+
   // 다음 단계로 이동 및 context 업데이트
   const handleNextStep = (e: FormEvent) => {
     e.preventDefault();
 
-    completeStep(RegisterStep.BASIC_INFO);
-    goToNextStep();
-
     const { latitude, longitude } = { latitude: 0, longitude: 0 };
+
     updateBasicInfo({
       name,
       phone,
       address,
+      detailAddress,
       latitude,
       longitude,
       storeLink,
@@ -187,8 +180,31 @@ export default function RegisterBasicInfoPage() {
     updateOwnerPickImages(ownerPickImageFiles);
     updateFeatures(features);
 
+    completeStep(RegisterStep.BASIC_INFO);
+    goToNextStep();
     router.push(`${NavigationPathname.OwnerRegisterMenu}`);
   };
+
+  // 폼 유효성 검사를 위한 useEffect 추가
+  useEffect(() => {
+    // 필수 입력 필드 검사
+    const isValid =
+      name.trim() !== '' &&
+      phone.trim() !== '' &&
+      address.trim() !== '' &&
+      detailAddress.trim() !== '' &&
+      tags.length > 0;
+
+    setIsFormValid(isValid);
+  }, [
+    name,
+    phone,
+    address,
+    detailAddress,
+    operatingHours,
+    tags,
+    storeImageFiles,
+  ]);
 
   // 컴포넌트 마운트 시 초기화
   useEffect(() => {
@@ -321,7 +337,6 @@ export default function RegisterBasicInfoPage() {
             id="address"
             value={address}
             placeholder="주소를 입력해주세요"
-            // onChange={handleAddressChange}
             disabled
           />
         </div>
@@ -433,7 +448,6 @@ export default function RegisterBasicInfoPage() {
           value={description}
           maxLength={60}
           onChange={handleDescriptionChange}
-          required
         />
       </div>
 
@@ -449,7 +463,6 @@ export default function RegisterBasicInfoPage() {
           id="storeLink"
           value={storeLink}
           onChange={handleStoreLinkChange}
-          required
         />
       </div>
 
@@ -481,7 +494,7 @@ export default function RegisterBasicInfoPage() {
       </div>
 
       <button
-        type="button"
+        type="submit"
         className={cn(
           'flex w-full items-center justify-center rounded-[99px] p-[10px] font-semibold text-[#393939]',
           isFormValid

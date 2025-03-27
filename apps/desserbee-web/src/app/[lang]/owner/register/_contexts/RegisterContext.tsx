@@ -47,12 +47,18 @@ export const STEP_TO_PATH: Record<RegisterStep, string> = {
   [RegisterStep.COMPLETE]: '/owner/register/complete',
 };
 
+interface StoreData extends RegisterStoreRequest {
+  detailAddress: string; // 클라이언트에서만 사용, api 연동할 때 address랑 합쳐야함
+}
+
 // 초기 상태 정의
-const initialStoreData: RegisterStoreRequest = {
+const initialStoreData: StoreData = {
   // 기본 정보
   name: '',
   phone: '',
   address: '',
+  detailAddress: '',
+
   storeLink: '',
   latitude: 0,
   longitude: 0,
@@ -92,7 +98,7 @@ const initialStoreData: RegisterStoreRequest = {
 // Context 타입 정의
 type RegisterContextType = {
   // 상태
-  storeData: RegisterStoreRequest;
+  storeData: StoreData;
   currentStep: number;
   isSubmitting: boolean;
   error: string | null;
@@ -113,6 +119,7 @@ type RegisterContextType = {
     name: string;
     phone: string;
     address: string;
+    detailAddress: string; // 클라이언트에서만 사용, api 연동할 때 address랑 합쳐야함
     latitude: number;
     longitude: number;
     storeLink?: string;
@@ -194,8 +201,7 @@ const RegisterContext = createContext<RegisterContextType | undefined>(
 // Context Provider 컴포넌트
 export function RegisterProvider({ children }: { children: ReactNode }) {
   // 상태 정의
-  const [storeData, setStoreData] =
-    useState<RegisterStoreRequest>(initialStoreData);
+  const [storeData, setStoreData] = useState<StoreData>(initialStoreData);
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
