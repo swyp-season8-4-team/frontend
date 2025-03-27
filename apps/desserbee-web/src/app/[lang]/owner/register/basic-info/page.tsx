@@ -96,7 +96,17 @@ export default function RegisterBasicInfoPage() {
     setPhone(e.target.value);
   };
 
-  const openAddressModal = () => {};
+  const openAddressModal = () => {
+    // Daum 우편번호 서비스 호출
+    new (window as any).daum.Postcode({
+      oncomplete: function (data: any) {
+        const addr = data.roadAddress || data.jibunAddress;
+
+        // 주소 정보 설정
+        setAddress(addr);
+      },
+    }).open();
+  };
 
   const closeAddressModal = (address: string) => {
     setAddress(address);
@@ -182,6 +192,13 @@ export default function RegisterBasicInfoPage() {
 
   // 컴포넌트 마운트 시 초기화
   useEffect(() => {
+    // Daum 우편번호 스크립트 동적 로드
+    const script = document.createElement('script');
+    script.src =
+      '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+    script.async = true;
+    document.head.appendChild(script);
+
     return () => {
       // 컴포넌트 언마운트 시 정리 작업 (선택 사항)
     };
