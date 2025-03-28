@@ -22,6 +22,7 @@ import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { TagSelectModal } from '../_modals/TagSelectModal';
 import { OperatingHoursSelectModal } from '../_modals/OperatingHoursSelectModal';
 import { TAG_CATEGORIES, TAGS } from '../_consts/tag';
+import { DAYS_OF_WEEK } from '../_consts/operatingHours';
 
 const FEATURES = [
   {
@@ -375,23 +376,47 @@ export default function RegisterBasicInfoPage() {
           <div className="text-sm font-medium">운영시간</div>
           <div className="text-xs">(필수)</div>
         </label>
-        <div className="relative">
-          <button
-            onClick={openOperatingHoursModal}
-            type="button"
-            className="absolute right-[10px] top-[50%] -translate-y-1/2"
-          >
-            <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
-          </button>
-          <input
-            className="w-full rounded-[5px] border border-[#9F9F9F] bg-[#F0F0F0] p-[10px] text-sm"
-            type="text"
-            id="operatingHours"
-            // value={operatingHours} // TODO: 운영시간 선택, 입력 완료하면 어떻게보여야하는거지?
-            placeholder="운영시간을 입력해주세요"
-            disabled
-          />
-        </div>
+        {operatingHours.length > 0 ? (
+          <div className="relative">
+            <button
+              onClick={openOperatingHoursModal}
+              type="button"
+              className="absolute right-[10px] top-5 -translate-y-1/2"
+            >
+              <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
+            </button>
+            <div className="flex w-full flex-wrap gap-1 rounded-[5px] border border-[#9F9F9F] bg-[#F0F0F0] p-[10px] pr-8 text-sm">
+              {operatingHours.map((item) => {
+                const day = DAYS_OF_WEEK.find((d) => d.en === item.dayOfWeek);
+                return (
+                  <div
+                    key={item.dayOfWeek}
+                    className="rounded-[3px] border-[0.3px] border-[#9F9F9F] bg-white px-2 py-1 text-xs text-[#393939]"
+                  >
+                    {day?.kr} {item.openingTime} ~ {item.closingTime}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <div className="relative">
+            <button
+              onClick={openOperatingHoursModal}
+              type="button"
+              className="absolute right-[10px] top-[50%] -translate-y-1/2"
+            >
+              <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
+            </button>
+            <input
+              className="w-full rounded-[5px] border border-[#9F9F9F] bg-[#F0F0F0] p-[10px] text-sm"
+              type="text"
+              id="operatingHours"
+              placeholder="운영시간을 입력해주세요"
+              disabled
+            />
+          </div>
+        )}
       </div>
 
       {/* 특성 태그 */}
