@@ -156,7 +156,7 @@ export default function RegisterBasicInfoPage() {
     });
   };
 
-  const closeOperatingHoursModal = () => {
+  const closeOperatingHoursModal = (operatingHours?: OperatingHoursItem[]) => {
     if (operatingHours) {
       setOperatingHours(operatingHours);
     }
@@ -168,7 +168,7 @@ export default function RegisterBasicInfoPage() {
       component: (
         <OperatingHoursSelectModal
           onClose={closeOperatingHoursModal}
-          initialOperatingHours={storeData.operatingHours}
+          initialOperatingHours={operatingHours}
         />
       ),
     });
