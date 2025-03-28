@@ -300,7 +300,7 @@ export default function RegisterBasicInfoPage() {
                   </div>
                   <button
                     type="button"
-                    className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white"
+                    className="bg-primary absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full text-sm text-white"
                     onClick={() => handleRemoveStoreImageFiles(index)}
                   >
                     ×
