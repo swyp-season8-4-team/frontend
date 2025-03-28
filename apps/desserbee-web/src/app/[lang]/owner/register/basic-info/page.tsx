@@ -95,8 +95,22 @@ export default function RegisterBasicInfoPage() {
     setName(e.target.value);
   };
 
+  const validatePhoneNumber = (phone: string): boolean => {
+    const phoneRegex = /^(\d{3,4})-(\d{4})-(\d{4})$/;
+    return phoneRegex.test(phone);
+  };
+
   const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPhone(e.target.value);
+    const value = e.target.value;
+
+    // 숫자와 하이픈만 허용
+    const sanitizedValue = value.replace(/[^0-9-]/g, '');
+
+    // if (value !== '' && !validatePhoneNumber(sanitizedValue)) {
+    //   alert('전화번호 형식을 확인해주세요.\n예시: 000-0000-0000');
+    // }
+
+    setPhone(sanitizedValue);
   };
 
   const handleDetailAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -176,37 +190,8 @@ export default function RegisterBasicInfoPage() {
     });
   };
 
-  // 다음 단계로 이동 및 context 업데이트
-  const handleNextStep = (e: FormEvent) => {
-    e.preventDefault();
-
-    const { latitude, longitude } = { latitude: 0, longitude: 0 };
-
-    updateBasicInfo({
-      name,
-      phone,
-      address,
-      detailAddress,
-      latitude,
-      longitude,
-      storeLink,
-      description,
-    });
-
-    //updateTags(tags); //TODO: 태그 관련 고쳐야함.. 데이터 스키마 이거 아닐듯 (Tag에서 tagId만 뽑아서 배열 만들어 보내기)
-    updateOperatingHours(operatingHours);
-    updateStoreImages(storeImageFiles);
-    updateOwnerPickImages(ownerPickImageFiles);
-    updateFeatures(features);
-
-    completeStep(RegisterStep.BASIC_INFO);
-    goToNextStep();
-    router.push(`${NavigationPathname.OwnerRegisterMenu}`);
-  };
-
-  // 폼 유효성 검사를 위한 useEffect 추가
+  // 입력값 존재 여부만 확인
   useEffect(() => {
-    // 필수 입력 필드 검사
     const isValid =
       name.trim() !== '' &&
       phone.trim() !== '' &&
@@ -224,6 +209,37 @@ export default function RegisterBasicInfoPage() {
     tags,
     storeImageFiles,
   ]);
+
+  const handleNextStep = (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!validatePhoneNumber(phone.trim())) {
+      alert('전화번호 형식을 확인해주세요.\n예시: 000-0000-0000');
+      return;
+    }
+
+    const { latitude, longitude } = { latitude: 0, longitude: 0 };
+
+    updateBasicInfo({
+      name,
+      phone,
+      address,
+      detailAddress,
+      latitude,
+      longitude,
+      storeLink,
+      description,
+    });
+
+    updateOperatingHours(operatingHours);
+    updateStoreImages(storeImageFiles);
+    updateOwnerPickImages(ownerPickImageFiles);
+    updateFeatures(features);
+
+    completeStep(RegisterStep.BASIC_INFO);
+    goToNextStep();
+    router.push(`${NavigationPathname.OwnerRegisterMenu}`);
+  };
 
   // 컴포넌트 마운트 시 초기화
   useEffect(() => {
