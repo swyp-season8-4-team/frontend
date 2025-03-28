@@ -37,7 +37,10 @@ export default function TokenManagerPage() {
     try {
       const tokenData = await checkTokenAction();
       if (tokenData) {
-        updateTokenInfo(tokenData.accessToken, tokenData.refreshToken);
+        updateTokenInfo(
+          tokenData.accessToken ?? null,
+          tokenData.refreshToken ?? null,
+        );
       }
     } catch (error) {
       console.error('토큰 정보를 가져오는 중 오류 발생:', error);
@@ -145,24 +148,24 @@ export default function TokenManagerPage() {
   }, []);
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">토큰 관리자</h1>
+    <div className="mx-auto max-w-4xl p-6">
+      <h1 className="mb-6 text-2xl font-bold">토큰 관리자</h1>
 
       <div className="flex flex-col gap-8">
         {/* 액세스 토큰 섹션 */}
-        <div className="border rounded-lg p-4 bg-white shadow">
-          <h2 className="text-xl font-semibold mb-2">액세스 토큰</h2>
+        <div className="rounded-lg border bg-white p-4 shadow">
+          <h2 className="mb-2 text-xl font-semibold">액세스 토큰</h2>
 
-          <div className="flex items-center mb-2">
-            <span className="font-medium mr-2">상태:</span>
+          <div className="mb-2 flex items-center">
+            <span className="mr-2 font-medium">상태:</span>
             {accessTokenInfo.token ? (
               <span
-                className={`px-2 py-1 rounded text-sm ${accessTokenInfo.isExpired ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}
+                className={`rounded px-2 py-1 text-sm ${accessTokenInfo.isExpired ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}
               >
                 {accessTokenInfo.isExpired ? '만료됨' : '유효함'}
               </span>
             ) : (
-              <span className="px-2 py-1 rounded text-sm bg-gray-100 text-gray-800">
+              <span className="rounded bg-gray-100 px-2 py-1 text-sm text-gray-800">
                 없음
               </span>
             )}
@@ -184,8 +187,8 @@ export default function TokenManagerPage() {
 
           {accessTokenInfo.token && (
             <div className="mt-4">
-              <div className="font-medium mb-1">토큰 정보:</div>
-              <div className="bg-gray-50 p-3 rounded overflow-auto max-h-40 text-xs font-mono">
+              <div className="mb-1 font-medium">토큰 정보:</div>
+              <div className="max-h-40 overflow-auto rounded bg-gray-50 p-3 font-mono text-xs">
                 {JSON.stringify(accessTokenInfo.decoded, null, 2)}
               </div>
             </div>
@@ -193,19 +196,19 @@ export default function TokenManagerPage() {
         </div>
 
         {/* 리프레시 토큰 섹션 */}
-        <div className="border rounded-lg p-4 bg-white shadow">
-          <h2 className="text-xl font-semibold mb-2">리프레시 토큰</h2>
+        <div className="rounded-lg border bg-white p-4 shadow">
+          <h2 className="mb-2 text-xl font-semibold">리프레시 토큰</h2>
 
-          <div className="flex items-center mb-2">
-            <span className="font-medium mr-2">상태:</span>
+          <div className="mb-2 flex items-center">
+            <span className="mr-2 font-medium">상태:</span>
             {refreshTokenInfo.token ? (
               <span
-                className={`px-2 py-1 rounded text-sm ${refreshTokenInfo.isExpired ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}
+                className={`rounded px-2 py-1 text-sm ${refreshTokenInfo.isExpired ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}
               >
                 {refreshTokenInfo.isExpired ? '만료됨' : '유효함'}
               </span>
             ) : (
-              <span className="px-2 py-1 rounded text-sm bg-gray-100 text-gray-800">
+              <span className="rounded bg-gray-100 px-2 py-1 text-sm text-gray-800">
                 없음
               </span>
             )}
@@ -227,8 +230,8 @@ export default function TokenManagerPage() {
 
           {refreshTokenInfo.token && (
             <div className="mt-4">
-              <div className="font-medium mb-1">토큰 정보:</div>
-              <div className="bg-gray-50 p-3 rounded overflow-auto max-h-40 text-xs font-mono">
+              <div className="mb-1 font-medium">토큰 정보:</div>
+              <div className="max-h-40 overflow-auto rounded bg-gray-50 p-3 font-mono text-xs">
                 {JSON.stringify(refreshTokenInfo.decoded, null, 2)}
               </div>
             </div>
@@ -242,9 +245,9 @@ export default function TokenManagerPage() {
             disabled={
               isLoading || !refreshTokenInfo.token || refreshTokenInfo.isExpired
             }
-            className={`py-2 px-4 rounded-lg font-medium transition ${
+            className={`rounded-lg px-4 py-2 font-medium transition ${
               isLoading || !refreshTokenInfo.token || refreshTokenInfo.isExpired
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? 'cursor-not-allowed bg-gray-300 text-gray-500'
                 : 'bg-blue-600 text-white hover:bg-blue-700'
             }`}
           >
@@ -252,13 +255,13 @@ export default function TokenManagerPage() {
           </button>
 
           {refreshStatus && (
-            <div className="bg-blue-50 text-blue-800 p-3 rounded">
+            <div className="rounded bg-blue-50 p-3 text-blue-800">
               {refreshStatus}
             </div>
           )}
 
           {refreshError && (
-            <div className="bg-red-50 text-red-800 p-3 rounded">
+            <div className="rounded bg-red-50 p-3 text-red-800">
               {refreshError}
             </div>
           )}
