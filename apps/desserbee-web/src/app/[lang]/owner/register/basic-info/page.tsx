@@ -1,6 +1,12 @@
 'use client';
 
-import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
+import {
+  useContext,
+  useEffect,
+  useState,
+  type ChangeEvent,
+  type FormEvent,
+} from 'react';
 import { useRegister, RegisterStep } from '../_contexts/RegisterContext';
 import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
@@ -12,18 +18,11 @@ import IconCar from '@repo/design-system/components/icons/IconCar2';
 import IconDog from '@repo/design-system/components/icons/IconDog2';
 import IconTumbler from '@repo/design-system/components/icons/IconTumbler2';
 import { cn } from '@repo/ui/lib/utils';
+import { PortalContext } from '@repo/ui/contexts/PortalContext';
+import { TagSelectModal } from '../_modals/TagSelectModal';
+import { OperatingHoursSelectModal } from '../_modals/OperatingHoursSelectModal';
+import { TAG_CATEGORIES, TAGS } from '../_consts/tag';
 
-const TAG_MOCK_DATA: Tag[] = [
-  { parentTagName: '베이커리', tagName: '베이글', tagId: 0 },
-  { parentTagName: '디저트', tagName: '케이크', tagId: 12 },
-  { parentTagName: '스페셜', tagName: '파르페', tagId: 3 },
-  { parentTagName: '스페셜', tagName: '파르페', tagId: 6 },
-  { parentTagName: '스페셜', tagName: '파르페', tagId: 2 },
-  { parentTagName: '스페셜', tagName: '파르페', tagId: 1 },
-  { parentTagName: '스페셜', tagName: '파르페', tagId: 4 },
-];
-
-// TODO: 선택되었을 때 스타일도 필요
 const FEATURES = [
   {
     icon: <IconCar className="h-full w-full text-[#E06A00]" />,
@@ -55,7 +54,10 @@ export default function RegisterBasicInfoPage() {
     goToNextStep,
     storeData,
   } = useRegister();
+
   const router = useRouter();
+
+  const { push, pop } = useContext(PortalContext);
 
   const [name, setName] = useState(storeData.name);
   const [phone, setPhone] = useState(storeData.phone);
@@ -64,8 +66,8 @@ export default function RegisterBasicInfoPage() {
   const [storeLink, setStoreLink] = useState(storeData.storeLink);
   const [description, setDescription] = useState(storeData.description);
 
-  const [tags, setTags] = useState<Tag[]>(TAG_MOCK_DATA || []); // TODO: 태그 관련 물어봐야함 (추후 목데이터 수정하기)
-  const [operatingHours, setOperationHours] = useState<OperatingHoursItem[]>(
+  const [tags, setTags] = useState<number[]>(storeData.tagIds || []);
+  const [operatingHours, setOperatingHours] = useState<OperatingHoursItem[]>(
     storeData.operatingHours || [],
   );
 
@@ -141,20 +143,35 @@ export default function RegisterBasicInfoPage() {
     }).open();
   };
 
-  const closeAddressModal = (address: string) => {
-    setAddress(address);
+  const closeTagModal = (tags?: number[]) => {
+    if (tags) {
+      setTags(tags);
+    }
+    pop('modal');
   };
 
-  const openOperatingHoursModal = () => {};
-
-  const closeOperatingHoursModal = (operationHours: OperatingHoursItem[]) => {
-    setOperationHours(operationHours);
+  const openTagModal = async () => {
+    push('modal', {
+      component: <TagSelectModal onClose={closeTagModal} initialTags={tags} />,
+    });
   };
 
-  const openTagModal = () => {};
+  const closeOperatingHoursModal = () => {
+    if (operatingHours) {
+      setOperatingHours(operatingHours);
+    }
+    pop('modal');
+  };
 
-  const closeTagModal = (tags: Tag[]) => {
-    setTags(tags);
+  const openOperatingHoursModal = async () => {
+    push('modal', {
+      component: (
+        <OperatingHoursSelectModal
+          onClose={closeOperatingHoursModal}
+          initialOperatingHours={storeData.operatingHours}
+        />
+      ),
+    });
   };
 
   // 다음 단계로 이동 및 context 업데이트
@@ -398,20 +415,29 @@ export default function RegisterBasicInfoPage() {
               className="flex w-full flex-wrap gap-1 rounded-[5px] border border-[#9F9F9F] bg-[#F0F0F0] p-[10px] pr-8 text-sm"
               id="tags"
             >
-              {tags.map(({ parentTagName, tagName, tagId }) => (
-                <div
-                  key={tagId}
-                  className="rounded-[3px] border-[0.3px] border-[#9F9F9F] bg-white px-2 py-1 text-xs text-[#393939]"
-                >
-                  {parentTagName}&nbsp;{'>'}&nbsp;{tagName}
-                </div>
-              ))}
+              {tags.map((tagId) => {
+                const tag = TAGS.find((tag) => tag.id === tagId);
+                const category = tag
+                  ? TAG_CATEGORIES.find(
+                      (cat) => cat.categoryId === tag.parentId,
+                    )
+                  : null;
+
+                return tag && category ? (
+                  <div
+                    key={tagId}
+                    className="rounded-[3px] border-[0.3px] border-[#9F9F9F] bg-white px-2 py-1 text-xs text-[#393939]"
+                  >
+                    {category.categoryName}&nbsp;{'>'}&nbsp;{tag.name}
+                  </div>
+                ) : null;
+              })}
             </div>
           </div>
         ) : (
           <div className="relative">
             <button
-              onClick={openAddressModal}
+              onClick={openTagModal}
               type="button"
               className="absolute right-[10px] top-[50%] -translate-y-1/2"
             >
@@ -482,8 +508,8 @@ export default function RegisterBasicInfoPage() {
               className={cn(
                 'flex items-center justify-center gap-[10px] rounded-[12px] border p-3',
                 features[id as keyof typeof features]
-                  ? 'border-primary bg-[#FFF8E7]'
-                  : 'border-[#B1B1B1]',
+                  ? 'border-[#825D00] bg-[#FFE4A1] text-[#614500]'
+                  : 'border-[#9F9F9F] bg-white text-[#393939]',
               )}
             >
               <div className="h-[27px] w-[27px]">{icon}</div>
