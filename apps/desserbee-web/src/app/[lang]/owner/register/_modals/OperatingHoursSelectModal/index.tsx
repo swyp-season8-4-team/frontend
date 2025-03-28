@@ -170,7 +170,7 @@ export function OperatingHoursSelectModal({
                       <div className="flex w-full items-center rounded-[6px] border border-[#58616A] px-2 py-1">
                         <input
                           type="number"
-                          className="w-auto px-0 py-0 text-center text-[15px]"
+                          className="w-8 px-0 py-0 text-center text-[15px]"
                           min="0"
                           max="23"
                           value={item.openingTime.split(':')[0]}
@@ -186,7 +186,7 @@ export function OperatingHoursSelectModal({
                         <span>:</span>
                         <input
                           type="number"
-                          className="w-auto px-0 py-0 text-center text-[15px]"
+                          className="w-8 px-0 py-0 text-center text-[15px]"
                           min="0"
                           max="59"
                           value={item.openingTime.split(':')[1]}
@@ -209,7 +209,7 @@ export function OperatingHoursSelectModal({
                       <div className="flex w-full items-center rounded-[6px] border border-[#58616A] px-2 py-1">
                         <input
                           type="number"
-                          className="w-auto px-0 py-0 text-center text-[15px]"
+                          className="w-8 px-0 py-0 text-center text-[15px]"
                           min="0"
                           max="23"
                           value={item.closingTime.split(':')[0]}
@@ -225,7 +225,7 @@ export function OperatingHoursSelectModal({
                         <span>:</span>
                         <input
                           type="number"
-                          className="w-auto px-0 py-0 text-center text-[15px]"
+                          className="w-8 px-0 py-0 text-center text-[15px]"
                           min="0"
                           max="59"
                           value={item.closingTime.split(':')[1]}
