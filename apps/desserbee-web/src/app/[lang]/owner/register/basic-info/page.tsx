@@ -1,12 +1,6 @@
 'use client';
 
-import {
-  useContext,
-  useEffect,
-  useState,
-  type ChangeEvent,
-  type FormEvent,
-} from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import { useRegister, RegisterStep } from '../_contexts/RegisterContext';
 import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
@@ -23,6 +17,7 @@ import { TagSelectModal } from '../_modals/TagSelectModal';
 import { OperatingHoursSelectModal } from '../_modals/OperatingHoursSelectModal';
 import { TAG_CATEGORIES, TAGS } from '../_consts/tag';
 import { DAYS_OF_WEEK } from '../_consts/operatingHours';
+import { useContext, useEffect, useState } from 'react';
 
 const FEATURES = [
   {
@@ -42,208 +37,100 @@ const FEATURES = [
   },
 ];
 
+interface FormInputs {
+  name: string;
+  phone: string;
+  address: string;
+  detailAddress: string;
+  storeLink: string;
+  description: string;
+  tags: number[];
+  operatingHours: OperatingHoursItem[];
+  storeImageFiles: File[];
+  ownerPickImageFiles: File[];
+  features: {
+    animalYn: boolean;
+    tumblerYn: boolean;
+    parkingYn: boolean;
+  };
+}
+
 export default function RegisterBasicInfoPage() {
+  const router = useRouter();
+  const { push, pop } = useContext(PortalContext);
   const {
-    setIsFormDirty,
     updateBasicInfo,
-    updateTags,
     updateOperatingHours,
-    updateFeatures,
     updateStoreImages,
     updateOwnerPickImages,
+    updateTags,
+    updateFeatures,
     completeStep,
     goToNextStep,
     storeData,
   } = useRegister();
 
-  const router = useRouter();
-
-  const { push, pop } = useContext(PortalContext);
-
-  const [name, setName] = useState(storeData.name);
-  const [phone, setPhone] = useState(storeData.phone);
-  const [address, setAddress] = useState(storeData.address);
-  const [detailAddress, setDetailAddress] = useState(storeData.detailAddress);
-  const [storeLink, setStoreLink] = useState(storeData.storeLink);
-  const [description, setDescription] = useState(storeData.description);
-
-  const [tags, setTags] = useState<number[]>(storeData.tagIds || []);
-  const [operatingHours, setOperatingHours] = useState<OperatingHoursItem[]>(
-    storeData.operatingHours || [],
-  );
-
-  const [features, setFeatures] = useState({
-    animalYn: storeData.animalYn || false,
-    tumblerYn: storeData.tumblerYn || false,
-    parkingYn: storeData.parkingYn || false,
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+    trigger,
+  } = useForm<FormInputs>({
+    defaultValues: {
+      name: storeData.name,
+      phone: storeData.phone,
+      address: storeData.address,
+      detailAddress: storeData.detailAddress,
+      storeLink: storeData.storeLink,
+      description: storeData.description,
+      tags: storeData.tagIds || [],
+      operatingHours: storeData.operatingHours || [],
+      storeImageFiles: storeData.storeImageFiles || [],
+      ownerPickImageFiles: storeData.ownerPickImageFiles || [],
+      features: {
+        animalYn: storeData.animalYn || false,
+        tumblerYn: storeData.tumblerYn || false,
+        parkingYn: storeData.parkingYn || false,
+      },
+    },
+    mode: 'onChange',
   });
 
-  const [storeImageFiles, setStoreImageFiles] = useState(
-    storeData.storeImageFiles || [],
-  );
-  const [ownerPickImageFiles, setOwnerPickImageFiles] = useState(
-    storeData.ownerPickImageFiles || [],
-  );
+  // 필수 필드들의 값을 watch로 구독
+  const name = watch('name');
+  const phone = watch('phone');
+  const address = watch('address');
+  const detailAddress = watch('detailAddress');
+  const tags = watch('tags');
+  const operatingHours = watch('operatingHours');
 
+  // isValid 상태 관리
   const [isFormValid, setIsFormValid] = useState(false);
 
-  const handleInputChange = () => {
-    setIsFormDirty(true);
-  };
-
-  const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  };
-
-  const validatePhoneNumber = (phone: string): boolean => {
-    const phoneRegex = /^(\d{3,4})-(\d{4})-(\d{4})$/;
-    return phoneRegex.test(phone);
-  };
-
-  const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-
-    // 숫자와 하이픈만 허용
-    const sanitizedValue = value.replace(/[^0-9-]/g, '');
-
-    // if (value !== '' && !validatePhoneNumber(sanitizedValue)) {
-    //   alert('전화번호 형식을 확인해주세요.\n예시: 000-0000-0000');
-    // }
-
-    setPhone(sanitizedValue);
-  };
-
-  const handleDetailAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setDetailAddress(e.target.value);
-  };
-
-  const handleStoreLinkChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setStoreLink(e.target.value);
-  };
-
-  const handleDescriptionChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setDescription(e.target.value);
-  };
-
-  const handleStoreImageFilesChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    if (e.target.files) {
-      const fileArray = Array.from(e.target.files);
-      setStoreImageFiles((prev) => [...prev, ...fileArray]);
-    }
-  };
-
-  const handleRemoveStoreImageFiles = (index: number) => {
-    setStoreImageFiles((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleFeatureToggle = (featureId: string) => {
-    setFeatures((prev) => ({
-      ...prev,
-      [featureId]: !prev[featureId as keyof typeof prev],
-    }));
-  };
-
-  // 모달
-  const openAddressModal = () => {
-    // Daum 우편번호 서비스 호출
-    new (window as any).daum.Postcode({
-      oncomplete: function (data: any) {
-        const addr = data.roadAddress || data.jibunAddress;
-
-        // 주소 정보 설정
-        setAddress(addr);
-      },
-    }).open();
-  };
-
-  const closeTagModal = (tags?: number[]) => {
-    if (tags) {
-      setTags(tags);
-    }
-    pop('modal');
-  };
-
-  const openTagModal = async () => {
-    push('modal', {
-      component: <TagSelectModal onClose={closeTagModal} initialTags={tags} />,
-    });
-  };
-
-  const closeOperatingHoursModal = (operatingHours?: OperatingHoursItem[]) => {
-    if (operatingHours) {
-      setOperatingHours(operatingHours);
-    }
-    console.log(operatingHours);
-    pop('modal');
-  };
-
-  const openOperatingHoursModal = async () => {
-    push('modal', {
-      component: (
-        <OperatingHoursSelectModal
-          onClose={closeOperatingHoursModal}
-          initialOperatingHours={operatingHours}
-        />
-      ),
-    });
-  };
-
-  // 입력값 존재 여부만 확인
   useEffect(() => {
     const isValid =
-      name.trim() !== '' &&
-      phone.trim() !== '' &&
-      address.trim() !== '' &&
-      detailAddress.trim() !== '' &&
-      tags.length > 0;
+      !!name?.trim() &&
+      !!phone?.trim() &&
+      validatePhoneNumber(phone) &&
+      !!address?.trim() &&
+      !!detailAddress?.trim() &&
+      tags?.length > 0 &&
+      operatingHours?.length > 0;
 
     setIsFormValid(isValid);
-  }, [
-    name,
-    phone,
-    address,
-    detailAddress,
-    operatingHours,
-    tags,
-    storeImageFiles,
-  ]);
+  }, [name, phone, address, detailAddress, tags, operatingHours]);
 
-  const handleNextStep = (e: FormEvent) => {
-    e.preventDefault();
-
-    if (!validatePhoneNumber(phone.trim())) {
-      alert('전화번호 형식을 확인해주세요.\n예시: 000-0000-0000');
-      return;
-    }
-
-    const { latitude, longitude } = { latitude: 0, longitude: 0 };
-
-    updateBasicInfo({
-      name,
-      phone,
-      address,
-      detailAddress,
-      latitude,
-      longitude,
-      storeLink,
-      description,
-    });
-
-    updateOperatingHours(operatingHours);
-    updateStoreImages(storeImageFiles);
-    updateOwnerPickImages(ownerPickImageFiles);
-    updateFeatures(features);
-
-    completeStep(RegisterStep.BASIC_INFO);
-    goToNextStep();
-    router.push(`${NavigationPathname.OwnerRegisterMenu}`);
-  };
-
-  // 컴포넌트 마운트 시 초기화
+  // 초기 마운트 시 유효성 검사 실행
   useEffect(() => {
-    // Daum 우편번호 스크립트 동적 로드
+    if (storeData.name) {
+      trigger();
+    }
+  }, [trigger, storeData]);
+
+  // Daum 우편번호 스크립트 로드
+  useEffect(() => {
     const script = document.createElement('script');
     script.src =
       '//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
@@ -251,14 +138,108 @@ export default function RegisterBasicInfoPage() {
     document.head.appendChild(script);
 
     return () => {
-      // 컴포넌트 언마운트 시 정리 작업 (선택 사항)
+      document.head.removeChild(script);
     };
   }, []);
 
+  const openAddressModal = () => {
+    new (window as any).daum.Postcode({
+      oncomplete: function (data: any) {
+        const addr = data.roadAddress || data.jibunAddress;
+        setValue('address', addr);
+      },
+    }).open();
+  };
+
+  const closeTagModal = (tags?: number[]) => {
+    if (tags) {
+      setValue('tags', tags);
+    }
+    pop('modal');
+  };
+
+  const openTagModal = () => {
+    push('modal', {
+      component: (
+        <TagSelectModal onClose={closeTagModal} initialTags={watch('tags')} />
+      ),
+    });
+  };
+
+  const closeOperatingHoursModal = (operatingHours?: OperatingHoursItem[]) => {
+    if (operatingHours) {
+      setValue('operatingHours', operatingHours);
+    }
+    pop('modal');
+  };
+
+  const openOperatingHoursModal = () => {
+    push('modal', {
+      component: (
+        <OperatingHoursSelectModal
+          onClose={closeOperatingHoursModal}
+          initialOperatingHours={watch('operatingHours')}
+        />
+      ),
+    });
+  };
+
+  const handleStoreImageFilesChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    if (e.target.files) {
+      const fileArray = Array.from(e.target.files);
+      const currentFiles = watch('storeImageFiles');
+      setValue('storeImageFiles', [...currentFiles, ...fileArray]);
+    }
+  };
+
+  const handleRemoveStoreImageFiles = (index: number) => {
+    const currentFiles = watch('storeImageFiles');
+    setValue(
+      'storeImageFiles',
+      currentFiles.filter((_, i) => i !== index),
+    );
+  };
+
+  const validatePhoneNumber = (phone: string): boolean => {
+    const phoneRegex = /^(\d{3,4})-(\d{4})-(\d{4})$/;
+    return phoneRegex.test(phone);
+  };
+
+  const onSubmit = (data: FormInputs) => {
+    if (!validatePhoneNumber(data.phone)) {
+      alert('전화번호 형식을 확인해주세요.\n예시: 000-0000-0000');
+      return;
+    }
+
+    const { latitude, longitude } = { latitude: 0, longitude: 0 };
+
+    updateBasicInfo({
+      name: data.name,
+      phone: data.phone,
+      address: data.address,
+      detailAddress: data.detailAddress,
+      latitude,
+      longitude,
+      storeLink: data.storeLink,
+      description: data.description,
+    });
+    updateOperatingHours(data.operatingHours);
+    updateTags(data.tags);
+    updateStoreImages(data.storeImageFiles);
+    updateOwnerPickImages(data.ownerPickImageFiles);
+    updateFeatures(data.features);
+
+    completeStep(RegisterStep.BASIC_INFO);
+    goToNextStep();
+
+    router.push(`${NavigationPathname.OwnerRegisterMenu}`);
+  };
+
   return (
     <form
-      onSubmit={handleNextStep}
-      onChange={handleInputChange}
+      onSubmit={handleSubmit(onSubmit)}
       className="mx-auto flex flex-col gap-y-[30px] p-4"
     >
       {/* 가게명 */}
@@ -267,14 +248,18 @@ export default function RegisterBasicInfoPage() {
           <div className="text-sm font-medium">가게명</div>
           <div className="text-xs">(필수)</div>
         </label>
-        <input
-          className="w-full rounded-[5px] border border-[#9F9F9F] p-[10px] text-sm font-medium"
-          type="text"
-          id="name"
-          value={name}
-          onChange={handleNameChange}
-          placeholder="가게 이름을 입력해주세요"
-          required
+        <Controller
+          name="name"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <input
+              {...field}
+              className="w-full rounded-[5px] border border-[#9F9F9F] p-[10px] text-sm font-medium"
+              type="text"
+              placeholder="가게 이름을 입력해주세요"
+            />
+          )}
         />
       </div>
 
@@ -302,36 +287,41 @@ export default function RegisterBasicInfoPage() {
                 <IconPicture className="h-full w-full text-[#545454]" />
               </div>
             </label>
-            {storeImageFiles.length > 0 &&
-              storeImageFiles.map((image, index) => (
-                <div key={index} className="relative">
-                  <div className="h-[68px] w-[68px] overflow-hidden rounded-md border-[1.17px] border-[#B1B1B1]">
-                    <Image
-                      width={100}
-                      height={100}
-                      src={URL.createObjectURL(image)}
-                      alt={`가게 사진 ${index + 1}`}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    className="bg-primary absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full text-sm text-white"
-                    onClick={() => handleRemoveStoreImageFiles(index)}
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-            {storeImageFiles.length < 4 &&
-              Array.from({ length: 3 - storeImageFiles.length }).map(
-                (_, index) => (
-                  <div
-                    key={`empty-${index}`}
-                    className="flex h-[68px] w-[68px] items-center justify-center overflow-hidden rounded-md border-[1.17px] border-[#B1B1B1] bg-[#DBDBDB]"
-                  />
-                ),
+            <Controller
+              name="storeImageFiles"
+              control={control}
+              render={({ field: { value } }) => (
+                <>
+                  {value.map((image, index) => (
+                    <div key={index} className="relative">
+                      <div className="h-[68px] w-[68px] overflow-hidden rounded-md border-[1.17px] border-[#B1B1B1]">
+                        <Image
+                          width={100}
+                          height={100}
+                          src={URL.createObjectURL(image)}
+                          alt={`가게 사진 ${index + 1}`}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        className="bg-primary absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full text-sm text-white"
+                        onClick={() => handleRemoveStoreImageFiles(index)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                  {value.length < 4 &&
+                    Array.from({ length: 3 - value.length }).map((_, index) => (
+                      <div
+                        key={`empty-${index}`}
+                        className="flex h-[68px] w-[68px] items-center justify-center overflow-hidden rounded-md border-[1.17px] border-[#B1B1B1] bg-[#DBDBDB]"
+                      />
+                    ))}
+                </>
               )}
+            />
           </div>
         </div>
       </div>
@@ -342,13 +332,22 @@ export default function RegisterBasicInfoPage() {
           <div className="text-sm font-medium">전화번호</div>
           <div className="text-xs">(필수)</div>
         </label>
-        <input
-          className="w-full rounded-[5px] border border-[#9F9F9F] p-[10px] text-sm"
-          type="text"
-          id="phone"
-          value={phone}
-          onChange={handlePhoneChange}
-          required
+        <Controller
+          name="phone"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <input
+              {...field}
+              className="w-full rounded-[5px] border border-[#9F9F9F] p-[10px] text-sm"
+              type="text"
+              placeholder="000-0000-0000"
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9-]/g, '');
+                field.onChange(value);
+              }}
+            />
+          )}
         />
       </div>
 
@@ -360,29 +359,39 @@ export default function RegisterBasicInfoPage() {
         </label>
         <div className="relative">
           <button
-            onClick={openAddressModal}
             type="button"
+            onClick={openAddressModal}
             className="absolute right-[10px] top-[50%] -translate-y-1/2"
           >
             <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
           </button>
-          <input
-            className="w-full rounded-[5px] border border-[#9F9F9F] bg-[#F0F0F0] p-[10px] text-sm"
-            type="text"
-            id="address"
-            value={address}
-            placeholder="주소를 입력해주세요"
-            disabled
+          <Controller
+            name="address"
+            control={control}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <input
+                {...field}
+                className="w-full rounded-[5px] border border-[#9F9F9F] bg-[#F0F0F0] p-[10px] text-sm"
+                type="text"
+                placeholder="주소를 입력해주세요"
+                disabled
+              />
+            )}
           />
         </div>
-        <input
-          className="w-full rounded-[5px] border border-[#9F9F9F] p-[10px] text-sm font-medium"
-          type="text"
-          id="address"
-          value={detailAddress}
-          placeholder="상세주소 (예.2층)"
-          onChange={handleDetailAddressChange}
-          required
+        <Controller
+          name="detailAddress"
+          control={control}
+          rules={{ required: true }}
+          render={({ field }) => (
+            <input
+              {...field}
+              className="w-full rounded-[5px] border border-[#9F9F9F] p-[10px] text-sm font-medium"
+              type="text"
+              placeholder="상세주소 (예.2층)"
+            />
+          )}
         />
       </div>
 
@@ -392,47 +401,55 @@ export default function RegisterBasicInfoPage() {
           <div className="text-sm font-medium">운영시간</div>
           <div className="text-xs">(필수)</div>
         </label>
-        {operatingHours.length > 0 ? (
-          <div className="relative">
-            <button
-              onClick={openOperatingHoursModal}
-              type="button"
-              className="absolute right-[10px] top-5 -translate-y-1/2"
-            >
-              <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
-            </button>
-            <div className="flex w-full flex-wrap gap-1 rounded-[5px] border border-[#9F9F9F] bg-[#F0F0F0] p-[10px] pr-8 text-sm">
-              {operatingHours.map((item) => {
-                const day = DAYS_OF_WEEK.find((d) => d.en === item.dayOfWeek);
-                return (
-                  <div
-                    key={item.dayOfWeek}
-                    className="rounded-[3px] border-[0.3px] border-[#9F9F9F] bg-white px-2 py-1 text-xs text-[#393939]"
-                  >
-                    {day?.kr} {item.openingTime} ~ {item.closingTime}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ) : (
-          <div className="relative">
-            <button
-              onClick={openOperatingHoursModal}
-              type="button"
-              className="absolute right-[10px] top-[50%] -translate-y-1/2"
-            >
-              <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
-            </button>
-            <input
-              className="w-full rounded-[5px] border border-[#9F9F9F] bg-[#F0F0F0] p-[10px] text-sm"
-              type="text"
-              id="operatingHours"
-              placeholder="운영시간을 입력해주세요"
-              disabled
-            />
-          </div>
-        )}
+        <Controller
+          name="operatingHours"
+          control={control}
+          rules={{ required: true }}
+          render={({ field: { value } }) =>
+            value.length > 0 ? (
+              <div className="relative">
+                <button
+                  onClick={openOperatingHoursModal}
+                  type="button"
+                  className="absolute right-[10px] top-5 -translate-y-1/2"
+                >
+                  <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
+                </button>
+                <div className="flex w-full flex-wrap gap-1 rounded-[5px] border border-[#9F9F9F] bg-[#F0F0F0] p-[10px] pr-8 text-sm">
+                  {value.map((item) => {
+                    const day = DAYS_OF_WEEK.find(
+                      (d) => d.en === item.dayOfWeek,
+                    );
+                    return (
+                      <div
+                        key={item.dayOfWeek}
+                        className="rounded-[3px] border-[0.3px] border-[#9F9F9F] bg-white px-2 py-1 text-xs text-[#393939]"
+                      >
+                        {day?.kr} {item.openingTime} ~ {item.closingTime}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="relative">
+                <button
+                  onClick={openOperatingHoursModal}
+                  type="button"
+                  className="absolute right-[10px] top-[50%] -translate-y-1/2"
+                >
+                  <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
+                </button>
+                <input
+                  className="w-full rounded-[5px] border border-[#9F9F9F] bg-[#F0F0F0] p-[10px] text-sm"
+                  type="text"
+                  placeholder="운영시간을 입력해주세요"
+                  disabled
+                />
+              </div>
+            )
+          }
+        />
       </div>
 
       {/* 특성 태그 */}
@@ -444,56 +461,59 @@ export default function RegisterBasicInfoPage() {
           </div>
           <div className="text-xs text-[#424242]">최대 3개 선택</div>
         </label>
-        {tags.length > 0 ? (
-          <div className="relative">
-            <button
-              onClick={openTagModal}
-              type="button"
-              className="absolute right-[10px] top-5 -translate-y-1/2"
-            >
-              <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
-            </button>
-            <div
-              className="flex w-full flex-wrap gap-1 rounded-[5px] border border-[#9F9F9F] bg-[#F0F0F0] p-[10px] pr-8 text-sm"
-              id="tags"
-            >
-              {tags.map((tagId) => {
-                const tag = TAGS.find((tag) => tag.id === tagId);
-                const category = tag
-                  ? TAG_CATEGORIES.find(
-                      (cat) => cat.categoryId === tag.parentId,
-                    )
-                  : null;
+        <Controller
+          name="tags"
+          control={control}
+          rules={{ required: true }}
+          render={({ field: { value } }) =>
+            value.length > 0 ? (
+              <div className="relative">
+                <button
+                  onClick={openTagModal}
+                  type="button"
+                  className="absolute right-[10px] top-5 -translate-y-1/2"
+                >
+                  <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
+                </button>
+                <div className="flex w-full flex-wrap gap-1 rounded-[5px] border border-[#9F9F9F] bg-[#F0F0F0] p-[10px] pr-8 text-sm">
+                  {value.map((tagId) => {
+                    const tag = TAGS.find((t) => t.id === tagId);
+                    const category = tag
+                      ? TAG_CATEGORIES.find(
+                          (cat) => cat.categoryId === tag.parentId,
+                        )
+                      : null;
 
-                return tag && category ? (
-                  <div
-                    key={tagId}
-                    className="rounded-[3px] border-[0.3px] border-[#9F9F9F] bg-white px-2 py-1 text-xs text-[#393939]"
-                  >
-                    {category.categoryName}&nbsp;{'>'}&nbsp;{tag.name}
-                  </div>
-                ) : null;
-              })}
-            </div>
-          </div>
-        ) : (
-          <div className="relative">
-            <button
-              onClick={openTagModal}
-              type="button"
-              className="absolute right-[10px] top-[50%] -translate-y-1/2"
-            >
-              <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
-            </button>
-            <input
-              className="w-full rounded-[5px] border border-[#9F9F9F] bg-[#F0F0F0] p-[10px] text-sm"
-              type="text"
-              id="tags"
-              placeholder="가게 태그를 선택해주세요"
-              disabled
-            />
-          </div>
-        )}
+                    return tag && category ? (
+                      <div
+                        key={tagId}
+                        className="rounded-[3px] border-[0.3px] border-[#9F9F9F] bg-white px-2 py-1 text-xs text-[#393939]"
+                      >
+                        {category.categoryName}&nbsp;{'>'}&nbsp;{tag.name}
+                      </div>
+                    ) : null;
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="relative">
+                <button
+                  onClick={openTagModal}
+                  type="button"
+                  className="absolute right-[10px] top-[50%] -translate-y-1/2"
+                >
+                  <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
+                </button>
+                <input
+                  className="w-full rounded-[5px] border border-[#9F9F9F] bg-[#F0F0F0] p-[10px] text-sm"
+                  type="text"
+                  placeholder="가게 태그를 선택해주세요"
+                  disabled
+                />
+              </div>
+            )
+          }
+        />
       </div>
 
       {/* 한 줄 소개 */}
@@ -503,19 +523,29 @@ export default function RegisterBasicInfoPage() {
             <div className="text-sm font-medium">한 줄 소개</div>
             <div className="text-xs">(선택)</div>
           </div>
-          <div className="flex items-center text-xs">
-            <div className="text-[#424242]">
-              {(description?.length as number) > 60 ? 60 : description?.length}/
-            </div>
-            <div className="text-[#7B7B7B]">60</div>
-          </div>
+          <Controller
+            name="description"
+            control={control}
+            render={({ field: { value } }) => (
+              <div className="flex items-center text-xs">
+                <div className="text-[#424242]">
+                  {(value?.length as number) > 60 ? 60 : value?.length}/
+                </div>
+                <div className="text-[#7B7B7B]">60</div>
+              </div>
+            )}
+          />
         </label>
-        <textarea
-          className="min-h-[108px] w-full resize-none rounded-[5px] border border-[#9F9F9F] p-3 text-sm"
-          id="description"
-          value={description}
-          maxLength={60}
-          onChange={handleDescriptionChange}
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <textarea
+              {...field}
+              className="min-h-[108px] w-full resize-none rounded-[5px] border border-[#9F9F9F] p-3 text-sm"
+              maxLength={60}
+            />
+          )}
         />
       </div>
 
@@ -525,12 +555,16 @@ export default function RegisterBasicInfoPage() {
           <div className="text-sm font-medium">SNS 링크</div>
           <div className="text-xs">(선택)</div>
         </label>
-        <input
-          className="w-full rounded-[5px] border border-[#9F9F9F] p-[10px] text-sm"
-          type="text"
-          id="storeLink"
-          value={storeLink}
-          onChange={handleStoreLinkChange}
+        <Controller
+          name="storeLink"
+          control={control}
+          render={({ field }) => (
+            <input
+              {...field}
+              className="w-full rounded-[5px] border border-[#9F9F9F] p-[10px] text-sm"
+              type="text"
+            />
+          )}
         />
       </div>
 
@@ -542,21 +576,26 @@ export default function RegisterBasicInfoPage() {
         </label>
         <div className="flex flex-wrap gap-2">
           {FEATURES.map(({ icon, title, id }) => (
-            <button
-              type="button"
-              key={title}
-              id={id}
-              onClick={() => handleFeatureToggle(id)}
-              className={cn(
-                'flex items-center justify-center gap-[10px] rounded-[12px] border p-3',
-                features[id as keyof typeof features]
-                  ? 'border-[#825D00] bg-[#FFE4A1] text-[#614500]'
-                  : 'border-[#9F9F9F] bg-white text-[#393939]',
+            <Controller
+              key={id}
+              name={`features.${id}` as any}
+              control={control}
+              render={({ field: { value, onChange } }) => (
+                <button
+                  type="button"
+                  onClick={() => onChange(!value)}
+                  className={cn(
+                    'flex items-center justify-center gap-[10px] rounded-[12px] border p-3',
+                    value
+                      ? 'border-[#825D00] bg-[#FFE4A1] text-[#614500]'
+                      : 'border-[#9F9F9F] bg-white text-[#393939]',
+                  )}
+                >
+                  <div className="h-[27px] w-[27px]">{icon}</div>
+                  <div className="text-xs">{title}</div>
+                </button>
               )}
-            >
-              <div className="h-[27px] w-[27px]">{icon}</div>
-              <div className="text-xs">{title}</div>
-            </button>
+            />
           ))}
         </div>
       </div>
