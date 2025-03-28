@@ -160,6 +160,7 @@ export default function RegisterBasicInfoPage() {
     if (operatingHours) {
       setOperatingHours(operatingHours);
     }
+    console.log(operatingHours);
     pop('modal');
   };
 

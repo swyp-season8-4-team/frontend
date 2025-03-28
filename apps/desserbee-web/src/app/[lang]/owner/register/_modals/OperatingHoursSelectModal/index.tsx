@@ -115,12 +115,12 @@ export function OperatingHoursSelectModal({
 
       <div className="p-4">
         {/* 요일 선택 버튼 */}
-        <div className="mb-4 flex justify-around gap-2">
+        <div className="mb-4 flex justify-center gap-2 md:justify-start">
           {DAYS_OF_WEEK.map((day) => (
             <button
               key={day.en}
               onClick={() => handleDayToggle(day)}
-              className={`h-[32px] w-[32px] rounded-full border text-center text-[14px] ${
+              className={`h-8 w-8 rounded-full border text-center text-[14px] md:h-12 md:w-12 ${
                 Array.from(operatingHours).some(
                   (item) => item.dayOfWeek === day.en,
                 )
@@ -170,7 +170,7 @@ export function OperatingHoursSelectModal({
                       <div className="flex w-full items-center rounded-[6px] border border-[#58616A] px-2 py-1">
                         <input
                           type="number"
-                          className="w-8 px-0 py-0 text-center text-[15px]"
+                          className="w-8 text-center text-[15px] [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                           min="0"
                           max="23"
                           value={item.openingTime.split(':')[0]}
@@ -186,7 +186,7 @@ export function OperatingHoursSelectModal({
                         <span>:</span>
                         <input
                           type="number"
-                          className="w-8 px-0 py-0 text-center text-[15px]"
+                          className="w-8 text-center text-[15px] [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                           min="0"
                           max="59"
                           value={item.openingTime.split(':')[1]}
@@ -205,11 +205,12 @@ export function OperatingHoursSelectModal({
                     <span> ~ </span>
 
                     {/* 종료 시간 */}
-                    <div className="flex w-full items-center gap-1">
+                    <div className="flex w-full items-center">
                       <div className="flex w-full items-center rounded-[6px] border border-[#58616A] px-2 py-1">
                         <input
                           type="number"
-                          className="w-8 px-0 py-0 text-center text-[15px]"
+                          className="w-8 text-center text-[15px] [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                          style={{ textAlign: 'center' }}
                           min="0"
                           max="23"
                           value={item.closingTime.split(':')[0]}
@@ -225,7 +226,8 @@ export function OperatingHoursSelectModal({
                         <span>:</span>
                         <input
                           type="number"
-                          className="w-8 px-0 py-0 text-center text-[15px]"
+                          className="w-8 text-center text-[15px] [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                          style={{ textAlign: 'center' }}
                           min="0"
                           max="59"
                           value={item.closingTime.split(':')[1]}
