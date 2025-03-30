@@ -13,81 +13,195 @@ import NavigationService from '@repo/usecase/src/navigationService';
 import { HTTPError } from '@repo/api/src/error';
 import { isProd } from './utils/env';
 
+// 토큰 정보 인터페이스
 interface TokenInfo {
   token: string | null;
   isExpired?: boolean;
   exp?: number;
 }
 
+// 토큰 캐시 저장소
 const savedTokens: { [key: string]: TokenInfo } = {};
 
+// 미들웨어 메인 함수
 export async function middleware(request: NextRequest) {
-  const { headers, cookies } = request;
   const { pathname } = request.nextUrl;
+  const requestHeaders = new Headers(request.headers);
 
-  const requestHeaders = new Headers(headers);
+  // 로케일 체크 및 리다이렉트
+  if (!hasLocale(pathname)) {
+    return handleLocaleRedirect(request);
+  }
 
-  const pathnameHasLocale = Object.values(SupportISO639Language).some(
+  // 토큰 처리
+  const tokenResponse = await handleTokens(request, requestHeaders);
+  if (tokenResponse) {
+    return tokenResponse;
+  }
+
+  // 인증 처리
+  const authResponse = await handleAuthorization(request, requestHeaders);
+  if (authResponse) {
+    return authResponse;
+  }
+
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+}
+
+// 로케일 존재 여부 확인
+function hasLocale(pathname: string): boolean {
+  return Object.values(SupportISO639Language).some(
     (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
   );
+}
 
-  if (!pathnameHasLocale) {
-    // Redirect if there is no locale
-    const locale = getLocale(request);
-    request.nextUrl.pathname = `/${locale}${pathname}`;
-    return NextResponse.redirect(request.nextUrl);
-  }
+// 로케일 리다이렉트 처리
+function handleLocaleRedirect(request: NextRequest): NextResponse {
+  const locale = getLocale(request);
+  request.nextUrl.pathname = `/${locale}${request.nextUrl.pathname}`;
+  return NextResponse.redirect(request.nextUrl);
+}
 
+// 토큰 처리 로직
+async function handleTokens(
+  request: NextRequest,
+  requestHeaders: Headers,
+): Promise<NextResponse | null> {
+  const { cookies } = request;
+
+  // 이메일 인증 토큰 처리
   const verificationToken = cookies.get('verificationToken')?.value;
   if (verificationToken) {
-    requestHeaders.set('X-Email-Verification-Token', `${verificationToken}`);
+    requestHeaders.set('X-Email-Verification-Token', verificationToken);
   }
 
+  // 액세스 토큰 처리
   const prevAccessToken = cookies.get('accessToken')?.value;
+  const refreshToken = cookies.get('refreshToken')?.value;
 
-  const { token, isExpired, exp } = await getTokenInfo(request);
-  if (token) {
-    requestHeaders.set('authorization', `Bearer ${token}`);
+  const tokenInfo = await getTokenInfo(prevAccessToken, refreshToken);
+
+  if (tokenInfo.token) {
+    requestHeaders.set('authorization', `Bearer ${tokenInfo.token}`);
+
+    // 토큰 갱신이 필요한 경우
+    if (tokenInfo.isExpired && tokenInfo.token !== prevAccessToken) {
+      const response = NextResponse.next({
+        request: { headers: requestHeaders },
+      });
+
+      response.cookies.set('accessToken', tokenInfo.token, {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: 'lax',
+        maxAge: (tokenInfo.exp ?? 0) * 1000,
+      });
+
+      return response;
+    }
   }
 
-  const next = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  return null;
+}
 
-  if (isExpired && token !== prevAccessToken && !!token && !!prevAccessToken) {
-    next.cookies.set('accessToken', token, {
-      httpOnly: true,
-      secure: isProd,
-      sameSite: 'lax',
-      maxAge: exp,
-    });
-  }
-
+// 인증 처리 로직
+async function handleAuthorization(
+  request: NextRequest,
+  requestHeaders: Headers,
+): Promise<NextResponse | null> {
+  const { pathname } = request.nextUrl;
   const authorization = requestHeaders.get('authorization');
-
-  // 로그인 여부에 따른 페이지 접근 권한 체크
   const navigationService = new NavigationService({});
 
   const isSignInServicePath = navigationService.isSignInServicePath(pathname);
   if (!isSignInServicePath && !authorization) {
-    return next;
+    return null;
   }
 
   if (!authorization) {
-    // Redirect to sign-in page if there is no authorization
-    const redirectURL = request.nextUrl.clone();
-
-    const originalSearchParam = redirectURL.search;
-    redirectURL.pathname = `${NavigationLanguageGroup.ko}${NavigationPathname.SignIn}`; // FIXME: ko
-    redirectURL.search = '';
-    redirectURL.searchParams.set('next', `${pathname}${originalSearchParam}`);
-
-    return NextResponse.redirect(redirectURL);
+    return redirectToSignIn(request);
   }
 
-  return next;
+  return null;
+}
+
+// 로그인 페이지 리다이렉트
+function redirectToSignIn(request: NextRequest): NextResponse {
+  const redirectURL = request.nextUrl.clone();
+  const originalSearchParam = redirectURL.search;
+
+  redirectURL.pathname = `${NavigationLanguageGroup.ko}${NavigationPathname.SignIn}`;
+  redirectURL.search = '';
+  redirectURL.searchParams.set(
+    'next',
+    `${request.nextUrl.pathname}${originalSearchParam}`,
+  );
+
+  return NextResponse.redirect(redirectURL);
+}
+
+// 토큰 정보 조회
+async function getTokenInfo(
+  accessToken: string | undefined,
+  refreshToken: string | undefined,
+): Promise<TokenInfo> {
+  if (!accessToken && !refreshToken) {
+    return { token: null };
+  }
+
+  // 캐시된 유효한 토큰이 있는지 확인
+  if (accessToken) {
+    const decodedToken = decodeJWT(accessToken);
+    if (decodedToken?.sub) {
+      const subKey = JSON.stringify(decodedToken.sub);
+      const savedToken = savedTokens[subKey]?.token;
+      if (savedToken && !isExpiredJWT(savedToken)) {
+        return { token: savedToken };
+      }
+    }
+  }
+
+  return await refreshTokenIfNeeded(accessToken ?? null, refreshToken ?? null);
+}
+
+// 토큰 갱신 처리
+async function refreshTokenIfNeeded(
+  accessToken: string | null,
+  refreshToken: string | null,
+): Promise<TokenInfo> {
+  const isAccessTokenExpired = isExpiredJWT(accessToken);
+  const isRefreshTokenExpired = refreshToken
+    ? isExpiredJWT(refreshToken)
+    : true;
+
+  if (isAccessTokenExpired && isRefreshTokenExpired) {
+    return { token: null };
+  }
+
+  if (isAccessTokenExpired && refreshToken) {
+    try {
+      const authService = new AuthService({
+        authRepository: new AuthAPIRepository(),
+      });
+      const { accessToken: newToken, expiresIn } =
+        await authService.refreshAccessToken(refreshToken);
+
+      return {
+        token: newToken,
+        isExpired: true,
+        exp: expiresIn,
+      };
+    } catch (error) {
+      if (error instanceof HTTPError && error.data.status === 401) {
+        return { token: null };
+      }
+      throw error;
+    }
+  }
+
+  return { token: accessToken };
 }
 
 export const config = {
@@ -118,99 +232,4 @@ function getLocale(request: NextRequest): SupportISO639Language {
 
   const defaultLocale = SupportISO639Language.ko; // 기본 언어를 ko로 설정
   return match(languages, locales, defaultLocale) as SupportISO639Language;
-}
-
-/**
- * accessToken과 refreshToken을 바탕으로 적절한 토큰을 반환합니다.
- * @param request 요청 객체
- * @returns 토큰
- */
-async function getTokenInfo(request: NextRequest): Promise<TokenInfo> {
-  const { cookies } = request;
-
-  const accessToken = cookies.get('accessToken')?.value;
-  const refreshToken = cookies.get('refreshToken')?.value;
-  // 둘다 없으면 로그인을 다시 해야하는것
-
-  if (!accessToken && !refreshToken) {
-    return { token: null };
-  }
-
-  // 저장된 토큰이 있고 만료되지 않았다면 반환
-  if (accessToken) {
-    const decodedAccessToken = decodeJWT(accessToken);
-    if (decodedAccessToken?.sub) {
-      const subKey = JSON.stringify(decodedAccessToken.sub);
-      const savedToken = savedTokens[subKey]?.token;
-      if (savedToken && !isExpiredJWT(savedToken)) {
-        return { token: savedToken };
-      }
-    }
-  }
-
-  const isAccessTokenExpired = isExpiredJWT(accessToken ?? null);
-  const isRefreshTokenExpired = !!refreshToken && isExpiredJWT(refreshToken);
-
-  const newAccessTokenInfo: TokenInfo = { token: accessToken ?? null };
-
-  const authService = new AuthService({
-    authRepository: new AuthAPIRepository(),
-  });
-
-  if (isAccessTokenExpired) {
-    if (isRefreshTokenExpired) {
-      return { token: null };
-    }
-
-    try {
-      if (refreshToken) {
-        const { accessToken: updatedAccessToken, expiresIn } =
-          await authService.refreshAccessToken(refreshToken);
-        newAccessTokenInfo.token = updatedAccessToken;
-        newAccessTokenInfo.isExpired = true;
-        newAccessTokenInfo.exp = expiresIn;
-      }
-    } catch (error) {
-      if (!(error instanceof HTTPError)) {
-        throw error;
-      }
-
-      if (error.data.status === 401) {
-        return { token: null };
-      }
-
-      throw error;
-    }
-
-    // 리프레시 토큰을 가지고 다시 accessToken 발급
-  }
-
-  return newAccessTokenInfo;
-
-  // const response = await authService.getAuthorization(
-  //   newAccessToken ?? accessToken,
-  // );
-
-  // if (!response) {
-  //   return;
-  // }
-
-  // const matches = response.match(/authorization: Bearer [^\s]*/i);
-
-  // if (!matches) {
-  //   throw new Error('Bearer field is not found');
-  // }
-
-  // const token = matches
-  //   .at(0)
-  //   ?.replace(/authorization: Bearer /i, '')
-  //   .trim();
-
-  // if (!token) {
-  //   throw new Error('Bearer token is not found');
-  // }
-
-  // savedTokens[decodedAccessToken.sub] = token;
-
-  // return token;
 }
