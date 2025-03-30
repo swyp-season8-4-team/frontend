@@ -202,6 +202,24 @@ export default function RegisterBasicInfoPage() {
     );
   };
 
+  const handleOwnerPickImageFilesChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    if (e.target.files) {
+      const fileArray = Array.from(e.target.files);
+      const currentFiles = watch('ownerPickImageFiles');
+      setValue('ownerPickImageFiles', [...currentFiles, ...fileArray]);
+    }
+  };
+
+  const handleRemoveOwnerPickImageFiles = (index: number) => {
+    const currentFiles = watch('ownerPickImageFiles');
+    setValue(
+      'ownerPickImageFiles',
+      currentFiles.filter((_, i) => i !== index),
+    );
+  };
+
   const validatePhoneNumber = (phone: string): boolean => {
     const phoneRegex = /^(\d{3,4})-(\d{4})-(\d{4})$/;
     return phoneRegex.test(phone);
@@ -213,7 +231,7 @@ export default function RegisterBasicInfoPage() {
       return;
     }
 
-    const { latitude, longitude } = { latitude: 0, longitude: 0 };
+    const { latitude, longitude } = { latitude: 0, longitude: 0 }; // TODO: 이건 마지막 API 보낼 때 업데이트하도록. 지금은 임시
 
     updateBasicInfo({
       name: data.name,
@@ -307,6 +325,72 @@ export default function RegisterBasicInfoPage() {
                         type="button"
                         className="bg-primary absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full text-sm text-white"
                         onClick={() => handleRemoveStoreImageFiles(index)}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                  {value.length < 4 &&
+                    Array.from({ length: 3 - value.length }).map((_, index) => (
+                      <div
+                        key={`empty-${index}`}
+                        className="flex h-[68px] w-[68px] items-center justify-center overflow-hidden rounded-md border-[1.17px] border-[#B1B1B1] bg-[#DBDBDB]"
+                      />
+                    ))}
+                </>
+              )}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* 사장님 픽 사진 */}
+      <div className="flex flex-col gap-2">
+        <label
+          htmlFor="ownerPickImageFiles"
+          className="flex items-center gap-1"
+        >
+          <div className="text-sm font-medium">사장님 픽 홍보용 사진</div>
+          <div className="text-xs">(선택)</div>
+        </label>
+        <div className="flex flex-col gap-2">
+          <input
+            className="hidden"
+            type="file"
+            id="ownerPickImageFiles"
+            onChange={handleOwnerPickImageFilesChange}
+            accept="image/*"
+            multiple
+          />
+          <div className="flex flex-wrap gap-2">
+            <label
+              className="flex h-[68px] w-[68px] cursor-pointer items-center justify-center overflow-hidden rounded-md border-[1.17px] border-[#B1B1B1] bg-[#DBDBDB]"
+              htmlFor="ownerPickImageFiles"
+            >
+              <div className="h-7 w-7">
+                <IconPicture className="h-full w-full text-[#545454]" />
+              </div>
+            </label>
+            <Controller
+              name="ownerPickImageFiles"
+              control={control}
+              render={({ field: { value } }) => (
+                <>
+                  {value.map((image, index) => (
+                    <div key={index} className="relative">
+                      <div className="h-[68px] w-[68px] overflow-hidden rounded-md border-[1.17px] border-[#B1B1B1]">
+                        <Image
+                          width={100}
+                          height={100}
+                          src={URL.createObjectURL(image)}
+                          alt={`홍보용 가게 사진 ${index + 1}`}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        className="bg-primary absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full text-sm text-white"
+                        onClick={() => handleRemoveOwnerPickImageFiles(index)}
                       >
                         ×
                       </button>
