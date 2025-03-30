@@ -40,8 +40,8 @@ export interface Menu {
   name: string;
   price: number;
   isPopular?: boolean;
-  description?: string | null;
-  imageFileKey?: string | null; // 파일명임. 확장자 포함해야함 ex) menu_cake6.jpeg"
+  description?: string;
+  imageFileKey?: string[]; // 파일명임. 확장자 포함해야함 ex) menu_cake6.jpeg"
   images?: string[]; // 응답
 }
 
@@ -231,7 +231,7 @@ export interface RegisterStoreRequest
   > {
   userUuid: string;
   menus: Menu[];
-  ImageFileKey?: string[]; // 메뉴 파일명
+  // ImageFileKey?: string[]; // 메뉴 파일명
   storeImageFiles?: File[];
   ownerPickImageFiles?: File[];
   menuImageFiles?: File[];

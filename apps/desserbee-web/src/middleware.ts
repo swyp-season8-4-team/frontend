@@ -191,8 +191,6 @@ async function refreshTokenIfNeeded(
       const { accessToken: newToken, expiresIn } =
         await authService.refreshAccessToken(refreshToken);
 
-      console.log('Backend expiresIn value:', expiresIn);
-
       return {
         token: newToken,
         isExpired: true,
