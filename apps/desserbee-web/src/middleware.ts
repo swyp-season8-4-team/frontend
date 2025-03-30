@@ -92,11 +92,14 @@ async function handleTokens(
         request: { headers: requestHeaders },
       });
 
+      // tokenInfo.exp는 밀리초 단위이므로 초 단위로 변환
+      const maxAgeInSeconds = Math.floor((tokenInfo.exp ?? 0) / 1000);
+
       response.cookies.set('accessToken', tokenInfo.token, {
         httpOnly: true,
         secure: isProd,
         sameSite: 'lax',
-        maxAge: (tokenInfo.exp ?? 0) * 1000,
+        maxAge: maxAgeInSeconds, // 초 단위로 변환된 값 사용
       });
 
       return response;
@@ -187,6 +190,8 @@ async function refreshTokenIfNeeded(
       });
       const { accessToken: newToken, expiresIn } =
         await authService.refreshAccessToken(refreshToken);
+
+      console.log('Backend expiresIn value:', expiresIn);
 
       return {
         token: newToken,

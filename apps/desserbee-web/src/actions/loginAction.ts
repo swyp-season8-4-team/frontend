@@ -11,7 +11,7 @@ import { decodeJWT } from '@repo/utility/src/jwt';
 
 const authService = new AuthService({
   authRepository:
-    process.env.NEXT_PUBLIC_APP_ENV === 'dev_local' // test용
+    process.env.NEXT_PUBLIC_APP_ENV === 'local' // test용
       ? new AuthDevAPIRepository()
       : new AuthAPIRepository(),
 });
@@ -45,7 +45,7 @@ export async function loginAction(
     const cookieList = await cookies();
 
     const domain =
-      process.env.NEXT_PUBLIC_APP_ENV !== 'local'
+      process.env.NEXT_PUBLIC_APP_ENV !== 'local' //TODO: 바꾸기
         ? process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN
         : '';
 
