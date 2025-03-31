@@ -125,21 +125,24 @@ export default function RegisterBasicInfoPage() {
   // isValid 상태 관리
   const [isFormValid, setIsFormValid] = useState(false);
 
-  const [storeLinks, setStoreLinks] = useState<string[]>(
-    storeData.storeLinks?.length ? storeData.storeLinks : [''],
+  const [storeLinks, setStoreLinks] = useState<string[]>([]);
+  const [primaryLinkIndex, setPrimaryLinkIndex] = useState<number | undefined>(
+    undefined,
   );
 
-  const [primaryLinkIndex, setPrimaryLinkIndex] = useState<number | undefined>(
-    () => {
+  // useEffect를 사용하여 클라이언트 사이드에서만 저장된 데이터 불러오기
+  useEffect(() => {
+    if (storeData.storeLinks?.length) {
+      setStoreLinks(storeData.storeLinks);
+
       if (storeData.primaryStoreLink) {
         const index = storeData.storeLinks?.findIndex(
           (link) => link === storeData.primaryStoreLink,
         );
-        return index >= 0 ? index : undefined;
+        setPrimaryLinkIndex(index >= 0 ? index : undefined);
       }
-      return undefined;
-    },
-  );
+    }
+  }, [storeData.storeLinks, storeData.primaryStoreLink]);
 
   useEffect(() => {
     const isValid =
@@ -716,26 +719,24 @@ export default function RegisterBasicInfoPage() {
                   className="border-neutral-40 w-full flex-1 rounded-[6px] border px-3 py-2 text-sm"
                   placeholder="http://"
                 />
-                {index !== 0 && (
-                  <button
-                    type="button"
-                    className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#CDC8C3] text-sm text-white"
-                    onClick={() => {
-                      const newLinks = storeLinks.filter((_, i) => i !== index);
-                      setStoreLinks(newLinks);
-                      if (
-                        primaryLinkIndex !== undefined &&
-                        index < primaryLinkIndex
-                      ) {
-                        setPrimaryLinkIndex((prev) =>
-                          prev ? prev - 1 : undefined,
-                        );
-                      }
-                    }}
-                  >
-                    <IconXRound className="h-full w-full text-[#CDC8C3]" />
-                  </button>
-                )}
+                <button
+                  type="button"
+                  className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#CDC8C3] text-sm text-white"
+                  onClick={() => {
+                    const newLinks = storeLinks.filter((_, i) => i !== index);
+                    setStoreLinks(newLinks);
+                    if (
+                      primaryLinkIndex !== undefined &&
+                      index < primaryLinkIndex
+                    ) {
+                      setPrimaryLinkIndex((prev) =>
+                        prev ? prev - 1 : undefined,
+                      );
+                    }
+                  }}
+                >
+                  <IconXRound className="h-full w-full text-[#CDC8C3]" />
+                </button>
               </div>
             </div>
           ))}
