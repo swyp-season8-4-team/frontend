@@ -19,15 +19,16 @@ import { useRouter, usePathname } from 'next/navigation';
 export enum RegisterStep {
   BASIC_INFO = 0,
   MENU = 1,
-  CHECK = 2,
-  COMPLETE = 3,
+  // CHECK = 2,
+  // COMPLETE = 3,
+  COMPLETE = 2,
 }
 
 // 단계별 경로 정의
 export const STEP_PATHNAME: Record<RegisterStep, string> = {
   [RegisterStep.BASIC_INFO]: '/owner/register/basic-info',
   [RegisterStep.MENU]: '/owner/register/menu',
-  [RegisterStep.CHECK]: '/owner/register/check',
+  // [RegisterStep.CHECK]: '/owner/register/check',  //NOTICE: 내용 확인 갑자기 없어짐(논의 안된채로..) 또 생길 수 있어서 남겨둠
   [RegisterStep.COMPLETE]: '/owner/register/complete',
 };
 
@@ -35,7 +36,7 @@ export const STEP_PATHNAME: Record<RegisterStep, string> = {
 export const PATH_TO_STEP: Record<string, RegisterStep> = {
   '/owner/register/basic-info': RegisterStep.BASIC_INFO,
   '/owner/register/menu': RegisterStep.MENU,
-  '/owner/register/check': RegisterStep.CHECK,
+  // '/owner/register/check': RegisterStep.CHECK,
   '/owner/register/complete': RegisterStep.COMPLETE,
 };
 
@@ -43,7 +44,7 @@ export const PATH_TO_STEP: Record<string, RegisterStep> = {
 export const STEP_TO_PATH: Record<RegisterStep, string> = {
   [RegisterStep.BASIC_INFO]: '/owner/register/basic-info',
   [RegisterStep.MENU]: '/owner/register/menu',
-  [RegisterStep.CHECK]: '/owner/register/check',
+  // [RegisterStep.CHECK]: '/owner/register/check',
   [RegisterStep.COMPLETE]: '/owner/register/complete',
 };
 
@@ -73,7 +74,7 @@ const initialStoreData: StoreData = {
 
   // 평점 및 태그
   averageRating: 0,
-  tagIds: [], // TODO: 이렇게 보내도 되는게 맞나?
+  tagIds: [],
 
   // 상태 정보
   status: 'ACTIVE', // 기본값
@@ -586,7 +587,7 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
         });
       }
 
-      // API 호출
+      // API 호출 //TODO: service 호출
       const response = await fetch('/api/stores', {
         method: 'POST',
         body: formData,

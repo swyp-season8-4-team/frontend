@@ -85,7 +85,7 @@ export default function RegisterMenuPage() {
 
     completeStep(RegisterStep.MENU);
     goToNextStep();
-    router.push(`${NavigationPathname.OwnerRegisterCheck}`);
+    router.push(`${NavigationPathname.OwnerRegisterComplete}`);
   };
 
   const handlePrevStep = () => {
