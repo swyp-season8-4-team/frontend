@@ -129,15 +129,17 @@ export default function RegisterBasicInfoPage() {
     storeData.storeLinks?.length ? storeData.storeLinks : [''],
   );
 
-  const [primaryLinkIndex, setPrimaryLinkIndex] = useState<number>(() => {
-    if (storeData.primaryStoreLink) {
-      const index = storeData.storeLinks?.findIndex(
-        (link) => link === storeData.primaryStoreLink,
-      );
-      return index >= 0 ? index : 0;
-    }
-    return 0;
-  });
+  const [primaryLinkIndex, setPrimaryLinkIndex] = useState<number | undefined>(
+    () => {
+      if (storeData.primaryStoreLink) {
+        const index = storeData.storeLinks?.findIndex(
+          (link) => link === storeData.primaryStoreLink,
+        );
+        return index >= 0 ? index : undefined;
+      }
+      return undefined;
+    },
+  );
 
   useEffect(() => {
     const isValid =
@@ -266,7 +268,7 @@ export default function RegisterBasicInfoPage() {
     updateBasicInfo({
       ...data,
       primaryStoreLink:
-        primaryLinkIndex >= 0 ? storeLinks[primaryLinkIndex] : '',
+        primaryLinkIndex !== undefined ? storeLinks[primaryLinkIndex] : '',
       storeLinks: storeLinks,
     });
     updateOperatingHours(data.operatingHours);
@@ -714,21 +716,26 @@ export default function RegisterBasicInfoPage() {
                   className="border-neutral-40 w-full flex-1 rounded-[6px] border px-3 py-2 text-sm"
                   placeholder="http://"
                 />
-                <button
-                  type="button"
-                  className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#CDC8C3] text-sm text-white"
-                  onClick={() => {
-                    const newLinks = storeLinks.filter((_, i) => i !== index);
-                    setStoreLinks(newLinks);
-                    if (index === primaryLinkIndex) {
-                      setPrimaryLinkIndex(-1);
-                    } else if (index < primaryLinkIndex) {
-                      setPrimaryLinkIndex((prev) => prev - 1);
-                    }
-                  }}
-                >
-                  <IconXRound className="h-full w-full text-[#CDC8C3]" />
-                </button>
+                {index !== 0 && (
+                  <button
+                    type="button"
+                    className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#CDC8C3] text-sm text-white"
+                    onClick={() => {
+                      const newLinks = storeLinks.filter((_, i) => i !== index);
+                      setStoreLinks(newLinks);
+                      if (
+                        primaryLinkIndex !== undefined &&
+                        index < primaryLinkIndex
+                      ) {
+                        setPrimaryLinkIndex((prev) =>
+                          prev ? prev - 1 : undefined,
+                        );
+                      }
+                    }}
+                  >
+                    <IconXRound className="h-full w-full text-[#CDC8C3]" />
+                  </button>
+                )}
               </div>
             </div>
           ))}
