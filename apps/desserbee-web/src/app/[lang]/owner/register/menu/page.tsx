@@ -98,13 +98,29 @@ export default function RegisterMenuPage() {
   return (
     <form onSubmit={handleNextStep}>
       <div className="px-base">
-        <button
-          onClick={openMenuAddModal}
-          type="button"
-          className="w-full rounded-[10px] border border-[#949494] bg-[#F5F5F5] px-[14px] py-3"
-        >
-          + 새 메뉴 추가
-        </button>
+        {menus.length === 0 ? (
+          <div className="px-base py-base flex min-h-[calc(100vh-150px)] w-full flex-col items-center justify-center gap-2">
+            <div className="flex w-full flex-col items-center gap-0">
+              <div className="text-[#424242]">현재 등록된 메뉴가 없습니다.</div>
+              <div className="text-[#424242]">새 메뉴를 추가해주세요</div>
+              <button
+                onClick={openMenuAddModal}
+                type="button"
+                className="mt-4 w-full max-w-[130px] rounded-[10px] border border-[#949494] bg-[#F5F5F5] px-[14px] py-3"
+              >
+                + 새 메뉴 추가
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button
+            onClick={openMenuAddModal}
+            type="button"
+            className="w-full rounded-[10px] border border-[#949494] bg-[#F5F5F5] px-[14px] py-3"
+          >
+            + 새 메뉴 추가
+          </button>
+        )}
       </div>
 
       <div className="flex flex-col pb-[80px]">

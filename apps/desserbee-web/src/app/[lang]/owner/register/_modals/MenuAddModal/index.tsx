@@ -3,6 +3,8 @@ import { StoreRegisterHeader } from '../../_components/StoreRegisterHeader';
 import { Controller, useForm } from 'react-hook-form';
 import IconPicture from '@repo/design-system/components/icons/IconPicture';
 import Image from 'next/image';
+import { useRef } from 'react';
+import IconXRound from '@repo/design-system/components/icons/IconXRound';
 
 interface MenuAddModalProps {
   onClose: (menu?: Menu, imageFiles?: File[]) => void;
@@ -31,6 +33,8 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
       menuImageFiles: [],
     },
   });
+
+  const priceInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
@@ -124,32 +128,38 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
                 name="price"
                 control={control}
                 rules={{ required: true }}
-                render={({ field: { value, onChange, ...rest } }) => (
-                  <div className="flex items-center">
-                    <div className="relative">
-                      <span className="invisible inline-block whitespace-pre px-0.5 text-sm font-medium">
-                        {value ? Number(value).toLocaleString() : '0'}
-                      </span>
-                      <input
-                        {...rest}
-                        value={value ? Number(value).toLocaleString() : ''}
-                        onChange={(e) => {
-                          const newValue = e.target.value.replace(
-                            /[^\d,]/g,
-                            '',
-                          );
-                          onChange(newValue.replace(/,/g, ''));
-                        }}
-                        className="absolute left-0 top-0 w-full appearance-none border-none pt-[2px] text-sm font-medium outline-none"
-                        placeholder="0"
-                        type="text"
-                      />
+                render={({ field: { value, onChange, ...rest } }) => {
+                  return (
+                    <div
+                      className="flex cursor-text items-center"
+                      onClick={() => priceInputRef.current?.focus()}
+                    >
+                      <div className="relative">
+                        <span className="invisible inline-block whitespace-pre px-0.5 text-sm font-medium">
+                          {value ? Number(value).toLocaleString() : '0'}
+                        </span>
+                        <input
+                          {...rest}
+                          ref={priceInputRef}
+                          value={value ? Number(value).toLocaleString() : ''}
+                          onChange={(e) => {
+                            const newValue = e.target.value.replace(
+                              /[^\d,]/g,
+                              '',
+                            );
+                            onChange(newValue.replace(/,/g, ''));
+                          }}
+                          className="absolute left-0 top-0 w-full appearance-none border-none p-0 text-sm font-medium outline-none"
+                          placeholder="0"
+                          type="text"
+                        />
+                      </div>
+                      {value ? (
+                        <span className="text-sm font-medium">원</span>
+                      ) : null}
                     </div>
-                    {value ? (
-                      <span className="text-sm font-medium">원</span>
-                    ) : null}
-                  </div>
-                )}
+                  );
+                }}
               />
             </div>
           </div>
@@ -195,10 +205,10 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
                           </div>
                           <button
                             type="button"
-                            className="bg-primary absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full text-sm text-white"
+                            className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full text-sm text-white"
                             onClick={() => handleRemoveImageFiles(index)}
                           >
-                            ×
+                            <IconXRound className="h-full w-full text-[#CDC8C3]" />
                           </button>
                         </div>
                       ))}
