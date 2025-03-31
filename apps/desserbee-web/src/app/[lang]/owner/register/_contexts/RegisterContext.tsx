@@ -48,7 +48,10 @@ export const STEP_TO_PATH: Record<RegisterStep, string> = {
 };
 
 interface StoreData extends RegisterStoreRequest {
-  detailAddress: string; // 클라이언트에서만 사용, api 연동할 때 address랑 합쳐야함
+  detailAddress: string;
+  // 메뉴 이미지 파일과 썸네일 관리를 위한 필드 추가
+  menuImageMap: Map<string, File>;
+  menuThumbnailUrls: Map<string, string>;
 }
 
 // 초기 상태 정의
@@ -93,6 +96,9 @@ const initialStoreData: StoreData = {
   storeImageFiles: [],
   ownerPickImageFiles: [],
   menuImageFiles: [],
+
+  menuImageMap: new Map(),
+  menuThumbnailUrls: new Map(),
 };
 
 // Context 타입 정의
@@ -191,6 +197,12 @@ type RegisterContextType = {
 
   // 단계별 경로 가져오기 (언어 포함)
   getStepPath: (step: RegisterStep) => string;
+
+  // 메뉴 이미지 관리
+  updateMenuImage: (menuId: string, file: File) => void;
+  removeMenuImage: (menuId: string) => void;
+  getMenuImage: (menuId: string) => File | undefined;
+  getMenuThumbnailUrl: (menuId: string) => string | undefined;
 };
 
 // Context 생성
@@ -484,7 +496,7 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
       const updatedMenus = [...prev.menus];
       updatedMenus[menuIndex] = {
         ...updatedMenus[menuIndex],
-        imageFileKey: file.name, // 파일명을 imageFileKey로 설정
+        imageFileKey: [file.name], // 파일명을 imageFileKey로 설정
       };
 
       return {
@@ -632,6 +644,70 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
     router.push(path);
   };
 
+  // 메뉴 이미지 관리 함수들
+  const updateMenuImage = (menuId: string, file: File) => {
+    setStoreData((prev) => {
+      const newImageMap = new Map(prev.menuImageMap);
+      const newThumbnailUrls = new Map(prev.menuThumbnailUrls);
+
+      // 기존 썸네일 URL이 있다면 해제
+      const existingUrl = newThumbnailUrls.get(menuId);
+      if (existingUrl) {
+        URL.revokeObjectURL(existingUrl);
+      }
+
+      // 새로운 파일과 썸네일 URL 설정
+      newImageMap.set(menuId, file);
+      newThumbnailUrls.set(menuId, URL.createObjectURL(file));
+
+      return {
+        ...prev,
+        menuImageMap: newImageMap,
+        menuThumbnailUrls: newThumbnailUrls,
+      };
+    });
+  };
+
+  const removeMenuImage = (menuId: string) => {
+    setStoreData((prev) => {
+      const newImageMap = new Map(prev.menuImageMap);
+      const newThumbnailUrls = new Map(prev.menuThumbnailUrls);
+
+      // 썸네일 URL 해제
+      const thumbnailUrl = newThumbnailUrls.get(menuId);
+      if (thumbnailUrl) {
+        URL.revokeObjectURL(thumbnailUrl);
+      }
+
+      newImageMap.delete(menuId);
+      newThumbnailUrls.delete(menuId);
+
+      return {
+        ...prev,
+        menuImageMap: newImageMap,
+        menuThumbnailUrls: newThumbnailUrls,
+      };
+    });
+  };
+
+  const getMenuImage = (menuId: string) => {
+    return storeData.menuImageMap.get(menuId);
+  };
+
+  const getMenuThumbnailUrl = (menuId: string) => {
+    return storeData.menuThumbnailUrls.get(menuId);
+  };
+
+  // cleanup effect
+  useEffect(() => {
+    return () => {
+      // Provider가 언마운트될 때 모든 썸네일 URL 해제
+      storeData.menuThumbnailUrls.forEach((url) => {
+        URL.revokeObjectURL(url);
+      });
+    };
+  }, []);
+
   // Context 값 제공
   return (
     <RegisterContext.Provider
@@ -691,6 +767,11 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
 
         isFormDirty,
         setIsFormDirty,
+
+        updateMenuImage,
+        removeMenuImage,
+        getMenuImage,
+        getMenuThumbnailUrl,
       }}
     >
       {children}

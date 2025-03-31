@@ -8,6 +8,12 @@ import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import Image from 'next/image';
+import IconX from '@repo/design-system/components/icons/IconX';
+
+interface MenuWithImage extends Menu {
+  id: string;
+  imageUrls?: string[];
+}
 
 export default function RegisterMenuPage() {
   const router = useRouter();
@@ -20,13 +26,17 @@ export default function RegisterMenuPage() {
     updateMenuImages,
     completeStep,
     goToNextStep,
+    updateMenuImage,
+    removeMenuImage,
+    getMenuThumbnailUrl,
   } = useRegister();
 
-  const [menus, setMenus] = useState<Menu[]>(storeData.menus || []);
-  const [menuImageFiles, setMenuImageFiles] = useState<File[]>(
-    storeData.menuImageFiles || [],
+  const [menus, setMenus] = useState<MenuWithImage[]>(
+    (storeData.menus || []).map((menu) => ({
+      ...menu,
+      id: `menu-${Date.now()}-${Math.random()}`,
+    })),
   );
-  const [thumnailUrls, setThumbnailUrls] = useState<string[]>([]);
 
   const openMenuAddModal = () => {
     push('modal', {
@@ -36,81 +46,95 @@ export default function RegisterMenuPage() {
 
   const closeMenuAddModal = (menu?: Menu, files?: File[]) => {
     if (menu) {
-      setMenus((prev) => [...prev, menu]);
-      if (files?.length) {
-        setMenuImageFiles((prev) => [...prev, ...files]);
+      const menuWithId = {
+        ...menu,
+        id: `menu-${Date.now()}`,
+      };
+
+      setMenus((prev) => [...prev, menuWithId]);
+
+      if (files?.length && menu.imageFileKey?.length) {
+        files.forEach((file, index) => {
+          if (menu.imageFileKey?.[index]) {
+            updateMenuImage(menu.imageFileKey[index], file);
+          }
+        });
       }
     }
     pop('modal');
   };
 
-  const handleDeleteMenu = (index: number) => {
-    // 삭제할 썸네일의 URL 메모리 해제
-    URL.revokeObjectURL(thumnailUrls[index]);
+  const handleDeleteMenu = (menuId: string) => {
+    const menuToDelete = menus.find((menu) => menu.id === menuId);
 
-    setMenus((prev) => prev.filter((_, i) => i !== index));
-    setMenuImageFiles((prev) => prev.filter((_, i) => i !== index));
-    setThumbnailUrls((prev) => prev.filter((_, i) => i !== index));
+    if (menuToDelete?.imageFileKey?.length) {
+      menuToDelete.imageFileKey.forEach((key) => {
+        removeMenuImage(key);
+      });
+    }
+
+    setMenus((prev) => prev.filter((menu) => menu.id !== menuId));
   };
 
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
 
     updateMenus(menus);
+    const menuImageFiles = Array.from(storeData.menuImageMap.values());
     updateMenuImages(menuImageFiles);
 
     completeStep(RegisterStep.MENU);
-
     goToNextStep();
-
     router.push(`${NavigationPathname.OwnerRegisterCheck}`);
   };
 
-  useEffect(() => {
-    // 이미지 파일이 변경될 때마다 URL 생성
-    const urls = menuImageFiles.map((file) => URL.createObjectURL(file));
-    setThumbnailUrls(urls);
-
-    // cleanup function
-    return () => {
-      urls.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, [menuImageFiles]);
-
   return (
-    <form onSubmit={handleNextStep} className="px-base">
-      <button
-        onClick={openMenuAddModal}
-        type="button"
-        className="w-full rounded-[10px] border border-[#949494] bg-[#F5F5F5] px-[14px] py-[10px]"
-      >
-        + 새 메뉴 추가
-      </button>
-      <div className="flex flex-col divide-y">
-        {menus.map(({ name, price, description }, index) => (
-          <div key={`${name}-${index}`} className="flex gap-3 py-3">
-            {thumnailUrls[index] && (
-              <div className="h-[68px] w-[68px] overflow-hidden rounded-md border-[1.17px] border-[#B1B1B1] bg-[#F5F5F5]">
-                <Image
-                  width={100}
-                  height={100}
-                  src={thumnailUrls[index]}
-                  alt={`메뉴 사진 ${index + 1}`}
-                  className="h-full w-full object-cover"
-                />
+    <form onSubmit={handleNextStep}>
+      <div className="px-base">
+        <button
+          onClick={openMenuAddModal}
+          type="button"
+          className="w-full rounded-[10px] border border-[#949494] bg-[#F5F5F5] px-[14px] py-3"
+        >
+          + 새 메뉴 추가
+        </button>
+      </div>
+
+      <div className="flex flex-col pb-[80px]">
+        {menus.map((menu) => (
+          <div
+            key={menu.id}
+            className="px-base flex gap-3 border-b border-[#A7A7A7] py-[18.5px]"
+          >
+            {menu.imageFileKey?.[0] &&
+              getMenuThumbnailUrl(menu.imageFileKey[0]) && (
+                <div className="h-[74px] w-[74px] overflow-hidden rounded-md border-[1.17px] border-[#B1B1B1] bg-[#F5F5F5]">
+                  <Image
+                    width={100}
+                    height={100}
+                    src={getMenuThumbnailUrl(menu.imageFileKey[0])!}
+                    alt={`메뉴 사진 ${menu.name}`}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )}
+            <div className="flex-1 flex-col justify-center">
+              <div className="font-semibold">{menu.name}</div>
+              <div className="overflow-hidden truncate text-xs">
+                {menu.description}
               </div>
-            )}
-            <div className="flex flex-1 flex-col justify-center">
-              <div className="font-medium">{name}</div>
-              <div className="text-[#757575]">{description}</div>
-              <div className="font-medium">{price.toLocaleString()}원</div>
+              <div className="text-sm font-medium">
+                {menu.price.toLocaleString()}원
+              </div>
             </div>
             <button
               type="button"
-              className="self-center p-2"
-              onClick={() => handleDeleteMenu(index)}
+              className="flex items-start"
+              onClick={() => handleDeleteMenu(menu.id)}
             >
-              ×
+              <div className="h-6 w-6">
+                <IconX className="h-full w-full text-[#B9B9B9]" />
+              </div>
             </button>
           </div>
         ))}
@@ -118,7 +142,7 @@ export default function RegisterMenuPage() {
       <div className="fixed bottom-4 left-0 right-0 mx-4 flex gap-x-2">
         <button
           type="button"
-          className="w-[20%] text-nowrap rounded-[99px] border border-[#B3B3B3] p-[10px]"
+          className="w-[20%] text-nowrap rounded-[99px] border border-[#B3B3B3] bg-white p-[10px]"
         >
           이전
         </button>
