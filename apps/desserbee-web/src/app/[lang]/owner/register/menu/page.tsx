@@ -150,15 +150,15 @@ export default function RegisterMenuPage() {
         <button
           type="button"
           onClick={handlePrevStep}
-          className="w-[20%] text-nowrap rounded-[99px] border border-[#B3B3B3] bg-white p-[10px]"
+          className="w-[20%] text-nowrap rounded-[6px] border border-[#B3B3B3] bg-white p-[10px]"
         >
           이전
         </button>
         <button
           type="submit"
-          className="w-[80%] rounded-[99px] bg-[#FFB700] p-[10px] text-center"
+          className="bg-primary-80 w-[80%] rounded-[6px] p-[10px] text-center text-[#412D00]"
         >
-          적용
+          다음
         </button>
       </div>
     </form>

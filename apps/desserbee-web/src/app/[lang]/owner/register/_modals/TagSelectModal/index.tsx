@@ -72,16 +72,16 @@ export function TagSelectModal({ onClose, initialTags }: TagSelectModalProps) {
       <div className="absolute bottom-4 flex w-full gap-x-2 px-4 font-semibold">
         <button
           onClick={resetSelectedTags}
-          className="w-[20%] text-nowrap rounded-[99px] border border-[#B3B3B3] p-[10px]"
+          className="w-[20%] text-nowrap rounded-[6px] border border-[#B3B3B3] p-[10px]"
         >
           초기화
         </button>
         <button
           onClick={() => onClose(Array.from(selectedTags))}
-          className="flex w-[80%] items-center justify-center rounded-[99px] bg-[#FFB700] p-[10px]"
+          className="bg-primary-80 w-[80%] rounded-[6px] p-[10px] text-center text-[#412D00]"
         >
-          <div className="text-[#7D1AFF]">{selectedTags.size}개&nbsp;</div>
-          <div>태그 적용</div>
+          {/* <div className="text-[#7D1AFF]">{selectedTags.size}개&nbsp;</div> */}
+          <div>태그 입력</div>
         </button>
       </div>
     </div>
