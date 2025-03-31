@@ -9,14 +9,14 @@ interface StoreRegisterHeaderProps {
 
 export function StoreRegisterHeader({
   title,
-  isSub,
+  isSub, // NOTICE: 이전 디자인에서 헤더가 선택창일 때는 색깔이 바뀌어서 적용한 것. 혹시 몰라 둠
   onClose,
 }: StoreRegisterHeaderProps) {
   return (
     <header
       className={cn(
-        'relative h-[50px]',
-        isSub ? 'bg-[#F7F6F2]' : 'bg-[#E8E8E8]',
+        'relative h-[54px] border-b border-b-[rgba(0,0,0,0.15)]',
+        // isSub ? 'bg-[#F7F6F2]' : 'bg-[#E8E8E8]',
       )}
     >
       {onClose && (
