@@ -119,18 +119,39 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
               <div className="text-sm font-medium">가격</div>
               <div className="text-xs">(필수)</div>
             </label>
-            <Controller
-              name="price"
-              control={control}
-              rules={{ required: true }}
-              render={({ field }) => (
-                <input
-                  {...field}
-                  className="w-full rounded-[5px] border border-[#9F9F9F] p-[10px] text-sm font-medium"
-                  type="text"
-                />
-              )}
-            />
+            <div className="inline-block w-full rounded-[5px] border border-[#9F9F9F] p-[10px]">
+              <Controller
+                name="price"
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { value, onChange, ...rest } }) => (
+                  <div className="flex items-center">
+                    <div className="relative">
+                      <span className="invisible inline-block whitespace-pre px-0.5 text-sm font-medium">
+                        {value ? Number(value).toLocaleString() : '0'}
+                      </span>
+                      <input
+                        {...rest}
+                        value={value ? Number(value).toLocaleString() : ''}
+                        onChange={(e) => {
+                          const newValue = e.target.value.replace(
+                            /[^\d,]/g,
+                            '',
+                          );
+                          onChange(newValue.replace(/,/g, ''));
+                        }}
+                        className="absolute left-0 top-0 w-full appearance-none border-none pt-[2px] text-sm font-medium outline-none"
+                        placeholder="0"
+                        type="text"
+                      />
+                    </div>
+                    {value ? (
+                      <span className="text-sm font-medium">원</span>
+                    ) : null}
+                  </div>
+                )}
+              />
+            </div>
           </div>
 
           {/* 메뉴사진 */}
