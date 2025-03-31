@@ -247,6 +247,7 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
                   {...field}
                   className="min-h-[108px] w-full resize-none rounded-[5px] border border-[#9F9F9F] p-3 text-sm"
                   maxLength={60}
+                  placeholder="메뉴 소개를 간단하게 적어주세요"
                 />
               )}
             />
