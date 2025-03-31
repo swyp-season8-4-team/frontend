@@ -19,6 +19,7 @@ import { OperatingHoursSelectModal } from '../_modals/OperatingHoursSelectModal'
 import { TAG_CATEGORIES, TAGS } from '../_consts/tag';
 import { DAYS_OF_WEEK } from '../_consts/operatingHours';
 import { useContext, useEffect, useState } from 'react';
+import IconCheck from '@repo/design-system/components/icons/IconCheck';
 
 const FEATURES = [
   {
@@ -123,6 +124,20 @@ export default function RegisterBasicInfoPage() {
 
   // isValid 상태 관리
   const [isFormValid, setIsFormValid] = useState(false);
+
+  const [storeLinks, setStoreLinks] = useState<string[]>(
+    storeData.storeLinks?.length ? storeData.storeLinks : [''],
+  );
+
+  const [primaryLinkIndex, setPrimaryLinkIndex] = useState<number>(() => {
+    if (storeData.primaryStoreLink) {
+      const index = storeData.storeLinks?.findIndex(
+        (link) => link === storeData.primaryStoreLink,
+      );
+      return index >= 0 ? index : 0;
+    }
+    return 0;
+  });
 
   useEffect(() => {
     const isValid =
@@ -249,15 +264,10 @@ export default function RegisterBasicInfoPage() {
     const { latitude, longitude } = { latitude: 0, longitude: 0 }; // TODO: 이건 마지막 API 보낼 때 업데이트하도록. 지금은 임시
 
     updateBasicInfo({
-      name: data.name,
-      phone: data.phone,
-      address: data.address,
-      detailAddress: data.detailAddress,
-      latitude,
-      longitude,
-      primaryStoreLink: data.primaryStoreLink,
-      storeLinks: data.storeLinks,
-      description: data.description,
+      ...data,
+      primaryStoreLink:
+        primaryLinkIndex >= 0 ? storeLinks[primaryLinkIndex] : '',
+      storeLinks: storeLinks,
     });
     updateOperatingHours(data.operatingHours);
     updateTags(data.tags);
@@ -651,21 +661,78 @@ export default function RegisterBasicInfoPage() {
 
       {/* SNS 링크 */}
       <div className="flex flex-col gap-2">
-        <label htmlFor="storeLink" className="flex items-center gap-1">
-          <div className="text-base font-medium">SNS 링크</div>
-          <div className="text-sm">(선택)</div>
-        </label>
-        <Controller
-          name="primaryStoreLink" //TODO: 여러 개 선택 및 대표 선택으로 수정 필요!!!
-          control={control}
-          render={({ field }) => (
-            <input
-              {...field}
-              className="w-full rounded-[5px] border border-[#A6A6A6] p-[10px] text-sm"
-              type="text"
-            />
+        <label
+          htmlFor="storeLink"
+          className="flex items-center justify-between"
+        >
+          <div className="flex items-center gap-1">
+            <div className="text-base font-medium">SNS 링크</div>
+            <div className="text-sm">(선택)</div>
+          </div>
+          {storeLinks.length < 3 && (
+            <button
+              type="button"
+              onClick={() => setStoreLinks([...storeLinks, ''])}
+              className="rounded-[6px] border border-[rgba(0,0,0,0.17)] px-[10px] py-2 text-center text-[11px] text-[#3E3E3E] opacity-50"
+            >
+              + 추가
+            </button>
           )}
-        />
+        </label>
+        <div className="space-y-2">
+          {/* 링크 목록 */}
+          {storeLinks.map((link, index) => (
+            <div key={index} className="flex items-center gap-[15.5px]">
+              <button
+                type="button"
+                className="flex items-center gap-[7px]"
+                onClick={() => setPrimaryLinkIndex(index)}
+              >
+                <div
+                  className={cn(
+                    'flex aspect-square h-[11px] w-[11px] items-center justify-center rounded-full',
+                    primaryLinkIndex === index
+                      ? 'bg-[#65558f]'
+                      : 'bg-[#9D9D9D]',
+                  )}
+                >
+                  <div className="h-1 w-2">
+                    <IconCheck className="h-full w-full text-white" />
+                  </div>
+                </div>
+                <div className="text-nowrap text-xs">대표</div>
+              </button>
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  value={link}
+                  onChange={(e) => {
+                    const newLinks = [...storeLinks];
+                    newLinks[index] = e.target.value;
+                    setStoreLinks(newLinks);
+                  }}
+                  className="border-neutral-40 w-full flex-1 rounded-[6px] border px-3 py-2 text-sm"
+                  placeholder="http://"
+                />
+                <button
+                  type="button"
+                  className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#CDC8C3] text-sm text-white"
+                  onClick={() => {
+                    const newLinks = storeLinks.filter((_, i) => i !== index);
+                    setStoreLinks(newLinks);
+                    if (index === primaryLinkIndex) {
+                      setPrimaryLinkIndex(-1);
+                    } else if (index < primaryLinkIndex) {
+                      setPrimaryLinkIndex((prev) => prev - 1);
+                    }
+                  }}
+                >
+                  <IconXRound className="h-full w-full text-[#CDC8C3]" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* 기타 정보 */}
