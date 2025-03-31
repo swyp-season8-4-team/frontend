@@ -1,6 +1,6 @@
 'use client';
 
-import StepIndicator from '../_components/StepIndicator';
+import StepIndicator from '../_components/StepIndicator2';
 import { StoreRegisterHeader } from '../_components/StoreRegisterHeader';
 
 export default function BasicInfoLayout({
