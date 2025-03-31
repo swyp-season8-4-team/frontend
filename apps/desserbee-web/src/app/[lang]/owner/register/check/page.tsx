@@ -11,7 +11,7 @@ export default function RegisterCheckPage() {
     e.preventDefault();
 
     // 확인 단계 완료 표시
-    completeStep(RegisterStep.CHECK);
+    // completeStep(RegisterStep.CHECK);
 
     // 내부 상태 업데이트
     goToNextStep();
