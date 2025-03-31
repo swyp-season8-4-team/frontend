@@ -725,7 +725,15 @@ export default function RegisterBasicInfoPage() {
                   onClick={() => {
                     const newLinks = storeLinks.filter((_, i) => i !== index);
                     setStoreLinks(newLinks);
-                    if (
+
+                    // 모든 링크가 삭제되었거나
+                    // 삭제된 링크가 대표 링크였거나
+                    // 삭제된 링크가 대표 링크보다 앞에 있었을 경우 처리
+                    if (newLinks.length === 0) {
+                      setPrimaryLinkIndex(undefined);
+                    } else if (index === primaryLinkIndex) {
+                      setPrimaryLinkIndex(undefined);
+                    } else if (
                       primaryLinkIndex !== undefined &&
                       index < primaryLinkIndex
                     ) {
