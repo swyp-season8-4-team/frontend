@@ -26,7 +26,7 @@ export default function StepIndicator2() {
   const currentStep = steps.indexOf(actualCurrentStep) + 1;
 
   return (
-    <div className="px-base w-full bg-[#F7F6F2] py-[14px]">
+    <div className="px-base w-full py-[14px]">
       <div className="relative mx-auto">
         {/* 프로그레스 바 컨테이너 */}
         <div className="mb-[10px] h-[7px] w-full rounded-[99px] bg-[#CBCBCB]">
