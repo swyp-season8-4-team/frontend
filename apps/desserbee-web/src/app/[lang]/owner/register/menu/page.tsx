@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useRegister, RegisterStep } from '../_contexts/RegisterContext';
 import type { Menu } from '@repo/entity/src/store';
 import { MenuAddModal } from '../_modals/MenuAddModal';
@@ -88,6 +88,10 @@ export default function RegisterMenuPage() {
     router.push(`${NavigationPathname.OwnerRegisterCheck}`);
   };
 
+  const handlePrevStep = () => {
+    router.back();
+  };
+
   return (
     <form onSubmit={handleNextStep}>
       <div className="px-base">
@@ -142,6 +146,7 @@ export default function RegisterMenuPage() {
       <div className="fixed bottom-4 left-0 right-0 mx-4 flex gap-x-2">
         <button
           type="button"
+          onClick={handlePrevStep}
           className="w-[20%] text-nowrap rounded-[99px] border border-[#B3B3B3] bg-white p-[10px]"
         >
           이전
