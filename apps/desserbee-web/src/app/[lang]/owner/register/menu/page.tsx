@@ -89,6 +89,9 @@ export default function RegisterMenuPage() {
   };
 
   const handlePrevStep = () => {
+    updateMenus(menus);
+    const menuImageFiles = Array.from(storeData.menuImageMap.values());
+    updateMenuImages(menuImageFiles);
     router.back();
   };
 
