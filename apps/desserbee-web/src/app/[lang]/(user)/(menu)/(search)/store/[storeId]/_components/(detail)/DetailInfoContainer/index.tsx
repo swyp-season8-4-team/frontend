@@ -35,7 +35,8 @@ export function DetailInfoContainer({
   address,
   operatingHours,
   phone,
-  storeLink,
+  primaryStoreLink,
+  storeLinks,
   description,
   storeImages,
   ownerPickImages,
@@ -63,7 +64,8 @@ export function DetailInfoContainer({
     address,
     operatingHours,
     phone,
-    storeLink,
+    primaryStoreLink,
+    storeLinks,
     description,
     holidays,
   };
@@ -106,16 +108,16 @@ export function DetailInfoContainer({
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-[9px]">
-        <div className="flex justify-start items-center">
-          <span className="md:mr-[10.37px] font-semibold text-base md:text-t28">
+      <div className="mb-[9px] flex items-center justify-between">
+        <div className="flex items-center justify-start">
+          <span className="md:text-t28 text-base font-semibold md:mr-[10.37px]">
             {name}
           </span>
           <StoreFeatureIconList {...storeFeatureIconListProps} />
-          <span className="flex ml-[5.55px] md:ml-[13px] text-[10px] md:text-base">
+          <span className="ml-[5.55px] flex text-[10px] md:ml-[13px] md:text-base">
             {tags.map((tag, index) => (
               <span
-                className="font-medium text-[#6F6F6F] md:text-t20"
+                className="md:text-t20 font-medium text-[#6F6F6F]"
                 key={tag}
               >
                 {tag}
@@ -125,22 +127,22 @@ export function DetailInfoContainer({
           </span>
         </div>
         {saved ? (
-          <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm">
-            <div className="w-4 md:w-[37.71px] h-4 md:h-[37.71px]">
+          <div className="mr-2 rounded-sm border-[0.5px] border-[#D5D5D5]">
+            <div className="h-4 w-4 md:h-[37.71px] md:w-[37.71px]">
               <IconFlower
                 className={cn(
                   listColorId && getIconColor(listColorId),
-                  'w-full h-full',
+                  'h-full w-full',
                 )}
               />
             </div>
           </div>
         ) : (
           <button onClick={() => handleIconFlowerClick()}>
-            <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm">
-              <div className="w-4 md:w-[37.71px] h-4 md:h-[37.71px]">
+            <div className="mr-2 rounded-sm border-[0.5px] border-[#D5D5D5]">
+              <div className="h-4 w-4 md:h-[37.71px] md:w-[37.71px]">
                 <IconFlowerOutline
-                  className={cn('w-full h-full text-[#898989]')}
+                  className={cn('h-full w-full text-[#898989]')}
                 />
               </div>
             </div>
@@ -150,31 +152,31 @@ export function DetailInfoContainer({
       <div className="relative">
         <button
           onClick={async () => handleBtnClick()}
-          className="text-start flex items-center border border-[#9F9F9F] rounded-[5px] md:rounded-[10px] w-full md:h-12 overflow-hidden"
+          className="flex w-full items-center overflow-hidden rounded-[5px] border border-[#9F9F9F] text-start md:h-12 md:rounded-[10px]"
         >
-          <div className="bg-primary min-w-[10px] w-2 h-6 mr-1 md:w-4 md:h-full"></div>
-          <div className="md:px-[10px] md:py-3 w-[calc(100%-95px)] md:w-[calc(100%-103px)] overflow-hidden text-[10px] md:text-[18px] md:text-nowrap">
+          <div className="bg-primary mr-1 h-6 w-2 min-w-[10px] md:h-full md:w-4"></div>
+          <div className="w-[calc(100%-95px)] overflow-hidden text-[10px] md:w-[calc(100%-103px)] md:text-nowrap md:px-[10px] md:py-3 md:text-[18px]">
             할인 / 이벤트 확인하기
           </div>
-          <div className="flex justify-center items-center border-[#9F9F9F] border-l-[1px] border-dashed w-[87px] h-full">
-            <div className="w-3 md:w-8 h-3 md:h-8">
-              <IconDownload className="w-full h-full text-[#393939]" />
+          <div className="flex h-full w-[87px] items-center justify-center border-l-[1px] border-dashed border-[#9F9F9F]">
+            <div className="h-3 w-3 md:h-8 md:w-8">
+              <IconDownload className="h-full w-full text-[#393939]" />
             </div>
           </div>
         </button>
-        <div className="-top-[10px] right-[80px] z-10 absolute bg-white border-[#9F9F9F] border-l-[1px] rounded-full w-4 h-4 -rotate-90"></div>
-        <div className="right-[80px] -bottom-[10px] z-10 absolute bg-white border-[#9F9F9F] border-l-[1px] rounded-full w-4 h-4 rotate-90"></div>
+        <div className="absolute -top-[10px] right-[80px] z-10 h-4 w-4 -rotate-90 rounded-full border-l-[1px] border-[#9F9F9F] bg-white"></div>
+        <div className="absolute -bottom-[10px] right-[80px] z-10 h-4 w-4 rotate-90 rounded-full border-l-[1px] border-[#9F9F9F] bg-white"></div>
       </div>
-      <div className="items-center grid grid-cols-[2fr_1fr] md:grid-cols-[2fr_1fr] md:mb-[37px]">
+      <div className="grid grid-cols-[2fr_1fr] items-center md:mb-[37px] md:grid-cols-[2fr_1fr]">
         <div>
           <div className="my-[10.93px] md:my-[26px]">
             <StoreInfo {...storeInfoProps} />
           </div>
           <div className="flex gap-[7.26px] md:gap-[17px]">
-            <button className="px-[17.8px] md:px-10 md:py-[9px] border border-[#9F9F9F] rounded-[25.62px] md:rounded-[60px] md:min-w-[113px] h-fit text-[10px] md:text-xl text-nowrap">
+            <button className="h-fit text-nowrap rounded-[25.62px] border border-[#9F9F9F] px-[17.8px] text-[10px] md:min-w-[113px] md:rounded-[60px] md:px-10 md:py-[9px] md:text-xl">
               <a href={`tel:${phone}`}>전화</a>
             </button>
-            <button className="px-[17.8px] md:px-10 md:py-[9px] border border-[#9F9F9F] rounded-[25.62px] md:rounded-[60px] md:min-w-[113px] h-fit text-[10px] md:text-xl text-nowrap">
+            <button className="h-fit text-nowrap rounded-[25.62px] border border-[#9F9F9F] px-[17.8px] text-[10px] md:min-w-[113px] md:rounded-[60px] md:px-10 md:py-[9px] md:text-xl">
               <a
                 href={`https://map.kakao.com/link/to/${name},${latitude},${longitude}`}
               >
@@ -191,7 +193,7 @@ export function DetailInfoContainer({
         {notice.map((content) => (
           <div
             key={content}
-            className="bg-[#F6F6F6] p-[6px] md:p-[13px] rounded-[4.27px] md:rounded-[10px] w-full text-[10px] md:text-base leading-3"
+            className="w-full rounded-[4.27px] bg-[#F6F6F6] p-[6px] text-[10px] leading-3 md:rounded-[10px] md:p-[13px] md:text-base"
           >
             {content}
           </div>

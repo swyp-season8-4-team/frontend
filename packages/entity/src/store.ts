@@ -7,7 +7,9 @@ export interface Store {
   name: string;
   phone: string;
   address: string;
-  storeLink: string;
+  // storeLink: string; //TODO: 가게 간략페이지, 상세페이지에서도 수정 !!!!
+  primaryStoreLink: string;
+  storeLinks: string[];
   latitude: number;
   longitude: number;
   description?: string;
@@ -132,7 +134,8 @@ export interface StoreSummaryInfoData
     | 'name'
     | 'address'
     | 'phone'
-    | 'storeLink'
+    | 'primaryStoreLink'
+    | 'storeLinks'
     | 'animalYn'
     | 'tumblerYn'
     | 'parkingYn'
@@ -159,7 +162,8 @@ export interface StoreDetailInfoData
     | 'name'
     | 'address'
     | 'phone'
-    | 'storeLink'
+    | 'primaryStoreLink'
+    | 'storeLinks'
     | 'animalYn'
     | 'tumblerYn'
     | 'parkingYn'
@@ -215,7 +219,8 @@ export interface RegisterStoreRequest
     | 'name'
     | 'phone'
     | 'address'
-    | 'storeLink'
+    | 'primaryStoreLink'
+    | 'storeLinks'
     | 'latitude'
     | 'longitude'
     | 'animalYn'
@@ -245,7 +250,8 @@ export interface RegisterStoreResponse
     | 'name'
     | 'phone'
     | 'address'
-    | 'storeLink'
+    | 'primaryStoreLink'
+    | 'storeLinks'
     | 'description'
     | 'latitude'
     | 'longitude'
@@ -290,7 +296,8 @@ export interface EditStoreRequest
     | 'name'
     | 'phone'
     | 'address'
-    | 'storeLink'
+    | 'primaryStoreLink'
+    | 'storeLinks'
     | 'description'
     | 'animalYn'
     | 'tumblerYn'
@@ -328,7 +335,8 @@ export interface EditStoreResponse
     | 'name'
     | 'address'
     | 'phone'
-    | 'storeLink'
+    | 'primaryStoreLink'
+    | 'storeLinks'
     | 'animalYn'
     | 'tumblerYn'
     | 'parkingYn'

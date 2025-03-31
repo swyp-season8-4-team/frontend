@@ -62,8 +62,8 @@ const initialStoreData: StoreData = {
   phone: '',
   address: '',
   detailAddress: '',
-
-  storeLink: '',
+  primaryStoreLink: '',
+  storeLinks: [],
   latitude: 0,
   longitude: 0,
 
@@ -129,7 +129,8 @@ type RegisterContextType = {
     detailAddress: string; // 클라이언트에서만 사용, api 연동할 때 address랑 합쳐야함
     latitude: number;
     longitude: number;
-    storeLink?: string;
+    storeLinks?: string[];
+    primaryStoreLink: string;
     description?: string;
   }) => void;
 

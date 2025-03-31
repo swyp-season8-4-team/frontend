@@ -4,7 +4,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { useRegister, RegisterStep } from '../_contexts/RegisterContext';
 import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
-import type { OperatingHoursItem, Tag } from '@repo/entity/src/store';
+import type { OperatingHoursItem, Store, Tag } from '@repo/entity/src/store';
 import Image from 'next/image';
 import IconPicture from '@repo/design-system/components/icons/IconPicture2';
 import IconDirection from '@repo/design-system/components/icons/IconDirection';
@@ -37,15 +37,28 @@ const FEATURES = [
   },
 ];
 
-interface FormInputs {
-  name: string;
-  phone: string;
-  address: string;
+interface FormInputs
+  extends Pick<
+    Store,
+    | 'name'
+    | 'phone'
+    | 'address'
+    | 'primaryStoreLink'
+    | 'storeLinks'
+    | 'latitude'
+    | 'longitude'
+    | 'animalYn'
+    | 'tumblerYn'
+    | 'parkingYn'
+    | 'averageRating'
+    | 'status'
+    | 'operatingHours'
+    | 'holidays'
+    | 'description'
+    | 'notice'
+  > {
   detailAddress: string;
-  storeLink: string;
-  description: string;
   tags: number[];
-  operatingHours: OperatingHoursItem[];
   storeImageFiles: File[];
   ownerPickImageFiles: File[];
   features: {
@@ -83,7 +96,8 @@ export default function RegisterBasicInfoPage() {
       phone: storeData.phone,
       address: storeData.address,
       detailAddress: storeData.detailAddress,
-      storeLink: storeData.storeLink,
+      storeLinks: storeData.storeLinks,
+      primaryStoreLink: storeData.primaryStoreLink,
       description: storeData.description,
       tags: storeData.tagIds || [],
       operatingHours: storeData.operatingHours || [],
@@ -240,7 +254,8 @@ export default function RegisterBasicInfoPage() {
       detailAddress: data.detailAddress,
       latitude,
       longitude,
-      storeLink: data.storeLink,
+      primaryStoreLink: data.primaryStoreLink,
+      storeLinks: data.storeLinks,
       description: data.description,
     });
     updateOperatingHours(data.operatingHours);
@@ -640,7 +655,7 @@ export default function RegisterBasicInfoPage() {
           <div className="text-xs">(선택)</div>
         </label>
         <Controller
-          name="storeLink"
+          name="primaryStoreLink" //TODO: 여러 개 선택 및 대표 선택으로 수정 필요!!!
           control={control}
           render={({ field }) => (
             <input

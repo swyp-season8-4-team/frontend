@@ -17,7 +17,8 @@ type StoreInfoProps = Pick<
   | 'address'
   | 'operatingHours'
   | 'phone'
-  | 'storeLink'
+  | 'primaryStoreLink'
+  | 'storeLinks'
   | 'description'
   | 'holidays'
 >;
@@ -25,7 +26,8 @@ export function StoreInfo({
   address,
   operatingHours,
   phone,
-  storeLink,
+  primaryStoreLink,
+  storeLinks,
   description,
   holidays,
 }: StoreInfoProps) {
@@ -33,18 +35,18 @@ export function StoreInfo({
   const { status, message } = getOperationStatus(operatingHours);
 
   return (
-    <div className="flex flex-col w-full text-[10px] md:text-lg leading-[15px]">
+    <div className="flex w-full flex-col text-[10px] leading-[15px] md:text-lg">
       <div className="flex items-start gap-[6px]">
-        <div className="flex-shrink-0 w-[10px] md:w-4 mt-[3px] md:mt-[5px]">
-          <IconLocation className="w-full h-full text-[#BABABA]" />
+        <div className="mt-[3px] w-[10px] flex-shrink-0 md:mt-[5px] md:w-4">
+          <IconLocation className="h-full w-full text-[#BABABA]" />
         </div>
         <span>{address}</span>
       </div>
       <div>
         <div className="flex flex-col">
           <div className="flex items-start gap-[6px] text-nowrap">
-            <div className="flex-shrink-0 w-[10px] md:w-4 mt-[3px] md:mt-[5px]">
-              <IconClock className="w-full h-full text-[#BABABA]" />
+            <div className="mt-[3px] w-[10px] flex-shrink-0 md:mt-[5px] md:w-4">
+              <IconClock className="h-full w-full text-[#BABABA]" />
             </div>
             <div
               className="flex items-center"
@@ -57,10 +59,10 @@ export function StoreInfo({
                 {status === 'DAY_OFF' && '휴무일'}
               </span>
               <span>{message}</span>
-              <div className="flex-shrink-0 w-[12px] md:w-5">
+              <div className="w-[12px] flex-shrink-0 md:w-5">
                 <IconDirection
                   className={cn(
-                    'w-full h-full text-[#BABABA]',
+                    'h-full w-full text-[#BABABA]',
                     isOperationHourOpen && 'rotate-180',
                   )}
                 />
@@ -81,12 +83,12 @@ export function StoreInfo({
                     key={dayOfWeek}
                     className={cn(isClosed ? 'font-semibold' : '')}
                   >
-                    <div className="flex items-center ap-[6px] md:leading-[100%]">
+                    <div className="ap-[6px] flex items-center md:leading-[100%]">
                       <div className="w-4"></div>
                       <div className="flex gap-[10px] pl-[10px] md:pl-10">
                         <div>{convertDayToKorean(dayOfWeek)}</div>
                         {!isClosed ? (
-                          <div className="flex flex-col md:gap-[6px] ">
+                          <div className="flex flex-col md:gap-[6px]">
                             <div className="flex">
                               <span>{openingTime}</span>
                               <span>&nbsp;-&nbsp;</span>
@@ -127,30 +129,31 @@ export function StoreInfo({
       </div>
       {phone && (
         <div className="flex items-start gap-[6px]">
-          <div className="flex-shrink-0 w-[10px] md:w-4  mt-[3px] md:mt-[5px] ">
-            <IconPhone className="w-full h-full text-[#BABABA]" />
+          <div className="mt-[3px] w-[10px] flex-shrink-0 md:mt-[5px] md:w-4">
+            <IconPhone className="h-full w-full text-[#BABABA]" />
           </div>
           <span>{phone}</span>
         </div>
       )}
       {description && (
         <div className="flex items-start gap-[6px]">
-          <div className="flex-shrink-0 w-[10px] md:w-4 mt-[3px] md:mt-[5px]">
-            <IconHome className="w-full h-full text-[#BABABA]" />
+          <div className="mt-[3px] w-[10px] flex-shrink-0 md:mt-[5px] md:w-4">
+            <IconHome className="h-full w-full text-[#BABABA]" />
           </div>
           <span>{description}</span>
         </div>
       )}
-      {storeLink && (
-        <div className="flex items-start gap-[6px] ">
-          <div className="flex-shrink-0 w-[10px] md:w-4 mt-[3px] md:mt-[5px]">
-            <IconBaseball className="w-full h-full text-[#BABABA]" />
+      {/* 디자인 나오는대로 수정필요 */}
+      {/* {storeLink && (
+        <div className="flex items-start gap-[6px]">
+          <div className="mt-[3px] w-[10px] flex-shrink-0 md:mt-[5px] md:w-4">
+            <IconBaseball className="h-full w-full text-[#BABABA]" />
           </div>
-          <a className="underline break-all" href={storeLink}>
+          <a className="break-all underline" href={storeLink}>
             {storeLink}
           </a>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
