@@ -7,6 +7,7 @@ import { cn } from '@repo/ui/lib/utils';
 // 단계별 제목 정의
 const STEP_TITLES = {
   [RegisterStep.BASIC_INFO]: '기본정보',
+  [RegisterStep.OPERATING_HOURS]: '운영시간',
   [RegisterStep.MENU]: '메뉴등록',
   // [RegisterStep.CHECK]: '내용확인', //NOTICE: 내용 확인 갑자기 없어짐(논의 안된채로..) 또 생길 수 있어서 남겨둠 (context에 주석처리되어있어서 현재 에러뜸)
   [RegisterStep.COMPLETE]: '등록완료',
