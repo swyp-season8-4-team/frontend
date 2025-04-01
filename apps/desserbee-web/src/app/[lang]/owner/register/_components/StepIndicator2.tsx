@@ -8,7 +8,12 @@ export default function StepIndicator2() {
   const actualCurrentStep = getCurrentStepFromPath();
 
   const steps = useMemo(
-    () => [RegisterStep.BASIC_INFO, RegisterStep.MENU, RegisterStep.COMPLETE],
+    () => [
+      RegisterStep.BASIC_INFO,
+      RegisterStep.OPERATING_HOURS,
+      RegisterStep.MENU,
+      RegisterStep.COMPLETE,
+    ],
     [],
   );
 

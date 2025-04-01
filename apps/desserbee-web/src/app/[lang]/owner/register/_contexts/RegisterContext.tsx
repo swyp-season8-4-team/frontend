@@ -18,23 +18,26 @@ import { useRouter, usePathname } from 'next/navigation';
 // 등록 단계 정의 (기존 코드 상단에 추가)
 export enum RegisterStep {
   BASIC_INFO = 0,
-  MENU = 1,
+  OPERATING_HOURS = 1,
+  MENU = 2,
+  COMPLETE = 3,
   // CHECK = 2,
   // COMPLETE = 3,
-  COMPLETE = 2,
 }
 
 // 단계별 경로 정의
 export const STEP_PATHNAME: Record<RegisterStep, string> = {
   [RegisterStep.BASIC_INFO]: '/owner/register/basic-info',
+  [RegisterStep.OPERATING_HOURS]: '/owner/register/operating-hours',
   [RegisterStep.MENU]: '/owner/register/menu',
-  // [RegisterStep.CHECK]: '/owner/register/check',  //NOTICE: 내용 확인 갑자기 없어짐(논의 안된채로..) 또 생길 수 있어서 남겨둠
+  // [RegisterStep.CHECK]: '/owner/register/check',
   [RegisterStep.COMPLETE]: '/owner/register/complete',
 };
 
 // 경로와 단계 매핑 (기존 코드 상단에 추가)
 export const PATH_TO_STEP: Record<string, RegisterStep> = {
   '/owner/register/basic-info': RegisterStep.BASIC_INFO,
+  '/owner/register/operating-hours': RegisterStep.OPERATING_HOURS,
   '/owner/register/menu': RegisterStep.MENU,
   // '/owner/register/check': RegisterStep.CHECK,
   '/owner/register/complete': RegisterStep.COMPLETE,
@@ -43,6 +46,7 @@ export const PATH_TO_STEP: Record<string, RegisterStep> = {
 // 단계와 경로 매핑 (기존 코드 상단에 추가)
 export const STEP_TO_PATH: Record<RegisterStep, string> = {
   [RegisterStep.BASIC_INFO]: '/owner/register/basic-info',
+  [RegisterStep.OPERATING_HOURS]: '/owner/register/operating-hours',
   [RegisterStep.MENU]: '/owner/register/menu',
   // [RegisterStep.CHECK]: '/owner/register/check',
   [RegisterStep.COMPLETE]: '/owner/register/complete',
