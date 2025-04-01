@@ -152,7 +152,18 @@ export default function RegisterMenuPage() {
           >
             <div className="flex-1 flex-col justify-center">
               <div className="font-semibold">{menu.name}</div>
-              <div className="overflow-hidden truncate text-xs">
+              <div
+                className="text-neutral-30 text-xs"
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitBoxOrient: 'vertical',
+                  WebkitLineClamp: 2,
+                  maxHeight: '32px',
+                  wordBreak: 'break-all',
+                }}
+              >
                 {menu.description}
               </div>
               <div className="text-sm font-medium">

@@ -256,7 +256,7 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
                 <textarea
                   {...field}
                   className="min-h-[108px] w-full resize-none rounded-[5px] border border-[#9F9F9F] p-3 text-sm"
-                  maxLength={60}
+                  maxLength={100}
                   placeholder="내용을 입력해주세요"
                 />
               )}
