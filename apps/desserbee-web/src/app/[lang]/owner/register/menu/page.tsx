@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import Image from 'next/image';
 import IconX from '@repo/design-system/components/icons/IconX';
+import IconPlusRound from '@repo/design-system/components/icons/IconPlusRound';
 
 interface MenuWithImage extends Menu {
   id: string;
@@ -97,29 +98,49 @@ export default function RegisterMenuPage() {
 
   return (
     <form onSubmit={handleNextStep}>
-      <div className="px-base">
+      <div>
         {menus.length === 0 ? (
           <div className="px-base py-base flex min-h-[calc(100vh-150px)] w-full flex-col items-center justify-center gap-2">
             <div className="flex w-full flex-col items-center gap-0">
-              <div className="text-[#424242]">현재 등록된 메뉴가 없습니다.</div>
-              <div className="text-[#424242]">새 메뉴를 추가해주세요</div>
+              <div className="text-sm text-[#424242]">
+                현재 등록된 메뉴가 없습니다.
+              </div>
+              <div className="text-sm text-[#424242]">
+                새 메뉴를 추가해주세요
+              </div>
               <button
                 onClick={openMenuAddModal}
                 type="button"
-                className="mt-4 w-full max-w-[130px] rounded-[10px] border border-[#949494] bg-[#F5F5F5] px-[14px] py-3"
+                className="mt-4 flex w-full max-w-[130px] items-center gap-[11.5px] rounded-[6px] border border-[#CDC8C3] bg-white px-3 py-[10px]"
               >
-                + 새 메뉴 추가
+                <div className="h-[18px] w-[18px]">
+                  <IconPlusRound className="text-neutral-20 h-full w-full" />
+                </div>
+                <div className="text-neutral-20 h-full w-full text-sm">
+                  새 메뉴 추가
+                </div>
               </button>
             </div>
           </div>
         ) : (
-          <button
-            onClick={openMenuAddModal}
-            type="button"
-            className="w-full rounded-[10px] border border-[#949494] bg-[#F5F5F5] px-[14px] py-3"
-          >
-            + 새 메뉴 추가
-          </button>
+          <div className="p-base flex items-center justify-between border-y border-[#CDC8C3]">
+            <div className="flex items-center gap-[5px]">
+              <div className="text-sm font-semibold">메뉴</div>
+              <div className="text-xs text-[#898989]">{menus.length}개</div>
+            </div>
+            <button
+              onClick={openMenuAddModal}
+              type="button"
+              className="flex w-full max-w-[130px] items-center gap-[10px] rounded-[6px] border border-[#CDC8C3] bg-white px-3 py-[10px]"
+            >
+              <div className="h-[18px] w-[18px]">
+                <IconPlusRound className="text-neutral-20 h-full w-full" />
+              </div>
+              <div className="text-neutral-20 h-full w-full text-sm">
+                새 메뉴 추가
+              </div>
+            </button>
+          </div>
         )}
       </div>
 
@@ -127,20 +148,8 @@ export default function RegisterMenuPage() {
         {menus.map((menu) => (
           <div
             key={menu.id}
-            className="px-base flex gap-3 border-b border-[#A7A7A7] py-[18.5px]"
+            className="px-base flex gap-3 border-b border-[#CDC8C3] py-[18.5px]"
           >
-            {menu.imageFileKey?.[0] &&
-              getMenuThumbnailUrl(menu.imageFileKey[0]) && (
-                <div className="h-[74px] w-[74px] overflow-hidden rounded-md border-[1.17px] border-[#B1B1B1] bg-[#F5F5F5]">
-                  <Image
-                    width={100}
-                    height={100}
-                    src={getMenuThumbnailUrl(menu.imageFileKey[0])!}
-                    alt={`메뉴 사진 ${menu.name}`}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              )}
             <div className="flex-1 flex-col justify-center">
               <div className="font-semibold">{menu.name}</div>
               <div className="overflow-hidden truncate text-xs">
@@ -150,20 +159,32 @@ export default function RegisterMenuPage() {
                 {menu.price.toLocaleString()}원
               </div>
             </div>
+            {menu.imageFileKey?.[0] &&
+              getMenuThumbnailUrl(menu.imageFileKey[0]) && (
+                <div className="h-20 w-20 overflow-hidden rounded-md border border-[#EFEDEB]">
+                  <Image
+                    width={100}
+                    height={100}
+                    src={getMenuThumbnailUrl(menu.imageFileKey[0])!}
+                    alt={`메뉴 사진 ${menu.name}`}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )}
             <button
               type="button"
               className="flex items-start"
               onClick={() => handleDeleteMenu(menu.id)}
             >
               <div className="h-6 w-6">
-                <IconX className="h-full w-full text-[#B9B9B9]" />
+                <IconX className="text-neutral-40 h-full w-full" />
               </div>
             </button>
           </div>
         ))}
       </div>
       <div className="fixed bottom-4 left-0 right-0 mx-4 flex gap-x-2">
-        <button
+        {/* <button
           type="button"
           onClick={handlePrevStep}
           className="w-[20%] text-nowrap rounded-[6px] border border-[#B3B3B3] bg-white p-[10px]"
@@ -173,6 +194,12 @@ export default function RegisterMenuPage() {
         <button
           type="submit"
           className="bg-primary-80 w-[80%] rounded-[6px] p-[10px] text-center text-[#412D00]"
+        >
+          다음
+        </button> */}
+        <button
+          type="submit"
+          className="bg-secondary-40 w-full rounded-[6px] p-[10px] text-center text-white"
         >
           다음
         </button>

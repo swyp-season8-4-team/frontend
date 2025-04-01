@@ -361,7 +361,7 @@ export default function RegisterBasicInfoPage() {
                       </div>
                       <button
                         type="button"
-                        className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full text-sm text-white"
+                        className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full text-sm text-white shadow-[0px_1px_3px_1px_#39393921]"
                         onClick={() => handleRemoveStoreImageFiles(index)}
                       >
                         <IconXRound className="h-full w-full text-[#CDC8C3]" />
@@ -431,7 +431,7 @@ export default function RegisterBasicInfoPage() {
                           </div>
                           <button
                             type="button"
-                            className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#CDC8C3] text-sm text-white"
+                            className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#CDC8C3] text-sm text-white shadow-[0px_1px_3px_1px_#39393921]"
                             onClick={() =>
                               handleRemoveOwnerPickImageFiles(index)
                             }
@@ -622,9 +622,9 @@ export default function RegisterBasicInfoPage() {
             render={({ field: { value } }) => (
               <div className="flex items-center text-xs">
                 <div className="text-[#424242]">
-                  {(value?.length as number) > 100 ? 100 : value?.length}/
+                  {(value?.length as number) > 100 ? 100 : value?.length}
                 </div>
-                <div className="text-neutral-50">100</div>
+                <div className="text-neutral-50">/100</div>
               </div>
             )}
           />
