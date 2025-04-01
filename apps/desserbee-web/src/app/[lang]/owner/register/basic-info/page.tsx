@@ -739,7 +739,7 @@ export default function RegisterBasicInfoPage() {
         <label htmlFor="features" className="flex items-center gap-1">
           <div className="text-neutral-30 text-base font-medium">기타 정보</div>
         </label>
-        <div className="flex w-[60%] flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2">
           {/* 선택 안함 버튼 추가 */}
           <button
             type="button"
