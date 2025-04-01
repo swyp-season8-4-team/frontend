@@ -16,7 +16,7 @@ export function StoreRegisterHeader({
     <header
       className={cn(
         'relative h-[54px] border-b border-b-[rgba(0,0,0,0.15)]',
-        // isSub ? 'bg-[#F7F6F2]' : 'bg-[#E8E8E8]',
+        isSub ? 'bg-white' : 'bg-[#FFC858] text-[#14100C]',
       )}
     >
       {onClose && (

@@ -7,7 +7,7 @@ import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 
-export default function RegisterMenuPage() {
+export default function RegisterOperatingHoursPage() {
   const router = useRouter();
 
   const { push, pop } = useContext(PortalContext);

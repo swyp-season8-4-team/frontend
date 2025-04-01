@@ -1,5 +1,5 @@
-import StepIndicator from '../_components/StepIndicator2';
-import { StoreRegisterHeader } from '../_components/StoreRegisterHeader';
+// import StepIndicator from '../_components/StepIndicator2';
+// import { StoreRegisterHeader } from '../_components/StoreRegisterHeader';
 
 export default function CompleteLayout({
   children,
@@ -8,8 +8,8 @@ export default function CompleteLayout({
 }) {
   return (
     <div>
-      <StoreRegisterHeader title="등록 완료" />
-      <StepIndicator />
+      {/* <StoreRegisterHeader title="등록 완료" />
+      <StepIndicator /> */}
       <div>{children}</div>
     </div>
   );
