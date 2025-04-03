@@ -33,9 +33,9 @@ const TimePicker = ({ value, onChange, disabled = false }: TimePickerProps) => {
   const handleTimeSelect = (hour: string, minute: string): void => {
     const newTime = `${hour}:${minute}`;
     setSelectedTime(newTime);
-    // if (onChange) {
-    //   onChange(newTime);
-    // }
+    if (onChange) {
+      onChange(newTime);
+    }
     // setShowPicker(false);
   };
 

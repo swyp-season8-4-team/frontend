@@ -156,10 +156,10 @@ export default function RegisterOperatingHoursPage() {
   const handleBatchTimeApply = () => {
     const { openingTime, closingTime } = watch();
 
-    if (openingTime >= closingTime) {
-      alert('오픈 시간은 마감 시간 이전으로 설정해주세요');
-      return;
-    }
+    // if (openingTime >= closingTime) {
+    //   alert('오픈 시간은 마감 시간 이전으로 설정해주세요');
+    //   return;
+    // }
 
     setOperatingHours((prev) =>
       prev.map((item) => {
