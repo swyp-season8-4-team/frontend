@@ -19,6 +19,7 @@ import { useForm } from 'react-hook-form';
 import { cn } from '@repo/ui/lib/utils';
 import { OperatingHoursEditModal } from '../_modals/OperatingHoursEditModal';
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
+import TimePicker from '@repo/design-system/components/TimePicker';
 
 interface BatchTimeFormData {
   openingTime: string;
@@ -194,54 +195,53 @@ export default function RegisterOperatingHoursPage() {
     <form className="" onSubmit={handleNextStep}>
       {/* 일괄입력 */}
       <div className="px-base w-full border-b border-b-[#CDC8C3] pb-[13px]">
-        <div className="flex max-w-96 items-center justify-around text-nowrap">
+        <div className="flex items-center justify-start text-nowrap">
           <div className="flex gap-[11px]">
             <CheckButton
               setFunction={handleBatchSelect}
               isChecked={batchSelected}
             />
-            <div className="text-sm">모두</div>
+            <div className="mr-2 text-sm">모두</div>
           </div>
-          <div
-            className={cn(
-              selectedWeekDays.size < 1 && 'cursor-not-allowed opacity-20',
-              'flex items-center gap-[3px]',
-            )}
-          >
-            <div className="flex items-center gap-[3px] overflow-hidden rounded-[6px] px-4 py-3">
-              <input
-                {...register('openingTime')}
-                type="time"
-                className="w-fit text-center text-sm"
-                onChange={(e) =>
-                  handleBatchTimeChange('openingTime', e.target.value)
-                }
-                disabled={selectedWeekDays.size < 1}
-              />
-              <div>~</div>
-              <input
-                {...register('closingTime')}
-                type="time"
-                className="w-fit text-center text-sm"
-                onChange={(e) =>
-                  handleBatchTimeChange('closingTime', e.target.value)
-                }
-                disabled={selectedWeekDays.size < 1}
-              />
+          <div className="flex w-full justify-start gap-2">
+            <div
+              className={cn(
+                selectedWeekDays.size < 1 && 'cursor-not-allowed opacity-80',
+                'flex items-center gap-[3px]',
+              )}
+            >
+              <div className="flex items-center gap-[3px] rounded-[6px]">
+                <TimePicker
+                  value={watch('openingTime')}
+                  onChange={(value) =>
+                    handleBatchTimeChange('openingTime', value)
+                  }
+                  disabled={selectedWeekDays.size < 1}
+                />
+                <div>~</div>
+
+                <TimePicker
+                  value={watch('closingTime')}
+                  onChange={(value) =>
+                    handleBatchTimeChange('closingTime', value)
+                  }
+                  disabled={selectedWeekDays.size < 1}
+                />
+              </div>
             </div>
+            <button
+              type="button"
+              onClick={handleBatchTimeApply}
+              className={cn(
+                selectedWeekDays.size < 1
+                  ? 'bg-neutral-70 cursor-not-allowed text-neutral-50'
+                  : 'bg-secondary-40 text-white',
+                'rounded-[6px] px-[13px] py-[10px] text-sm font-medium',
+              )}
+            >
+              일괄수정
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={handleBatchTimeApply}
-            className={cn(
-              selectedWeekDays.size < 1
-                ? 'bg-neutral-70 cursor-not-allowed text-neutral-50'
-                : 'bg-secondary-40 text-white',
-              'rounded-[6px] px-[27px] py-[12.5px] text-sm font-medium',
-            )}
-          >
-            일괄수정
-          </button>
         </div>
       </div>
       {/* 각 요일 확인 */}
@@ -319,7 +319,7 @@ export default function RegisterOperatingHoursPage() {
               openOperatingHoursEditModal(selectedWeekDays, handleSelectWeekDay)
             }
           >
-            선택 요일 수정
+            요일별 상세 설정
           </button>
         </div>
       </div>
