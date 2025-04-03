@@ -196,88 +196,90 @@ export default function RegisterOperatingHoursPage() {
   return (
     <form className="" onSubmit={handleNextStep}>
       {/* 일괄입력 */}
-      <div className="px-base flex items-center gap-[22px] text-nowrap border-b border-b-[#CDC8C3] pb-[13px]">
-        <div className="flex gap-[11px]">
-          <CheckButton
-            setFunction={handleBatchSelect}
-            isAllChecked={batchSelected}
-          />
-          <div className="text-sm">전체</div>
-        </div>
-        <div
-          className={cn(
-            selectedWeekDays.size < 1 && 'cursor-not-allowed opacity-20',
-            'flex items-center gap-[3px]',
-          )}
-        >
-          <div className="flex w-fit overflow-hidden rounded-[6px] border border-black px-[13px] py-[5.67px] text-center text-sm">
-            <input
-              {...register('openingHour')}
-              type="number"
-              min="0"
-              max="23"
-              className="w-5 appearance-none text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              onChange={(e) =>
-                handleBatchTimeChange('openingHour', e.target.value)
-              }
-              disabled={selectedWeekDays.size < 1}
+      <div className="px-base w-full border-b border-b-[#CDC8C3] pb-[13px]">
+        <div className="flex max-w-96 items-center justify-around text-nowrap">
+          <div className="flex gap-[11px]">
+            <CheckButton
+              setFunction={handleBatchSelect}
+              isAllChecked={batchSelected}
             />
-            <div>:</div>
-            <input
-              {...register('openingMinute')}
-              type="number"
-              min="0"
-              max="59"
-              className="w-5 appearance-none text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              onChange={(e) =>
-                handleBatchTimeChange('openingMinute', e.target.value)
-              }
-              disabled={selectedWeekDays.size < 1}
-            />
+            <div className="text-sm">전체</div>
           </div>
-          <div>~</div>
-          <div className="flex w-fit overflow-hidden rounded-[6px] border border-black px-[13px] py-[5.67px] text-center text-sm">
-            <input
-              {...register('closingHour')}
-              type="number"
-              min="0"
-              max="23"
-              className="m-0 w-5 appearance-none p-0 text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              onChange={(e) =>
-                handleBatchTimeChange('closingHour', e.target.value)
-              }
-              disabled={selectedWeekDays.size < 1}
-            />
-            <div>:</div>
-            <input
-              {...register('closingMinute')}
-              type="number"
-              min="0"
-              max="59"
-              className="w-5 appearance-none text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              onChange={(e) =>
-                handleBatchTimeChange('closingMinute', e.target.value)
-              }
-              disabled={selectedWeekDays.size < 1}
-            />
+          <div
+            className={cn(
+              selectedWeekDays.size < 1 && 'cursor-not-allowed opacity-20',
+              'flex items-center gap-[3px]',
+            )}
+          >
+            <div className="flex w-fit overflow-hidden rounded-[6px] border border-black px-[13px] py-[5.67px] text-center text-sm">
+              <input
+                {...register('openingHour')}
+                type="number"
+                min="0"
+                max="23"
+                className="w-5 appearance-none text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                onChange={(e) =>
+                  handleBatchTimeChange('openingHour', e.target.value)
+                }
+                disabled={selectedWeekDays.size < 1}
+              />
+              <div>:</div>
+              <input
+                {...register('openingMinute')}
+                type="number"
+                min="0"
+                max="59"
+                className="w-5 appearance-none text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                onChange={(e) =>
+                  handleBatchTimeChange('openingMinute', e.target.value)
+                }
+                disabled={selectedWeekDays.size < 1}
+              />
+            </div>
+            <div>~</div>
+            <div className="flex w-fit overflow-hidden rounded-[6px] border border-black px-[13px] py-[5.67px] text-center text-sm">
+              <input
+                {...register('closingHour')}
+                type="number"
+                min="0"
+                max="23"
+                className="m-0 w-5 appearance-none p-0 text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                onChange={(e) =>
+                  handleBatchTimeChange('closingHour', e.target.value)
+                }
+                disabled={selectedWeekDays.size < 1}
+              />
+              <div>:</div>
+              <input
+                {...register('closingMinute')}
+                type="number"
+                min="0"
+                max="59"
+                className="w-5 appearance-none text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                onChange={(e) =>
+                  handleBatchTimeChange('closingMinute', e.target.value)
+                }
+                disabled={selectedWeekDays.size < 1}
+              />
+            </div>
           </div>
+          <button
+            type="button"
+            onClick={handleBatchTimeApply}
+            className={cn(
+              selectedWeekDays.size < 1
+                ? 'bg-neutral-70 cursor-not-allowed text-neutral-50'
+                : 'bg-secondary-40 text-white',
+              'rounded-[6px] px-[27px] py-[12.5px] text-sm font-medium',
+            )}
+          >
+            입력
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={handleBatchTimeApply}
-          className={cn(
-            selectedWeekDays.size < 1
-              ? 'bg-neutral-70 cursor-not-allowed text-neutral-50'
-              : 'bg-secondary-40 text-white',
-            'rounded-[6px] px-[27px] py-[12.5px] text-sm font-medium',
-          )}
-        >
-          입력
-        </button>
       </div>
       {/* 각 요일 확인 */}
       <div className="px-base">
-        <div className="max-w-3xl flex-col gap-[9px]">
+        <div className="w-full flex-col gap-[9px]">
           {operatingHours.map(
             ({
               dayOfWeek,
