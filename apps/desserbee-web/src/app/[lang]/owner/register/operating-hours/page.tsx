@@ -17,6 +17,7 @@ import {
 import { ALL_WEEKDAYS } from '../_consts/operatingHours';
 import { useForm } from 'react-hook-form';
 import { cn } from '@repo/ui/lib/utils';
+import { OperatingHoursEditModal } from '../_modals/OperatingHoursEditModal';
 
 interface BatchTimeFormData {
   openingHour: string;
@@ -32,16 +33,6 @@ export default function RegisterOperatingHoursPage() {
 
   const { storeData, completeStep, goToNextStep, updateOperatingHours } =
     useRegister();
-
-  // const openOperatingHoursAddModal = () => {
-  //   push('modal', {
-  //     component: <OperatingHoursSelectModal onClose={closeMenuAddModal} />,
-  //   });
-  // };
-
-  // const closeMenuAddModal = () => {
-  //   pop('modal');
-  // };
 
   const [batchSelected, setBatchSelected] = useState(false);
   const [selectedWeekDays, setSelectedWeekdays] = useState<Set<string>>(
@@ -110,6 +101,16 @@ export default function RegisterOperatingHoursPage() {
     },
   });
 
+  const handleBatchSelect = (): void => {
+    setSelectedWeekdays(() => {
+      if (batchSelected) {
+        return new Set();
+      } else {
+        return new Set(ALL_WEEKDAYS);
+      }
+    });
+  };
+
   const handleBatchTimeChange = (
     field: keyof BatchTimeFormData,
     value: string,
@@ -139,14 +140,29 @@ export default function RegisterOperatingHoursPage() {
     });
   };
 
-  const handleBatchSelect = (): void => {
-    setSelectedWeekdays(() => {
-      if (batchSelected) {
-        return new Set();
-      } else {
-        return new Set(ALL_WEEKDAYS);
-      }
-    });
+  const openOperatingHoursEditModal = (
+    weekdays: Set<string> | string,
+    selectFunction?: (weekDay: string) => void,
+  ) => {
+    if (
+      (weekdays instanceof Set && weekdays.size > 0) ||
+      typeof weekdays === 'string'
+    ) {
+      push('modal', {
+        component: (
+          <OperatingHoursEditModal
+            initialOperatingHours={operatingHours}
+            editableWeekdays={weekdays}
+            handleSelectWeekDay={selectFunction}
+            onClose={closeMenuAddModal}
+          />
+        ),
+      });
+    }
+  };
+
+  const closeMenuAddModal = () => {
+    pop('modal');
   };
 
   const handleBatchTimeApply = () => {
@@ -335,7 +351,11 @@ export default function RegisterOperatingHoursPage() {
                     {lastOrderTime && <div>라스트 오더 {lastOrderTime}</div>}
                   </div>
                 </div>
-                <button type="button" className="text-xs underline">
+                <button
+                  type="button"
+                  onClick={() => openOperatingHoursEditModal(dayOfWeek)}
+                  className="text-xs underline"
+                >
                   수정
                 </button>
               </div>
@@ -348,6 +368,9 @@ export default function RegisterOperatingHoursPage() {
               selectedWeekDays.size < 1 && 'cursor-not-allowed opacity-50',
               'text-neutral-20 rounded-[6px] border border-[#CDC8C3] px-[43px] py-[10px] text-sm font-medium',
             )}
+            onClick={() =>
+              openOperatingHoursEditModal(selectedWeekDays, handleSelectWeekDay)
+            }
           >
             선택 요일 수정
           </button>
