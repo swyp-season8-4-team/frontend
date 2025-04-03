@@ -48,8 +48,8 @@ export interface Menu {
 }
 
 export interface BreakTime {
-  startTime: string;
-  endTime: string;
+  startTime: string; // "14:00"
+  endTime: string; // "15:00"
 }
 
 export interface OperatingHoursItem {
@@ -58,9 +58,12 @@ export interface OperatingHoursItem {
   closingTime: string;
   lastOrderTime: string;
   isClosed: false;
-  regularClosureType: string;
-  regularClosureWeeks: string; // "1,3"
-  breakTimes: BreakTime[];
+  regularClosureType?: 'MONTHLY' | 'WEEKLY' | 'NONE';
+  // MONTHLY("매월"),    // 매월 특정 주차의 특정 요일
+  // WEEKLY("매주"),     // 매주 특정 요일
+  // NONE("없음");       // 정기 휴무 없음
+  regularClosureWeeks?: string; // "1,3"
+  breakTimes?: BreakTime[];
 }
 
 export interface HolidaysItem {
