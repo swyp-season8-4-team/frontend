@@ -9,7 +9,11 @@ import { CheckButton } from '@repo/design-system/components/CheckButton';
 import { OperatingHoursSelectModal } from '../_modals/OperatingHoursSelectModal';
 import type { OperatingHoursItem } from '@repo/entity/src/store';
 import { formatTimeTo12Hour } from '@repo/utility/src/time';
-import { convertDayToKorean } from '@repo/utility/src/date';
+import {
+  convertClosureTypeToKorean,
+  convertDayToKorean,
+  convertWeekNumberToKorean,
+} from '@repo/utility/src/date';
 import { ALL_WEEKDAYS } from '../_consts/operatingHours';
 import { useForm } from 'react-hook-form';
 import { cn } from '@repo/ui/lib/utils';
@@ -48,6 +52,15 @@ export default function RegisterOperatingHoursPage() {
       dayOfWeek: 'MONDAY',
       openingTime: '09:00',
       closingTime: '22:00',
+      lastOrderTime: '21:00',
+      breakTimes: [
+        {
+          startTime: '13:00',
+          endTime: '15:00',
+        },
+      ],
+      regularClosureType: 'MONTHLY',
+      regularClosureWeeks: '1,2',
       isClosed: false,
     },
     {
@@ -265,29 +278,67 @@ export default function RegisterOperatingHoursPage() {
       {/* 각 요일 확인 */}
       <div className="px-base">
         <div className="max-w-3xl flex-col gap-[9px]">
-          {operatingHours.map(({ dayOfWeek, openingTime, closingTime }) => (
-            <div key={dayOfWeek} className="flex items-center justify-between">
-              <div className="flex py-2">
-                <div className="mr-6 flex gap-[13.25px]">
-                  <CheckButton
-                    setFunction={() => handleSelectWeekDay(dayOfWeek)}
-                    isChecked={selectedWeekDays.has(dayOfWeek)}
-                  />
-                  <div className="text-sm">
-                    {convertDayToKorean(dayOfWeek)}요일
+          {operatingHours.map(
+            ({
+              dayOfWeek,
+              openingTime,
+              closingTime,
+              breakTimes,
+              lastOrderTime,
+              regularClosureType,
+              regularClosureWeeks,
+            }) => (
+              <div
+                key={dayOfWeek}
+                className={cn(
+                  (breakTimes ||
+                    lastOrderTime ||
+                    regularClosureType ||
+                    regularClosureWeeks) &&
+                    'border-b border-[#EFEDEB]',
+                  'flex items-center justify-between',
+                )}
+              >
+                <div className="flex py-2">
+                  <div className="mr-6 flex items-center gap-[13.25px]">
+                    <CheckButton
+                      setFunction={() => handleSelectWeekDay(dayOfWeek)}
+                      isChecked={selectedWeekDays.has(dayOfWeek)}
+                    />
+                    <div className="text-sm">
+                      {convertDayToKorean(dayOfWeek)}요일
+                    </div>
+                  </div>
+                  {/* 결과 */}
+                  <div className="flex-col text-sm">
+                    {regularClosureType && (
+                      <div>
+                        {convertClosureTypeToKorean(regularClosureType)}{' '}
+                        {regularClosureWeeks &&
+                          convertWeekNumberToKorean(regularClosureWeeks)}{' '}
+                        휴무
+                      </div>
+                    )}
+                    <div className="flex items-center">
+                      <div>{formatTimeTo12Hour(openingTime)}</div>
+                      <div>~</div>
+                      <div>{formatTimeTo12Hour(closingTime)}</div>
+                    </div>
+                    {breakTimes && (
+                      <div>
+                        휴게시간 {breakTimes[0].startTime}~
+                        {breakTimes[0].endTime}
+                      </div>
+                    )}
+                    {lastOrderTime && <div>라스트 오더 {lastOrderTime}</div>}
                   </div>
                 </div>
-                <div className="flex text-sm">
-                  <div>{formatTimeTo12Hour(openingTime)}</div>
-                  <div>~</div>
-                  <div>{formatTimeTo12Hour(closingTime)}</div>
-                </div>
+                <button type="button" className="text-xs underline">
+                  수정
+                </button>
               </div>
-              <button type="button" className="text-xs underline">
-                수정
-              </button>
-            </div>
-          ))}
+            ),
+          )}
           {/* 선택 요일 수정 버튼 */}
           <button
             type="button"

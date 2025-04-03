@@ -162,3 +162,29 @@ export function convertDayToKorean(englishDay: string): string {
     ? dayMap[day as DayKey]
     : '올바른 영어 요일을 입력해주세요.';
 }
+
+export const convertClosureTypeToKorean = (
+  type: 'MONTHLY' | 'WEEKLY' | 'NONE',
+): string => {
+  const types = {
+    MONTHLY: '매월',
+    WEEKLY: '매주',
+    NONE: '없음',
+  };
+  return types[type];
+};
+
+export const convertWeekNumberToKorean = (weekNumbers: string): string => {
+  const weekMap: { [key: string]: string } = {
+    '1': '첫째 주',
+    '2': '둘째 주',
+    '3': '셋째 주',
+    '4': '넷째 주',
+    '5': '다섯째 주',
+  };
+
+  return weekNumbers
+    .split(',')
+    .map((num) => weekMap[num])
+    .join(', ');
+};
