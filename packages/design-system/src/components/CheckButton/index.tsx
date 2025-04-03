@@ -4,9 +4,14 @@ import IconCheck from '../icons/IconCheck';
 interface CheckButtonProps {
   setFunction: (index?: any) => void;
   isChecked?: boolean;
+  isAllChecked?: boolean;
 }
 
-export function CheckButton({ setFunction, isChecked }: CheckButtonProps) {
+export function CheckButton({
+  setFunction,
+  isChecked,
+  isAllChecked, // 전체 선택
+}: CheckButtonProps) {
   return (
     <button
       type="button"
@@ -15,13 +20,20 @@ export function CheckButton({ setFunction, isChecked }: CheckButtonProps) {
     >
       <div
         className={cn(
-          'flex aspect-square h-[13.5px] w-[13.5px] items-center justify-center rounded-[1.5px]',
-          isChecked ? 'bg-secondary-60' : 'bg-[#9D9D9D]',
+          'border-neutral-30 flex aspect-square h-[13.5px] w-[13.5px] items-center justify-center rounded-[1.5px]',
+          isChecked && 'bg-secondary-60',
+          isAllChecked && 'bg-[#7A590C]',
+          !isChecked && !isAllChecked && 'border-[2px] bg-white',
         )}
       >
-        <div className="h-2 w-2">
-          <IconCheck className="h-full w-full text-white" />
-        </div>
+        {isChecked && (
+          <div className="h-2 w-2">
+            <IconCheck className="flex h-full w-full items-center text-white" />
+          </div>
+        )}
+        {isAllChecked && (
+          <div className="w-2 border-t-[2px] border-white"></div>
+        )}
       </div>
     </button>
   );

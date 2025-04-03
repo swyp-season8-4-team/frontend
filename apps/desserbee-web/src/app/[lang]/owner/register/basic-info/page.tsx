@@ -12,6 +12,7 @@ import IconDirection from '@repo/design-system/components/icons/IconDirection';
 import IconCar from '@repo/design-system/components/icons/IconCar2';
 import IconDog from '@repo/design-system/components/icons/IconDog2';
 import IconTumbler from '@repo/design-system/components/icons/IconTumbler2';
+import IconMinusRound from '@repo/design-system/components/icons/IconMinusRound';
 import { cn } from '@repo/ui/lib/utils';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { TagSelectModal } from '../_modals/TagSelectModal';
@@ -657,7 +658,9 @@ export default function RegisterBasicInfoPage() {
                   }}
                   className="absolute right-4 top-[50%] z-10 flex h-[18px] w-[18px] -translate-y-1/2 items-center justify-center"
                 >
-                  <div className="w-[13.5px] border border-[#271900]"></div>
+                  <div className="h-[15px] w-[15px]">
+                    <IconMinusRound className="text-neutral-30 h-full w-full" />
+                  </div>
                 </button>
               </div>
             </div>
@@ -717,7 +720,7 @@ export default function RegisterBasicInfoPage() {
         className={cn(
           'flex w-full items-center justify-center rounded-[6px] p-[12px] font-semibold',
           isFormValid
-            ? 'bg-primary-80 cursor-pointer text-[#412D00]'
+            ? 'bg-secondary-40 cursor-pointer text-white'
             : 'bg-neutral-70 cursor-not-allowed text-neutral-50',
         )}
       >

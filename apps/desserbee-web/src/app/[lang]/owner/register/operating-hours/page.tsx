@@ -6,6 +6,8 @@ import { MenuAddModal } from '../_modals/MenuAddModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
+import { CheckButton } from '@repo/design-system/components/CheckButton';
+import { OperatingHoursSelectModal } from '../_modals/OperatingHoursSelectModal';
 
 export default function RegisterOperatingHoursPage() {
   const router = useRouter();
@@ -17,7 +19,7 @@ export default function RegisterOperatingHoursPage() {
 
   const openOperatingHoursAddModal = () => {
     push('modal', {
-      component: <MenuAddModal onClose={closeMenuAddModal} />,
+      component: <OperatingHoursSelectModal onClose={closeMenuAddModal} />,
     });
   };
 
@@ -36,7 +38,9 @@ export default function RegisterOperatingHoursPage() {
   return (
     <form onSubmit={handleNextStep}>
       <div>
-        <div></div>
+        <div>
+          <CheckButton setFunction={() => {}} isAllChecked={true} />
+        </div>
         <div></div>
       </div>
       <div className="fixed bottom-4 left-0 right-0 mx-4">
