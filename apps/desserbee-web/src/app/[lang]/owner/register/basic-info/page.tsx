@@ -24,6 +24,7 @@ import { PhotoBox } from '@repo/design-system/components/PhotoBox';
 import { TitleLabel } from '../_components/TitleLabel';
 import { HiddenImageInput } from '../_components/HiddenImageInput';
 import { NoneImageBox } from '../_components/NoneImageBox';
+import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
 
 const FEATURES = [
   {
@@ -250,6 +251,8 @@ export default function RegisterBasicInfoPage() {
       alert('전화번호 형식을 확인해주세요.\n예시: 0000-0000-0000');
       return;
     }
+
+    if (!isFormValid) return;
 
     const { latitude, longitude } = { latitude: 0, longitude: 0 }; // TODO: 이건 마지막 API 보낼 때 업데이트하도록. 지금은 임시
 
@@ -715,16 +718,12 @@ export default function RegisterBasicInfoPage() {
         </div>
       </div>
 
-      <button
-        type="submit"
-        className={cn(
-          'flex w-full items-center justify-center rounded-[6px] p-[12px] font-semibold',
-          isFormValid
-            ? 'bg-secondary-40 cursor-pointer text-white'
-            : 'bg-neutral-70 cursor-not-allowed text-neutral-50',
-        )}
-      >
-        다음
+      <button type="submit">
+        <OliveButton
+          className="font-semibold"
+          text="다음"
+          isDisabled={!isFormValid}
+        />
       </button>
     </form>
   );

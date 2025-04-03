@@ -18,6 +18,7 @@ import { ALL_WEEKDAYS } from '../_consts/operatingHours';
 import { useForm } from 'react-hook-form';
 import { cn } from '@repo/ui/lib/utils';
 import { OperatingHoursEditModal } from '../_modals/OperatingHoursEditModal';
+import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
 
 interface BatchTimeFormData {
   openingTime: string;
@@ -197,9 +198,9 @@ export default function RegisterOperatingHoursPage() {
           <div className="flex gap-[11px]">
             <CheckButton
               setFunction={handleBatchSelect}
-              isAllChecked={batchSelected}
+              isChecked={batchSelected}
             />
-            <div className="text-sm">전체</div>
+            <div className="text-sm">모두</div>
           </div>
           <div
             className={cn(
@@ -239,7 +240,7 @@ export default function RegisterOperatingHoursPage() {
               'rounded-[6px] px-[27px] py-[12.5px] text-sm font-medium',
             )}
           >
-            입력
+            일괄수정
           </button>
         </div>
       </div>
@@ -259,15 +260,11 @@ export default function RegisterOperatingHoursPage() {
               <div
                 key={dayOfWeek}
                 className={cn(
-                  (breakTimes ||
-                    lastOrderTime ||
-                    regularClosureType ||
-                    regularClosureWeeks) &&
-                    'border-b border-[#EFEDEB]',
-                  'flex items-center justify-between',
+                  'border-b border-[#EFEDEB]',
+                  'flex min-h-[68px] items-center justify-between py-2',
                 )}
               >
-                <div className="flex py-2">
+                <div className="flex">
                   <div className="mr-6 flex items-center gap-[13.25px]">
                     <CheckButton
                       setFunction={() => handleSelectWeekDay(dayOfWeek)}
@@ -326,12 +323,9 @@ export default function RegisterOperatingHoursPage() {
           </button>
         </div>
       </div>
-      <div className="fixed bottom-4 left-0 right-0 mx-4">
-        <button
-          type="submit"
-          className="bg-primary-80 w-full rounded-[6px] p-[10px] text-center font-semibold text-[#412D00]"
-        >
-          다음
+      <div className="p-4">
+        <button type="submit" className="w-full">
+          <OliveButton className="font-semibold" text="다음" />
         </button>
       </div>
     </form>

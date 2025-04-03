@@ -7,6 +7,7 @@ import { cn } from '@repo/ui/lib/utils';
 import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import IconPicture from '@repo/design-system/components/icons/IconPicture';
+import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
 
 export default function RegisterCompletePage() {
   const router = useRouter();
@@ -83,11 +84,8 @@ export default function RegisterCompletePage() {
       </div>
 
       <div className="px-base flex w-full flex-col gap-y-5 py-5 pb-10">
-        <button
-          onClick={goToMapPage}
-          className="bg-secondary-40 w-full rounded-[6px] p-[10px] text-center text-lg text-white"
-        >
-          사장님 대시보드
+        <button onClick={goToMapPage}>
+          <OliveButton text="사장님 대시보드" />
         </button>
         <button
           onClick={goToMapPage}
