@@ -12,7 +12,8 @@ export default function RegisterOperatingHoursPage() {
 
   const { push, pop } = useContext(PortalContext);
 
-  const { storeData, completeStep, goToNextStep } = useRegister();
+  const { storeData, completeStep, goToNextStep, updateOperatingHours } =
+    useRegister();
 
   const openOperatingHoursAddModal = () => {
     push('modal', {
@@ -32,24 +33,16 @@ export default function RegisterOperatingHoursPage() {
     router.push(`${NavigationPathname.OwnerRegisterMenu}`);
   };
 
-  const handlePrevStep = () => {
-    router.back();
-  };
-
   return (
     <form onSubmit={handleNextStep}>
-      <div className="fixed bottom-4 left-0 right-0 mx-4 flex gap-x-2">
+      <div>
         <div></div>
-        <button
-          type="button"
-          onClick={handlePrevStep}
-          className="w-[20%] text-nowrap rounded-[6px] border border-[#B3B3B3] bg-white p-[10px]"
-        >
-          이전
-        </button>
+        <div></div>
+      </div>
+      <div className="fixed bottom-4 left-0 right-0 mx-4">
         <button
           type="submit"
-          className="bg-primary-80 w-[80%] rounded-[6px] p-[10px] text-center text-[#412D00]"
+          className="bg-primary-80 w-full rounded-[6px] p-[10px] text-center font-semibold text-[#412D00]"
         >
           다음
         </button>

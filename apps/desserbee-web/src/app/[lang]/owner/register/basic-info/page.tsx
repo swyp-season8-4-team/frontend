@@ -17,7 +17,12 @@ import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { TagSelectModal } from '../_modals/TagSelectModal';
 import { TAG_CATEGORIES, TAGS } from '../_consts/tag';
 import { useContext, useEffect, useState, type ChangeEvent } from 'react';
-import IconCheck from '@repo/design-system/components/icons/IconCheck';
+import { CheckButton } from '@repo/design-system/components/CheckButton';
+import { PhotoAddBox } from '@repo/design-system/components/PhotoAddBox';
+import { PhotoBox } from '@repo/design-system/components/PhotoBox';
+import { TitleLabel } from '../_components/TitleLabel';
+import { HiddenImageInput } from '../_components/HiddenImageInput';
+import { NoneImageBox } from '../_components/NoneImageBox';
 
 const FEATURES = [
   {
@@ -271,10 +276,7 @@ export default function RegisterBasicInfoPage() {
     >
       {/* 가게명 */}
       <div className="flex flex-col gap-2">
-        <label htmlFor="name" className="flex items-center gap-1">
-          <div className="text-neutral-30 text-base font-medium">가게명</div>
-          <div className="text-error-60 text-sm">*</div>
-        </label>
+        <TitleLabel title="가게명" isPrimary={true} />
         <Controller
           name="name"
           control={control}
@@ -303,46 +305,23 @@ export default function RegisterBasicInfoPage() {
 
       {/* 가게사진 */}
       <div className="flex flex-col gap-2">
-        <label className="flex flex-col gap-[5px]">
-          <div className="flex items-center gap-1">
-            <div className="text-neutral-30 text-base font-medium">
-              대표 사진
-            </div>
-            <div className="text-error-60 text-sm">*</div>
-          </div>
-          <div className="text-neutral-40 text-xs">1~3장 업로드 가능</div>
-        </label>
+        <TitleLabel
+          title="대표 사진"
+          isPrimary={true}
+          description="1~3장 업로드 가능"
+        />
         <div className="flex flex-col gap-2">
-          <input
-            className="hidden"
-            type="file"
+          <HiddenImageInput
             id="storeImages"
             onChange={handleStoreImageFilesChange}
-            accept="image/*"
-            multiple
             disabled={watch('storeImageFiles').length >= 3}
+            multiple
           />
           <div className="flex flex-wrap gap-[15px]">
-            <label
-              className={cn(
-                'bg-neutral-70 flex h-[68px] w-[68px] items-center justify-center overflow-hidden rounded-[9.38px]',
-                watch('storeImageFiles').length >= 3
-                  ? 'cursor-not-allowed'
-                  : 'border-neutral-40 cursor-pointer border-[1.17px]',
-              )}
+            <PhotoAddBox
               htmlFor="storeImages"
-            >
-              <div className="h-5 w-5">
-                <IconPlusRound
-                  className={cn(
-                    'h-full w-full',
-                    watch('storeImageFiles').length >= 3
-                      ? 'text-neutral-50'
-                      : 'text-[#545454]',
-                  )}
-                />
-              </div>
-            </label>
+              disabled={watch('storeImageFiles').length >= 3}
+            />
             <Controller
               name="storeImageFiles"
               control={control}
@@ -350,30 +329,31 @@ export default function RegisterBasicInfoPage() {
                 <>
                   {value.map((image, index) => (
                     <div key={index} className="relative">
-                      <div className="border-neutral-40 h-[68px] w-[68px] overflow-hidden rounded-[9.38px] border-[1.17px]">
-                        <Image
-                          width={100}
-                          height={100}
-                          src={URL.createObjectURL(image)}
-                          alt={`가게 사진 ${index + 1}`}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                      <button
-                        type="button"
-                        className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full text-sm text-white shadow-[0px_1px_3px_1px_#39393921]"
-                        onClick={() => handleRemoveStoreImageFiles(index)}
-                      >
-                        <IconXRound className="h-full w-full text-[#CDC8C3]" />
-                      </button>
+                      <PhotoBox
+                        image={
+                          <Image
+                            width={100}
+                            height={100}
+                            src={URL.createObjectURL(image)}
+                            alt={`가게 사진 ${index + 1}`}
+                            className="h-full w-full object-cover"
+                          />
+                        }
+                        deleteFunction={() =>
+                          handleRemoveStoreImageFiles(index)
+                        }
+                      />
                     </div>
                   ))}
-                  {value.length < 1 && (
-                    <div className="text-neutral-40 flex grow flex-col items-center justify-center rounded-[12px] bg-[#EFEDEB] text-sm">
-                      <div>가게를 대표하는 사진을</div>
-                      <div>3장 선택해주세요</div>
-                    </div>
-                  )}
+                  <NoneImageBox
+                    isShown={value.length < 1}
+                    description={
+                      <>
+                        <div>가게를 대표하는 사진을</div>
+                        <div>3장 선택해주세요</div>
+                      </>
+                    }
+                  />
                 </>
               )}
             />
@@ -383,33 +363,16 @@ export default function RegisterBasicInfoPage() {
 
       {/* 사장님 픽 사진 */}
       <div className="flex flex-col">
-        <label className="flex flex-col gap-[5px]">
-          <div className="flex items-center gap-1">
-            <div className="text-neutral-30 text-base font-medium">
-              추가 사진
-            </div>
-          </div>
-          <div className="text-neutral-40 text-xs">1~n장 업로드 가능</div>
-        </label>
+        <TitleLabel title=" 추가 사진" description="1~n장 업로드 가능" />
         <div className="flex flex-col gap-2">
-          <input
-            className="hidden"
-            type="file"
+          <HiddenImageInput
             id="ownerPickImageFiles"
             onChange={handleOwnerPickImageFilesChange}
-            accept="image/*"
             multiple
           />
           <div className="flex items-center gap-[15px]">
             <div className="pt-2">
-              <label
-                className="border-neutral-40 bg-neutral-70 flex h-[68px] w-[68px] flex-shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-[9.38px] border-[1.17px]"
-                htmlFor="ownerPickImageFiles"
-              >
-                <div className="h-5 w-5">
-                  <IconPlusRound className="h-full w-full text-[#545454]" />
-                </div>
-              </label>
+              <PhotoAddBox htmlFor="ownerPickImageFiles" />
             </div>
             <div className="flex flex-1 gap-[15px] overflow-x-auto pt-2">
               <Controller
@@ -417,10 +380,10 @@ export default function RegisterBasicInfoPage() {
                 control={control}
                 render={({ field: { value } }) => (
                   <>
-                    {value.length > 0 ? (
-                      value.map((image, index) => (
-                        <div key={index} className="relative flex-shrink-0">
-                          <div className="h-[68px] w-[68px] overflow-hidden rounded-[9.38px] border-[1.17px] border-[#96938E]">
+                    {value.map((image, index) => (
+                      <div key={index} className="relative flex-shrink-0">
+                        <PhotoBox
+                          image={
                             <Image
                               width={100}
                               height={100}
@@ -428,24 +391,22 @@ export default function RegisterBasicInfoPage() {
                               alt={`홍보용 가게 사진 ${index + 1}`}
                               className="h-full w-full object-cover"
                             />
-                          </div>
-                          <button
-                            type="button"
-                            className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#CDC8C3] text-sm text-white shadow-[0px_1px_3px_1px_#39393921]"
-                            onClick={() =>
-                              handleRemoveOwnerPickImageFiles(index)
-                            }
-                          >
-                            <IconXRound className="h-full w-full text-[#CDC8C3]" />
-                          </button>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-neutral-40 flex h-[68px] w-full flex-col items-center justify-center rounded-[12px] bg-[#EFEDEB] text-sm">
-                        <div>사장님 픽 홍보용 사진을</div>
-                        <div>선택해주세요</div>
+                          }
+                          deleteFunction={() =>
+                            handleRemoveOwnerPickImageFiles(index)
+                          }
+                        />
                       </div>
-                    )}
+                    ))}
+                    <NoneImageBox
+                      isShown={value.length < 1}
+                      description={
+                        <>
+                          <div>사장님 픽 홍보용 사진을</div>
+                          <div>선택해주세요</div>
+                        </>
+                      }
+                    />
                   </>
                 )}
               />
@@ -456,10 +417,7 @@ export default function RegisterBasicInfoPage() {
 
       {/* 전화번호 */}
       <div className="flex flex-col gap-2">
-        <label htmlFor="phone" className="flex items-center gap-1">
-          <div className="text-neutral-30 text-base font-medium">전화번호</div>
-          <div className="text-error-60 text-sm">*</div>
-        </label>
+        <TitleLabel title="전화번호" isPrimary={true} />
         <Controller
           name="phone"
           control={control}
@@ -492,10 +450,7 @@ export default function RegisterBasicInfoPage() {
 
       {/* 주소 */}
       <div className="flex flex-col gap-2">
-        <label htmlFor="address" className="flex items-center gap-1">
-          <div className="text-neutral-30 text-base font-medium">주소</div>
-          <div className="text-error-60 text-sm">*</div>
-        </label>
+        <TitleLabel title="주소" isPrimary={true} />
         <div onClick={openAddressModal} className="relative cursor-pointer">
           <button
             type="button"
@@ -546,15 +501,11 @@ export default function RegisterBasicInfoPage() {
 
       {/* 특성 태그 */}
       <div className="flex flex-col gap-2">
-        <label htmlFor="tags" className="flex flex-col gap-[5px]">
-          <div className="flex items-center gap-1">
-            <div className="text-neutral-30 text-base font-medium">
-              특성 태그
-            </div>
-            <div className="text-error-60 text-sm">*</div>
-          </div>
-          <div className="text-neutral-40 text-xs">최대 3개 선택</div>
-        </label>
+        <TitleLabel
+          title="특성 태그"
+          isPrimary={true}
+          description="최대 3개 선택"
+        />
         <Controller
           name="tags"
           control={control}
@@ -611,11 +562,7 @@ export default function RegisterBasicInfoPage() {
       {/* 한 줄 소개 */}
       <div className="flex flex-col gap-2">
         <label htmlFor="description" className="flex justify-between">
-          <div className="flex items-center gap-1">
-            <div className="text-neutral-30 text-base font-medium">
-              한 줄 소개
-            </div>
-          </div>
+          <TitleLabel title="한 줄 소개" />
           <Controller
             name="description"
             control={control}
@@ -638,6 +585,12 @@ export default function RegisterBasicInfoPage() {
               className="min-h-[108px] w-full resize-none rounded-[5px] border border-[#A6A6A6] p-3 text-sm"
               maxLength={100}
               placeholder="사장님 가게를 소개해주세요"
+              onInput={(e) => {
+                const value = e.currentTarget.value;
+                if (value.length > 100) {
+                  e.currentTarget.value = value.slice(0, 100); // 100자 이상 입력 방지
+                }
+              }}
             />
           )}
         />
@@ -647,26 +600,18 @@ export default function RegisterBasicInfoPage() {
       <div className="flex flex-col gap-2">
         <label htmlFor="storeLink" className="flex flex-col gap-[5px]">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1">
-              <div className="text-neutral-30 text-base font-medium">
-                SNS 링크
+            <TitleLabel title="SNS 링크" />
+            <button
+              type="button"
+              onClick={() => setStoreLinks([...storeLinks, ''])}
+              className="text-primary-60 flex items-center gap-[6.33px] px-[10px] py-2 text-center text-xs"
+            >
+              <div className="h-[14.33px] w-[13.33px]">
+                <IconPlusRound className="text-primary-60 h-full w-full" />
               </div>
-              <div className="text-error-60 text-sm">*</div>
-            </div>
-            {storeLinks.length < 3 && (
-              <button
-                type="button"
-                onClick={() => setStoreLinks([...storeLinks, ''])}
-                className="text-primary-60 flex items-center gap-[6.33px] px-[10px] py-2 text-center text-xs"
-              >
-                <div className="h-[14.33px] w-[13.33px]">
-                  <IconPlusRound className="text-primary-60 h-full w-full" />
-                </div>
-                <div>추가</div>
-              </button>
-            )}
+              <div>추가</div>
+            </button>
           </div>
-
           <div className="text-neutral-40 text-xs">
             대표 링크 1~3개 선택 가능
           </div>
@@ -675,24 +620,10 @@ export default function RegisterBasicInfoPage() {
           {/* 링크 목록 */}
           {storeLinks.map((link, index) => (
             <div key={index} className="flex items-center gap-[15.5px]">
-              <button
-                type="button"
-                className="flex items-center gap-[7px]"
-                onClick={() => setPrimaryLinkIndex(index)}
-              >
-                <div
-                  className={cn(
-                    'flex aspect-square h-[13.5px] w-[13.5px] items-center justify-center rounded-[1.5px]',
-                    primaryLinkIndex === index
-                      ? 'bg-secondary-60'
-                      : 'bg-[#9D9D9D]',
-                  )}
-                >
-                  <div className="h-2 w-2">
-                    <IconCheck className="h-full w-full text-white" />
-                  </div>
-                </div>
-              </button>
+              <CheckButton
+                setFunction={() => setPrimaryLinkIndex(index)}
+                isChecked={primaryLinkIndex === index}
+              />
               <div className="relative w-full">
                 <input
                   type="text"
@@ -736,22 +667,17 @@ export default function RegisterBasicInfoPage() {
 
       {/* 기타 정보 */}
       <div className="flex flex-col gap-2">
-        <label htmlFor="features" className="flex items-center gap-1">
-          <div className="text-neutral-30 text-base font-medium">기타 정보</div>
-        </label>
+        <TitleLabel title="기타 정보" />
         <div className="flex flex-wrap gap-2">
-          {/* 선택 안함 버튼 추가 */}
           <button
             type="button"
             onClick={() => {
-              // 모든 feature를 false로 설정
               FEATURES.forEach(({ id }) => {
                 setValue(`features.${id}` as any, false);
               });
             }}
             className={cn(
               'text-neutral-30 flex min-w-[93px] items-center justify-center rounded-[6px] border px-[10px] py-2',
-              // 모든 feature가 false일 때 활성화 스타일 적용
               Object.values(watch('features')).every((v) => !v)
                 ? 'border-primary-60 bg-primary-90'
                 : 'border-[#CDC8C3] bg-white',
