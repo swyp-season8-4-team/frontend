@@ -20,10 +20,8 @@ import { cn } from '@repo/ui/lib/utils';
 import { OperatingHoursEditModal } from '../_modals/OperatingHoursEditModal';
 
 interface BatchTimeFormData {
-  openingHour: string;
-  openingMinute: string;
-  closingHour: string;
-  closingMinute: string;
+  openingTime: string;
+  closingTime: string;
 }
 
 export default function RegisterOperatingHoursPage() {
@@ -94,10 +92,8 @@ export default function RegisterOperatingHoursPage() {
 
   const { register, watch, setValue } = useForm<BatchTimeFormData>({
     defaultValues: {
-      openingHour: '09',
-      openingMinute: '00',
-      closingHour: '22',
-      closingMinute: '00',
+      openingTime: '09:00',
+      closingTime: '22:00',
     },
   });
 
@@ -115,17 +111,7 @@ export default function RegisterOperatingHoursPage() {
     field: keyof BatchTimeFormData,
     value: string,
   ) => {
-    let numValue = Number(value);
-
-    if (field.includes('Hour')) {
-      if (numValue < 0) numValue = 0;
-      if (numValue > 23) numValue = 23;
-    } else {
-      if (numValue < 0) numValue = 0;
-      if (numValue > 59) numValue = 59;
-    }
-
-    setValue(field, numValue.toString().padStart(2, '0'));
+    setValue(field, value);
   };
 
   const handleSelectWeekDay = (weekDay: string): void => {
@@ -166,15 +152,9 @@ export default function RegisterOperatingHoursPage() {
   };
 
   const handleBatchTimeApply = () => {
-    const { openingHour, openingMinute, closingHour, closingMinute } = watch();
-    const batchOpeningTime = `${openingHour}:${openingMinute}`;
-    const batchClosingTime = `${closingHour}:${closingMinute}`;
+    const { openingTime, closingTime } = watch();
 
-    // 시간 비교를 위해 숫자로 변환
-    const openingMinutes = Number(openingHour) * 60 + Number(openingMinute);
-    const closingMinutes = Number(closingHour) * 60 + Number(closingMinute);
-
-    if (openingMinutes >= closingMinutes) {
+    if (openingTime >= closingTime) {
       alert('오픈 시간은 마감 시간 이전으로 설정해주세요');
       return;
     }
@@ -184,8 +164,8 @@ export default function RegisterOperatingHoursPage() {
         if (selectedWeekDays.has(item.dayOfWeek)) {
           return {
             ...item,
-            openingTime: batchOpeningTime,
-            closingTime: batchClosingTime,
+            openingTime,
+            closingTime,
           };
         }
         return item;
@@ -227,53 +207,23 @@ export default function RegisterOperatingHoursPage() {
               'flex items-center gap-[3px]',
             )}
           >
-            <div className="flex w-fit overflow-hidden rounded-[6px] border border-black px-[13px] py-[5.67px] text-center text-sm">
+            <div className="flex items-center gap-[3px]">
               <input
-                {...register('openingHour')}
-                type="number"
-                min="0"
-                max="23"
-                className="w-5 appearance-none text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                {...register('openingTime')}
+                type="time"
+                className="w-fit rounded-[6px] border border-black px-[13px] py-[5.67px] text-center text-sm"
                 onChange={(e) =>
-                  handleBatchTimeChange('openingHour', e.target.value)
+                  handleBatchTimeChange('openingTime', e.target.value)
                 }
                 disabled={selectedWeekDays.size < 1}
               />
-              <div>:</div>
+              <div>~</div>
               <input
-                {...register('openingMinute')}
-                type="number"
-                min="0"
-                max="59"
-                className="w-5 appearance-none text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                {...register('closingTime')}
+                type="time"
+                className="w-fit rounded-[6px] border border-black px-[13px] py-[5.67px] text-center text-sm"
                 onChange={(e) =>
-                  handleBatchTimeChange('openingMinute', e.target.value)
-                }
-                disabled={selectedWeekDays.size < 1}
-              />
-            </div>
-            <div>~</div>
-            <div className="flex w-fit overflow-hidden rounded-[6px] border border-black px-[13px] py-[5.67px] text-center text-sm">
-              <input
-                {...register('closingHour')}
-                type="number"
-                min="0"
-                max="23"
-                className="m-0 w-5 appearance-none p-0 text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                onChange={(e) =>
-                  handleBatchTimeChange('closingHour', e.target.value)
-                }
-                disabled={selectedWeekDays.size < 1}
-              />
-              <div>:</div>
-              <input
-                {...register('closingMinute')}
-                type="number"
-                min="0"
-                max="59"
-                className="w-5 appearance-none text-center [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                onChange={(e) =>
-                  handleBatchTimeChange('closingMinute', e.target.value)
+                  handleBatchTimeChange('closingTime', e.target.value)
                 }
                 disabled={selectedWeekDays.size < 1}
               />

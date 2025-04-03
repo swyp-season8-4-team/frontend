@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { DAYS_OF_WEEK } from '../../_consts/operatingHours';
 import { cn } from '@repo/ui/lib/utils';
 
+import { RadioButton } from '@repo/design-system/components/RadioButton';
 /**
  * 1. editableWeekday를 받아온다. string
  * 2. initialOperatingHours를 props로 받아온다. (메인에서 편집한 거 반영되어야하기 때문)
@@ -40,6 +41,8 @@ export function OperatingHoursEditModal({
   const [currentEditableWeekdays, setCurrentEditableWeekdays] =
     useState(editableWeekdays);
 
+  const [isWorkingdaySetting, setIsWorkingDaySetting] = useState(true);
+
   const handleCurrentEditableWeekdaysToggle = (weekday: string) => {
     if (handleSelectWeekDay) {
       // 현재 컴포넌트에서도 selectedWeekday 보여주도록
@@ -72,7 +75,7 @@ export function OperatingHoursEditModal({
               key={day.en}
               onClick={() => handleCurrentEditableWeekdaysToggle(day.en)}
               className={cn(
-                'h-[34px] w-[34px] rounded-full border text-center text-[14px] md:h-12 md:w-12',
+                'aspect-square h-[34px] w-[34px] rounded-full border text-center text-[14px] md:h-12 md:w-12',
                 (currentEditableWeekdays instanceof Set &&
                   currentEditableWeekdays.has(day.en)) ||
                   currentEditableWeekdays === day.en
@@ -85,6 +88,27 @@ export function OperatingHoursEditModal({
           ))}
         </div>
       </div>
+      {/* 영업일 휴무일 선택 */}
+      <form className="px-base">
+        <div className="flex items-center gap-4 border-b border-[#EFEDEB] py-[15px]">
+          <label className="flex cursor-pointer items-center">
+            <RadioButton
+              name="dayOrOff"
+              onClick={() => setIsWorkingDaySetting(true)}
+              isChecked={isWorkingdaySetting}
+            />
+            <span className="ml-[7.58px] text-xs">영업일</span>
+          </label>
+          <label className="flex cursor-pointer items-center">
+            <RadioButton
+              name="dayOrOff"
+              onClick={() => setIsWorkingDaySetting(false)}
+              isChecked={!isWorkingdaySetting}
+            />
+            <span className="ml-[7.58px] text-xs">휴무일</span>
+          </label>
+        </div>
+      </form>
     </div>
   );
 }
