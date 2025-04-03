@@ -141,6 +141,15 @@ export default function RegisterOperatingHoursPage() {
     const batchOpeningTime = `${openingHour}:${openingMinute}`;
     const batchClosingTime = `${closingHour}:${closingMinute}`;
 
+    // 시간 비교를 위해 숫자로 변환
+    const openingMinutes = Number(openingHour) * 60 + Number(openingMinute);
+    const closingMinutes = Number(closingHour) * 60 + Number(closingMinute);
+
+    if (openingMinutes >= closingMinutes) {
+      alert('오픈 시간은 마감 시간 이전으로 설정해주세요');
+      return;
+    }
+
     setOperatingHours((prev) =>
       prev.map((item) => {
         if (selectedWeekDays.has(item.dayOfWeek)) {
