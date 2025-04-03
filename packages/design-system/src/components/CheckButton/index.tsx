@@ -32,7 +32,7 @@ export function CheckButton({
           </div>
         )}
         {isAllChecked && (
-          <div className="w-2 border-t-[2px] border-white"></div>
+          <div className="w-2 border-t-[1.5px] border-white"></div>
         )}
       </div>
     </button>

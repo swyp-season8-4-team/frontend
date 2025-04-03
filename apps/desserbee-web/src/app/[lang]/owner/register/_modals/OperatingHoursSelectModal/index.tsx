@@ -271,9 +271,6 @@ export function OperatingHoursSelectModal({
                     </>
                   )}
                 </div>
-                {/* <button className="w-full rounded-[10px] border border-[#949494] px-[14px] py-[10px]">
-                + 라스트 오더 추가
-              </button> */}
               </div>
             ))}
           </div>
@@ -291,7 +288,7 @@ export function OperatingHoursSelectModal({
           onClick={() => onClose(Array.from(operatingHours))}
           className="bg-primary-80 w-[80%] rounded-[6px] p-[10px] text-center text-[#412D00]"
         >
-          운영시간 입력
+          수정
         </button>
       </div>
     </div>

@@ -7,3 +7,13 @@ export const DAYS_OF_WEEK = [
   { kr: '토', en: 'SATURDAY' },
   { kr: '일', en: 'SUNDAY' },
 ];
+
+export const ALL_WEEKDAYS = [
+  'MONDAY',
+  'TUESDAY',
+  'WEDNESDAY',
+  'THURSDAY',
+  'FRIDAY',
+  'SATURDAY',
+  'SUNDAY',
+];

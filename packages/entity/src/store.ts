@@ -54,9 +54,16 @@ export interface BreakTime {
 
 export interface OperatingHoursItem {
   dayOfWeek: string;
+  // | 'MONDAY'
+  // | 'TUESDAY'
+  // | 'WEDNESDAY'
+  // | 'THURSDAY'
+  // | 'FRIDAY'
+  // | 'SATURDAY'
+  // | 'SUNDAY';
   openingTime: string;
   closingTime: string;
-  lastOrderTime: string;
+  lastOrderTime?: string;
   isClosed: false;
   regularClosureType?: 'MONTHLY' | 'WEEKLY' | 'NONE';
   // MONTHLY("매월"),    // 매월 특정 주차의 특정 요일

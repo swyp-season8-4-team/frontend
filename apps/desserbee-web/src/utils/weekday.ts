@@ -46,3 +46,5 @@ export function convertDayToKorean(englishDay: string): string {
     ? dayMap[day as DayKey]
     : '올바른 영어 요일을 입력해주세요.';
 }
+
+// TODO: utility의 date로 옮김. 사용된 곳들도 동기화해야함. 그 후이 파일 삭제
