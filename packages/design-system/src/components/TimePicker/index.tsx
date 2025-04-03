@@ -1,15 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { cn } from '@repo/ui/lib/utils';
 import IconClockOutline from '../icons/IconClockOutline';
 
 interface TimePickerProps {
+  id: string; // 고유 ID 필요
   value?: string;
   onChange?: (value: string) => void;
   disabled?: boolean;
+  isOpen: boolean; // 현재 열려있는지 여부
+  onToggle: (id: string) => void; // 열기/닫기 토글 함수
 }
 
-const TimePicker = ({ value, onChange, disabled = false }: TimePickerProps) => {
-  const [showPicker, setShowPicker] = useState<boolean>(false);
+const TimePicker = ({
+  id,
+  value,
+  onChange,
+  disabled = false,
+  isOpen,
+  onToggle,
+}: TimePickerProps) => {
   const [selectedTime, setSelectedTime] = useState<string>(value || '09:00');
 
   // 시간과 분 생성
@@ -26,7 +35,7 @@ const TimePicker = ({ value, onChange, disabled = false }: TimePickerProps) => {
 
   const handleTimeClick = (): void => {
     if (!disabled) {
-      setShowPicker(!showPicker);
+      onToggle(id);
     }
   };
 
@@ -36,15 +45,13 @@ const TimePicker = ({ value, onChange, disabled = false }: TimePickerProps) => {
     if (onChange) {
       onChange(newTime);
     }
-    // setShowPicker(false);
   };
 
-  // 확인 버튼 핸들러 추가
   const handleConfirm = (): void => {
     if (onChange) {
       onChange(selectedTime);
     }
-    setShowPicker(false);
+    onToggle(''); // 모든 타임피커 닫기
   };
 
   return (
@@ -66,7 +73,7 @@ const TimePicker = ({ value, onChange, disabled = false }: TimePickerProps) => {
       </div>
 
       {/* 타임피커 팝업 */}
-      {showPicker && (
+      {isOpen && (
         <div className="absolute z-50 mt-2 w-40 rounded-lg border border-gray-200 bg-white p-2 shadow-lg">
           <div className="grid grid-cols-2 gap-4">
             <div className="h-48 overflow-y-auto pr-2">
@@ -98,23 +105,15 @@ const TimePicker = ({ value, onChange, disabled = false }: TimePickerProps) => {
                       ? 'bg-secondary-40 hover:bg-secondary-40 text-white'
                       : ''
                   }`}
-                  onClick={() =>
-                    handleTimeSelect(selectedTime.split(':')[0], minute)
-                  }
+                  onClick={() => {
+                    handleTimeSelect(selectedTime.split(':')[0], minute);
+                    handleConfirm();
+                  }}
                 >
                   {minute}
                 </div>
               ))}
             </div>
-          </div>
-
-          <div className="mt-4 flex justify-end">
-            <button
-              className="bg-secondary-40 hover:bg-secondary-50 rounded px-4 py-2 text-white"
-              onClick={handleConfirm}
-            >
-              확인
-            </button>
           </div>
         </div>
       )}

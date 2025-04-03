@@ -35,6 +35,7 @@ export default function RegisterOperatingHoursPage() {
     useRegister();
 
   const [batchSelected, setBatchSelected] = useState(false);
+  const [activeTimePicker, setActiveTimePicker] = useState<string>('');
   const [selectedWeekDays, setSelectedWeekdays] = useState<Set<string>>(
     new Set(),
   );
@@ -114,6 +115,10 @@ export default function RegisterOperatingHoursPage() {
     value: string,
   ) => {
     setValue(field, value);
+  };
+
+  const handleTimePickerToggle = (id: string) => {
+    setActiveTimePicker((prev) => (prev === id ? '' : id));
   };
 
   const handleSelectWeekDay = (weekDay: string): void => {
@@ -212,20 +217,25 @@ export default function RegisterOperatingHoursPage() {
             >
               <div className="flex items-center gap-[3px] rounded-[6px]">
                 <TimePicker
+                  id="opening-time"
                   value={watch('openingTime')}
                   onChange={(value) =>
                     handleBatchTimeChange('openingTime', value)
                   }
                   disabled={selectedWeekDays.size < 1}
+                  isOpen={activeTimePicker === 'opening-time'}
+                  onToggle={handleTimePickerToggle}
                 />
                 <div>~</div>
-
                 <TimePicker
+                  id="closing-time"
                   value={watch('closingTime')}
                   onChange={(value) =>
                     handleBatchTimeChange('closingTime', value)
                   }
                   disabled={selectedWeekDays.size < 1}
+                  isOpen={activeTimePicker === 'closing-time'}
+                  onToggle={handleTimePickerToggle}
                 />
               </div>
             </div>
