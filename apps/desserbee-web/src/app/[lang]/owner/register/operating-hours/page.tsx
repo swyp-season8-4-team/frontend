@@ -208,11 +208,11 @@ export default function RegisterOperatingHoursPage() {
               'flex items-center gap-[3px]',
             )}
           >
-            <div className="flex items-center gap-[3px]">
+            <div className="flex items-center gap-[3px] overflow-hidden rounded-[6px] px-4 py-3">
               <input
                 {...register('openingTime')}
                 type="time"
-                className="w-fit rounded-[6px] border border-black px-[13px] py-[5.67px] text-center text-sm"
+                className="w-fit text-center text-sm"
                 onChange={(e) =>
                   handleBatchTimeChange('openingTime', e.target.value)
                 }
@@ -222,7 +222,7 @@ export default function RegisterOperatingHoursPage() {
               <input
                 {...register('closingTime')}
                 type="time"
-                className="w-fit rounded-[6px] border border-black px-[13px] py-[5.67px] text-center text-sm"
+                className="w-fit text-center text-sm"
                 onChange={(e) =>
                   handleBatchTimeChange('closingTime', e.target.value)
                 }
@@ -313,7 +313,7 @@ export default function RegisterOperatingHoursPage() {
             type="button"
             className={cn(
               selectedWeekDays.size < 1 && 'cursor-not-allowed opacity-50',
-              'text-neutral-20 rounded-[6px] border border-[#CDC8C3] px-[43px] py-[10px] text-sm font-medium',
+              'text-neutral-20 mt-[10px] rounded-[6px] border border-[#CDC8C3] px-3 py-[10px] text-sm font-medium',
             )}
             onClick={() =>
               openOperatingHoursEditModal(selectedWeekDays, handleSelectWeekDay)
