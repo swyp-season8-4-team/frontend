@@ -47,12 +47,20 @@ export interface Menu {
   images?: string[]; // 응답
 }
 
+export interface BreakTime {
+  startTime: string;
+  endTime: string;
+}
+
 export interface OperatingHoursItem {
   dayOfWeek: string;
   openingTime: string;
   closingTime: string;
   lastOrderTime: string;
-  isClosed: boolean;
+  isClosed: false;
+  regularClosureType: string;
+  regularClosureWeeks: string; // "1,3"
+  breakTimes: BreakTime[];
 }
 
 export interface HolidaysItem {
