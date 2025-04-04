@@ -11,6 +11,7 @@ import Image from 'next/image';
 import IconX from '@repo/design-system/components/icons/IconX';
 import IconPlusRound from '@repo/design-system/components/icons/IconPlusRound';
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
+import { AddButton } from '../_components/AddButton';
 
 interface MenuWithImage extends Menu {
   id: string;
@@ -109,18 +110,11 @@ export default function RegisterMenuPage() {
               <div className="text-sm text-[#424242]">
                 새 메뉴를 추가해주세요
               </div>
-              <button
+              <AddButton
                 onClick={openMenuAddModal}
-                type="button"
-                className="mt-4 flex w-full max-w-[130px] items-center gap-[11.5px] rounded-[6px] border border-[#CDC8C3] bg-white px-3 py-[10px]"
-              >
-                <div className="h-[18px] w-[18px]">
-                  <IconPlusRound className="text-neutral-20 h-full w-full" />
-                </div>
-                <div className="text-neutral-20 h-full w-full text-sm">
-                  새 메뉴 추가
-                </div>
-              </button>
+                text="새 메뉴 추가"
+                clasName="mt-[10px]"
+              />
             </div>
           </div>
         ) : (
@@ -129,18 +123,7 @@ export default function RegisterMenuPage() {
               <div className="text-sm font-semibold">메뉴</div>
               <div className="text-xs text-[#898989]">{menus.length}개</div>
             </div>
-            <button
-              onClick={openMenuAddModal}
-              type="button"
-              className="flex w-full max-w-[130px] items-center gap-[10px] rounded-[6px] border border-[#CDC8C3] bg-white px-3 py-[10px]"
-            >
-              <div className="h-[18px] w-[18px]">
-                <IconPlusRound className="text-neutral-20 h-full w-full" />
-              </div>
-              <div className="text-neutral-20 h-full w-full text-sm">
-                새 메뉴 추가
-              </div>
-            </button>
+            <AddButton onClick={openMenuAddModal} text="새 메뉴 추가" />
           </div>
         )}
       </div>

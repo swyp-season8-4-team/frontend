@@ -25,6 +25,7 @@ import { TitleLabel } from '../_components/TitleLabel';
 import { HiddenImageInput } from '../_components/HiddenImageInput';
 import { NoneImageBox } from '../_components/NoneImageBox';
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
+import { AddButton } from '../_components/AddButton';
 
 const FEATURES = [
   {
@@ -608,16 +609,21 @@ export default function RegisterBasicInfoPage() {
           </div>
           <div className="text-neutral-40 text-xs">최대 3개 추가</div>
           {storeLinks.length < 3 && (
-            <button
-              type="button"
+            // <button
+            //   type="button"
+            //   onClick={() => setStoreLinks([...storeLinks, ''])}
+            //   className="text-neutral-20 flex w-fit items-center gap-[6.33px] rounded-[6px] border border-[#CDC8C3] px-[10px] py-2 text-center text-sm"
+            // >
+            //   <div className="h-[15px] w-[15px]">
+            //     <IconPlusRound className="text-neutral-20 h-full w-full" />
+            //   </div>
+            //   <div>링크 추가</div>
+            // </button>
+            <AddButton
               onClick={() => setStoreLinks([...storeLinks, ''])}
-              className="text-neutral-20 flex w-fit items-center gap-[6.33px] rounded-[6px] border border-[#CDC8C3] px-[10px] py-2 text-center text-sm"
-            >
-              <div className="h-[15px] w-[15px]">
-                <IconPlusRound className="text-neutral-20 h-full w-full" />
-              </div>
-              <div>링크 추가</div>
-            </button>
+              text="링크 추가"
+              clasName="w-fit px-[10px] py-2"
+            />
           )}
         </label>
         <div className="space-y-2">

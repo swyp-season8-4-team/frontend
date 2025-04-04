@@ -6,7 +6,6 @@ import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import { CheckButton } from '@repo/design-system/components/CheckButton';
-import { OperatingHoursSelectModal } from '../_modals/OperatingHoursSelectModal';
 import type { OperatingHoursItem } from '@repo/entity/src/store';
 import { formatTimeTo12Hour } from '@repo/utility/src/time';
 import {
