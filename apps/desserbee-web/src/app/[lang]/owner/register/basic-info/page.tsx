@@ -605,20 +605,20 @@ export default function RegisterBasicInfoPage() {
         <label htmlFor="storeLink" className="flex flex-col gap-[5px]">
           <div className="flex items-center justify-between">
             <TitleLabel title="SNS 링크" />
+          </div>
+          <div className="text-neutral-40 text-xs">최대 3개 추가</div>
+          {storeLinks.length < 3 && (
             <button
               type="button"
               onClick={() => setStoreLinks([...storeLinks, ''])}
-              className="text-primary-60 flex items-center gap-[6.33px] px-[10px] py-2 text-center text-xs"
+              className="text-neutral-20 flex w-fit items-center gap-[6.33px] rounded-[6px] border border-[#CDC8C3] px-[10px] py-2 text-center text-sm"
             >
-              <div className="h-[14.33px] w-[13.33px]">
-                <IconPlusRound className="text-primary-60 h-full w-full" />
+              <div className="h-[15px] w-[15px]">
+                <IconPlusRound className="text-neutral-20 h-full w-full" />
               </div>
-              <div>추가</div>
+              <div>링크 추가</div>
             </button>
-          </div>
-          <div className="text-neutral-40 text-xs">
-            대표 링크 1~3개 선택 가능
-          </div>
+          )}
         </label>
         <div className="space-y-2">
           {/* 링크 목록 */}
