@@ -7,7 +7,9 @@ export interface Store {
   name: string;
   phone: string;
   address: string;
-  storeLink: string;
+  // storeLink: string; //TODO: 가게 간략페이지, 상세페이지에서도 수정 !!!!
+  primaryStoreLink: string;
+  storeLinks: string[];
   latitude: number;
   longitude: number;
   description?: string;
@@ -40,17 +42,35 @@ export interface Menu {
   name: string;
   price: number;
   isPopular?: boolean;
-  description?: string | null;
-  imageFileKey?: string | null; // 파일명임. 확장자 포함해야함 ex) menu_cake6.jpeg"
+  description?: string;
+  imageFileKey?: string[]; // 파일명임. 확장자 포함해야함 ex) menu_cake6.jpeg"
   images?: string[]; // 응답
+}
+
+export interface BreakTime {
+  startTime: string; // "14:00"
+  endTime: string; // "15:00"
 }
 
 export interface OperatingHoursItem {
   dayOfWeek: string;
+  // | 'MONDAY'
+  // | 'TUESDAY'
+  // | 'WEDNESDAY'
+  // | 'THURSDAY'
+  // | 'FRIDAY'
+  // | 'SATURDAY'
+  // | 'SUNDAY';
   openingTime: string;
   closingTime: string;
-  lastOrderTime: string;
-  isClosed: boolean;
+  lastOrderTime?: string;
+  isClosed: false;
+  regularClosureType?: 'MONTHLY' | 'WEEKLY' | 'NONE';
+  // MONTHLY("매월"),    // 매월 특정 주차의 특정 요일
+  // WEEKLY("매주"),     // 매주 특정 요일
+  // NONE("없음");       // 정기 휴무 없음
+  regularClosureWeeks?: string; // "1,3"
+  breakTimes?: BreakTime[];
 }
 
 export interface HolidaysItem {
@@ -132,7 +152,8 @@ export interface StoreSummaryInfoData
     | 'name'
     | 'address'
     | 'phone'
-    | 'storeLink'
+    | 'primaryStoreLink'
+    | 'storeLinks'
     | 'animalYn'
     | 'tumblerYn'
     | 'parkingYn'
@@ -159,7 +180,8 @@ export interface StoreDetailInfoData
     | 'name'
     | 'address'
     | 'phone'
-    | 'storeLink'
+    | 'primaryStoreLink'
+    | 'storeLinks'
     | 'animalYn'
     | 'tumblerYn'
     | 'parkingYn'
@@ -215,7 +237,8 @@ export interface RegisterStoreRequest
     | 'name'
     | 'phone'
     | 'address'
-    | 'storeLink'
+    | 'primaryStoreLink'
+    | 'storeLinks'
     | 'latitude'
     | 'longitude'
     | 'animalYn'
@@ -231,7 +254,7 @@ export interface RegisterStoreRequest
   > {
   userUuid: string;
   menus: Menu[];
-  ImageFileKey?: string[]; // 메뉴 파일명
+  // ImageFileKey?: string[]; // 메뉴 파일명
   storeImageFiles?: File[];
   ownerPickImageFiles?: File[];
   menuImageFiles?: File[];
@@ -245,7 +268,8 @@ export interface RegisterStoreResponse
     | 'name'
     | 'phone'
     | 'address'
-    | 'storeLink'
+    | 'primaryStoreLink'
+    | 'storeLinks'
     | 'description'
     | 'latitude'
     | 'longitude'
@@ -290,7 +314,8 @@ export interface EditStoreRequest
     | 'name'
     | 'phone'
     | 'address'
-    | 'storeLink'
+    | 'primaryStoreLink'
+    | 'storeLinks'
     | 'description'
     | 'animalYn'
     | 'tumblerYn'
@@ -328,7 +353,8 @@ export interface EditStoreResponse
     | 'name'
     | 'address'
     | 'phone'
-    | 'storeLink'
+    | 'primaryStoreLink'
+    | 'storeLinks'
     | 'animalYn'
     | 'tumblerYn'
     | 'parkingYn'

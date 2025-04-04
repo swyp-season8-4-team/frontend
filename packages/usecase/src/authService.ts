@@ -64,7 +64,7 @@ export default class AuthService {
   }
 
   private getRedirectUri(provider: OAuthSocialProvider) {
-    return `${process.env.NEXT_PUBLIC_APP_HOST}${NavigationLanguageGroup.ko}${NavigationPathGroup.OAuthCallback}${provider.toLowerCase()}`;
+    return `${process.env.NEXT_PUBLIC_KAKAO_REDIRECT_HOST}${NavigationLanguageGroup.ko}${NavigationPathGroup.OAuthCallback}${provider.toLowerCase()}`;
   }
 
   getServerSideUrl(provider: OAuthSocialProvider, state?: string) {

@@ -1,40 +1,186 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useContext, useState } from 'react';
 import { useRegister, RegisterStep } from '../_contexts/RegisterContext';
+import type { Menu } from '@repo/entity/src/store';
+import { MenuAddModal } from '../_modals/MenuAddModal';
+import { PortalContext } from '@repo/ui/contexts/PortalContext';
+import { useRouter } from 'next/navigation';
+import { NavigationPathname } from '@repo/entity/src/navigation';
+import Image from 'next/image';
+import IconX from '@repo/design-system/components/icons/IconX';
+import IconPlusRound from '@repo/design-system/components/icons/IconPlusRound';
+import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
+import { AddButton } from '../_components/AddButton';
 
-export default function RegisterCheckPage() {
-  const { completeStep, goToNextStep, redirectToStep } = useRegister();
+interface MenuWithImage extends Menu {
+  id: string;
+  imageUrls?: string[];
+}
 
-  // 다음 단계로 이동
+export default function RegisterMenuPage() {
+  const router = useRouter();
+
+  const { push, pop } = useContext(PortalContext);
+
+  const {
+    storeData,
+    updateMenus,
+    updateMenuImages,
+    completeStep,
+    goToNextStep,
+    updateMenuImage,
+    removeMenuImage,
+    getMenuThumbnailUrl,
+  } = useRegister();
+
+  const [menus, setMenus] = useState<MenuWithImage[]>(
+    (storeData.menus || []).map((menu) => ({
+      ...menu,
+      id: `menu-${Date.now()}-${Math.random()}`,
+    })),
+  );
+
+  const openMenuAddModal = () => {
+    push('modal', {
+      component: <MenuAddModal onClose={closeMenuAddModal} />,
+    });
+  };
+
+  const closeMenuAddModal = (menu?: Menu, files?: File[]) => {
+    if (menu) {
+      const menuWithId = {
+        ...menu,
+        id: `menu-${Date.now()}`,
+      };
+
+      setMenus((prev) => [...prev, menuWithId]);
+
+      if (files?.length && menu.imageFileKey?.length) {
+        files.forEach((file, index) => {
+          if (menu.imageFileKey?.[index]) {
+            updateMenuImage(menu.imageFileKey[index], file);
+          }
+        });
+      }
+    }
+    pop('modal');
+  };
+
+  const handleDeleteMenu = (menuId: string) => {
+    const menuToDelete = menus.find((menu) => menu.id === menuId);
+
+    if (menuToDelete?.imageFileKey?.length) {
+      menuToDelete.imageFileKey.forEach((key) => {
+        removeMenuImage(key);
+      });
+    }
+
+    setMenus((prev) => prev.filter((menu) => menu.id !== menuId));
+  };
+
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 확인 단계 완료 표시
+    updateMenus(menus);
+    const menuImageFiles = Array.from(storeData.menuImageMap.values());
+    updateMenuImages(menuImageFiles);
+
     completeStep(RegisterStep.MENU);
-
-    // 내부 상태 업데이트
     goToNextStep();
-
-    // 다음 단계로 이동
-    redirectToStep(RegisterStep.CHECK);
+    router.push(`${NavigationPathname.OwnerRegisterComplete}`);
   };
 
-  // 컴포넌트 마운트 시 초기화
-  useEffect(() => {
-    return () => {
-      // 컴포넌트 언마운트 시 정리 작업 (선택 사항)
-    };
-  }, []);
+  const handlePrevStep = () => {
+    updateMenus(menus);
+    const menuImageFiles = Array.from(storeData.menuImageMap.values());
+    updateMenuImages(menuImageFiles);
+    router.back();
+  };
 
   return (
-    <form onSubmit={handleNextStep} className="mx-auto max-w-md p-4">
-      <div className="mt-6 flex justify-end">
-        <button
-          type="submit"
-          className="rounded-md bg-blue-500 px-6 py-2 text-white transition-colors hover:bg-blue-600"
-        >
-          다음 단계
+    <form onSubmit={handleNextStep}>
+      <div>
+        {menus.length === 0 ? (
+          <div className="px-base py-base flex min-h-[calc(100vh-150px)] w-full flex-col items-center justify-center gap-2">
+            <div className="flex w-full flex-col items-center gap-0">
+              <div className="text-sm text-[#424242]">
+                현재 등록된 메뉴가 없습니다.
+              </div>
+              <div className="text-sm text-[#424242]">
+                새 메뉴를 추가해주세요
+              </div>
+              <AddButton
+                onClick={openMenuAddModal}
+                text="새 메뉴 추가"
+                clasName="mt-[10px]"
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="p-base flex items-center justify-between border-y border-[#CDC8C3]">
+            <div className="flex items-center gap-[5px]">
+              <div className="text-sm font-semibold">메뉴</div>
+              <div className="text-xs text-[#898989]">{menus.length}개</div>
+            </div>
+            <AddButton onClick={openMenuAddModal} text="새 메뉴 추가" />
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col pb-[80px]">
+        {menus.map((menu) => (
+          <div
+            key={menu.id}
+            className="px-base flex gap-3 border-b border-[#CDC8C3] py-[18.5px]"
+          >
+            <div className="flex-1 flex-col justify-center">
+              <div className="font-semibold">{menu.name}</div>
+              <div
+                className="text-neutral-30 text-xs"
+                style={{
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  display: '-webkit-box',
+                  WebkitBoxOrient: 'vertical',
+                  WebkitLineClamp: 2,
+                  maxHeight: '32px',
+                  wordBreak: 'break-all',
+                }}
+              >
+                {menu.description}
+              </div>
+              <div className="text-sm font-medium">
+                {menu.price.toLocaleString()}원
+              </div>
+            </div>
+            {menu.imageFileKey?.[0] &&
+              getMenuThumbnailUrl(menu.imageFileKey[0]) && (
+                <div className="h-20 w-20 overflow-hidden rounded-md border border-[#EFEDEB]">
+                  <Image
+                    width={100}
+                    height={100}
+                    src={getMenuThumbnailUrl(menu.imageFileKey[0])!}
+                    alt={`메뉴 사진 ${menu.name}`}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )}
+            <button
+              type="button"
+              className="flex items-start"
+              onClick={() => handleDeleteMenu(menu.id)}
+            >
+              <div className="h-6 w-6">
+                <IconX className="text-neutral-40 h-full w-full" />
+              </div>
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="fixed bottom-4 left-0 right-0 mx-4 flex gap-x-2">
+        <button type="submit" className="w-full">
+          <OliveButton className="font-semibold" text="다음" />
         </button>
       </div>
     </form>

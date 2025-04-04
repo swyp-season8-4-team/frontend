@@ -1,6 +1,7 @@
 'use client';
 
-import StepIndicator from '../_components/StepIndicator';
+import { useRouter } from 'next/navigation';
+import StepIndicator from '../_components/StepIndicator2';
 import { StoreRegisterHeader } from '../_components/StoreRegisterHeader';
 
 export default function BasicInfoLayout({
@@ -8,9 +9,15 @@ export default function BasicInfoLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+
+  const onClose = () => {
+    router.back();
+  };
+
   return (
     <div>
-      <StoreRegisterHeader title="가게 기본 정보" />
+      <StoreRegisterHeader title="내 가게 등록" onClose={onClose} />
       <StepIndicator />
       <div>{children}</div>
     </div>

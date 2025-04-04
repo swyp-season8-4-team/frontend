@@ -54,7 +54,8 @@ export function BottomSheetContainer({
     address: storeSummary.address,
     operatingHours: storeSummary.operatingHours,
     phone: storeSummary.phone,
-    storeLink: storeSummary.storeLink,
+    primaryStoreLink: storeSummary.primaryStoreLink,
+    storeLinks: storeSummary.storeLinks,
     description: storeSummary.description,
     holidays: storeSummary.holidays,
     topPreferences: storeSummary.topPreferences,
@@ -71,7 +72,7 @@ export function BottomSheetContainer({
 
   return (
     <BottomSheet isOpen={isBottomSheetOpen} onClose={handleBottomSheetClose}>
-      <div className="grid grid-cols-[0.5fr_2fr] md:grid-cols-[0.3fr_2fr] mb-2 md:mb-[37px]">
+      <div className="mb-2 grid grid-cols-[0.5fr_2fr] md:mb-[37px] md:grid-cols-[0.3fr_2fr]">
         <HexagonGrid {...hexaGridProps} />
         <SummaryInfoContainer {...storeSummaryProps} />
       </div>

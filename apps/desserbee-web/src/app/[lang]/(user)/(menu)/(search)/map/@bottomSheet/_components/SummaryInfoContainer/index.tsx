@@ -26,7 +26,8 @@ export function SummaryInfoContainer({
   address,
   operatingHours,
   phone,
-  storeLink,
+  primaryStoreLink,
+  storeLinks,
   description,
   holidays,
 }: StoreSummaryProps) {
@@ -43,7 +44,8 @@ export function SummaryInfoContainer({
     address,
     operatingHours,
     phone,
-    storeLink,
+    primaryStoreLink,
+    storeLinks,
     description,
     holidays,
   };
@@ -70,37 +72,37 @@ export function SummaryInfoContainer({
   };
 
   return (
-    <div className="flex flex-col w-full">
-      <div className="flex justify-between mb-[2px] md:mb-[9px]">
+    <div className="flex w-full flex-col">
+      <div className="mb-[2px] flex justify-between md:mb-[9px]">
         <div className="flex items-center">
-          <div className="mx-[3px] md:mx-2 w-[10px] md:w-[21px]">
-            <IconStar className="w-full h-full text-[#FFB700]" />
+          <div className="mx-[3px] w-[10px] md:mx-2 md:w-[21px]">
+            <IconStar className="h-full w-full text-[#FFB700]" />
           </div>
-          <span className="text-[10px] md:text-xl mr-1 md:mr-2">
+          <span className="mr-1 text-[10px] md:mr-2 md:text-xl">
             {averageRating}
           </span>
           <StoreFeatureIconList {...storeFeatureIconListProps} />
         </div>
         <button
           onClick={handleGoDetailBtnClick}
-          className="bg-[#DE8332] px-[5.6px] md:px-5 md:py-[5px] rounded-[42.71px] md:rounded-[100px] max-h-fit font-semibold text-white text-nowrap"
+          className="max-h-fit text-nowrap rounded-[42.71px] bg-[#DE8332] px-[5.6px] font-semibold text-white md:rounded-[100px] md:px-5 md:py-[5px]"
         >
           <div className="flex items-center">
-            <div className="flex justify-center items-center mr-[0.57px] w-[10px] md:w-[18.08px]">
-              <IconDetail className="w-full h-full" />
+            <div className="mr-[0.57px] flex w-[10px] items-center justify-center md:w-[18.08px]">
+              <IconDetail className="h-full w-full" />
             </div>
             <div className="text-[10px] md:text-lg">자세히 보기</div>
           </div>
         </button>
       </div>
-      <div className="flex md:flex-row flex-col items-start md:items-center mb-[2px] md:mb-[15px]">
-        <span className="mr-[4.44px] md:mr-[10.37px] font-semibold md:text-t28 text-xs">
+      <div className="mb-[2px] flex flex-col items-start md:mb-[15px] md:flex-row md:items-center">
+        <span className="md:text-t28 mr-[4.44px] text-xs font-semibold md:mr-[10.37px]">
           {name}
         </span>
         <span className="flex flex-wrap">
           {tags.map((tag, index) => (
             <span
-              className="font-medium text-[#6F6F6F] text-[10px] md:text-t20"
+              className="md:text-t20 text-[10px] font-medium text-[#6F6F6F]"
               key={tag}
             >
               {tag}

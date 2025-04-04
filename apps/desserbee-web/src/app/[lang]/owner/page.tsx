@@ -66,7 +66,7 @@ export default function OwnerHomePage() {
                     <div className="mb-[9px] text-[9px] md:mb-4 md:text-[22px]">
                       {index}
                     </div>
-                    <div className="mb-[9px] whitespace-normal text-start text-[13px] font-semibold md:mb-6 md:whitespace-pre-line md:text-[28px]">
+                    <div className="mb-[9px] whitespace-pre-line text-start text-[13px] font-semibold md:mb-6 md:text-[28px]">
                       {title}
                     </div>
                     <div className="mb-[32.26px] text-start text-[8px] md:mb-[14px] md:text-lg">
