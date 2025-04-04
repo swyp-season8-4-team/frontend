@@ -1,6 +1,6 @@
 import Icon, { IconSize, type SVGProps } from '..';
 
-export default function IconLocationOutline({
+export default function IconLocationOutline2({
   size = IconSize.m,
   ...props
 }: SVGProps) {

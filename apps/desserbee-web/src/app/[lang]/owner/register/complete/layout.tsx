@@ -7,10 +7,10 @@ export default function CompleteLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-[#F5F2F0]">
+    <div className="flex min-h-[100dvh] w-full flex-1 flex-col bg-[#F5F2F0]">
       {/* <StoreRegisterHeader title="등록 완료" />
       <StepIndicator /> */}
-      {children}
+      <main className="flex flex-1">{children}</main>
     </div>
   );
 }

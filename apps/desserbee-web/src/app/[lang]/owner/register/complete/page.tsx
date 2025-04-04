@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import IconPicture from '@repo/design-system/components/icons/IconPicture';
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
+import IconLocationOutline from '@repo/design-system/components/icons/IconLocationOutline2';
 
 export default function RegisterCompletePage() {
   const router = useRouter();
@@ -34,13 +35,12 @@ export default function RegisterCompletePage() {
   };
 
   return (
-    <div className="flex h-[100dvh] flex-col">
+    <div className="flex h-[100dvh] w-full flex-col items-center">
       <div className="flex-1">
         <div className="flex flex-col items-center justify-center gap-[34px] py-10">
           <div className="flex flex-col gap-2">
             <div className="text-primary-20 text-center text-[22px] font-medium">
               <div>고생하셨습니다 사장님</div>
-              <div>가게를 잘 등록했어요 !</div>
             </div>
             <div className="text-primary-40 text-center text-sm">
               <div>메인 지도에서 '내 취향' 을 누르면</div>
@@ -50,7 +50,7 @@ export default function RegisterCompletePage() {
           <div className="flex h-full min-h-[254.35px] w-full max-w-[242px] flex-col gap-[9.88px] rounded-[12.35px] border-[#ABABAB] bg-white p-5 shadow-[0px_2px_6px_2px_#28201426]">
             <div
               className={cn(
-                'h-[111px] overflow-hidden rounded-[7.41px]',
+                'h-[210px] overflow-hidden rounded-[7.41px]',
                 storeData.storeImageFiles?.[0] ? 'bg-white' : 'bg-[#D9D9D9]',
               )}
             >
@@ -71,13 +71,17 @@ export default function RegisterCompletePage() {
               )}
             </div>
             <div>
-              <div className="text-[17.29px] font-semibold">
-                {storeData.name}
-              </div>
-              <div className="text-[14.82px]">
+              <div className="text-lg font-semibold">{storeData.name}</div>
+              <span className="inline-block text-xs leading-[20px]">
+                <span className="mr-1 inline-block h-[15px] w-[15px] align-text-bottom leading-[20px]">
+                  <IconLocationOutline className="text-nuetral-30 h-full w-full" />
+                </span>
                 {storeData.address + ' ' + storeData.detailAddress}
-              </div>
-              <div className="text-[14.82px]">{formatDate(new Date())}</div>
+              </span>
+            </div>
+
+            <div className="text-xs text-neutral-50">
+              {formatDate(new Date())}
             </div>
           </div>
         </div>
