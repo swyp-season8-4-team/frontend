@@ -118,7 +118,10 @@ export default function RegisterOperatingHoursPage() {
   };
 
   const handleTimePickerToggle = (id: string) => {
-    setActiveTimePicker((prev) => (prev === id ? '' : id));
+    if (selectedWeekDays.size < 1 && id !== '') {
+      return;
+    }
+    setActiveTimePicker(id);
   };
 
   const handleSelectWeekDay = (weekDay: string): void => {
@@ -186,6 +189,12 @@ export default function RegisterOperatingHoursPage() {
     );
     setBatchSelected(isAllSelected);
   }, [selectedWeekDays]);
+
+  useEffect(() => {
+    if (selectedWeekDays.size < 1) {
+      setActiveTimePicker('');
+    }
+  }, [selectedWeekDays.size]);
 
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
