@@ -7,7 +7,6 @@ import { NavigationPathname } from '@repo/entity/src/navigation';
 import type { Store } from '@repo/entity/src/store';
 import Image from 'next/image';
 import IconXRound from '@repo/design-system/components/icons/IconXRound';
-import IconPlusRound from '@repo/design-system/components/icons/IconPlusRound';
 import IconDirection from '@repo/design-system/components/icons/IconDirection';
 import IconCar from '@repo/design-system/components/icons/IconCar2';
 import IconDog from '@repo/design-system/components/icons/IconDog2';
@@ -609,16 +608,6 @@ export default function RegisterBasicInfoPage() {
           </div>
           <div className="text-neutral-40 text-xs">최대 3개 추가</div>
           {storeLinks.length < 3 && (
-            // <button
-            //   type="button"
-            //   onClick={() => setStoreLinks([...storeLinks, ''])}
-            //   className="text-neutral-20 flex w-fit items-center gap-[6.33px] rounded-[6px] border border-[#CDC8C3] px-[10px] py-2 text-center text-sm"
-            // >
-            //   <div className="h-[15px] w-[15px]">
-            //     <IconPlusRound className="text-neutral-20 h-full w-full" />
-            //   </div>
-            //   <div>링크 추가</div>
-            // </button>
             <AddButton
               onClick={() => setStoreLinks([...storeLinks, ''])}
               text="링크 추가"

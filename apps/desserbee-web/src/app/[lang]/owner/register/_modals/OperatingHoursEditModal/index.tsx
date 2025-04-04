@@ -108,6 +108,7 @@ export function OperatingHoursEditModal({
             <span className="ml-[7.58px] text-xs">휴무일</span>
           </label>
         </div>
+        <div></div>
       </form>
     </div>
   );
