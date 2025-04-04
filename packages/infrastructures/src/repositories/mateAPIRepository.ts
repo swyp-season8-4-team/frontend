@@ -43,6 +43,7 @@ export default class MateAPIRepository
 
   async applyMate({
     data,
+    authorization,
   }: BaseRequestData<MateApplyRequest>): Promise<unknown> {
     if (!data) {
       throw new Error('data is required');
@@ -51,6 +52,11 @@ export default class MateAPIRepository
     const { mateId, userId } = data;
 
     const response = await fetch<RawMateApplyRequest, unknown>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       data: {
         userUuid: userId,
       },
@@ -63,6 +69,7 @@ export default class MateAPIRepository
 
   async cancelApplyMate({
     data,
+    authorization,
   }: BaseRequestData<MateApplyRequest>): Promise<unknown> {
     if (!data) {
       throw new Error('data is required');
@@ -71,6 +78,11 @@ export default class MateAPIRepository
     const { mateId, userId } = data;
 
     const response = await fetch<RawMateApplyRequest, unknown>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       data: {
         userUuid: userId,
       },
@@ -81,7 +93,10 @@ export default class MateAPIRepository
     return response;
   }
 
-  async leave({ data }: BaseRequestData<MateLeaveRequest>): Promise<unknown> {
+  async leave({
+    data,
+    authorization,
+  }: BaseRequestData<MateLeaveRequest>): Promise<unknown> {
     if (!data) {
       throw new Error('data is required');
     }
@@ -89,6 +104,11 @@ export default class MateAPIRepository
     const { userUuid } = data;
 
     const response = await fetch<MateLeaveRequest, unknown>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       data: {
         userUuid,
       },
@@ -101,6 +121,7 @@ export default class MateAPIRepository
 
   async getMyTeamMembers({
     data,
+    authorization,
   }: BaseRequestData<MateRequest>): Promise<Mate[]> {
     if (!data) {
       throw new Error('data is required');
@@ -109,6 +130,11 @@ export default class MateAPIRepository
     const { id } = data;
 
     const response = await fetch<void, RawMate[]>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'GET',
       url: `${this.endpoint}/mates/${id}/members`,
     });
