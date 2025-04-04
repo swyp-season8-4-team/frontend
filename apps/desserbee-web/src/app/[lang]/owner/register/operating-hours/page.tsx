@@ -19,7 +19,7 @@ import { useForm } from 'react-hook-form';
 import { cn } from '@repo/ui/lib/utils';
 import { OperatingHoursEditModal } from '../_modals/OperatingHoursEditModal';
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
-import TimePicker from '@repo/design-system/components/TimePicker/clock';
+import TimePicker from '@repo/design-system/components/TimePicker';
 
 interface BatchTimeFormData {
   openingTime: string;
