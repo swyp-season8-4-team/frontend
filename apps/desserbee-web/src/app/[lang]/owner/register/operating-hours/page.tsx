@@ -176,7 +176,10 @@ export default function RegisterOperatingHoursPage() {
     }
   };
 
-  const closeMenuAddModal = () => {
+  const closeMenuAddModal = (updatedOperatingHours?: OperatingHoursItem[]) => {
+    if (updatedOperatingHours) {
+      setOperatingHours(updatedOperatingHours);
+    }
     pop('modal');
   };
 

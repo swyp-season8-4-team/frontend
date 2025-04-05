@@ -1,16 +1,30 @@
-import type { OperatingHoursItem } from '@repo/entity/src/store';
+import type { BreakTime, OperatingHoursItem } from '@repo/entity/src/store';
 import { StoreRegisterHeader } from '../../_components/StoreRegisterHeader';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DAYS_OF_WEEK } from '../../_consts/operatingHours';
 import { cn } from '@repo/ui/lib/utils';
 
 import { RadioButton } from '@repo/design-system/components/RadioButton';
+import TimePicker from '@repo/design-system/components/TimePicker';
+import { useForm } from 'react-hook-form';
+import { AddButton } from '../../_components/AddButton';
+import IconX from '@repo/design-system/components/icons/IconX';
 /**
  * 1. editableWeekday를 받아온다. string
  * 2. initialOperatingHours를 props로 받아온다. (메인에서 편집한 거 반영되어야하기 때문)
  * 3. handle함수를 props로 받아서서 editableWeekday에 해당하는 operatingHours를 edit한다. (이건 수정 버튼 눌렀을 시)
  * 4. 초기화하면 그냥 입력 값만 비워지는 거다. 이 컴포넌트의
  */
+
+interface BatchTimeFormData {
+  openingTime: string;
+  closingTime: string;
+  breakTimes: {
+    startTime: string;
+    endTime: string;
+  }[];
+  lastOrderTime: string;
+}
 
 interface OperatingHoursEditModalProps {
   initialOperatingHours: OperatingHoursItem[];
@@ -42,6 +56,49 @@ export function OperatingHoursEditModal({
     useState(editableWeekdays);
 
   const [isWorkingdaySetting, setIsWorkingDaySetting] = useState(true);
+  const [isOffHourInputOpen, setIsOffHourInputOpen] = useState(false);
+  const [isLastOrderInputOpen, setIsLastOrderInputOpen] = useState(false);
+
+  const [activeTimePicker, setActiveTimePicker] = useState<string>('');
+
+  const { register, watch, setValue, getValues } = useForm<BatchTimeFormData>({
+    defaultValues: {
+      openingTime: '09:00',
+      closingTime: '22:00',
+      breakTimes: [{ startTime: '14:00', endTime: '15:00' }],
+      lastOrderTime: '21:00',
+    },
+  });
+
+  // 초기값 설정
+  useEffect(() => {
+    if (typeof editableWeekdays === 'string') {
+      // 단일 요일 수정인 경우
+      const targetDay = initialOperatingHours.find(
+        (item) => item.dayOfWeek === editableWeekdays,
+      );
+
+      if (targetDay) {
+        setValue('openingTime', targetDay.openingTime);
+        setValue('closingTime', targetDay.closingTime);
+
+        if (targetDay.breakTimes && targetDay.breakTimes.length > 0) {
+          setValue('breakTimes', [
+            {
+              startTime: targetDay.breakTimes[0].startTime,
+              endTime: targetDay.breakTimes[0].endTime,
+            },
+          ]);
+          setIsOffHourInputOpen(true);
+        }
+
+        if (targetDay.lastOrderTime) {
+          setValue('lastOrderTime', targetDay.lastOrderTime);
+          setIsLastOrderInputOpen(true);
+        }
+      }
+    }
+  }, [editableWeekdays, initialOperatingHours, setValue]);
 
   const handleCurrentEditableWeekdaysToggle = (weekday: string) => {
     if (handleSelectWeekDay) {
@@ -59,6 +116,54 @@ export function OperatingHoursEditModal({
       handleSelectWeekDay?.(weekday); // 메인 폼의 selectedWeekday 관리
     }
   };
+
+  const handleBatchValueChange = (
+    field: keyof BatchTimeFormData,
+    value: string,
+  ) => {
+    setValue(field, value, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
+  const handleTimePickerToggle = (id: string) => {
+    setActiveTimePicker(id);
+  };
+
+  const handleSubmit = () => {
+    const values = getValues();
+    const updatedOperatingHours = initialOperatingHours.map((item) => {
+      // currentEditableWeekdays에 해당하는 요일만 수정
+      if (
+        typeof currentEditableWeekdays === 'string'
+          ? currentEditableWeekdays === item.dayOfWeek
+          : currentEditableWeekdays.has(item.dayOfWeek)
+      ) {
+        return {
+          ...item,
+          openingTime: values.openingTime,
+          closingTime: values.closingTime,
+          breakTimes: isOffHourInputOpen
+            ? [
+                {
+                  startTime: values.breakTimes[0].startTime,
+                  endTime: values.breakTimes[0].endTime,
+                },
+              ]
+            : item.breakTimes,
+          lastOrderTime: isLastOrderInputOpen
+            ? values.lastOrderTime
+            : item.lastOrderTime,
+        };
+      }
+      // currentEditableWeekdays에 해당하지 않는 요일은 그대로 유지
+      return item;
+    });
+
+    onClose(updatedOperatingHours);
+  };
+
   return (
     <div className="fixed bottom-0 left-0 right-0 top-0 z-10 flex h-full w-full flex-col bg-white">
       <StoreRegisterHeader
@@ -108,8 +213,149 @@ export function OperatingHoursEditModal({
             <span className="ml-[7.58px] text-xs">휴무일</span>
           </label>
         </div>
-        <div></div>
+        {/* 영업일/휴무일 폼 */}
+        {isWorkingdaySetting ? (
+          <div className="w-full">
+            <div className="py-base border-b border-[#EFEDEB]">
+              <div className="mb-[13px] flex w-full justify-start text-sm">
+                운영시간
+              </div>
+              <div className="flex w-full items-center gap-[3px] rounded-[6px]">
+                <TimePicker
+                  id="operating-opening-time"
+                  value={watch('openingTime')}
+                  onChange={(value) =>
+                    handleBatchValueChange('openingTime', value)
+                  }
+                  isOpen={activeTimePicker === 'operating-opening-time'}
+                  onToggle={handleTimePickerToggle}
+                  selectClassName="w-full"
+                  pickerClassName="w-full"
+                />
+                <div>~</div>
+                <TimePicker
+                  id="operating-closing-time"
+                  value={watch('closingTime')}
+                  onChange={(value) =>
+                    handleBatchValueChange('closingTime', value)
+                  }
+                  isOpen={activeTimePicker === 'operating-closing-time'}
+                  onToggle={handleTimePickerToggle}
+                  selectClassName="w-full"
+                  pickerClassName="w-full"
+                />
+              </div>
+            </div>
+            {isOffHourInputOpen && (
+              <div className="py-base border-b border-[#EFEDEB]">
+                <div className="mb-[13px] flex w-full items-center justify-between text-sm">
+                  <div>휴게시간</div>
+                  <button
+                    type="button"
+                    onClick={() => setIsOffHourInputOpen(false)}
+                    className="h-[14.73px] w-[14.73px]"
+                  >
+                    <IconX className="text-neutral-40 h-full w-full" />
+                  </button>
+                </div>
+                <div className="flex w-full items-center gap-[3px] rounded-[6px]">
+                  <TimePicker
+                    id="break-start-time"
+                    value={watch('breakTimes.0.startTime')}
+                    onChange={(value) =>
+                      setValue('breakTimes.0.startTime', value, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      })
+                    }
+                    isOpen={activeTimePicker === 'break-start-time'}
+                    onToggle={handleTimePickerToggle}
+                    selectClassName="w-full"
+                    pickerClassName="w-full"
+                  />
+                  <div>~</div>
+                  <TimePicker
+                    id="break-end-time"
+                    value={watch('breakTimes.0.endTime')}
+                    onChange={(value) =>
+                      setValue('breakTimes.0.endTime', value, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      })
+                    }
+                    isOpen={activeTimePicker === 'break-end-time'}
+                    onToggle={handleTimePickerToggle}
+                    selectClassName="w-full"
+                    pickerClassName="w-full"
+                  />
+                </div>
+              </div>
+            )}
+            {isLastOrderInputOpen && (
+              <div className="py-base">
+                <div className="mb-[13px] flex w-full items-center justify-between text-sm">
+                  <div>라스트 오더</div>
+                  <button
+                    type="button"
+                    onClick={() => setIsLastOrderInputOpen(false)}
+                    className="h-[14.73px] w-[14.73px]"
+                  >
+                    <IconX className="text-neutral-40 h-full w-full" />
+                  </button>
+                </div>
+                <div className="flex w-full items-center gap-[3px] rounded-[6px]">
+                  <TimePicker
+                    id="last-order-time"
+                    value={watch('lastOrderTime')}
+                    onChange={(value) =>
+                      setValue('lastOrderTime', value, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                      })
+                    }
+                    isOpen={activeTimePicker === 'last-order-time'}
+                    onToggle={handleTimePickerToggle}
+                    selectClassName="w-1/2"
+                    pickerClassName="w-1/2"
+                  />
+                </div>
+              </div>
+            )}
+            {(!isOffHourInputOpen || !isLastOrderInputOpen) && (
+              <div className="py-base">
+                <div className="mb-[13px] flex w-full justify-start text-sm">
+                  추가
+                </div>
+                <div className="flex gap-[10px]">
+                  {!isOffHourInputOpen && (
+                    <AddButton
+                      text="휴게시간"
+                      clasName="font-medium w-1/2"
+                      onClick={() => setIsOffHourInputOpen(true)}
+                    />
+                  )}
+                  {!isLastOrderInputOpen && (
+                    <AddButton
+                      text="라스트 오더"
+                      clasName="font-medium  w-1/2"
+                      onClick={() => setIsLastOrderInputOpen(true)}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div></div>
+        )}
       </form>
+      <button
+        type="button"
+        onClick={handleSubmit}
+        className="bg-secondary-40 rounded-[6px] px-[13px] py-[10px] text-sm font-medium text-white"
+      >
+        수정
+      </button>
     </div>
   );
 }

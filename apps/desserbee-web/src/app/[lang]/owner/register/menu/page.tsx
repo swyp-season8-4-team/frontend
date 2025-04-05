@@ -113,7 +113,7 @@ export default function RegisterMenuPage() {
               <AddButton
                 onClick={openMenuAddModal}
                 text="새 메뉴 추가"
-                clasName="mt-[10px]"
+                clasName="mt-[10px] max-w-[130px]"
               />
             </div>
           </div>
