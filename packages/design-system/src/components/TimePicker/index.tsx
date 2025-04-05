@@ -9,6 +9,8 @@ interface TimePickerProps {
   disabled?: boolean;
   isOpen: boolean; // 현재 열려있는지 여부
   onToggle: (id: string) => void; // 열기/닫기 토글 함수
+  selectClassName?: string;
+  pickerClassName?: string;
 }
 
 const TimePicker = ({
@@ -18,6 +20,8 @@ const TimePicker = ({
   disabled = false,
   isOpen,
   onToggle,
+  selectClassName,
+  pickerClassName,
 }: TimePickerProps) => {
   const [selectedTime, setSelectedTime] = useState<string>(value || '09:00');
 
@@ -25,8 +29,9 @@ const TimePicker = ({
   const hours: string[] = Array.from({ length: 24 }, (_, i) =>
     i.toString().padStart(2, '0'),
   );
-  const minutes: string[] = Array.from({ length: 12 }, (_, i) =>
-    (i * 5).toString().padStart(2, '0'),
+  const minutes: string[] = Array.from(
+    { length: 60 },
+    (_, i) => i.toString().padStart(2, '0'), // 00, 01, 02, ..., 59
   );
 
   useEffect(() => {
@@ -45,31 +50,23 @@ const TimePicker = ({
     if (onChange) {
       onChange(newTime);
     }
-  };
-
-  const handleConfirm = (): void => {
-    if (onChange) {
-      onChange(selectedTime);
-    }
-    onToggle(''); // 모든 타임피커 닫기
+    onToggle(''); // 선택 즉시 타임피커를 닫습니다
   };
 
   return (
-    <div className="relative font-sans">
+    <div className="relative w-full font-sans">
       {/* 시간 표시 박스 */}
       <div
         className={cn(
-          // 픽셀 고정하도록 요청됨
-          'text-neutral-20 flex w-[70px] cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-[#CDC8C3] bg-white p-2 font-medium',
+          'text-neutral-20 flex min-w-[70px] cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-[#CDC8C3] bg-white p-2 text-xs font-medium',
           disabled && 'cursor-not-allowed opacity-50',
+          selectClassName || 'w-[70px]',
         )}
         onClick={handleTimeClick}
       >
-        <div className="text-xs">{selectedTime}</div>
+        <div className="flex-1 text-center">{selectedTime}</div>
         <div className="ml-1">
-          <div>
-            <IconClockOutline />
-          </div>
+          <IconClockOutline />
         </div>
       </div>
 
@@ -78,7 +75,12 @@ const TimePicker = ({
         <>
           {/* backdrop */}
           <div className="fixed inset-0 z-40" onClick={() => onToggle('')} />
-          <div className="absolute z-50 mt-2 w-40 rounded-lg border border-gray-200 bg-white p-2 shadow-lg">
+          <div
+            className={cn(
+              'absolute z-50 mt-2 min-w-40 rounded-lg border border-gray-200 bg-white p-2 shadow-lg',
+              pickerClassName || 'w-40',
+            )}
+          >
             <div className="grid grid-cols-2 gap-4">
               <div className="h-48 overflow-y-auto pr-2">
                 <h3 className="mb-2 text-xs font-medium text-gray-500">시간</h3>
@@ -111,7 +113,6 @@ const TimePicker = ({
                     }`}
                     onClick={() => {
                       handleTimeSelect(selectedTime.split(':')[0], minute);
-                      handleConfirm();
                     }}
                   >
                     {minute}

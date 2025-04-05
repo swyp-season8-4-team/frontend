@@ -13,7 +13,7 @@ import {
   convertDayToKorean,
   convertWeekNumberToKorean,
 } from '@repo/utility/src/date';
-import { ALL_WEEKDAYS } from '../_consts/operatingHours';
+import { ALL_WEEKDAYS, DAYS_OF_WEEK } from '../_consts/operatingHours';
 import { useForm } from 'react-hook-form';
 import { cn } from '@repo/ui/lib/utils';
 import { OperatingHoursEditModal } from '../_modals/OperatingHoursEditModal';
@@ -38,61 +38,29 @@ export default function RegisterOperatingHoursPage() {
   const [selectedWeekDays, setSelectedWeekdays] = useState<Set<string>>(
     new Set(),
   );
-  const [operatingHours, setOperatingHours] = useState<OperatingHoursItem[]>([
-    {
-      dayOfWeek: 'MONDAY',
-      openingTime: '09:00',
-      closingTime: '22:00',
-      lastOrderTime: '21:00',
-      breakTimes: [
-        {
-          startTime: '13:00',
-          endTime: '15:00',
-        },
-      ],
-      regularClosureType: 'MONTHLY',
-      regularClosureWeeks: '1,2',
-      isClosed: false,
-    },
-    {
-      dayOfWeek: 'TUESDAY',
-      openingTime: '09:00',
-      closingTime: '22:00',
-      isClosed: false,
-    },
-    {
-      dayOfWeek: 'WEDNESDAY',
-      openingTime: '09:00',
-      closingTime: '22:00',
-      isClosed: false,
-    },
-    {
-      dayOfWeek: 'THURSDAY',
-      openingTime: '09:00',
-      closingTime: '22:00',
-      isClosed: false,
-    },
-    {
-      dayOfWeek: 'FRIDAY',
-      openingTime: '09:00',
-      closingTime: '22:00',
-      isClosed: false,
-    },
-    {
-      dayOfWeek: 'SATURDAY',
-      openingTime: '09:00',
-      closingTime: '22:00',
-      isClosed: false,
-    },
-    {
-      dayOfWeek: 'SUNDAY',
-      openingTime: '09:00',
-      closingTime: '22:00',
-      isClosed: false,
-    },
-  ]);
+  const [operatingHours, setOperatingHours] = useState<OperatingHoursItem[]>(
+    DAYS_OF_WEEK.map(({ en: dayOfWeek }) => {
+      const existingData = storeData?.operatingHours?.find(
+        (item) => item.dayOfWeek === dayOfWeek,
+      );
 
-  const { register, watch, setValue } = useForm<BatchTimeFormData>({
+      if (existingData) {
+        return existingData;
+      }
+
+      // 기본값 반환
+      const defaultData: OperatingHoursItem = {
+        dayOfWeek,
+        openingTime: '09:00',
+        closingTime: '22:00',
+        isClosed: false,
+      };
+
+      return defaultData;
+    }),
+  );
+
+  const { register, watch, setValue, getValues } = useForm<BatchTimeFormData>({
     defaultValues: {
       openingTime: '09:00',
       closingTime: '22:00',
@@ -113,7 +81,27 @@ export default function RegisterOperatingHoursPage() {
     field: keyof BatchTimeFormData,
     value: string,
   ) => {
-    setValue(field, value);
+    setValue(field, value, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
+  const handleBatchTimeApply = () => {
+    const values = getValues();
+
+    setOperatingHours((prev) =>
+      prev.map((item) => {
+        if (selectedWeekDays.has(item.dayOfWeek)) {
+          return {
+            ...item,
+            openingTime: values.openingTime,
+            closingTime: values.closingTime,
+          };
+        }
+        return item;
+      }),
+    );
   };
 
   const handleTimePickerToggle = (id: string) => {
@@ -156,30 +144,11 @@ export default function RegisterOperatingHoursPage() {
     }
   };
 
-  const closeMenuAddModal = () => {
+  const closeMenuAddModal = (updatedOperatingHours?: OperatingHoursItem[]) => {
+    if (updatedOperatingHours) {
+      setOperatingHours(updatedOperatingHours);
+    }
     pop('modal');
-  };
-
-  const handleBatchTimeApply = () => {
-    const { openingTime, closingTime } = watch();
-
-    // if (openingTime >= closingTime) {
-    //   alert('오픈 시간은 마감 시간 이전으로 설정해주세요');
-    //   return;
-    // }
-
-    setOperatingHours((prev) =>
-      prev.map((item) => {
-        if (selectedWeekDays.has(item.dayOfWeek)) {
-          return {
-            ...item,
-            openingTime,
-            closingTime,
-          };
-        }
-        return item;
-      }),
-    );
   };
 
   useEffect(() => {
@@ -309,11 +278,13 @@ export default function RegisterOperatingHoursPage() {
                     </div>
                     {breakTimes && (
                       <div>
-                        휴게시간 {breakTimes[0].startTime}~
-                        {breakTimes[0].endTime}
+                        휴게시간 {formatTimeTo12Hour(breakTimes[0].startTime)}~
+                        {formatTimeTo12Hour(breakTimes[0].endTime)}
                       </div>
                     )}
-                    {lastOrderTime && <div>라스트 오더 {lastOrderTime}</div>}
+                    {lastOrderTime && (
+                      <div>라스트 오더 {formatTimeTo12Hour(lastOrderTime)}</div>
+                    )}
                   </div>
                 </div>
                 <button
