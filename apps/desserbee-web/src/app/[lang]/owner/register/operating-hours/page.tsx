@@ -13,7 +13,7 @@ import {
   convertDayToKorean,
   convertWeekNumberToKorean,
 } from '@repo/utility/src/date';
-import { ALL_WEEKDAYS } from '../_consts/operatingHours';
+import { ALL_WEEKDAYS, DAYS_OF_WEEK } from '../_consts/operatingHours';
 import { useForm } from 'react-hook-form';
 import { cn } from '@repo/ui/lib/utils';
 import { OperatingHoursEditModal } from '../_modals/OperatingHoursEditModal';
@@ -38,59 +38,27 @@ export default function RegisterOperatingHoursPage() {
   const [selectedWeekDays, setSelectedWeekdays] = useState<Set<string>>(
     new Set(),
   );
-  const [operatingHours, setOperatingHours] = useState<OperatingHoursItem[]>([
-    {
-      dayOfWeek: 'MONDAY',
-      openingTime: '09:00',
-      closingTime: '22:00',
-      lastOrderTime: '21:00',
-      breakTimes: [
-        {
-          startTime: '13:00',
-          endTime: '15:00',
-        },
-      ],
-      regularClosureType: 'MONTHLY',
-      regularClosureWeeks: '1,2',
-      isClosed: false,
-    },
-    {
-      dayOfWeek: 'TUESDAY',
-      openingTime: '09:00',
-      closingTime: '22:00',
-      isClosed: false,
-    },
-    {
-      dayOfWeek: 'WEDNESDAY',
-      openingTime: '09:00',
-      closingTime: '22:00',
-      isClosed: false,
-    },
-    {
-      dayOfWeek: 'THURSDAY',
-      openingTime: '09:00',
-      closingTime: '22:00',
-      isClosed: false,
-    },
-    {
-      dayOfWeek: 'FRIDAY',
-      openingTime: '09:00',
-      closingTime: '22:00',
-      isClosed: false,
-    },
-    {
-      dayOfWeek: 'SATURDAY',
-      openingTime: '09:00',
-      closingTime: '22:00',
-      isClosed: false,
-    },
-    {
-      dayOfWeek: 'SUNDAY',
-      openingTime: '09:00',
-      closingTime: '22:00',
-      isClosed: false,
-    },
-  ]);
+  const [operatingHours, setOperatingHours] = useState<OperatingHoursItem[]>(
+    DAYS_OF_WEEK.map(({ en: dayOfWeek }) => {
+      const existingData = storeData?.operatingHours?.find(
+        (item) => item.dayOfWeek === dayOfWeek,
+      );
+
+      if (existingData) {
+        return existingData;
+      }
+
+      // 기본값 반환
+      const defaultData: OperatingHoursItem = {
+        dayOfWeek,
+        openingTime: '09:00',
+        closingTime: '22:00',
+        isClosed: false,
+      };
+
+      return defaultData;
+    }),
+  );
 
   const { register, watch, setValue, getValues } = useForm<BatchTimeFormData>({
     defaultValues: {
