@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import StepIndicator from '../_components/StepIndicator2';
+import StepIndicator from '../_components/StepIndicator';
 import { StoreRegisterHeader } from '../_components/StoreRegisterHeader';
 
 export default function MenuLayout({
