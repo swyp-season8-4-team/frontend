@@ -25,8 +25,9 @@ const TimePicker = ({
   const hours: string[] = Array.from({ length: 24 }, (_, i) =>
     i.toString().padStart(2, '0'),
   );
-  const minutes: string[] = Array.from({ length: 12 }, (_, i) =>
-    (i * 5).toString().padStart(2, '0'),
+  const minutes: string[] = Array.from(
+    { length: 60 },
+    (_, i) => i.toString().padStart(2, '0'), // 00, 01, 02, ..., 59
   );
 
   useEffect(() => {
@@ -45,13 +46,7 @@ const TimePicker = ({
     if (onChange) {
       onChange(newTime);
     }
-  };
-
-  const handleConfirm = (): void => {
-    if (onChange) {
-      onChange(selectedTime);
-    }
-    onToggle(''); // 모든 타임피커 닫기
+    onToggle(''); // 선택 즉시 타임피커를 닫습니다
   };
 
   return (
@@ -111,7 +106,6 @@ const TimePicker = ({
                     }`}
                     onClick={() => {
                       handleTimeSelect(selectedTime.split(':')[0], minute);
-                      handleConfirm();
                     }}
                   >
                     {minute}
