@@ -44,6 +44,12 @@ export interface JWTRefreshTokens extends Omit<JWTTokens, 'refreshToken'> {
   expiresIn: number;
 }
 
+export interface TokenInfo {
+  token: string | null;
+  isExpired?: boolean;
+  exp?: number;
+}
+
 export interface RawSignInResponse extends JWTTokens {
   userUuid: string;
   email: string;

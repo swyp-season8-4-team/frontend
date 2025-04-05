@@ -2,26 +2,14 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { match } from '@formatjs/intl-localematcher';
 import Negotiator from 'negotiator';
 import { SupportISO639Language } from '@repo/entity/src/i18n';
-import { decodeJWT, isExpiredJWT } from '@repo/utility/src/jwt';
-import AuthService from '@repo/usecase/src/authService';
-import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
+
 import {
   NavigationLanguageGroup,
   NavigationPathname,
 } from '@repo/entity/src/navigation';
 import NavigationService from '@repo/usecase/src/navigationService';
-import { HTTPError } from '@repo/api/src/error';
 import { isProd } from './utils/env';
-
-// 토큰 정보 인터페이스
-interface TokenInfo {
-  token: string | null;
-  isExpired?: boolean;
-  exp?: number;
-}
-
-// 토큰 캐시 저장소
-const savedTokens: { [key: string]: TokenInfo } = {};
+import { getTokenInfo } from './utils/token';
 
 // 미들웨어 메인 함수
 export async function middleware(request: NextRequest) {
@@ -143,68 +131,6 @@ function redirectToSignIn(request: NextRequest): NextResponse {
   );
 
   return NextResponse.redirect(redirectURL);
-}
-
-// 토큰 정보 조회
-async function getTokenInfo(
-  accessToken: string | undefined,
-  refreshToken: string | undefined,
-): Promise<TokenInfo> {
-  if (!accessToken && !refreshToken) {
-    return { token: null };
-  }
-
-  // 캐시된 유효한 토큰이 있는지 확인
-  if (accessToken) {
-    const decodedToken = decodeJWT(accessToken);
-    if (decodedToken?.sub) {
-      const subKey = JSON.stringify(decodedToken.sub);
-      const savedToken = savedTokens[subKey]?.token;
-      if (savedToken && !isExpiredJWT(savedToken)) {
-        return { token: savedToken };
-      }
-    }
-  }
-
-  return await refreshTokenIfNeeded(accessToken ?? null, refreshToken ?? null);
-}
-
-// 토큰 갱신 처리
-async function refreshTokenIfNeeded(
-  accessToken: string | null,
-  refreshToken: string | null,
-): Promise<TokenInfo> {
-  const isAccessTokenExpired = isExpiredJWT(accessToken);
-  const isRefreshTokenExpired = refreshToken
-    ? isExpiredJWT(refreshToken)
-    : true;
-
-  if (isAccessTokenExpired && isRefreshTokenExpired) {
-    return { token: null };
-  }
-
-  if (isAccessTokenExpired && refreshToken) {
-    try {
-      const authService = new AuthService({
-        authRepository: new AuthAPIRepository(),
-      });
-      const { accessToken: newToken, expiresIn } =
-        await authService.refreshAccessToken(refreshToken);
-
-      return {
-        token: newToken,
-        isExpired: true,
-        exp: expiresIn,
-      };
-    } catch (error) {
-      if (error instanceof HTTPError && error.data.status === 401) {
-        return { token: null };
-      }
-      throw error;
-    }
-  }
-
-  return { token: accessToken };
 }
 
 export const config = {

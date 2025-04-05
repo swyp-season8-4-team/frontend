@@ -5,14 +5,18 @@ import IconChevronDown from '@repo/design-system/components/icons/IconChevronDow
 import type { CommunityDessertReviewCategory } from '@repo/entity/src/community';
 import { NavigationPathGroup } from '@repo/entity/src/navigation';
 import type { Review, ReviewContent } from '@repo/entity/src/review';
-import ReviewAPIRepository from '@repo/infrastructures/src/repositories/reviewAPIRepository';
-import ReviewService from '@repo/usecase/src/reviewService';
 import { useRouter } from 'next/navigation';
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { writeReviewPost, editReviewPost } from './action';
 
-const reviewService = new ReviewService({
-  reviewRepository: new ReviewAPIRepository(),
-});
+const CATEGORIES: CommunityDessertReviewCategory[] = [
+  '입터짐 조심',
+  '신상템 추천',
+  '세일 정보',
+  '웰시 디저트',
+  '내돈내산',
+  '핫플레이스',
+];
 
 interface Props {
   initialReview?: Review;
@@ -299,7 +303,7 @@ export default function ReviewWriteForm({ initialReview }: Props) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !editorRef.current) {
+    if (!user || !editorRef.current || !selectedCategory) {
       return;
     }
 
@@ -307,38 +311,41 @@ export default function ReviewWriteForm({ initialReview }: Props) {
       // 에디터 내용을 파싱하여 ReviewContent[] 형식으로 변환
       const parsedContents = parseEditorContents();
 
-      const data = {
+      const requestData = {
         userId: user.id,
         title,
         contents: parsedContents,
-        category: selectedCategory!,
+        category: selectedCategory,
         place: {
           name: space,
         },
         imageFiles: uploadFiles,
       };
 
-      let id = '';
-
+      let result;
       if (initialReview) {
-        await reviewService.edit({ id: initialReview.id, ...data });
-        id = initialReview.id;
+        result = await editReviewPost({
+          id: initialReview.id,
+          ...requestData,
+        });
       } else {
-        const response = await reviewService.write(data);
-        id = response.id;
+        result = await writeReviewPost(requestData);
       }
 
-      router.replace(`${NavigationPathGroup.ReviewDetail}${id}`);
+      if (result.success) {
+        router.replace(`${NavigationPathGroup.ReviewDetail}${result.data?.id}`);
+      } else {
+        console.error('리뷰 저장 실패');
+      }
     } catch (error) {
       console.error('리뷰 저장 실패:', error);
-      // 에러 처리 로직
     }
   };
 
   return (
-    <form className="flex flex-col h-full" onSubmit={handleSubmit}>
+    <form className="flex h-full flex-col" onSubmit={handleSubmit}>
       {/* 상단 헤더 */}
-      <div className="flex items-center justify-end px-5 py-4 border-b bg-white h-[52px] flex-shrink-0">
+      <div className="flex h-[52px] flex-shrink-0 items-center justify-end border-b bg-white px-5 py-4">
         <div className="flex items-center gap-4">
           {/* 주제 드롭다운 */}
           <div className="relative">
@@ -352,12 +359,12 @@ export default function ReviewWriteForm({ initialReview }: Props) {
             </button>
 
             {isDropdownOpen && (
-              <div className="absolute top-full right-0 mt-1 bg-white shadow-lg rounded-lg py-2 z-10">
-                {reviewService.categories.map((category) => (
+              <div className="absolute right-0 top-full z-10 mt-1 rounded-lg bg-white py-2 shadow-lg">
+                {CATEGORIES.map((category) => (
                   <button
                     key={category}
                     onClick={() => handleCategorySelect(category)}
-                    className="w-full whitespace-nowrap px-4 py-2 text-left hover:bg-gray-100 text-[8px] leading-[130%] tracking-[-0.24px]"
+                    className="w-full whitespace-nowrap px-4 py-2 text-left text-[8px] leading-[130%] tracking-[-0.24px] hover:bg-gray-100"
                   >
                     {category}
                   </button>
@@ -375,7 +382,7 @@ export default function ReviewWriteForm({ initialReview }: Props) {
               className="hidden"
             />
             <span
-              className="text-gray-600 cursor-pointer text-[16px] leading-[130%]"
+              className="cursor-pointer text-[16px] leading-[130%] text-gray-600"
               onClick={handleImageClick}
             >
               사진
@@ -384,10 +391,10 @@ export default function ReviewWriteForm({ initialReview }: Props) {
           <button
             type="submit"
             disabled={!isFormValid}
-            className={`px-[9.106px] py-[4.553px] rounded-full text-[14px] font-semibold leading-[130%] transition-colors ${
+            className={`rounded-full px-[9.106px] py-[4.553px] text-[14px] font-semibold leading-[130%] transition-colors ${
               isFormValid
-                ? 'bg-[#F9B950] text-white cursor-pointer'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                ? 'cursor-pointer bg-[#F9B950] text-white'
+                : 'cursor-not-allowed bg-gray-300 text-gray-500'
             }`}
           >
             업로드
@@ -396,14 +403,14 @@ export default function ReviewWriteForm({ initialReview }: Props) {
       </div>
 
       {/* 메인 폼 영역 */}
-      <div className="flex flex-col bg-white flex-grow overflow-auto">
+      <div className="flex flex-grow flex-col overflow-auto bg-white">
         {/* 제목 입력 */}
         <div className="relative flex-shrink-0">
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-5 py-4 text-[12px] focus:outline-none placeholder:text-gray-400"
+            className="w-full px-5 py-4 text-[12px] placeholder:text-gray-400 focus:outline-none"
             placeholder="제목"
           />
           <div className="absolute bottom-0 left-5 right-5 h-[1px] bg-gray-200" />
@@ -415,7 +422,7 @@ export default function ReviewWriteForm({ initialReview }: Props) {
             type="text"
             value={space}
             onChange={(e) => setSpace(e.target.value)}
-            className="w-full px-5 py-4 h-[48px] text-[12px] focus:outline-none placeholder:text-gray-400"
+            className="h-[48px] w-full px-5 py-4 text-[12px] placeholder:text-gray-400 focus:outline-none"
             placeholder="장소"
           />
           <div className="absolute bottom-0 left-5 right-5 h-[1px] bg-gray-200" />
@@ -425,7 +432,7 @@ export default function ReviewWriteForm({ initialReview }: Props) {
         <div
           ref={editorRef}
           contentEditable
-          className="w-full px-5 py-4 text-[12px] focus:outline-none flex-grow overflow-y-auto editor-placeholder editor-content"
+          className="editor-placeholder editor-content w-full flex-grow overflow-y-auto px-5 py-4 text-[12px] focus:outline-none"
           data-placeholder="디저트샵 리뷰를 자유롭게 남겨주세요!"
           onFocus={(e) => {
             // 빈 에디터에 포커스가 갔을 때 p 태그 생성
