@@ -3,8 +3,6 @@
 import { UserContext } from '@/contexts/UserContext';
 import IconChevronDown from '@repo/design-system/components/icons/IconChevronDown';
 import type { Mate } from '@repo/entity/src/mate';
-import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
-import MateService from '@repo/usecase/src/mateService';
 import Image from 'next/image';
 import { useContext, useState } from 'react';
 
@@ -14,10 +12,7 @@ import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import Modal from '@repo/design-system/components/Modal';
 import { Button } from '@repo/ui/components/button';
 import { MateDetailContext } from '../../_contexts/MateDetailContext';
-
-const mateService = new MateService({
-  mateRepository: new MateAPIRepository(),
-});
+import { acceptMateRequest, rejectMateRequest } from './action';
 
 interface Props {
   waitList: Mate[];
@@ -43,12 +38,17 @@ export default function CurrentApplyList({ waitList }: Props) {
     };
 
     const handleAccept = async () => {
-      await mateService.acceptMyTeamMember({
+      const result = await acceptMateRequest({
         creatorUserId: user.id,
         userId: mate.userId,
         mateId: ownerMate.id,
       });
-      closeModal();
+
+      if (result.success) {
+        closeModal();
+      } else {
+        console.error('Failed to accept mate request');
+      }
     };
 
     push('modal', {
@@ -57,13 +57,13 @@ export default function CurrentApplyList({ waitList }: Props) {
           buttons={
             <>
               <Button
-                className="w-full py-3 text-white text-center rounded-[100px] transition-colors bg-[#FFB700] hover:bg-[#FFB700]/90"
+                className="w-full rounded-[100px] bg-[#FFB700] py-3 text-center text-white transition-colors hover:bg-[#FFB700]/90"
                 onClick={handleAccept}
               >
                 수락하기
               </Button>
               <Button
-                className="w-full py-3 text-white text-center rounded-[100px] transition-colors bg-[#898989] hover:bg-[#898989]/90"
+                className="w-full rounded-[100px] bg-[#898989] py-3 text-center text-white transition-colors hover:bg-[#898989]/90"
                 onClick={closeModal}
               >
                 돌아가기
@@ -88,12 +88,17 @@ export default function CurrentApplyList({ waitList }: Props) {
     };
 
     const handleReject = async () => {
-      await mateService.rejectMyTeamMember({
+      const result = await rejectMateRequest({
         creatorUserId: user.id,
         userId: mate.userId,
         mateId: ownerMate.id,
       });
-      closeModal();
+
+      if (result.success) {
+        closeModal();
+      } else {
+        console.error('Failed to reject mate request');
+      }
     };
 
     push('modal', {
@@ -102,13 +107,13 @@ export default function CurrentApplyList({ waitList }: Props) {
           buttons={
             <>
               <Button
-                className="w-full py-3 text-white text-center rounded-[100px] font-medium transition-colors bg-[#FFB700] hover:bg-[#FFB700]/90"
+                className="w-full rounded-[100px] bg-[#FFB700] py-3 text-center font-medium text-white transition-colors hover:bg-[#FFB700]/90"
                 onClick={handleReject}
               >
                 거절하기
               </Button>
               <Button
-                className="w-full py-3 text-white text-center rounded-[100px] font-medium transition-colors bg-[#898989] hover:bg-[#898989]/90"
+                className="w-full rounded-[100px] bg-[#898989] py-3 text-center font-medium text-white transition-colors hover:bg-[#898989]/90"
                 onClick={closeModal}
               >
                 돌아가기
@@ -132,17 +137,19 @@ export default function CurrentApplyList({ waitList }: Props) {
   return (
     <>
       <div
-        className="flex items-center justify-between py-4 cursor-pointer"
+        className="flex cursor-pointer items-center justify-between py-4"
         onClick={handleClick}
       >
         <span className="font-semibold">요청 현황</span>
         <IconChevronDown
-          className={`transform transition-transform duration-200 ${isOpen ? 'rotate-[-90deg]' : ''}`}
+          className={`transform transition-transform duration-200 ${
+            isOpen ? 'rotate-[-90deg]' : ''
+          }`}
         />
       </div>
 
       <div
-        className={`transition-all duration-200 overflow-hidden ${
+        className={`overflow-hidden transition-all duration-200 ${
           isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
@@ -160,19 +167,19 @@ export default function CurrentApplyList({ waitList }: Props) {
                 height={32}
                 className="rounded-full"
               />
-              <span className="text-[#393939] text-[10px] font-semibold leading-normal tracking-[-0.24px]">
+              <span className="text-[10px] font-semibold leading-normal tracking-[-0.24px] text-[#393939]">
                 {wait.nickname}
               </span>
             </div>
             <div className="flex gap-2">
               <button
-                className="px-4 py-1 text-[10px] text-white bg-[#F5B01C] rounded-full"
+                className="rounded-full bg-[#F5B01C] px-4 py-1 text-[10px] text-white"
                 onClick={() => handleClickReceive(wait)}
               >
                 수락
               </button>
               <button
-                className="px-4 py-1 text-[10px] text-white bg-[#CD7F32] rounded-full"
+                className="rounded-full bg-[#CD7F32] px-4 py-1 text-[10px] text-white"
                 onClick={() => handleClickReject(wait)}
               >
                 거절
