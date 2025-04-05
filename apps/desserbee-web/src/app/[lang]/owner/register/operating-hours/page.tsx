@@ -310,11 +310,13 @@ export default function RegisterOperatingHoursPage() {
                     </div>
                     {breakTimes && (
                       <div>
-                        휴게시간 {breakTimes[0].startTime}~
-                        {breakTimes[0].endTime}
+                        휴게시간 {formatTimeTo12Hour(breakTimes[0].startTime)}~
+                        {formatTimeTo12Hour(breakTimes[0].endTime)}
                       </div>
                     )}
-                    {lastOrderTime && <div>라스트 오더 {lastOrderTime}</div>}
+                    {lastOrderTime && (
+                      <div>라스트 오더 {formatTimeTo12Hour(lastOrderTime)}</div>
+                    )}
                   </div>
                 </div>
                 <button
