@@ -92,7 +92,6 @@ export function OperatingHoursEditModal({
   // 초기값 설정
   useEffect(() => {
     if (typeof editableWeekdays === 'string') {
-      // 단일 요일 수정인 경우
       const targetDay = initialOperatingHours.find(
         (item) => item.dayOfWeek === editableWeekdays,
       );
@@ -121,13 +120,16 @@ export function OperatingHoursEditModal({
             targetDay.regularClosureType === 'WEEKLY' ? '매주' : '매월',
           );
           if (targetDay.regularClosureWeeks) {
-            const weeks = targetDay.regularClosureWeeks.split(',').map(String);
-            setSelectedWeeks(new Set(weeks));
+            const weeks = targetDay.regularClosureWeeks
+              .split(',')
+              .map(Number)
+              .sort((a, b) => a - b)
+              .map(String);
+            setSelectedWeeksState(new Set(weeks));
           }
         }
       }
     } else {
-      // 다중 요일 수정인 경우
       const targetDay = initialOperatingHours.find(
         (item) =>
           editableWeekdays.has(item.dayOfWeek) && item.regularClosureType,
@@ -138,8 +140,12 @@ export function OperatingHoursEditModal({
           targetDay.regularClosureType === 'WEEKLY' ? '매주' : '매월',
         );
         if (targetDay.regularClosureWeeks) {
-          const weeks = targetDay.regularClosureWeeks.split(',').map(String);
-          setSelectedWeeks(new Set(weeks));
+          const weeks = targetDay.regularClosureWeeks
+            .split(',')
+            .map(Number)
+            .sort((a, b) => a - b)
+            .map(String);
+          setSelectedWeeksState(new Set(weeks));
         }
       }
     }
@@ -281,7 +287,11 @@ export function OperatingHoursEditModal({
                   { value: '4', label: '넷째 주' },
                   { value: '5', label: '다섯째 주' },
                 ]}
-                value={Array.from(selectedWeeks)}
+                value={
+                  typeof editableWeekdays === 'string'
+                    ? Array.from(selectedWeeks)
+                    : undefined
+                }
                 onChange={(selectedValues) => {
                   const newSet = new Set(selectedValues);
                   setSelectedWeeks(newSet);
