@@ -123,7 +123,11 @@ export default function RegisterMenuPage() {
               <div className="text-sm font-semibold">메뉴</div>
               <div className="text-xs text-[#898989]">{menus.length}개</div>
             </div>
-            <AddButton onClick={openMenuAddModal} text="새 메뉴 추가" />
+            <AddButton
+              onClick={openMenuAddModal}
+              text="새 메뉴 추가"
+              clasName="max-w-[130px]"
+            />
           </div>
         )}
       </div>
