@@ -1,15 +1,10 @@
 'use client';
 
-import MateAPIRepository from "@repo/infrastructures/src/repositories/mateAPIRepository";
-import { Button } from "@repo/ui/components/button";
-import MateService from "@repo/usecase/src/mateService";
-import { MateDetailContext } from "../../_contexts/MateDetailContext";
-import { useContext, useMemo, useState } from "react";
-import { UserContext } from "@/contexts/UserContext";
-
-const mateService = new MateService({
-  mateRepository: new MateAPIRepository(),
-});
+import { Button } from '@repo/ui/components/button';
+import { MateDetailContext } from '../../_contexts/MateDetailContext';
+import { useContext, useMemo, useState } from 'react';
+import { UserContext } from '@/contexts/UserContext';
+import { applyMate, cancelApplyMate } from './action';
 
 export default function MateApplyButton() {
   const { user } = useContext(UserContext);
@@ -26,14 +21,20 @@ export default function MateApplyButton() {
       setLoading(true);
 
       if (mate.applyStatus === 'NONE') {
-        await mateService.applyMate({ mateId: mate.id, userId: user.id });
+        const result = await applyMate(mate.id, user.id);
+        if (!result.success) {
+          console.error('Failed to apply mate');
+        }
       } else if (mate.applyStatus === 'PENDING') {
-        await mateService.cancelApplyMate({ mateId: mate.id, userId: user.id });
+        const result = await cancelApplyMate(mate.id, user.id);
+        if (!result.success) {
+          console.error('Failed to cancel apply mate');
+        }
       }
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const text = useMemo(() => {
     switch (mate.applyStatus) {
@@ -52,11 +53,11 @@ export default function MateApplyButton() {
 
   return (
     <Button
-      className="px-4 py-1 text-sm text-center text-white bg-[#F5B01C] rounded-full"
+      className="rounded-full bg-[#F5B01C] px-4 py-1 text-center text-sm text-white"
       isLoading={isLoading}
       onClick={handleClick}
     >
       {text}
     </Button>
-  )
+  );
 }
