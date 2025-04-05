@@ -1,18 +1,11 @@
 'use client';
 
-import { revalidatePathAction } from '@/actions/revalidatePathAction';
 import { UserContext } from '@/contexts/UserContext';
-import { RouteGroup } from '@repo/entity/src/navigation';
-import ReviewAPIRepository from '@repo/infrastructures/src/repositories/reviewAPIRepository';
 import { Button } from '@repo/ui/components/button';
-import ReviewService from '@repo/usecase/src/reviewService';
 import Image from 'next/image';
 import { useContext, useState } from 'react';
 import { ReviewDetailContext } from '../../_contexts/ReviewDetailContext';
-
-const reviewService = new ReviewService({
-  reviewRepository: new ReviewAPIRepository(),
-});
+import { createReviewComment } from './action';
 
 export default function ReviewCommentForm() {
   const { review } = useContext(ReviewDetailContext);
@@ -33,17 +26,17 @@ export default function ReviewCommentForm() {
     setIsSubmitting(true);
 
     try {
-      await reviewService.createReply({
-        id: review.id,
-        userId: user?.id,
+      const result = await createReviewComment({
+        reviewId: review.id,
+        userId: user.id,
         content: comment,
       });
 
-      await revalidatePathAction(RouteGroup.ReviewDetail, 'page');
-
-      setComment('');
-    } catch (error) {
-      console.error('댓글 등록 실패:', error);
+      if (result.success) {
+        setComment('');
+      } else {
+        console.error('댓글 등록 실패');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -66,7 +59,7 @@ export default function ReviewCommentForm() {
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="댓글을 입력해주세요."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none focus:outline-none focus:border-[#FDB813] min-h-[60px] pb-7"
+              className="min-h-[60px] w-full resize-none rounded-lg border border-gray-300 px-3 py-2 pb-7 text-sm focus:border-[#FDB813] focus:outline-none"
               disabled={isSubmitting}
               maxLength={300}
             />
@@ -77,12 +70,12 @@ export default function ReviewCommentForm() {
             </div>
           </div>
 
-          <div className="flex justify-end mt-2">
+          <div className="mt-2 flex justify-end">
             <Button
               type="submit"
               disabled={!comment.trim() || isSubmitting}
               isLoading={isSubmitting}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium ${
+              className={`rounded-full px-4 py-1.5 text-sm font-medium ${
                 comment.trim() && !isSubmitting
                   ? 'bg-[#FDB813] text-white'
                   : 'bg-gray-200 text-gray-500'
