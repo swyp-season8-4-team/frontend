@@ -74,13 +74,15 @@ export default class ReviewAPIRepository
     return this.reviewConverter.convertRawToReview(response);
   }
 
-  async write({ data }: BaseRequestData<ReviewWriteData>): Promise<Review> {
+  async write({
+    data,
+    authorization,
+  }: BaseRequestData<ReviewWriteData>): Promise<Review> {
     if (!data) {
       throw new Error('data is not set');
     }
 
     const { userId, title, contents, category, place, imageFiles } = data;
-
     const formData = new FormData();
 
     const requestData = {
@@ -100,10 +102,10 @@ export default class ReviewAPIRepository
       imageFiles.forEach((imageFile) => {
         formData.append('reviewImages', imageFile);
       });
-      console.log('----', formData.get('reviewImages'));
     }
 
     const response = await fetch<RawReviewWriteRequest, RawReview>({
+      ...(authorization && { headers: { Authorization: authorization } }),
       method: 'POST',
       url: `${this.endpoint}/review`,
       headers: {
@@ -117,15 +119,14 @@ export default class ReviewAPIRepository
 
   async edit({
     data,
+    authorization,
   }: BaseRequestData<ReviewWriteData & ReviewUpdateData>): Promise<unknown> {
     if (!data) {
       throw new Error('data is not set');
     }
 
     const { id, ...rest } = data;
-
     const { userId, title, contents, category, place, imageFiles } = rest;
-
     const formData = new FormData();
 
     const requestData = {
@@ -148,6 +149,7 @@ export default class ReviewAPIRepository
     }
 
     const response = await fetch<void, unknown>({
+      ...(authorization && { headers: { Authorization: authorization } }),
       method: 'PATCH',
       url: `${this.endpoint}/review/${id}`,
       headers: {
@@ -159,18 +161,19 @@ export default class ReviewAPIRepository
     return response;
   }
 
-  async delete({ data }: BaseRequestData<ReviewUpdateData>): Promise<unknown> {
+  async delete({
+    data,
+    authorization,
+  }: BaseRequestData<ReviewUpdateData>): Promise<unknown> {
     if (!data) {
       throw new Error('data is not set');
     }
 
     const { id } = data;
-
-    const url = `${this.endpoint}/review/${id}`;
-
     const response = await fetch<unknown, unknown>({
+      ...(authorization && { headers: { Authorization: authorization } }),
       method: 'DELETE',
-      url: url,
+      url: `${this.endpoint}/review/${id}`,
     });
 
     return response;
@@ -214,14 +217,15 @@ export default class ReviewAPIRepository
 
   async createReply({
     data,
+    authorization,
   }: BaseRequestData<ReviewReplyRequest>): Promise<ReviewReply> {
     if (!data) {
       throw new Error('data is not set');
     }
 
     const { id, userId, content } = data;
-
     const response = await fetch<RawReviewReplyRequest, RawReviewReply>({
+      ...(authorization && { headers: { Authorization: authorization } }),
       data: {
         userUuid: userId,
         content,

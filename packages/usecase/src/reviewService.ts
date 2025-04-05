@@ -73,7 +73,11 @@ export default class ReviewService {
       throw new Error('ReviewRepository is not set');
     }
 
-    const response = await this.reviewRepository.createReply({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.reviewRepository.createReply({
+      data,
+      authorization,
+    });
 
     return response;
   }
@@ -95,7 +99,8 @@ export default class ReviewService {
       throw new Error('reviewRepository is not set');
     }
 
-    const response = await this.reviewRepository.write({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.reviewRepository.write({ data, authorization });
 
     return response;
   }
@@ -105,7 +110,8 @@ export default class ReviewService {
       throw new Error('ReviewRepository is not set');
     }
 
-    const response = await this.reviewRepository.edit({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.reviewRepository.edit({ data, authorization });
 
     return response;
   }
@@ -115,7 +121,11 @@ export default class ReviewService {
       throw new Error('ReviewRepository is not set');
     }
 
-    const response = await this.reviewRepository.delete({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.reviewRepository.delete({
+      data,
+      authorization,
+    });
 
     return response;
   }
