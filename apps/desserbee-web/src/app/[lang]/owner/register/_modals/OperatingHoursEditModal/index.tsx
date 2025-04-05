@@ -19,11 +19,11 @@ import IconX from '@repo/design-system/components/icons/IconX';
 interface BatchTimeFormData {
   openingTime: string;
   closingTime: string;
-  breakTimes: {
+  breakTimes?: {
     startTime: string;
     endTime: string;
   }[];
-  lastOrderTime: string;
+  lastOrderTime?: string;
 }
 
 interface OperatingHoursEditModalProps {
@@ -134,7 +134,6 @@ export function OperatingHoursEditModal({
   const handleSubmit = () => {
     const values = getValues();
     const updatedOperatingHours = initialOperatingHours.map((item) => {
-      // currentEditableWeekdays에 해당하는 요일만 수정
       if (
         typeof currentEditableWeekdays === 'string'
           ? currentEditableWeekdays === item.dayOfWeek
@@ -144,20 +143,12 @@ export function OperatingHoursEditModal({
           ...item,
           openingTime: values.openingTime,
           closingTime: values.closingTime,
-          breakTimes: isOffHourInputOpen
-            ? [
-                {
-                  startTime: values.breakTimes[0].startTime,
-                  endTime: values.breakTimes[0].endTime,
-                },
-              ]
-            : item.breakTimes,
+          breakTimes: isOffHourInputOpen ? values.breakTimes : undefined,
           lastOrderTime: isLastOrderInputOpen
             ? values.lastOrderTime
-            : item.lastOrderTime,
+            : undefined,
         };
       }
-      // currentEditableWeekdays에 해당하지 않는 요일은 그대로 유지
       return item;
     });
 
@@ -252,7 +243,10 @@ export function OperatingHoursEditModal({
                   <div>휴게시간</div>
                   <button
                     type="button"
-                    onClick={() => setIsOffHourInputOpen(false)}
+                    onClick={() => {
+                      setIsOffHourInputOpen(false);
+                      setValue('breakTimes', undefined);
+                    }}
                     className="h-[14.73px] w-[14.73px]"
                   >
                     <IconX className="text-neutral-40 h-full w-full" />
@@ -297,7 +291,10 @@ export function OperatingHoursEditModal({
                   <div>라스트 오더</div>
                   <button
                     type="button"
-                    onClick={() => setIsLastOrderInputOpen(false)}
+                    onClick={() => {
+                      setIsLastOrderInputOpen(false);
+                      setValue('lastOrderTime', undefined);
+                    }}
                     className="h-[14.73px] w-[14.73px]"
                   >
                     <IconX className="text-neutral-40 h-full w-full" />
