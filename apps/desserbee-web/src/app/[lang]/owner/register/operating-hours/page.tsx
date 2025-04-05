@@ -92,7 +92,7 @@ export default function RegisterOperatingHoursPage() {
     },
   ]);
 
-  const { register, watch, setValue } = useForm<BatchTimeFormData>({
+  const { register, watch, setValue, getValues } = useForm<BatchTimeFormData>({
     defaultValues: {
       openingTime: '09:00',
       closingTime: '22:00',
@@ -113,7 +113,27 @@ export default function RegisterOperatingHoursPage() {
     field: keyof BatchTimeFormData,
     value: string,
   ) => {
-    setValue(field, value);
+    setValue(field, value, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  };
+
+  const handleBatchTimeApply = () => {
+    const values = getValues();
+
+    setOperatingHours((prev) =>
+      prev.map((item) => {
+        if (selectedWeekDays.has(item.dayOfWeek)) {
+          return {
+            ...item,
+            openingTime: values.openingTime,
+            closingTime: values.closingTime,
+          };
+        }
+        return item;
+      }),
+    );
   };
 
   const handleTimePickerToggle = (id: string) => {
@@ -158,28 +178,6 @@ export default function RegisterOperatingHoursPage() {
 
   const closeMenuAddModal = () => {
     pop('modal');
-  };
-
-  const handleBatchTimeApply = () => {
-    const { openingTime, closingTime } = watch();
-
-    // if (openingTime >= closingTime) {
-    //   alert('오픈 시간은 마감 시간 이전으로 설정해주세요');
-    //   return;
-    // }
-
-    setOperatingHours((prev) =>
-      prev.map((item) => {
-        if (selectedWeekDays.has(item.dayOfWeek)) {
-          return {
-            ...item,
-            openingTime,
-            closingTime,
-          };
-        }
-        return item;
-      }),
-    );
   };
 
   useEffect(() => {
