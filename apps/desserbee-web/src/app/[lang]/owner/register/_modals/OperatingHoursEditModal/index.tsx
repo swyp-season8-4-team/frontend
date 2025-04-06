@@ -274,7 +274,7 @@ export function OperatingHoursEditModal({
               }
             : {
                 regularClosureType:
-                  selectedCycle === '매주'
+                  selectedCycle === '매주' && !isWorkingdaySetting
                     ? ('WEEKLY' as const)
                     : ('MONTHLY' as const),
                 regularClosureWeeks:
@@ -372,10 +372,12 @@ export function OperatingHoursEditModal({
                   const newSet = new Set(selectedValues);
                   setSelectedWeeks(newSet);
                 }}
-                disabled={selectedCycle === '매주'}
+                disabled={selectedCycle === '매주' && !isWorkingdaySetting}
                 placeholder="주 선택"
                 selectClassName={cn(
-                  selectedCycle === '매주' ? 'opacity-50' : '',
+                  selectedCycle === '매주' && !isWorkingdaySetting
+                    ? 'opacity-50'
+                    : '',
                 )}
               />
             </div>
@@ -383,8 +385,15 @@ export function OperatingHoursEditModal({
         )}
 
         <div className="w-full">
-          <div className="py-base border-b border-[#EFEDEB]">
-            <div className="mb-[13px] flex w-full justify-start text-sm">
+          <div className={cn('py-base border-b border-[#EFEDEB]')}>
+            <div
+              className={cn(
+                selectedCycle === '매주' &&
+                  !isWorkingdaySetting &&
+                  'opacity-50',
+                'mb-[13px] flex w-full items-center justify-between text-sm',
+              )}
+            >
               운영시간
             </div>
             <div className="flex w-full items-center gap-[3px] rounded-[6px]">
@@ -398,6 +407,7 @@ export function OperatingHoursEditModal({
                 onToggle={handleTimePickerToggle}
                 selectClassName="w-full"
                 pickerClassName="w-full"
+                disabled={selectedCycle === '매주' && !isWorkingdaySetting}
               />
               <div>~</div>
               <TimePicker
@@ -410,16 +420,26 @@ export function OperatingHoursEditModal({
                 onToggle={handleTimePickerToggle}
                 selectClassName="w-full"
                 pickerClassName="w-full"
+                disabled={selectedCycle === '매주' && !isWorkingdaySetting}
               />
             </div>
           </div>
           {isOffHourInputOpen && (
             <div className="py-base border-b border-[#EFEDEB]">
-              <div className="mb-[13px] flex w-full items-center justify-between text-sm">
+              <div
+                className={cn(
+                  selectedCycle === '매주' &&
+                    !isWorkingdaySetting &&
+                    'opacity-50',
+                  'mb-[13px] flex w-full items-center justify-between text-sm',
+                )}
+              >
                 <div>휴게시간</div>
                 <button
                   type="button"
                   onClick={() => {
+                    if (selectedCycle === '매주' && !isWorkingdaySetting)
+                      return;
                     setIsOffHourInputOpen(false);
                     setValue('breakTimes', undefined);
                   }}
@@ -442,6 +462,7 @@ export function OperatingHoursEditModal({
                   onToggle={handleTimePickerToggle}
                   selectClassName="w-full"
                   pickerClassName="w-full"
+                  disabled={selectedCycle === '매주' && !isWorkingdaySetting}
                 />
                 <div>~</div>
                 <TimePicker
@@ -457,17 +478,27 @@ export function OperatingHoursEditModal({
                   onToggle={handleTimePickerToggle}
                   selectClassName="w-full"
                   pickerClassName="w-full"
+                  disabled={selectedCycle === '매주' && !isWorkingdaySetting}
                 />
               </div>
             </div>
           )}
           {isLastOrderInputOpen && (
             <div className="py-base">
-              <div className="mb-[13px] flex w-full items-center justify-between text-sm">
+              <div
+                className={cn(
+                  selectedCycle === '매주' &&
+                    !isWorkingdaySetting &&
+                    'opacity-50',
+                  'mb-[13px] flex w-full items-center justify-between text-sm',
+                )}
+              >
                 <div>라스트 오더</div>
                 <button
                   type="button"
                   onClick={() => {
+                    if (selectedCycle === '매주' && !isWorkingdaySetting)
+                      return;
                     setIsLastOrderInputOpen(false);
                     setValue('lastOrderTime', undefined);
                   }}
@@ -490,12 +521,20 @@ export function OperatingHoursEditModal({
                   onToggle={handleTimePickerToggle}
                   selectClassName="w-1/2"
                   pickerClassName="w-1/2"
+                  disabled={selectedCycle === '매주' && !isWorkingdaySetting}
                 />
               </div>
             </div>
           )}
           {(!isOffHourInputOpen || !isLastOrderInputOpen) && (
-            <div className="py-base">
+            <div
+              className={cn(
+                'py-base',
+                selectedCycle === '매주' &&
+                  !isWorkingdaySetting &&
+                  'opacity-50',
+              )}
+            >
               <div className="mb-[13px] flex w-full justify-start text-sm">
                 추가
               </div>
@@ -504,14 +543,22 @@ export function OperatingHoursEditModal({
                   <AddButton
                     text="휴게시간"
                     clasName="font-medium w-1/2"
-                    onClick={() => setIsOffHourInputOpen(true)}
+                    onClick={() => {
+                      if (selectedCycle === '매주' && !isWorkingdaySetting)
+                        return;
+                      setIsOffHourInputOpen(true);
+                    }}
                   />
                 )}
                 {!isLastOrderInputOpen && (
                   <AddButton
                     text="라스트 오더"
                     clasName="font-medium  w-1/2"
-                    onClick={() => setIsLastOrderInputOpen(true)}
+                    onClick={() => {
+                      if (selectedCycle === '매주' && !isWorkingdaySetting)
+                        return;
+                      setIsLastOrderInputOpen(true);
+                    }}
                   />
                 )}
               </div>
