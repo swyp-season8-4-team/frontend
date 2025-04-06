@@ -12,10 +12,11 @@ import IconLocationOutline from '@repo/design-system/components/icons/IconLocati
 
 export default function RegisterCompletePage() {
   const router = useRouter();
-  const { storeData, completeStep, goToNextStep } = useRegister();
+  const { storeData } = useRegister();
 
   // 컴포넌트 마운트 시 초기화
   useEffect(() => {
+    console.log(storeData);
     return () => {
       // 컴포넌트 언마운트 시 정리 작업 (선택 사항)
     };

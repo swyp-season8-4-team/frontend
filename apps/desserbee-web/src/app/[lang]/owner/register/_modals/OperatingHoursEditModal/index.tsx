@@ -198,14 +198,21 @@ export function OperatingHoursEditModal({
           lastOrderTime: isLastOrderInputOpen
             ? values.lastOrderTime
             : undefined,
-          regularClosureType:
-            selectedCycle === '매주'
-              ? ('WEEKLY' as const)
-              : ('MONTHLY' as const),
-          regularClosureWeeks:
-            selectedCycle === '매월'
-              ? Array.from(selectedWeeks).join(',')
-              : undefined,
+          ...(isWorkingdaySetting
+            ? {
+                regularClosureType: undefined,
+                regularClosureWeeks: undefined,
+              }
+            : {
+                regularClosureType:
+                  selectedCycle === '매주'
+                    ? ('WEEKLY' as const)
+                    : ('MONTHLY' as const),
+                regularClosureWeeks:
+                  selectedCycle === '매월'
+                    ? Array.from(selectedWeeks).join(',')
+                    : undefined,
+              }),
         };
       }
       return item;
