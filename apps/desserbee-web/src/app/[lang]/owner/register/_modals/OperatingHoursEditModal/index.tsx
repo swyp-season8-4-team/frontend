@@ -182,6 +182,75 @@ export function OperatingHoursEditModal({
     setActiveTimePicker(id);
   };
 
+  const handleReset = () => {
+    if (typeof editableWeekdays === 'string') {
+      const targetDay = initialOperatingHours.find(
+        (item) => item.dayOfWeek === editableWeekdays,
+      );
+
+      if (targetDay) {
+        // 운영시간 초기화
+        setValue('openingTime', targetDay.openingTime);
+        setValue('closingTime', targetDay.closingTime);
+
+        // 휴게시간 초기화
+        if (targetDay.breakTimes && targetDay.breakTimes.length > 0) {
+          setValue('breakTimes', [
+            {
+              startTime: targetDay.breakTimes[0].startTime,
+              endTime: targetDay.breakTimes[0].endTime,
+            },
+          ]);
+          setIsOffHourInputOpen(true);
+        } else {
+          setValue('breakTimes', undefined);
+          setIsOffHourInputOpen(false);
+        }
+
+        // 라스트오더 초기화
+        if (targetDay.lastOrderTime) {
+          setValue('lastOrderTime', targetDay.lastOrderTime);
+          setIsLastOrderInputOpen(true);
+        } else {
+          setValue('lastOrderTime', undefined);
+          setIsLastOrderInputOpen(false);
+        }
+
+        // 휴무일 관련 초기화
+        if (targetDay.regularClosureType) {
+          setIsWorkingDaySetting(false);
+          setSelectedCycle(
+            targetDay.regularClosureType === 'WEEKLY' ? '매주' : '매월',
+          );
+          if (targetDay.regularClosureWeeks) {
+            const weeks = targetDay.regularClosureWeeks
+              .split(',')
+              .map(Number)
+              .sort((a, b) => a - b)
+              .map(String);
+            setSelectedWeeksState(new Set(weeks));
+          }
+        } else {
+          setIsWorkingDaySetting(true);
+          setSelectedCycle('매주');
+          setSelectedWeeksState(new Set());
+        }
+      }
+    } else {
+      // 여러 요일이 선택된 경우 기본값으로 초기화
+      setValue('openingTime', '09:00');
+      setValue('closingTime', '22:00');
+      setValue('breakTimes', [{ startTime: '14:00', endTime: '15:00' }]);
+      setValue('lastOrderTime', '21:00');
+
+      setIsWorkingDaySetting(true);
+      setIsOffHourInputOpen(false);
+      setIsLastOrderInputOpen(false);
+      setSelectedCycle('매주');
+      setSelectedWeeksState(new Set());
+    }
+  };
+
   const handleSubmit = () => {
     const values = getValues();
     const updatedOperatingHours = initialOperatingHours.map((item) => {
@@ -450,13 +519,22 @@ export function OperatingHoursEditModal({
           )}
         </div>
       </form>
-      <button
-        type="button"
-        onClick={handleSubmit}
-        className="bg-secondary-40 rounded-[6px] px-[13px] py-[10px] text-sm font-medium text-white"
-      >
-        수정
-      </button>
+      <div className="flex gap-2 px-4 py-2">
+        <button
+          type="button"
+          onClick={handleReset}
+          className="border-secondary-40 text-secondary-40 flex-1 rounded-[6px] border px-[13px] py-[10px] text-sm font-medium"
+        >
+          초기화
+        </button>
+        <button
+          type="button"
+          onClick={handleSubmit}
+          className="bg-secondary-40 flex-1 rounded-[6px] px-[13px] py-[10px] text-sm font-medium text-white"
+        >
+          수정
+        </button>
+      </div>
     </div>
   );
 }
