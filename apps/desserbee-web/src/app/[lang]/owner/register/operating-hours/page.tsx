@@ -232,7 +232,7 @@ export default function RegisterOperatingHoursPage() {
         </div>
       </div>
       {/* 각 요일 확인 */}
-      <div className="px-base">
+      <div className="px-base text-nowrap">
         <div className="w-full flex-col gap-[9px]">
           {operatingHours.map(
             ({
@@ -264,7 +264,7 @@ export default function RegisterOperatingHoursPage() {
                   {/* 결과 */}
                   <div className="flex-col text-sm">
                     {regularClosureType && (
-                      <div>
+                      <div className="whitespace-pre-wrap break-keep">
                         {convertClosureTypeToKorean(regularClosureType)}{' '}
                         {regularClosureWeeks &&
                           convertWeekNumberToKorean(regularClosureWeeks)}{' '}
