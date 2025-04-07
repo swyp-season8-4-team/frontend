@@ -58,6 +58,7 @@ export interface RawSignInResponse extends JWTTokens {
   tokenType: string;
   expiresIn: number;
   profileImageUrl: string;
+  deviceId: string;
 }
 
 export interface SignInResponse
