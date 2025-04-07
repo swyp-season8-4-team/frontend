@@ -15,23 +15,29 @@ export default function CommunityMateCardBookmarkButton({ mateId }: Props) {
   const { user } = useContext(UserContext);
   const [isBookmarked, setIsBookmarked] = useState(false);
 
-  const handleClick = useCallback(async () => {
-    if (!user) {
-      return;
-    }
+  const handleClick = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
 
-    setIsBookmarked((prev) => !prev);
+      if (!user) {
+        return;
+      }
 
-    const result = !isBookmarked
-      ? await saveMateBookmark({ id: mateId, userId: user.id })
-      : await cancelMateBookmark({ id: mateId, userId: user.id });
-
-    if (!result.success) {
-      // 실패 시 상태 되돌리기
       setIsBookmarked((prev) => !prev);
-      console.error('Failed to update bookmark');
-    }
-  }, [isBookmarked, mateId, user]);
+
+      const result = !isBookmarked
+        ? await saveMateBookmark({ id: mateId, userId: user.id })
+        : await cancelMateBookmark({ id: mateId, userId: user.id });
+
+      if (!result.success) {
+        // 실패 시 상태 되돌리기
+        setIsBookmarked((prev) => !prev);
+        console.error('Failed to update bookmark');
+      }
+    },
+    [isBookmarked, mateId, user],
+  );
 
   return (
     <IconButton
