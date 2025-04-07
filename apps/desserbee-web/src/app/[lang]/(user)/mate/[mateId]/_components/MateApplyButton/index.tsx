@@ -5,10 +5,11 @@ import { MateDetailContext } from '../../_contexts/MateDetailContext';
 import { useContext, useMemo, useState } from 'react';
 import { UserContext } from '@/contexts/UserContext';
 import { applyMate, cancelApplyMate } from './action';
+import { cn } from '@repo/ui/lib/utils';
 
 export default function MateApplyButton() {
   const { user } = useContext(UserContext);
-  const { mate } = useContext(MateDetailContext);
+  const { mate, updateMateStatus } = useContext(MateDetailContext);
 
   const [isLoading, setLoading] = useState(false);
 
@@ -22,12 +23,16 @@ export default function MateApplyButton() {
 
       if (mate.applyStatus === 'NONE') {
         const result = await applyMate(mate.id, user.id);
-        if (!result.success) {
+        if (result.success) {
+          updateMateStatus('PENDING');
+        } else {
           console.error('Failed to apply mate');
         }
       } else if (mate.applyStatus === 'PENDING') {
         const result = await cancelApplyMate(mate.id, user.id);
-        if (!result.success) {
+        if (result.success) {
+          updateMateStatus('NONE');
+        } else {
           console.error('Failed to cancel apply mate');
         }
       }
@@ -51,13 +56,22 @@ export default function MateApplyButton() {
     }
   }, [mate.applyStatus]);
 
+  const isDisabled =
+    !mate.recruit ||
+    mate.applyStatus === 'APPROVED' ||
+    mate.applyStatus === 'REJECTED';
+
   return (
     <Button
-      className="rounded-full bg-[#F5B01C] px-4 py-1 text-center text-sm text-white"
+      className={cn(
+        'rounded-full px-4 py-1 text-center text-sm text-white',
+        mate.recruit ? 'bg-[#F5B01C]' : 'cursor-not-allowed bg-[#545454]',
+      )}
       isLoading={isLoading}
       onClick={handleClick}
+      disabled={isDisabled}
     >
-      {text}
+      {mate.recruit ? text : '모집완료'}
     </Button>
   );
 }

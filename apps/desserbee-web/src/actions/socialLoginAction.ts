@@ -27,11 +27,12 @@ interface ActionData {
 export default async function socialLoginAction({
   code,
   provider,
-  next,
+  // next,
 }: ActionData) {
   const response = await authService.socialSignIn({ code, provider });
 
-  const { accessToken, refreshToken, userId, isPreferenceSet } = response;
+  const { accessToken, refreshToken, userId, isPreferenceSet, deviceId } =
+    response;
 
   const cookieList = await cookies();
   const domain =
@@ -41,7 +42,19 @@ export default async function socialLoginAction({
 
   // 토큰 저장
   const decodedAccessToken = decodeJWT(accessToken);
+  const decodedRefreshToken = decodeJWT(refreshToken);
+
   let accessTokenMaxAge = 3600; // 기본값 1시간
+  let refreshTokenMaxAge = 10 * 24 * 60 * 60;
+
+  cookieList.set('deviceId', deviceId, {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: 'strict',
+    domain,
+    maxAge:
+      calculateTokenMaxAge(decodedRefreshToken?.exp) || refreshTokenMaxAge,
+  });
 
   cookieList.set('accessToken', accessToken, {
     httpOnly: true,
@@ -50,11 +63,6 @@ export default async function socialLoginAction({
     domain,
     maxAge: calculateTokenMaxAge(decodedAccessToken?.exp) || accessTokenMaxAge,
   });
-
-  // 리프레시 토큰의 만료 시간 계산
-  const decodedRefreshToken = decodeJWT(refreshToken);
-  // 기본값으로 10일 설정 (디코딩 실패 시 백업)
-  let refreshTokenMaxAge = 10 * 24 * 60 * 60;
 
   cookieList.set('refreshToken', refreshToken, {
     httpOnly: true,

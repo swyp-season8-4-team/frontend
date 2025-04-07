@@ -63,7 +63,11 @@ export default class ReviewService {
       throw new Error('ReviewRepository is not set');
     }
 
-    const response = await this.reviewRepository.getMine({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.reviewRepository.getMine({
+      data,
+      authorization,
+    });
 
     return response;
   }
@@ -89,7 +93,11 @@ export default class ReviewService {
       throw new Error('ReviewRepository is not set');
     }
 
-    const response = await this.reviewRepository.getReplyList({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.reviewRepository.getReplyList({
+      data,
+      authorization,
+    });
 
     return response;
   }

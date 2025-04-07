@@ -239,6 +239,7 @@ export default class ReviewAPIRepository
 
   async getReplyList({
     data,
+    authorization,
   }: BaseRequestData<GetReviewReplyListRequest>): Promise<GetReviewReplyListResponse> {
     if (!data) {
       throw new Error('data is not set');
@@ -249,6 +250,7 @@ export default class ReviewAPIRepository
     const url = `${this.endpoint}/review/${id}/reply`;
 
     const response = await fetch<void, RawGetReviewReplyListResponse>({
+      ...(authorization && { headers: { Authorization: authorization } }),
       method: 'GET',
       url,
       query: {
@@ -265,20 +267,76 @@ export default class ReviewAPIRepository
     };
   }
 
-  getReply(
-    data: BaseRequestData<ReviewReplyUpdateRequest>,
-  ): Promise<ReviewReply> {
-    throw new Error('Method not implemented.');
+  async getReply({
+    data,
+    authorization,
+  }: BaseRequestData<ReviewReplyUpdateRequest>): Promise<ReviewReply> {
+    if (!data) {
+      throw new Error('data is not set');
+    }
+
+    const { id, replyId } = data;
+
+    const url = `${this.endpoint}/review/${id}/reply/${replyId}`;
+
+    const response = await fetch<void, RawReviewReply>({
+      ...(authorization && { headers: { Authorization: authorization } }),
+      method: 'GET',
+      url: url,
+    });
+
+    return this.reviewConverter.convertRawToReviewReply(response);
   }
 
-  deleteReply(
-    data: BaseRequestData<Omit<unknown, 'content'>>,
-  ): Promise<unknown> {
-    throw new Error('Method not implemented.');
+  async deleteReply({
+    data,
+    authorization,
+  }: BaseRequestData<
+    Omit<ReviewReplyUpdateRequest, 'content'>
+  >): Promise<unknown> {
+    if (!data) {
+      throw new Error('data is not set');
+    }
+
+    const { id, userId, replyId } = data;
+
+    const url = `${this.endpoint}/review/${id}/reply/${replyId}`;
+
+    const response = await fetch<{ userUuid: string }, unknown>({
+      ...(authorization && { headers: { Authorization: authorization } }),
+      data: {
+        userUuid: userId,
+      },
+      method: 'DELETE',
+      url: url,
+    });
+
+    return response;
   }
 
-  editReply(data: BaseRequestData<unknown>): Promise<unknown> {
-    throw new Error('Method not implemented.');
+  async editReply({
+    data,
+    authorization,
+  }: BaseRequestData<ReviewReplyUpdateRequest>): Promise<unknown> {
+    if (!data) {
+      throw new Error('data is not set');
+    }
+
+    const { id, userId, replyId, content } = data;
+
+    const url = `${this.endpoint}/review/${id}/reply/${replyId}`;
+
+    const response = await fetch<RawReviewReplyRequest, unknown>({
+      ...(authorization && { headers: { Authorization: authorization } }),
+      data: {
+        userUuid: userId,
+        content,
+      },
+      method: 'PATCH',
+      url: url,
+    });
+
+    return response;
   }
 
   async save({

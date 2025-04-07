@@ -4,7 +4,7 @@ import { UserContext } from '@/contexts/UserContext';
 import IconChevronDown from '@repo/design-system/components/icons/IconChevronDown';
 import type { Mate } from '@repo/entity/src/mate';
 import Image from 'next/image';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 
 import defaultMaleProfileImage from '@/assets/images/image-default-male-profile.png';
 import defaultFemaleProfileImage from '@/assets/images/image-default-female-profile.png';
@@ -23,6 +23,11 @@ export default function CurrentApplyList({ waitList }: Props) {
   const { push, pop } = useContext(PortalContext);
   const { user } = useContext(UserContext);
   const [isOpen, setIsOpen] = useState(false);
+  const [localWaitList, setLocalWaitList] = useState<Mate[]>(waitList);
+
+  useEffect(() => {
+    setLocalWaitList(waitList);
+  }, [waitList]);
 
   const handleClick = () => {
     setIsOpen((prev) => !prev);
@@ -45,6 +50,7 @@ export default function CurrentApplyList({ waitList }: Props) {
       });
 
       if (result.success) {
+        setLocalWaitList((prev) => prev.filter((item) => item.id !== mate.id));
         closeModal();
       } else {
         console.error('Failed to accept mate request');
@@ -95,6 +101,7 @@ export default function CurrentApplyList({ waitList }: Props) {
       });
 
       if (result.success) {
+        setLocalWaitList((prev) => prev.filter((item) => item.id !== mate.id));
         closeModal();
       } else {
         console.error('Failed to reject mate request');
@@ -153,8 +160,8 @@ export default function CurrentApplyList({ waitList }: Props) {
           isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        {waitList.map((wait) => (
-          <div key={wait.id} className="flex items-center justify-between py-2">
+        {localWaitList.map((wait, index) => (
+          <div key={index} className="flex items-center justify-between py-2">
             <div className="flex items-center gap-2">
               <Image
                 src={

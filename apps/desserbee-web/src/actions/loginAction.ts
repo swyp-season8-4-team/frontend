@@ -41,7 +41,7 @@ export async function loginAction(
       keepLoggedIn: keepLoggedIn === 'on',
     });
 
-    const { accessToken, refreshToken, expiresIn } = response;
+    const { accessToken, refreshToken, expiresIn, deviceId } = response;
 
     const cookieList = await cookies();
 
@@ -52,7 +52,19 @@ export async function loginAction(
 
     // 토큰 저장
     const decodedAccessToken = decodeJWT(accessToken);
+    const decodedRefreshToken = decodeJWT(refreshToken);
+
     let accessTokenMaxAge = expiresIn; // 기본값으로 백엔드에서 받은 값 사용
+    let refreshTokenMaxAge = 10 * 24 * 60 * 60;
+
+    cookieList.set('deviceId', deviceId, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: 'strict',
+      domain,
+      maxAge:
+        calculateTokenMaxAge(decodedRefreshToken?.exp) || refreshTokenMaxAge,
+    });
 
     cookieList.set('accessToken', accessToken, {
       httpOnly: true,
@@ -62,11 +74,6 @@ export async function loginAction(
       maxAge:
         calculateTokenMaxAge(decodedAccessToken?.exp) || accessTokenMaxAge,
     });
-
-    // 리프레시 토큰의 만료 시간 계산
-    const decodedRefreshToken = decodeJWT(refreshToken);
-    // 기본값으로 10일 설정 (디코딩 실패 시 백업)
-    let refreshTokenMaxAge = 10 * 24 * 60 * 60;
 
     cookieList.set('refreshToken', refreshToken, {
       httpOnly: true,

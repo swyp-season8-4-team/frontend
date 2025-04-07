@@ -150,7 +150,8 @@ export default class MateService {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.create({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.mateRepository.create({ data, authorization });
 
     return response;
   }
@@ -160,7 +161,8 @@ export default class MateService {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.update({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.mateRepository.update({ data, authorization });
 
     return response;
   }
@@ -170,7 +172,8 @@ export default class MateService {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.delete({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.mateRepository.delete({ data, authorization });
 
     return response;
   }
@@ -181,7 +184,6 @@ export default class MateService {
     }
 
     const authorization = await this.authRepository?.getAuthorization();
-
     const response = await this.mateRepository.save({ data, authorization });
 
     return response;
@@ -193,7 +195,6 @@ export default class MateService {
     }
 
     const authorization = await this.authRepository?.getAuthorization();
-
     const response = await this.mateRepository.cancelSave({
       data,
       authorization,
@@ -207,7 +208,11 @@ export default class MateService {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.acceptMyTeamMember({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.mateRepository.acceptMyTeamMember({
+      data,
+      authorization,
+    });
 
     return response;
   }
@@ -217,7 +222,11 @@ export default class MateService {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.rejectMyTeamMember({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.mateRepository.rejectMyTeamMember({
+      data,
+      authorization,
+    });
 
     return response;
   }
@@ -227,7 +236,8 @@ export default class MateService {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.write({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.mateRepository.write({ data, authorization });
 
     return response;
   }
@@ -237,7 +247,8 @@ export default class MateService {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.edit({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.mateRepository.edit({ data, authorization });
 
     return response;
   }
@@ -247,7 +258,11 @@ export default class MateService {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.createReply({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.mateRepository.createReply({
+      data,
+      authorization,
+    });
 
     return response;
   }
@@ -259,7 +274,11 @@ export default class MateService {
       throw new Error('mateRepository is not set');
     }
 
-    const response = await this.mateRepository.getReplyList({ data });
+    const authorization = await this.authRepository?.getAuthorization();
+    const response = await this.mateRepository.getReplyList({
+      data,
+      authorization,
+    });
 
     return response;
   }
@@ -274,7 +293,6 @@ export default class MateService {
     }
 
     const authorization = await this.authRepository?.getAuthorization();
-
     const response = await this.mateRepository.getSavedMateList({
       data,
       authorization,

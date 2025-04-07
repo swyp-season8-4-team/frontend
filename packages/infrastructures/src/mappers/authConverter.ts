@@ -14,6 +14,7 @@ export default class AuthConverter {
       email: raw.email,
       nickname: raw.nickname,
       profileImageUrl: raw.profileImageUrl,
+      deviceId: raw.deviceId,
     };
   }
 
