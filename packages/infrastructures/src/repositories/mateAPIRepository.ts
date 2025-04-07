@@ -167,6 +167,7 @@ export default class MateAPIRepository
 
   async acceptMyTeamMember({
     data,
+    authorization,
   }: BaseRequestData<MateAcceptRequest>): Promise<unknown> {
     if (!data) {
       throw new Error('data is required');
@@ -175,6 +176,11 @@ export default class MateAPIRepository
     const { creatorUserId, userId, mateId } = data;
 
     const response = await fetch<RawMateAcceptRequest, unknown>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       data: {
         creatorUserUuid: creatorUserId,
         acceptUserUuid: userId,
@@ -188,6 +194,7 @@ export default class MateAPIRepository
 
   async rejectMyTeamMember({
     data,
+    authorization,
   }: BaseRequestData<MateRejectRequest>): Promise<unknown> {
     if (!data) {
       throw new Error('data is required');
@@ -196,6 +203,11 @@ export default class MateAPIRepository
     const { creatorUserId, userId, mateId } = data;
 
     const response = await fetch<RawMateRejectRequest, unknown>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       data: {
         creatorUuid: creatorUserId,
         targetUuid: userId,
@@ -209,6 +221,7 @@ export default class MateAPIRepository
 
   async fireMyTeamMember({
     data,
+    authorization,
   }: BaseRequestData<MateFireRequest>): Promise<unknown> {
     if (!data) {
       throw new Error('data is required');
@@ -220,6 +233,11 @@ export default class MateAPIRepository
       { creatorUuid: string; targetUuid: string },
       unknown
     >({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       data: {
         creatorUuid: creatorId,
         targetUuid: userId,
@@ -233,6 +251,7 @@ export default class MateAPIRepository
 
   async getMateList({
     data,
+    authorization,
   }: BaseRequestData<MateListRequest>): Promise<MateAllListResponse> {
     if (!data) {
       throw new Error('data is required');
@@ -241,6 +260,11 @@ export default class MateAPIRepository
     const { from, to, mateCategoryId, keyword } = data;
 
     const response = await fetch<MateListRequest, MateRawAllListResponse>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'GET',
       url: `${this.endpoint}/mates`,
       query: {
@@ -284,12 +308,20 @@ export default class MateAPIRepository
     return this.mateConverter.convertRawToMate(response);
   }
 
-  async create({ data }: BaseRequestData<MateCreateRequest>): Promise<Mate> {
+  async create({
+    data,
+    authorization,
+  }: BaseRequestData<MateCreateRequest>): Promise<Mate> {
     if (!data) {
       throw new Error('data is required');
     }
 
     const response = await fetch<MateCreateRequest, RawMate>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       data,
       method: 'POST',
       url: `${this.endpoint}/mates`,
@@ -298,7 +330,10 @@ export default class MateAPIRepository
     return this.mateConverter.convertRawToMate(response);
   }
 
-  async delete({ data }: BaseRequestData<MateRequest>): Promise<void> {
+  async delete({
+    data,
+    authorization,
+  }: BaseRequestData<MateRequest>): Promise<void> {
     if (!data) {
       throw new Error('data is required');
     }
@@ -306,6 +341,11 @@ export default class MateAPIRepository
     const { id } = data;
 
     const response = await fetch<MateRequest, void>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'DELETE',
       url: `${this.endpoint}/mates/${id}`,
     });
@@ -313,7 +353,10 @@ export default class MateAPIRepository
     return response;
   }
 
-  async update({ data }: BaseRequestData<MateUpdateRequest>): Promise<void> {
+  async update({
+    data,
+    authorization,
+  }: BaseRequestData<MateUpdateRequest>): Promise<void> {
     if (!data) {
       throw new Error('data is required');
     }
@@ -321,6 +364,11 @@ export default class MateAPIRepository
     const { id, ...rest } = data;
 
     const response = await fetch<Omit<MateUpdateRequest, 'id'>, void>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       data: rest,
       method: 'PATCH',
       url: `${this.endpoint}/mates/${id}`,
@@ -383,6 +431,7 @@ export default class MateAPIRepository
 
   async createReply({
     data,
+    authorization,
   }: BaseRequestData<MateReplyRequest>): Promise<MateReply> {
     if (!data) {
       throw new Error('data is required');
@@ -391,6 +440,11 @@ export default class MateAPIRepository
     const { id, userId, content } = data;
 
     const response = await fetch<RawMateReplyRequest, RawMateReply>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       data: {
         userUuid: userId,
         content,
@@ -404,6 +458,7 @@ export default class MateAPIRepository
 
   async deleteReply({
     data,
+    authorization,
   }: BaseRequestData<
     Omit<MateReplyUpdateRequest, 'content'>
   >): Promise<unknown> {
@@ -414,6 +469,11 @@ export default class MateAPIRepository
     const { id, userId, replyId } = data;
 
     const response = await fetch<{ userUuid: string }, unknown>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       data: {
         userUuid: userId,
       },
@@ -426,6 +486,7 @@ export default class MateAPIRepository
 
   async editReply({
     data,
+    authorization,
   }: BaseRequestData<MateReplyUpdateRequest>): Promise<unknown> {
     if (!data) {
       throw new Error('data is required');
@@ -434,6 +495,11 @@ export default class MateAPIRepository
     const { id, userId, content, replyId } = data;
 
     const response = await fetch<RawMateReplyRequest, unknown>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       data: {
         userUuid: userId,
         content,
@@ -447,6 +513,7 @@ export default class MateAPIRepository
 
   async getReply({
     data,
+    authorization,
   }: BaseRequestData<MateReplyUpdateRequest>): Promise<MateReply> {
     if (!data) {
       throw new Error('data is required');
@@ -455,6 +522,11 @@ export default class MateAPIRepository
     const { id, replyId } = data;
 
     const response = await fetch<RawMateReplyRequest, RawMateReply>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'GET',
       url: `${this.endpoint}/mates/${id}/reply/${replyId}`,
     });
@@ -464,6 +536,7 @@ export default class MateAPIRepository
 
   async getReplyList({
     data,
+    authorization,
   }: BaseRequestData<GetMateReplyListRequest>): Promise<GetMateReplyListResponse> {
     if (!data) {
       throw new Error('data is required');
@@ -475,6 +548,11 @@ export default class MateAPIRepository
       GetMateReplyListRequest,
       RawGetMateReplyListResponse
     >({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
       method: 'GET',
       url: `${this.endpoint}/mates/${id}/reply`,
       query: {
@@ -518,7 +596,10 @@ export default class MateAPIRepository
     return response;
   }
 
-  async write({ data }: BaseRequestData<MateWriteRequest>): Promise<Mate> {
+  async write({
+    data,
+    authorization,
+  }: BaseRequestData<MateWriteRequest>): Promise<Mate> {
     if (!data) {
       throw new Error('data is required');
     }
@@ -551,6 +632,7 @@ export default class MateAPIRepository
       method: 'POST',
       url: `${this.endpoint}/mates`,
       headers: {
+        ...(authorization && { Authorization: authorization }),
         'Content-Type': 'multipart/form-data',
       },
       formData,
@@ -559,7 +641,10 @@ export default class MateAPIRepository
     return this.mateConverter.convertRawToMate(response);
   }
 
-  async edit({ data }: BaseRequestData<MateEditRequest>): Promise<unknown> {
+  async edit({
+    data,
+    authorization,
+  }: BaseRequestData<MateEditRequest>): Promise<unknown> {
     if (!data) {
       throw new Error('data is required');
     }
@@ -600,6 +685,7 @@ export default class MateAPIRepository
       method: 'PATCH',
       url: `${this.endpoint}/mates/${id}`,
       headers: {
+        ...(authorization && { Authorization: authorization }),
         'Content-Type': 'multipart/form-data',
       },
       formData,
