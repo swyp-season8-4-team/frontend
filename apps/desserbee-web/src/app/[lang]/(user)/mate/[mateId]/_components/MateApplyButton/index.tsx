@@ -5,6 +5,7 @@ import { MateDetailContext } from '../../_contexts/MateDetailContext';
 import { useContext, useMemo, useState } from 'react';
 import { UserContext } from '@/contexts/UserContext';
 import { applyMate, cancelApplyMate } from './action';
+import { cn } from '@repo/ui/lib/utils';
 
 export default function MateApplyButton() {
   const { user } = useContext(UserContext);
@@ -55,13 +56,22 @@ export default function MateApplyButton() {
     }
   }, [mate.applyStatus]);
 
+  const isDisabled =
+    !mate.recruit ||
+    mate.applyStatus === 'APPROVED' ||
+    mate.applyStatus === 'REJECTED';
+
   return (
     <Button
-      className="rounded-full bg-[#F5B01C] px-4 py-1 text-center text-sm text-white"
+      className={cn(
+        'rounded-full px-4 py-1 text-center text-sm text-white',
+        mate.recruit ? 'bg-[#F5B01C]' : 'cursor-not-allowed bg-[#545454]',
+      )}
       isLoading={isLoading}
       onClick={handleClick}
+      disabled={isDisabled}
     >
-      {text}
+      {mate.recruit ? text : '모집완료'}
     </Button>
   );
 }
