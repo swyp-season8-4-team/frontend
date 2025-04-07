@@ -8,7 +8,7 @@ import { applyMate, cancelApplyMate } from './action';
 
 export default function MateApplyButton() {
   const { user } = useContext(UserContext);
-  const { mate } = useContext(MateDetailContext);
+  const { mate, updateMateStatus } = useContext(MateDetailContext);
 
   const [isLoading, setLoading] = useState(false);
 
@@ -22,12 +22,16 @@ export default function MateApplyButton() {
 
       if (mate.applyStatus === 'NONE') {
         const result = await applyMate(mate.id, user.id);
-        if (!result.success) {
+        if (result.success) {
+          updateMateStatus('PENDING');
+        } else {
           console.error('Failed to apply mate');
         }
       } else if (mate.applyStatus === 'PENDING') {
         const result = await cancelApplyMate(mate.id, user.id);
-        if (!result.success) {
+        if (result.success) {
+          updateMateStatus('NONE');
+        } else {
           console.error('Failed to cancel apply mate');
         }
       }

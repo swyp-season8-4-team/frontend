@@ -1,11 +1,14 @@
 'use client';
 
-import type { Mate } from "@repo/entity/src/mate";
-import type { WithChildren } from "@repo/ui";
-import { createContext } from "react";
+import type { Mate } from '@repo/entity/src/mate';
+import type { WithChildren } from '@repo/ui';
+import { createContext, useState } from 'react';
 
 interface State {
   mate: Mate;
+  updateMateStatus: (
+    status: 'NONE' | 'PENDING' | 'APPROVED' | 'REJECTED',
+  ) => void;
 }
 
 const defaultState: State = {
@@ -30,6 +33,7 @@ const defaultState: State = {
     gender: 'MALE',
     applyStatus: 'PENDING',
   },
+  updateMateStatus: () => {},
 };
 
 export const MateDetailContext = createContext<State>(defaultState);
@@ -38,9 +42,20 @@ interface Props extends WithChildren {
   mate: Mate;
 }
 
-export const MateDetailProvider = ({ children, mate }: Props) => {
+export const MateDetailProvider = ({ children, mate: initialMate }: Props) => {
+  const [mate, setMate] = useState(initialMate);
+
+  const updateMateStatus = (
+    status: 'NONE' | 'PENDING' | 'APPROVED' | 'REJECTED',
+  ) => {
+    setMate((prev) => ({
+      ...prev,
+      applyStatus: status,
+    }));
+  };
+
   return (
-    <MateDetailContext.Provider value={{ mate }}>
+    <MateDetailContext.Provider value={{ mate, updateMateStatus }}>
       {children}
     </MateDetailContext.Provider>
   );
