@@ -16,6 +16,7 @@ import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRep
 import { Button } from '@repo/ui/components/button';
 import { HoneyButton } from '@repo/design-system/components/buttons/FillButtons/Honey';
 import { ResetButton } from '@repo/design-system/components/buttons/ResetButton';
+import IconWarn from '@repo/design-system/components/icons/IconWarn';
 
 const authService = new AuthService({
   authRepository: new AuthAPIRepository(),
@@ -70,45 +71,40 @@ export function ForgotPasswordEmailForm({
         알려주세요
       </h2>
       <div className="flex h-full flex-col justify-between">
-        <div className="relative">
-          <input
-            type="email"
-            value={message}
-            onChange={handleChange}
-            placeholder="이메일을 입력해주세요."
-            className={`w-full rounded-[6px] border px-4 py-[12.5px] text-sm ${
-              error ? 'border-red-500' : 'border-[#CDC8C3]'
-            } placeholder:text-[#BABABA] focus:outline-none`}
-          />
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
-            <ResetButton
-              isShown={message !== ''}
-              onClick={() => {
-                setMessage('');
-                setError('');
-              }}
+        <div className="">
+          <div className="relative mb-[13.5px]">
+            <input
+              type="email"
+              value={message}
+              onChange={handleChange}
+              placeholder="이메일을 입력해주세요."
+              className={`w-full rounded-[6px] border px-4 py-[12.5px] text-sm ${
+                error ? 'border-error-40' : 'border-[#A6A6A6]'
+              } placeholder:text-[#BABABA] focus:outline-none`}
             />
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <ResetButton
+                isShown={message !== ''}
+                onClick={() => {
+                  setMessage('');
+                  setError('');
+                }}
+              />
+            </div>
           </div>
-
           {error && (
-            <p className="absolute mt-1 text-sm text-red-500">{error}</p>
+            <p className="text-error-60 flex items-center gap-[5px] text-sm">
+              <div className="h-4 w-4">
+                <IconWarn className="h-full w-full" />
+              </div>
+              {error}
+            </p>
           )}
         </div>
 
-        {/* <Button
-          className={`w-full py-3 text-white rounded-[100px] font-medium transition-colors mt-6
-            ${
-              message.trim() && !error
-                ? 'bg-[#FFB700] hover:bg-[#FFB700]/90'
-                : 'bg-gray-400 cursor-not-allowed opacity-50'
-            }`}
-          disabled={!message.trim() || !!error}
-          onClick={handleClick}
-        >
-          계속하기
-        </Button> */}
         <HoneyButton
-          text="계속하기"
+          type="submit"
+          text="다음"
           onClick={handleClick}
           isDisabled={!message.trim() || !!error}
         />
