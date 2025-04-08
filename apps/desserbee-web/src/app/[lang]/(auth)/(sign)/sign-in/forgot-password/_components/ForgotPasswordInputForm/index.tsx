@@ -1,12 +1,16 @@
 'use client';
 
-import { Button } from '@repo/ui/components/button';
 import { useCallback, useContext, useState } from 'react';
 import { ForgotPasswordContext } from '../../_contexts/ForgotPasswordContext';
 import AuthService from '@repo/usecase/src/authService';
 import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
 import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
+import { HoneyButton } from '@repo/design-system/components/buttons/FillButtons/Honey';
+import { ResetButton } from '@repo/design-system/components/buttons/ResetButton';
+import IconEye from '@repo/design-system/components/icons/IconEye';
+import IconEyeBan from '@repo/design-system/components/icons/IconEyeBan';
+import IconWarn from '@repo/design-system/components/icons/IconWarn';
 
 const authService = new AuthService({
   authRepository: new AuthAPIRepository(),
@@ -19,6 +23,10 @@ export function ForgotPasswordInputForm() {
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [error, setError] = useState('');
 
   const isValid =
@@ -27,6 +35,14 @@ export function ForgotPasswordInputForm() {
     /[0-9]/.test(password) &&
     /[!@#$%^&*]/.test(password) &&
     password === confirmPassword;
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
@@ -42,7 +58,7 @@ export function ForgotPasswordInputForm() {
 
   const handleSubmit = useCallback(async () => {
     if (!isValid) {
-      setError('비밀번호가 조건에 맞지 않습니다.');
+      setError('비밀번호가 조건에 맞지 않습니다.'); //TODO: API 에러로 수정
       return;
     }
 
@@ -62,115 +78,100 @@ export function ForgotPasswordInputForm() {
   }, [isValid, email, password]);
 
   return (
-    <div className="space-y-6 px-4">
-      <h2 className="text-lg font-medium">비밀번호 재설정</h2>
+    <div className="h-full space-y-2 px-4 py-[45px]">
+      <h2 className="text-[22px] font-medium">새 비밀번호를 입력해주세요</h2>
+      <div className="text-neutral-30 text-sm">
+        최소 8자, 영문 소문자, 숫자, 특수문자 조합
+      </div>
 
-      <div className="space-y-6">
-        <div className="text-gray-600">{email}</div>
-
+      <div className="flex h-full flex-col justify-between">
         <div className="space-y-4">
           <div className="space-y-1">
-            <label className="block text-sm font-medium">비밀번호 입력</label>
-            <div className="relative">
+            {/* <label className="block text-sm font-medium">비밀번호 입력</label> */}
+            <div className="relative w-full">
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={handlePasswordChange}
-                placeholder="비밀번호 (8자 이상, 영어 소문자, 특수문자 포함)"
-                className="w-full border-b border-gray-200 py-[10px] text-[12px] font-medium leading-[-0.3px] placeholder:text-[#BABABA] focus:outline-none"
+                placeholder="비밀번호"
+                className={`w-full flex-1 rounded-[6px] border px-4 py-[12.5px] text-sm ${
+                  error ? 'border-error-40' : 'border-[#A6A6A6]'
+                } placeholder:text-[#BABABA] focus:outline-none`}
               />
-              {password && (
+              <div className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-1 text-gray-400">
+                <ResetButton
+                  isShown={password !== ''}
+                  onClick={() => {
+                    setPassword('');
+                    setError('');
+                  }}
+                />
                 <button
                   type="button"
-                  onClick={() => setPassword('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2"
+                  tabIndex={-1}
+                  onClick={togglePasswordVisibility}
+                  className="text-neutral-30"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <circle cx="12" cy="12" r="12" fill="#D9D9D9" />
-                    <g transform="translate(7, 7)">
-                      <path
-                        d="M1 9L9 1"
-                        stroke="#393939"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        d="M9 9L1 1"
-                        stroke="#393939"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                    </g>
-                  </svg>
+                  {showPassword ? (
+                    <IconEye size={18} />
+                  ) : (
+                    <IconEyeBan size={18} />
+                  )}
                 </button>
-              )}
+              </div>
             </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="block text-sm font-medium">비밀번호 확인</label>
+          <div className="">
+            {/* <label className="block text-sm font-medium">비밀번호 확인</label> */}
             <div className="relative">
               <input
-                type="password"
+                type={showConfirmPassword ? 'text' : 'password'}
                 value={confirmPassword}
                 onChange={handleConfirmPasswordChange}
-                placeholder="비밀번호 (8자 이상, 영어 소문자, 특수문자 포함) 를 다시 입력해주세요."
-                className="w-full border-b border-gray-200 py-[10px] text-[10px] font-medium leading-[-0.3px] placeholder:text-[#BABABA] focus:outline-none"
+                placeholder="비밀번호 확인"
+                className={`w-full flex-1 rounded-[6px] border px-4 py-[12.5px] text-sm ${
+                  error ? 'border-error-40' : 'border-[#A6A6A6]'
+                } placeholder:text-[#BABABA] focus:outline-none`}
               />
-              {confirmPassword && (
+              <div className="absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-1 text-gray-400">
+                <ResetButton
+                  isShown={confirmPassword !== ''}
+                  onClick={() => {
+                    setConfirmPassword('');
+                    setError('');
+                  }}
+                />
                 <button
                   type="button"
-                  onClick={() => setConfirmPassword('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2"
+                  tabIndex={-1}
+                  onClick={toggleConfirmPasswordVisibility}
+                  className="text-neutral-30"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <circle cx="12" cy="12" r="12" fill="#D9D9D9" />
-                    <g transform="translate(7, 7)">
-                      <path
-                        d="M1 9L9 1"
-                        stroke="#393939"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        d="M9 9L1 1"
-                        stroke="#393939"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                    </g>
-                  </svg>
+                  {showConfirmPassword ? (
+                    <IconEye size={18} />
+                  ) : (
+                    <IconEyeBan size={18} />
+                  )}
                 </button>
-              )}
+              </div>
             </div>
           </div>
+          {error && (
+            <p className="text-error-60 flex items-center gap-[5px] text-sm">
+              <div className="h-4 w-4">
+                <IconWarn className="h-full w-full" />
+              </div>
+              {error}
+            </p>
+          )}
         </div>
-
-        {error && <p className="text-sm text-red-500">{error}</p>}
-
-        <Button
-          className={`w-full rounded-[100px] py-3 font-medium text-white transition-colors ${
-            isValid
-              ? 'bg-[#FFB700] hover:bg-[#FFB700]/90'
-              : 'cursor-not-allowed bg-gray-400 opacity-50'
-          }`}
-          disabled={!isValid}
+        <HoneyButton
+          text="변경하기"
+          isDisabled={!isValid}
           onClick={handleSubmit}
-        >
-          변경하기
-        </Button>
+          className="mb-4"
+        />
       </div>
     </div>
   );
