@@ -97,7 +97,7 @@ export function ForgotPasswordAuthCodeForm({
 
   return (
     <>
-      <h2 className="text-[22px] font-semibold leading-[130%] tracking-[-0.9px]">
+      <h2 className="pt-[45px] text-[22px] font-medium leading-[130%] tracking-[-0.9px]">
         {/* {email} */}
         <div className="text-primary-60">eepy2.23@gmail.com</div>
         <div className="text-primary-5">인증코드를 보내드렸어요 !</div>

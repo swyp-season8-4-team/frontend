@@ -65,7 +65,7 @@ export function ForgotPasswordEmailForm({
 
   return (
     <>
-      <h2 className="text-[18px] font-semibold leading-[130%] tracking-[-0.9px] text-[#393939]">
+      <h2 className="pt-[45px] text-[22px] font-medium leading-[130%] tracking-[-0.9px] text-[#393939]">
         가입하셨던 이메일 주소를
         <br />
         알려주세요
