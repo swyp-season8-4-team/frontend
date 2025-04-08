@@ -1,19 +1,17 @@
 import { recipeKorea } from '@/app/fonts';
-import IconBee from '@repo/design-system/components/icons/IconBee';
 import LoginForm from './_components/LoginForm';
 import { SignUpLink } from './_components/SignUpLink';
 import { cn } from '@repo/ui/lib/utils';
 import KakaoSignInButton from './_components/KakaoSignInButton';
 
+import { Logo } from '@/app/[lang]/_components/Logo';
 export default async function SignInPage() {
   return (
     <>
       {/* 메인 컨텐츠 */}
       <main className="px-base">
         <div className="flex w-full items-center justify-center gap-[11.39px] py-[75.5px]">
-          <div className="flex h-[48.77px] w-[48.77px] items-center justify-center">
-            <IconBee className="h-full w-full" />
-          </div>
+          <Logo width={48.77} height={48.77} />
           <div
             className={cn(
               recipeKorea.className,
