@@ -313,9 +313,11 @@ export default function RegisterOperatingHoursPage() {
         </div>
       </div>
       <div className="p-4">
-        <button type="submit" className="w-full">
-          <OliveButton className="font-semibold" text="다음" />
-        </button>
+        <OliveButton
+          className="w-full font-semibold"
+          text="다음"
+          type="submit"
+        />
       </div>
     </form>
   );

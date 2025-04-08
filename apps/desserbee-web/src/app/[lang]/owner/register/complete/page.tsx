@@ -89,8 +89,8 @@ export default function RegisterCompletePage() {
       </div>
 
       <div className="px-base flex w-full flex-col gap-y-5 py-5 pb-10">
-        <button onClick={goToMapPage}>
-          <OliveButton text="사장님 대시보드" />
+        <button >
+          <OliveButton text="사장님 대시보드" onClick={goToMapPage} />
         </button>
         <button
           onClick={goToMapPage}

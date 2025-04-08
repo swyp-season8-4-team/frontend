@@ -4,7 +4,10 @@ import { cn } from '@repo/ui/lib/utils';
 interface HoneyButtonProps extends WithChildren {
   className?: string;
   isDisabled?: boolean;
+  isLoading?: boolean;
   text?: string;
+  onClick?: () => void;
+  type?: 'submit' | 'reset' | 'button';
 }
 
 export function HoneyButton({
@@ -12,9 +15,14 @@ export function HoneyButton({
   text,
   className,
   isDisabled,
+  isLoading,
+  onClick,
+  type = 'submit',
 }: HoneyButtonProps) {
   return (
-    <div
+    <button
+      type={type}
+      onClick={onClick}
       className={cn(
         isDisabled
           ? 'bg-neutral-70 cursor-not-allowed text-neutral-50'
@@ -23,8 +31,10 @@ export function HoneyButton({
         className,
       )}
     >
-      {children}
-      {text}
-    </div>
+      <div className="flex items-center justify-center gap-2">
+        {children}
+        {text}
+      </div>
+    </button>
   );
 }

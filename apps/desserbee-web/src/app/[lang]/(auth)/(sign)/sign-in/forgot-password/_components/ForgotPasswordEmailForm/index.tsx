@@ -14,6 +14,7 @@ import AuthService from '@repo/usecase/src/authService';
 import { HTTPError } from '@repo/api/src/error';
 import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
 import { Button } from '@repo/ui/components/button';
+import { HoneyButton } from '@repo/design-system/components/buttons/FillButtons/Honey';
 
 const authService = new AuthService({
   authRepository: new AuthAPIRepository(),
@@ -62,7 +63,7 @@ export function ForgotPasswordEmailForm({
 
   return (
     <>
-      <h2 className="text-[#393939] text-[18px] font-semibold leading-[130%] tracking-[-0.9px]">
+      <h2 className="text-[18px] font-semibold leading-[130%] tracking-[-0.9px] text-[#393939]">
         가입하셨던 이메일을
         <br />
         알려주세요.
@@ -74,9 +75,9 @@ export function ForgotPasswordEmailForm({
             value={message}
             onChange={handleChange}
             placeholder="이메일을 입력해주세요."
-            className={`w-full py-[10px] border-b ${
+            className={`w-full border-b py-[10px] ${
               error ? 'border-red-500' : 'border-gray-200'
-            } focus:outline-none placeholder:text-[#BABABA]`}
+            } placeholder:text-[#BABABA] focus:outline-none`}
           />
           {message && (
             <button
@@ -117,7 +118,7 @@ export function ForgotPasswordEmailForm({
           )}
         </div>
 
-        <Button
+        {/* <Button
           className={`w-full py-3 text-white rounded-[100px] font-medium transition-colors mt-6
             ${
               message.trim() && !error
@@ -128,7 +129,10 @@ export function ForgotPasswordEmailForm({
           onClick={handleClick}
         >
           계속하기
-        </Button>
+        </Button> */}
+        <HoneyButton isDisabled={!message.trim() || !!error}>
+          <button onClick={handleClick}></button>
+        </HoneyButton>
       </div>
     </>
   );

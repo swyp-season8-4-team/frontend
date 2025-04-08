@@ -183,9 +183,11 @@ export default function RegisterMenuPage() {
         ))}
       </div>
       <div className="fixed bottom-4 left-0 right-0 mx-4 flex gap-x-2">
-        <button type="submit" className="w-full">
-          <OliveButton className="font-semibold" text="다음" />
-        </button>
+        <OliveButton
+          className="w-full font-semibold"
+          text="다음"
+          type="submit"
+        />
       </div>
     </form>
   );

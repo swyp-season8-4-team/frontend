@@ -21,8 +21,9 @@ export default function IconButton({
   ...props
 }: Props) {
   const buttonClasses = useMemo(() => {
-    const baseClasses = 'flex items-center justify-center flex-shrink-0 rounded-full bg-none';
-    
+    const baseClasses =
+      'flex items-center justify-center flex-shrink-0 rounded-full bg-none';
+
     // 사이즈별 클래스 매핑 개선
     let sizeClasses = '';
     if (size === IconSize.xs) {
@@ -37,9 +38,9 @@ export default function IconButton({
       // 커스텀 사이즈 지원
       sizeClasses = `w-[${size}px] h-[${size}px]`;
     }
-    
-    const hoverClasses = 'hover:bg-gray-200 hover:not:disabled:opacity-100';
-    
+
+    const hoverClasses = '';
+
     return `${baseClasses} ${sizeClasses} ${hoverClasses} ${className || ''}`;
   }, [className, size]);
 
@@ -53,15 +54,15 @@ export default function IconButton({
     if (size === IconSize.s) return IconSize.s;
     if (size === IconSize.m) return IconSize.m;
     if (size === IconSize.l) return IconSize.l;
-    
+
     return IconSize.m; // 기본값
   }, [iconSize, size]);
 
   return (
     <Button className={buttonClasses} {...props}>
-      {cloneElement(children, { 
+      {cloneElement(children, {
         size: defaultIconSize,
-        className: 'fill-current transition-colors duration-200' 
+        className: 'fill-current transition-colors duration-200',
       })}
     </Button>
   );
