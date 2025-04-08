@@ -5,6 +5,8 @@ interface OliveButtonProps extends WithChildren {
   className?: string;
   isDisabled?: boolean;
   text?: string;
+  type?: 'submit' | 'reset' | 'button';
+  onClick?: () => void;
 }
 
 export function OliveButton({
@@ -12,9 +14,13 @@ export function OliveButton({
   text,
   className,
   isDisabled,
+  type = 'submit',
+  onClick,
 }: OliveButtonProps) {
   return (
-    <div
+    <button
+      type={type}
+      onClick={onClick}
       className={cn(
         isDisabled
           ? 'bg-neutral-70 cursor-not-allowed text-neutral-50'
@@ -25,6 +31,6 @@ export function OliveButton({
     >
       {children}
       {text}
-    </div>
+    </button>
   );
 }
