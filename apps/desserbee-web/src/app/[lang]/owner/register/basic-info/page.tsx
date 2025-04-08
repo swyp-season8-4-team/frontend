@@ -713,13 +713,12 @@ export default function RegisterBasicInfoPage() {
         </div>
       </div>
 
-      <button type="submit">
-        <OliveButton
-          className="font-semibold"
-          text="다음"
-          isDisabled={!isFormValid}
-        />
-      </button>
+      <OliveButton
+        type="submit"
+        className="font-semibold"
+        text="다음"
+        isDisabled={!isFormValid}
+      />
     </form>
   );
 }

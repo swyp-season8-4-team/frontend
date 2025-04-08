@@ -11,13 +11,12 @@ export default function LoginButton({
   isFormValid = false,
 }: LoginButtonsProps) {
   return (
-    <button type="submit" className="w-full">
-      <HoneyButton
-        text="로그인"
-        isDisabled={isLoading || !isFormValid}
-        isLoading={isLoading}
-        className="text-lg font-medium"
-      ></HoneyButton>
-    </button>
+    <HoneyButton
+      type="submit"
+      text="로그인"
+      isDisabled={isLoading || !isFormValid}
+      isLoading={isLoading}
+      className="w-full text-lg font-medium"
+    ></HoneyButton>
   );
 }
