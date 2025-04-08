@@ -64,8 +64,9 @@ export function ForgotPasswordAuthCodeForm({
   }, [email]);
 
   const handleNextButtonClick = useCallback(async () => {
+    if (!isVerified) return;
     onNextStep(ForgotPasswordStep.NewPassword);
-  }, [onNextStep]);
+  }, [onNextStep, isVerified]);
 
   const handleVerifyButtonClick = useCallback(async () => {
     // 인증 코드 검증 로직 구현 필요
