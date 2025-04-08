@@ -4,6 +4,7 @@ import { cn } from '@repo/ui/lib/utils';
 interface HoneyButtonProps extends WithChildren {
   className?: string;
   isDisabled?: boolean;
+  isLoading?: boolean;
   text?: string;
 }
 
@@ -12,6 +13,7 @@ export function HoneyButton({
   text,
   className,
   isDisabled,
+  isLoading,
 }: HoneyButtonProps) {
   return (
     <div
@@ -23,8 +25,10 @@ export function HoneyButton({
         className,
       )}
     >
-      {children}
-      {text}
+      <div className="flex items-center justify-center gap-2">
+        {children}
+        {text}
+      </div>
     </div>
   );
 }
