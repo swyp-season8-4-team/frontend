@@ -19,6 +19,8 @@ import NavigationService from '@repo/usecase/src/navigationService';
 import LoginButton from './LoginButton';
 import IconEyeBan from '@repo/design-system/components/icons/IconEyeBan';
 import IconEye from '@repo/design-system/components/icons/IconEye';
+import IconWarn from '@repo/design-system/components/icons/IconWarn';
+
 import { ResetButton } from '@repo/design-system/components/buttons/ResetButton';
 import { RadioButton } from '@repo/design-system/components/RadioButton';
 
@@ -164,8 +166,7 @@ export default function LoginForm({
 
   // 라디오 버튼 토글 핸들러
   const handleRadioToggle = () => {
-    console.log('[직접 호출] 토글 시도', keepLoggedIn); // 디버깅용
-    setKeepLoggedIn(!keepLoggedIn); // 이전 함수형 업데이트는 필요없음 (계산이 복잡하지 않음)
+    setKeepLoggedIn(!keepLoggedIn);
   };
 
   return (
@@ -180,7 +181,7 @@ export default function LoginForm({
               setError(null); // 입력 시 에러 메시지 초기화
             }}
             placeholder="이메일을 입력 해주세요"
-            className={`w-full rounded-lg border px-4 py-3 ${error?.code === 'INVALID_EMAIL' ? 'border-red-500' : 'border-[#A6A6A6]'} focus:border-gray-400 focus:outline-none`}
+            className={`w-full rounded-lg border px-4 py-3 ${error?.code === 'INVALID_EMAIL' ? 'border-error-40' : 'border-[#A6A6A6]'} focus:border-gray-400 focus:outline-none`}
             disabled={isLoading}
           />
           <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-[11.5px]">
@@ -200,7 +201,7 @@ export default function LoginForm({
               setError(null); // 입력 시 에러 메시지 초기화
             }}
             placeholder="비밀번호를 입력 해주세요"
-            className={`w-full rounded-lg border px-4 py-3 ${error?.code === 'INVALID_PASSWORD' ? 'border-red-500' : 'border-[#A6A6A6]'} focus:border-gray-400 focus:outline-none`}
+            className={`w-full rounded-lg border px-4 py-3 ${error?.code === 'INVALID_PASSWORD' ? 'border-error-40' : 'border-[#A6A6A6]'} focus:border-gray-400 focus:outline-none`}
             disabled={isLoading}
           />
           <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-[11.5px]">
@@ -220,8 +221,15 @@ export default function LoginForm({
         </div>
 
         {/* 통합된 에러 메시지 영역 - 항상 같은 높이 유지 */}
-        <div className="h-3">
-          {error && <p className="text-error-60 text-xs">{error.message}</p>}
+        <div className="mb-[25px] h-3">
+          {error && (
+            <p className="text-error-60 flex gap-[5px] text-xs">
+              <div className="h-4 w-4">
+                <IconWarn className="h-full w-full" />
+              </div>
+              {error.message}
+            </p>
+          )}
         </div>
       </div>
       {/* 왠지 모르겠는데.. mt-4가 자동으로 생겨서 inline style로 수정. (이전 개발자가 한 거라 파악이 안됨) */}
