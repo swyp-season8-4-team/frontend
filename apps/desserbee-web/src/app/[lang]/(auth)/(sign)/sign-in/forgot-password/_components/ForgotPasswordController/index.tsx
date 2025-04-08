@@ -18,13 +18,15 @@ export function ForgotPasswordController() {
 
   return (
     <ForgotPasswordProvider>
-      {step === ForgotPasswordStep.Email && (
+      {step === ForgotPasswordStep.Email && ( // Email
         <ForgotPasswordEmailForm onNextStep={updateStep} />
       )}
-      {step === ForgotPasswordStep.AuthCode && (
+      {step === ForgotPasswordStep.AuthCode && ( // AuthCode
         <ForgotPasswordAuthCodeForm onNextStep={updateStep} />
       )}
-      {step === ForgotPasswordStep.NewPassword && <ForgotPasswordInputForm />}
+      {
+        step === ForgotPasswordStep.NewPassword && <ForgotPasswordInputForm /> // NewPassword
+      }
     </ForgotPasswordProvider>
   );
 }
