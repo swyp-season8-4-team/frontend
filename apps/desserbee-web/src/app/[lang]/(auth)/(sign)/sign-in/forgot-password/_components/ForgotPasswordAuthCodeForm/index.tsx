@@ -153,7 +153,7 @@ export function ForgotPasswordAuthCodeForm({
             <div>인증코드를 아직 받지 못하셨나요?</div>
             <button
               className="text-secondary-30 text-b-400 font-medium underline decoration-solid decoration-from-font underline-offset-auto"
-              onClick={handleVerifyButtonClick}
+              onClick={handleResendButtonClick}
             >
               재전송
             </button>
