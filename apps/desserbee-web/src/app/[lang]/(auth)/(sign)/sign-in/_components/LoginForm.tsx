@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { loginAction } from '@/actions/loginAction';
 import {
   NavigationLanguageGroup,
@@ -7,16 +8,19 @@ import {
   NavigationPathname,
 } from '@repo/entity/src/navigation';
 import type { WithClassName } from '@repo/ui/index';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import LoginButtons from './LoginButtons';
-import IconEyeBan from '@repo/design-system/components/icons/IconEyeBan';
-import IconEye from '@repo/design-system/components/icons/IconEye';
+
 import { isErrorResponseData } from '@repo/api/src/error';
 import type { SignInCodeError } from '@repo/entity/src/signIn';
 import AuthConverter from '@repo/infrastructures/src/mappers/authConverter';
 import NavigationService from '@repo/usecase/src/navigationService';
+
+import LoginButton from './LoginButton';
+import IconEyeBan from '@repo/design-system/components/icons/IconEyeBan';
+import IconEye from '@repo/design-system/components/icons/IconEye';
+import { ResetButton } from '@repo/design-system/components/buttons/ResetButton';
+import { RadioButton } from '@repo/design-system/components/RadioButton';
 
 // FIXME: 컨버터를 구현체 안에서만 사용할수 있도록 변경
 const authConverter = new AuthConverter();
@@ -160,24 +164,32 @@ export default function LoginForm({
 
   // 라디오 버튼 토글 핸들러
   const handleRadioToggle = () => {
-    setKeepLoggedIn(!keepLoggedIn);
+    console.log('[직접 호출] 토글 시도', keepLoggedIn); // 디버깅용
+    setKeepLoggedIn(!keepLoggedIn); // 이전 함수형 업데이트는 필요없음 (계산이 복잡하지 않음)
   };
 
   return (
     <form className={className} onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-2">
-        <input
-          name="email"
-          value={email}
-          onChange={(e) => {
-            setEmail(e.target.value);
-            setError(null); // 입력 시 에러 메시지 초기화
-          }}
-          placeholder="이메일을 입력 해주세요."
-          className={`w-full px-4 py-3 rounded-lg border ${error?.code === 'INVALID_EMAIL' ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-400`}
-          disabled={isLoading}
-        />
-
+      <div className="flex flex-col gap-[12px]">
+        <div className="relative">
+          <input
+            name="email"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setError(null); // 입력 시 에러 메시지 초기화
+            }}
+            placeholder="이메일을 입력 해주세요"
+            className={`w-full rounded-lg border px-4 py-3 ${error?.code === 'INVALID_EMAIL' ? 'border-red-500' : 'border-[#A6A6A6]'} focus:border-gray-400 focus:outline-none`}
+            disabled={isLoading}
+          />
+          <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-[11.5px]">
+            <ResetButton
+              isShown={email.length > 0}
+              onClick={() => setEmail('')}
+            />
+          </div>
+        </div>
         <div className="relative">
           <input
             type={showPassword ? 'text' : 'password'}
@@ -187,76 +199,58 @@ export default function LoginForm({
               setPassword(e.target.value);
               setError(null); // 입력 시 에러 메시지 초기화
             }}
-            placeholder="비밀번호를 입력 해주세요."
-            className={`w-full px-4 py-3 rounded-lg border ${error?.code === 'INVALID_PASSWORD' ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:border-gray-400`}
+            placeholder="비밀번호를 입력 해주세요"
+            className={`w-full rounded-lg border px-4 py-3 ${error?.code === 'INVALID_PASSWORD' ? 'border-red-500' : 'border-[#A6A6A6]'} focus:border-gray-400 focus:outline-none`}
             disabled={isLoading}
           />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center">
+          <div className="absolute right-3 top-1/2 flex -translate-y-1/2 items-center gap-[11.5px]">
+            <ResetButton
+              isShown={password.length > 0}
+              onClick={() => setPassword('')}
+            />
             <button
               type="button"
               tabIndex={-1}
               onClick={togglePasswordVisibility}
-              className="text-gray-500"
+              className="text-neutral-30"
             >
-              {showPassword ? (
-                <IconEye
-                  size={20}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              ) : (
-                <IconEyeBan
-                  size={20}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              )}
+              {showPassword ? <IconEye /> : <IconEyeBan />}
             </button>
           </div>
         </div>
 
         {/* 통합된 에러 메시지 영역 - 항상 같은 높이 유지 */}
         <div className="h-3">
-          {error && <p className="text-red-500 text-xs">{error.message}</p>}
+          {error && <p className="text-error-60 text-xs">{error.message}</p>}
         </div>
       </div>
-
-      <div className="flex items-center justify-between mt-4">
-        <label className="flex items-center cursor-pointer">
-          <input
-            type="radio"
-            name="containLogin"
-            checked={keepLoggedIn}
+      {/* 왠지 모르겠는데.. mt-4가 자동으로 생겨서 inline style로 수정. (이전 개발자가 한 거라 파악이 안됨) */}
+      <div className="flex items-center justify-between" style={{ margin: 0 }}>
+        <div
+          className="flex cursor-pointer items-center"
+          onClick={handleRadioToggle}
+        >
+          <RadioButton
             onClick={handleRadioToggle}
-            onChange={() => {}}
-            className="w-4 h-4 rounded-full border-gray-300"
+            isChecked={keepLoggedIn}
+            name="containLogin"
+            outerSize={14.17}
+            innerSize={7}
           />
-          <span className="ml-2 text-[11px] text-gray-600">로그인 유지</span>
-        </label>
+          <span className="text-neutral-30 ml-[11.92px] text-sm font-medium">
+            로그인 유지
+          </span>
+        </div>
         <div className="flex items-center gap-2">
           <Link
-            href={navigationService.getHref(NavigationPathname.SignUp)}
-            className="text-b-400 text-[11px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font"
-          >
-            일반 회원가입
-          </Link>
-          {/* <Link href={NavigationPathname.SignUp} className="text-b-400 text-[10px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font">사장님 회원가입</Link> */}
-          <Link
             href={navigationService.getHref(NavigationPathname.ForgotPassword)}
-            className="text-b-400 text-[11px] text-gray-600 underline decoration-solid underline-offset-auto decoration-from-font"
+            className="text-neutral-30 cursor-pointer text-sm font-medium"
           >
             비밀번호 찾기
           </Link>
         </div>
       </div>
-
-      <LoginButtons isLoading={isLoading} isFormValid={isFormValid} />
+      <LoginButton isLoading={isLoading} isFormValid={isFormValid} />{' '}
     </form>
   );
 }
