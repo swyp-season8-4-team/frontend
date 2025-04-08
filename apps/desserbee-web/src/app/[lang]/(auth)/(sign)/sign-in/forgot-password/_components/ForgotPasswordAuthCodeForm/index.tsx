@@ -3,11 +3,20 @@
 import { useState, useContext, useCallback } from 'react';
 import { ForgotPasswordStep, type ForgotPasswordStepProps } from '../../_types';
 import { ForgotPasswordContext } from '../../_contexts/ForgotPasswordContext';
-import { Button } from '@repo/ui/components/button';
+
 import AuthService from '@repo/usecase/src/authService';
 import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
-import { VerifyEmailPurpose } from '@repo/usecase/src/authService';
+import {
+  EmailAuthSessionKey,
+  VerifyEmailPurpose,
+} from '@repo/usecase/src/authService';
 import { verifyTokenAction } from '@/actions/verfiyTokenAction';
+import { HoneyButton } from '@repo/design-system/components/buttons/FillButtons/Honey';
+import { ResetButton } from '@repo/design-system/components/buttons/ResetButton';
+import IconWarn from '@repo/design-system/components/icons/IconWarn';
+import IconCheckRound from '@repo/design-system/components/icons/IconCheckRound';
+import { HTTPError } from '@repo/api/src/error';
+import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
 
 const authService = new AuthService({
   authRepository: new AuthAPIRepository(),
@@ -20,6 +29,8 @@ export function ForgotPasswordAuthCodeForm({
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setLoading] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -28,12 +39,40 @@ export function ForgotPasswordAuthCodeForm({
     if (error) {
       setError('');
     }
+    if (successMessage) {
+      setSuccessMessage('');
+      setIsVerified(false);
+    }
   };
 
-  const handleClick = useCallback(async () => {
+  const handleResendButtonClick = useCallback(async () => {
+    try {
+      const { expirationMinutes } = await authService.verifyEmailRequest({
+        email: email,
+        purpose: VerifyEmailPurpose.RESET_PASSWORD,
+      });
+
+      authService.saveEmailAuthSession(EmailAuthSessionKey.RESET_PASSWORD, {
+        email: email,
+        expirationTimes: expirationMinutes * 60,
+      });
+    } catch (error) {
+      if (error instanceof HTTPError) {
+        setError(error.data.message ?? '');
+      }
+    }
+  }, [email]);
+
+  const handleNextButtonClick = useCallback(async () => {
+    onNextStep(ForgotPasswordStep.NewPassword);
+  }, [onNextStep]);
+
+  const handleVerifyButtonClick = useCallback(async () => {
     // 인증 코드 검증 로직 구현 필요
     try {
       setLoading(true);
+      setSuccessMessage('');
+      setError('');
       // API 호출 및 검증
       const { verificationToken } = await authService.verifyEmail({
         email: email,
@@ -42,92 +81,89 @@ export function ForgotPasswordAuthCodeForm({
       });
 
       await verifyTokenAction({ token: verificationToken });
-
-      onNextStep(ForgotPasswordStep.NewPassword);
+      setIsVerified(true);
+      setSuccessMessage('인증이 완료되었습니다.');
     } catch (error) {
+      setIsVerified(false);
       if (error instanceof Error) {
-        setError(error.message);
+        // setError(error.message);
+        setError('인증코드 전송 중 에러가 발생했습니다.');
       }
     } finally {
       setLoading(false);
     }
-  }, [code, email, onNextStep]);
+  }, [code, email]);
 
   return (
     <>
-      <div className="p-4 space-y-6">
-        <div className="flex flex-col gap-3">
-          <h2 className="text-[#393939] text-[18px] font-semibold leading-[130%] tracking-[-0.9px]">
-            이메일로 받으신 인증 코드를 입력해주세요.
-          </h2>
-          <span className="text-[#393939] text-[16px] font-normal leading-normal tracking-[-0.66px]">
-            {email}
-          </span>
-        </div>
-        <div className="flex flex-col gap-7">
-          <div className="relative">
-            <input
-              type="text"
-              value={code}
-              onChange={handleChange}
-              placeholder="인증코드를 입력해주세요"
-              className={`w-full py-[10px] border-b ${
-                error ? 'border-red-500' : 'border-gray-200'
-              } focus:outline-none placeholder:text-[#BABABA]`}
-            />
-            {code && (
-              <button
-                type="button"
-                onClick={() => {
-                  setCode('');
-                  setError('');
-                }}
-                className="absolute right-2 top-1/2 -translate-y-1/2"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                >
-                  <circle cx="12" cy="12" r="12" fill="#D9D9D9" />
-                  <g transform="translate(7, 7)">
-                    <path
-                      d="M1 9L9 1"
-                      stroke="#393939"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                    <path
-                      d="M9 9L1 1"
-                      stroke="#393939"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                  </g>
-                </svg>
-              </button>
-            )}
-            {error && (
-              <p className="absolute mt-1 text-sm text-red-500">{error}</p>
-            )}
+      <h2 className="text-[22px] font-semibold leading-[130%] tracking-[-0.9px]">
+        {/* {email} */}
+        <div className="text-primary-60">eepy2.23@gmail.com</div>
+        <div className="text-primary-5">인증코드를 보내드렸어요 !</div>
+      </h2>
+      <div className="flex h-full flex-col justify-between">
+        <div className="">
+          <div className="mb-[13.5px] w-full">
+            <div className="flex w-full gap-[10px]">
+              <div className="relative w-full">
+                <input
+                  type="email"
+                  value={code}
+                  onChange={handleChange}
+                  placeholder="인증코드를 입력해주세요"
+                  className={`w-full flex-1 rounded-[6px] border px-4 py-[12.5px] text-sm ${
+                    error ? 'border-error-40' : 'border-[#A6A6A6]'
+                  } placeholder:text-[#BABABA] focus:outline-none`}
+                />
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+                  <ResetButton
+                    isShown={code !== ''}
+                    onClick={() => {
+                      setCode('');
+                      setError('');
+                    }}
+                  />
+                </div>
+              </div>
+              <OliveButton
+                onClick={handleVerifyButtonClick}
+                text="중복확인"
+                className="max-w-[90px] text-nowrap"
+              />
+            </div>
           </div>
-
-          <Button
-            className={`flex items-center justify-center w-full py-3 text-white rounded-[100px] font-medium transition-colors
-              ${
-                code.trim() && !error
-                  ? 'bg-[#FFB700] hover:bg-[#FFB700]/90'
-                  : 'bg-gray-400 cursor-not-allowed opacity-50'
-              }`}
-            disabled={!code.trim() || !!error || isLoading}
-            isLoading={isLoading}
-            onClick={handleClick}
-          >
-            계속하기
-          </Button>
+          {error && (
+            <p className="text-error-60 flex items-center gap-[5px] text-sm">
+              <div className="h-4 w-4">
+                <IconWarn className="h-full w-full" />
+              </div>
+              {error}
+            </p>
+          )}
+          {successMessage && !error && (
+            <p className="text-sucess-60 flex items-center gap-[5px] text-sm">
+              <div className="h-4 w-4">
+                <IconCheckRound className="h-full w-full" />
+              </div>
+              {successMessage}
+            </p>
+          )}
+          <div className="text-neutral-30 flex w-full items-center justify-center gap-[11px] py-[34px] text-sm">
+            <div>인증코드를 아직 받지 못하셨나요?</div>
+            <button
+              className="text-secondary-30 text-b-400 font-medium underline decoration-solid decoration-from-font underline-offset-auto"
+              onClick={handleVerifyButtonClick}
+            >
+              재전송
+            </button>
+          </div>
         </div>
+        <HoneyButton
+          type="submit"
+          text="다음"
+          onClick={handleNextButtonClick}
+          isDisabled={!code.trim() || !!error || isLoading || !isVerified}
+        />
       </div>
     </>
   );
