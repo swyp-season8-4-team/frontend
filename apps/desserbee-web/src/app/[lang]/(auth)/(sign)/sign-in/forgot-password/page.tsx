@@ -1,11 +1,11 @@
-import { ForgotPasswordController } from "./_components/ForgotPasswordController";
+import { ForgotPasswordController } from './_components/ForgotPasswordController';
 
 export default async function ForgotPasswordPage() {
   return (
-    <main className="px-4 pt-8 overflow-hidden h-[100dvh]">
-      <div className="flex flex-col mt-[48px] gap-6 h-full">
+    <main className="h-[100dvh] overflow-y-scroll px-4 py-[30px]">
+      <div className="flex h-full flex-col gap-6">
         <ForgotPasswordController />
       </div>
     </main>
-  )
+  );
 }
