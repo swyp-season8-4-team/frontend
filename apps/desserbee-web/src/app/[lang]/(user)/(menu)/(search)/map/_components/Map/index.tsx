@@ -53,7 +53,7 @@ import type { Preference } from '@repo/entity/src/preference';
 import { SearchResultList } from '../SearchResultList';
 import IconLoadingSpinner from '@repo/design-system/components/icons/IconLoadingSpinner';
 
-interface KakaoMapProps {
+interface MapProps {
   preferenceCategories: PreferenceData[];
 }
 
@@ -70,7 +70,7 @@ const MemoizedMapPanel = React.memo(MapPanel);
 const MemoizedReFetchStoreBtn = React.memo(ReFetchStoreBtn);
 const MemoizedSearchResultList = React.memo(SearchResultList);
 
-export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
+export function Map({ preferenceCategories }: MapProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const mapRef = useRef<HTMLDivElement>(null);
@@ -965,4 +965,4 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
   );
 }
 
-export default React.memo(KakaoMap);
+export default React.memo(Map);

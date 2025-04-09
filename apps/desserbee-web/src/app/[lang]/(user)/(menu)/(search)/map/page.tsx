@@ -1,4 +1,4 @@
-import { KakaoMap } from './_components/KakaoMap';
+import { Map } from './_components/Map';
 import { BannerCarousel } from './_components/BannerCarousel';
 
 import StoreService from '@repo/usecase/src/storeService';
@@ -20,14 +20,14 @@ export default async function MapPage() {
     return <NotFound />;
   }
 
-  const kakaoMapProps = {
+  const mapProps = {
     preferenceCategories,
   };
 
   return (
-    <div className="h-full overflow-hidden scroll-none">
+    <div className="scroll-none h-full overflow-hidden">
       <div className="px-base h-full">
-        <KakaoMap {...kakaoMapProps} />
+        <Map {...mapProps} />
         <BannerCarousel />
       </div>
     </div>
