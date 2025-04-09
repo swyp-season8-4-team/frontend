@@ -58,6 +58,10 @@ export function ForgotPasswordAuthCodeForm({
       });
     } catch (error) {
       if (error instanceof HTTPError) {
+        if (error.data.status === 400) {
+          setError('잘못된 인증코드입니다.');
+          return;
+        }
         setError(error.data.message ?? '');
       }
     }
