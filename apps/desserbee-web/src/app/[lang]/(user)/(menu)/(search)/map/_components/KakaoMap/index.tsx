@@ -51,6 +51,7 @@ import { useTag } from '../../../_hooks/useTag';
 import { getNearbyStores, getStoresLocationInSavedList } from './action';
 import type { Preference } from '@repo/entity/src/preference';
 import { SearchResultList } from '../SearchResultList';
+import IconLoadingSpinner from '@repo/design-system/components/icons/IconLoadingSpinner';
 
 interface KakaoMapProps {
   preferenceCategories: PreferenceData[];
@@ -927,16 +928,23 @@ export function KakaoMap({ preferenceCategories }: KakaoMapProps) {
       />
       <div
         ref={mapRef}
-        className="relative bg-[#E8E8E8] mb-[9px] rounded-base w-full h-[calc(100dvh-295px)] overflow-x-hidden z-0"
+        className="rounded-base relative z-0 mb-[9px] h-[calc(100dvh-295px)] w-full overflow-x-hidden bg-[#E8E8E8]"
       >
         {error && (
-          <div className="top-1/2 left-1/2 z-20 absolute bg-red-100 px-4 py-2 border border-red-400 rounded text-red-700 -translate-x-1/2 transform w-[200px] text-center">
+          <div className="absolute left-1/2 top-1/2 z-20 w-[200px] -translate-x-1/2 transform rounded border border-red-400 bg-red-100 px-4 py-2 text-center text-red-700">
             {error}
           </div>
         )}
         {isSearching && (
-          <div className="top-1/2 left-1/2 z-20 absolute -translate-x-1/2 -translate-y-1/2 transform bg-white/80 p-2 rounded-full shadow-md flex items-center justify-center">
-            <span className="w-12 h-12 border-4 border-[#F9C22E] border-b-transparent rounded-full inline-block box-border animate-spin"></span>
+          // <div className="top-1/2 left-1/2 z-20 absolute -translate-x-1/2 -translate-y-1/2 transform bg-white/80 p-2 rounded-full shadow-md flex items-center justify-center">
+          //   <span className="w-12 h-12 border-4 border-[#F9C22E] border-b-transparent rounded-full inline-block box-border animate-spin"></span>
+          // </div>
+          <div className="flex h-full flex-col items-center justify-center">
+            <IconLoadingSpinner
+              className="animate-spin"
+              size={50}
+              viewBox="0 0 104 104"
+            />
           </div>
         )}
         <MemoizedPreferenceTags {...preferenceTagsProps} />
