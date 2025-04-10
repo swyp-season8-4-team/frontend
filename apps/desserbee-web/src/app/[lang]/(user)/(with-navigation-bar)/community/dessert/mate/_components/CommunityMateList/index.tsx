@@ -1,15 +1,21 @@
 'use client';
 
-import { startTransition, useContext, useEffect, useRef, useState } from "react";
-import { CommunityMateListContext } from "../../_contexts/CommunityMateListContext";
-import CommunityMateCard from "../CommunityMateCard";
-import { nanoid } from "nanoid";
+import {
+  startTransition,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { CommunityMateListContext } from '../../_contexts/CommunityMateListContext';
+import CommunityMateCard from '../CommunityMateCard';
+import { nanoid } from 'nanoid';
 
 export default function CommunityMateList() {
   const { mates, isLast, loadMore } = useContext(CommunityMateListContext);
   const observerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       async (entries) => {
@@ -24,7 +30,7 @@ export default function CommunityMateList() {
       {
         threshold: 0.1,
         rootMargin: '100px',
-      }
+      },
     );
 
     if (observerRef.current) {
@@ -35,16 +41,11 @@ export default function CommunityMateList() {
   }, [isLast, loadMore, isLoading]);
 
   return (
-    <>
+    <div className="flex flex-col gap-[6px]">
       {mates.map((mate) => {
-        return (
-          <CommunityMateCard
-            key={mate.id || nanoid(10)}
-            mate={mate}
-          />
-        )
+        return <CommunityMateCard key={mate.id || nanoid(10)} mate={mate} />;
       })}
       <div ref={observerRef} />
-    </>
-  )
+    </div>
+  );
 }

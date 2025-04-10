@@ -18,7 +18,7 @@ export default function DessertCategoryFilter({ categories }: Props) {
       {categories.map((category) => (
         <button
           key={`dessert-mate-${category}-chip`}
-          className={`whitespace-nowrap rounded-full border px-4 py-2 text-xs font-medium text-[#412D00] transition-colors ${
+          className={`whitespace-nowrap rounded-full border px-3 py-[6px] text-xs font-medium text-[#412D00] transition-colors ${
             activeCategory === category
               ? 'border-primary-70 bg-primary-90'
               : 'border-[#CDC8C3] bg-white'

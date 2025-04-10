@@ -44,6 +44,7 @@ export interface Mate
   mateImage: string;
   recruit: boolean;
   applied?: boolean;
+  //TODO: 유저프로필사진, 주소 필드, createdAt 추가되어야함 (디자인에 있지만 API 반영안됨)
 }
 
 export interface RawMateReply {
