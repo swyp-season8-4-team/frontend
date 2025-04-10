@@ -1,22 +1,22 @@
-import BackButton from '@/app/[lang]/_components/BackButton';
-import { recipeKorea } from '@/app/fonts';
-import { Header } from '@repo/design-system/components/Header';
-import type { WithChildren } from '@repo/ui';
-import SearchIconButton from './_components/SearchIconButton';
-import { Logo } from '@/app/[lang]/_components/Logo';
+'use client';
 
-export default async function CommunityDessertLayout({
-  children,
-}: WithChildren) {
+import type { WithChildren } from '@repo/ui';
+import { DessertHeader } from './_components/DessertHeader';
+import { usePathname } from 'next/navigation';
+
+export default function CommunityDessertLayout({ children }: WithChildren) {
+  const pathname = usePathname();
+
+  let title = '';
+  if (pathname.endsWith('/dessert/mate')) {
+    title = '디저트 메이트';
+  } else if (pathname.endsWith('/dessert/review')) {
+    title = '디저트 리뷰';
+  }
+
   return (
     <>
-      <Header
-        backButton={<BackButton />}
-        title="디저비"
-        fontClass={recipeKorea.className}
-        searchIcon={<SearchIconButton />}
-        logo={<Logo height={20} width={20} />}
-      />
+      <DessertHeader title={title} />
       {children}
     </>
   );
