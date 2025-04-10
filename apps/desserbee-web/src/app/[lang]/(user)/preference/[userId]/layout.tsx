@@ -1,5 +1,4 @@
 import type { WithParams } from '@/app';
-import { recipeKorea } from '@/app/fonts';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import { isTargetUser } from '@repo/entity/src/user';
 import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
@@ -38,7 +37,7 @@ export default async function PreferenceLayout({
 
   return (
     <div className="relative flex h-screen flex-col overflow-hidden bg-white">
-      <HeaderContainer fontClass={recipeKorea.className} />
+      <HeaderContainer />
       <div className="mt-[56px] flex flex-1 justify-center overflow-hidden">
         <PreferencesProvider user={targetUser}>{children}</PreferencesProvider>
       </div>
