@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import type { SavedListData } from '@repo/entity/src/store';
 import IconFlower from '@repo/design-system/components/icons/IconFlower';
-import { getIconColor } from '../../../(menu)/(search)/map/_utils/iconColor';
+import { getIconColor } from '../../../map/_utils/iconColor';
 import { cn } from '@repo/ui/lib/utils';
 import type { SavedReviewListResponse } from '@repo/entity/src/review';
 
