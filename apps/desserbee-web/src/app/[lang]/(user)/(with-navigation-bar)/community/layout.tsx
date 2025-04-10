@@ -1,9 +1,5 @@
-export default async function CommunityLayout({
-  children,
-}: {
-  bottomSheet: React.ReactNode;
-  sidebar: React.ReactNode;
-  children: React.ReactNode;
-}) {
+import type { WithChildren } from '@repo/ui/index';
+
+export default function CommunityLayout({ children }: WithChildren) {
   return <div>{children}</div>;
 }
