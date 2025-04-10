@@ -316,4 +316,16 @@ export default class KakaoMapController implements MapController {
       throw error;
     }
   }
+
+  async convertAddressToCoordinates(address: string): Promise<MapPosition> {
+    try {
+      if (!this.map) {
+        throw new Error('Map is not initialized');
+      }
+      return await this.map.convertAddressToCoordinates(address);
+    } catch (error) {
+      console.error('주소 변환 중 오류 발생:', error);
+      throw error;
+    }
+  }
 }

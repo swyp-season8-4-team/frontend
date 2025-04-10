@@ -45,4 +45,5 @@ export interface MapController {
     markerImageSrc: string,
     name: string,
   ): void;
+  convertAddressToCoordinates(address: string): Promise<MapPosition>;
 }
