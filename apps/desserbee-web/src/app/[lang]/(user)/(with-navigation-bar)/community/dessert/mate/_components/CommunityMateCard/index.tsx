@@ -41,7 +41,7 @@ export default function CommunityMateCard({ mate }: Props) {
               <CommunityMateCardBookmarkButton mateId={mate.id} />
             </div>
           </div>
-          <div className="flex w-full flex-col gap-[2px]">
+          <div className="flex w-full flex-col justify-between gap-[2px]">
             <div className="flex justify-between">
               <div className="flex items-center gap-1">
                 <Chip
@@ -58,26 +58,26 @@ export default function CommunityMateCard({ mate }: Props) {
                   </span>
                 )}
               </div>
-              <div className="text-neutral-40 flex items-center gap-1">
+              {/* <div className="text-neutral-40 flex items-center gap-1">
                 <div className="h-3 w-3 md:h-4 md:w-4">
                   <IconPeople className="h-full w-full" />
                 </div>
                 <span className="text-[11px] font-medium"> 2/5</span>
-              </div>
+              </div> */}
             </div>
             <span className="line-clamp-1 text-sm font-medium">{title}</span>
-            <div className="flex items-center gap-1">
+            {/* <div className="flex items-center gap-1">
               <div className="h-3 w-3">
                 <IconLocationOutline2 className="text-neutral-40 h-full w-full" />
               </div>
               <div className="text-neutral-40 text-xs">모임 장소명</div>
-            </div>
+            </div> */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1">
                 {/* <span className="h-4 w-4 rounded-full bg-[#DFDFDF]"></span> */}
                 <span className="text-neutral-30 text-[10px]">{nickname}</span>
               </div>
-              <div className="text-[10px] text-neutral-50">2025.01.28</div>
+              {/* <div className="text-[10px] text-neutral-50">2025.01.28</div> */}
             </div>
           </div>
         </div>
