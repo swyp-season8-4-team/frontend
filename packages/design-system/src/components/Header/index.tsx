@@ -27,7 +27,7 @@ export function Header({
           {logo}
           <h1
             className={cn(
-              'mt-2 flex h-full items-center justify-center text-[18px] leading-[130%] tracking-[-0.54px] text-white',
+              'mt-2 flex h-full items-center justify-center text-lg leading-[130%] tracking-[-0.54px] text-[#271900]',
               fontClass,
             )}
           >

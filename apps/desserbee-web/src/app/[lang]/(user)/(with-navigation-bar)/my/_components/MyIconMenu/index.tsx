@@ -7,7 +7,7 @@ import IconSetting from '@repo/design-system/components/icons/IconSetting';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useContext, type ReactNode } from 'react';
-import { CouponIsNotReadyModal } from '../../../(with-navigation-bar)/map/_modals/CouponIsNotReadyModal';
+import { CouponIsNotReadyModal } from '../../../map/_modals/CouponIsNotReadyModal';
 import { useRouter } from 'next/navigation';
 import { PointIsNotReadyModal } from '../../_modals/PointIsNotReadyModal';
 import StoreService from '@repo/usecase/src/storeService';
