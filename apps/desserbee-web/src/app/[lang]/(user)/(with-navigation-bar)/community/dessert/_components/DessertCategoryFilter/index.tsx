@@ -9,17 +9,19 @@ interface Props {
 }
 
 export default function DessertCategoryFilter({ categories }: Props) {
-  const { activeCategory, handleCategoryClick } = useContext(CommunityDessertCategorySearchContext);
-  
+  const { activeCategory, handleCategoryClick } = useContext(
+    CommunityDessertCategorySearchContext,
+  );
+
   return (
-    <div className="flex gap-2 overflow-x-auto mb-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+    <div className="mb-6 flex gap-2 overflow-x-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
       {categories.map((category) => (
         <button
           key={`dessert-mate-${category}-chip`}
-          className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-medium transition-colors ${
-            activeCategory === category 
-              ? 'bg-[#FFC700] text-white' 
-              : 'bg-white text-[#333] hover:bg-gray-50'
+          className={`whitespace-nowrap rounded-full border px-4 py-2 text-xs font-medium text-[#412D00] transition-colors ${
+            activeCategory === category
+              ? 'border-primary-70 bg-primary-90'
+              : 'border-[#CDC8C3] bg-white'
           }`}
           onClick={() => handleCategoryClick(category)}
         >
@@ -28,4 +30,4 @@ export default function DessertCategoryFilter({ categories }: Props) {
       ))}
     </div>
   );
-} 
+}
