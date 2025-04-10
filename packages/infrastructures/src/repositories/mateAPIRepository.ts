@@ -560,12 +560,11 @@ export default class MateAPIRepository
         ...(to && { to: to.toString() }),
       },
     });
-
     return {
-      replyList: response.mates.map((reply) =>
+      replyList: response.mateReplies.map((reply) =>
         this.mateConverter.convertRawToMateReply(reply),
       ),
-      isLast: response.isLast,
+      isLast: response.last,
     };
   }
 

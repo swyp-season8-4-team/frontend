@@ -30,7 +30,7 @@ export const MobileScreenProvider = (props: Props) => {
     <MobileScreenContext.Provider value={{ width }}>
       <div
         ref={ref}
-        className="max-w-[768px] mx-auto bg-white overflow-hidden"
+        className="mx-auto max-w-[768px] overflow-hidden bg-white"
         style={
           {
             // minHeight: innerHeight ?? '100dvh',

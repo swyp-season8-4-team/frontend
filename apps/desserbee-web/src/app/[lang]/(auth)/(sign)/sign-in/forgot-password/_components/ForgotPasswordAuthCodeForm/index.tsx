@@ -58,6 +58,10 @@ export function ForgotPasswordAuthCodeForm({
       });
     } catch (error) {
       if (error instanceof HTTPError) {
+        if (error.data.status === 400) {
+          setError('잘못된 인증코드입니다.');
+          return;
+        }
         setError(error.data.message ?? '');
       }
     }
@@ -98,8 +102,7 @@ export function ForgotPasswordAuthCodeForm({
   return (
     <>
       <h2 className="pt-[45px] text-[22px] font-medium leading-[130%] tracking-[-0.9px]">
-        {/* {email} */}
-        <div className="text-primary-60">eepy2.23@gmail.com</div>
+        <div className="text-primary-60">{email}</div>
         <div className="text-primary-5">인증코드를 보내드렸어요 !</div>
       </h2>
       <div className="flex h-full flex-col justify-between">
@@ -128,7 +131,7 @@ export function ForgotPasswordAuthCodeForm({
               </div>
               <OliveButton
                 onClick={handleVerifyButtonClick}
-                text="중복확인"
+                text="인증확인"
                 className="max-w-[90px] text-nowrap"
               />
             </div>
@@ -153,7 +156,7 @@ export function ForgotPasswordAuthCodeForm({
             <div>인증코드를 아직 받지 못하셨나요?</div>
             <button
               className="text-secondary-30 text-b-400 font-medium underline decoration-solid decoration-from-font underline-offset-auto"
-              onClick={handleVerifyButtonClick}
+              onClick={handleResendButtonClick}
             >
               재전송
             </button>

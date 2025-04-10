@@ -95,7 +95,7 @@ export default {
           90: '#FCFAF8',
           100: '#FFFFFF',
         },
-        sucess: {
+        success: {
           5: '#0D3216',
           10: '#175A28',
           20: '#1D6D31',
