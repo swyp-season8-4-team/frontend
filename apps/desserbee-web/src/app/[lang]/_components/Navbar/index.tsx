@@ -14,7 +14,7 @@ interface Props {
 
 export default function NavBar({ menuList, pathname }: Props) {
   return (
-    <nav className="z-navbar fixed bottom-0 inline-flex w-full items-center justify-center gap-14 bg-white py-4 md:gap-28">
+    <nav className="z-navbar fixed bottom-0 inline-flex w-full max-w-screen-md items-center justify-center gap-14 bg-white py-4 md:gap-28">
       {menuList.map(({ icon, text, path }) => (
         <Link key={`navbar-${path}`} href={path ?? ''}>
           <div className="flex flex-col items-center justify-center">

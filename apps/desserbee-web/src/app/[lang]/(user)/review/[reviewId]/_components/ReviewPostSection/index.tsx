@@ -1,4 +1,4 @@
-import { formatDate } from '@/app/[lang]/(user)/(menu)/(search)/store/_utils/date';
+import { formatDate } from '@/app/[lang]/(user)/store/_utils/date';
 import DefaultMaleAvatar from '@/assets/images/image-default-male-profile.png';
 import type { Review } from '@repo/entity/src/review';
 import Image from 'next/image';

@@ -20,8 +20,8 @@ export function Header({
   logo,
 }: HeaderProp) {
   return (
-    <header className="sticky top-0">
-      <div className="bg-primary flex w-full items-center justify-between px-[16px] py-[21px] pb-3 pt-[13px] text-[22px]">
+    <header className="w-full">
+      <div className="bg-primary-80 flex w-full max-w-screen-md items-center justify-between px-[16px] py-[21px] pb-3 pt-[13px] text-[22px]">
         <div className="flex items-center gap-1">
           {backButton}
           {logo}

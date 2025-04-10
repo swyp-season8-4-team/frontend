@@ -8,7 +8,7 @@ import type { WithChildren } from '@repo/ui';
 import NavigationService from '@repo/usecase/src/navigationService';
 import UserService from '@repo/usecase/src/userService';
 import { notFound, redirect } from 'next/navigation';
-import { HeaderContainer } from '../../(menu)/(search)/_components/HeaderContainer';
+import { HeaderContainer } from '../../_components/HeaderContainer';
 import { PreferencesProvider } from './_contexts/PreferencesContext';
 
 const navigationService = new NavigationService({});
@@ -37,9 +37,9 @@ export default async function PreferenceLayout({
   }
 
   return (
-    <div className="h-screen bg-white relative flex flex-col overflow-hidden">
+    <div className="relative flex h-screen flex-col overflow-hidden bg-white">
       <HeaderContainer fontClass={recipeKorea.className} />
-      <div className="flex-1 flex mt-[56px] justify-center overflow-hidden">
+      <div className="mt-[56px] flex flex-1 justify-center overflow-hidden">
         <PreferencesProvider user={targetUser}>{children}</PreferencesProvider>
       </div>
     </div>
