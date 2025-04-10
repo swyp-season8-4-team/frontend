@@ -40,11 +40,11 @@ export default function DessertSearchBar({ searchType }: Props) {
           placeholder="검색어를 입력해주세요"
           value={query}
           onChange={handleInputChange}
-          className="w-full py-3 px-12 rounded-full bg-white text-sm focus:outline-none"
+          className="w-full rounded-full bg-white px-12 py-2 text-sm focus:outline-none"
         />
         <div className="absolute left-4">
           <svg
-            className="w-5 h-5 text-gray-400"
+            className="h-5 w-5 text-gray-400"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

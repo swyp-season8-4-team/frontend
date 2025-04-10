@@ -12,13 +12,12 @@ export default function CommunityMateFixedTopArea({ children }: WithChildren) {
     <div className="relative">
       {/* 검색바와 기존 콘텐츠를 절대 위치로 배치하여 같은 공간을 차지하도록 함 */}
       <div
-        className={`absolute top-0 left-0 w-full transition-opacity duration-300 ${isViewSearchBar ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}
+        className={`absolute left-0 top-2 w-full transition-opacity duration-300 ${isViewSearchBar ? 'z-10 opacity-100' : 'pointer-events-none z-0 opacity-0'}`}
       >
         <DessertSearchBar searchType="dessert-mate-search" />
       </div>
-
       <div
-        className={`transition-opacity duration-300 ${isViewSearchBar ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+        className={`transition-opacity duration-300 ${isViewSearchBar ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
       >
         {children}
       </div>

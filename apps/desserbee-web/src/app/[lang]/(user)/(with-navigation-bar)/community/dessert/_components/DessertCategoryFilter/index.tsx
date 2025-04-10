@@ -14,7 +14,7 @@ export default function DessertCategoryFilter({ categories }: Props) {
   );
 
   return (
-    <div className="mb-6 flex gap-2 overflow-x-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
+    <div className="py-base flex gap-2 overflow-x-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
       {categories.map((category) => (
         <button
           key={`dessert-mate-${category}-chip`}

@@ -7,6 +7,7 @@ import CommunityMateFixedTopArea from './_components/CommunityMateFixedTopArea';
 import CommunityMateSection from './_components/CommunityMateSection';
 import CommunityMateTitle from './_components/CommunityMateTitle';
 import { COMMUNITY_MATE_CATEGORIES } from './_constant';
+import IconWriting from '@repo/design-system/components/icons/IconWriting2';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,25 +17,18 @@ export default async function CommunityMatePage({
   const { q } = await searchParams;
 
   return (
-    <main className="mx-auto flex h-[calc(100dvh-65px)] max-w-screen-md flex-col overflow-hidden bg-[#f6f6f6] px-4 py-6">
-      {/* 타이틀 영역 */}
+    <main className="relative mx-auto flex h-[calc(100dvh-65px)] max-w-screen-md flex-col overflow-hidden bg-[#f6f6f6] px-4">
+      <Link
+        href={NavigationPathname.MateWrite}
+        className="z-modal fixed bottom-24 right-4 flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#3F3C39]"
+      >
+        <IconWriting className="text-[#FFC858]" />
+      </Link>
       <CommunityDessertCategorySearchProvider>
-        <div className="flex flex-col gap-2">
-          <CommunityMateFixedTopArea>
-            <div className="relative mb-6 flex justify-between">
-              <CommunityMateTitle />
-              <div className="flex gap-2">
-                <Link
-                  className="flex h-[26px] w-[60px] flex-shrink-0 items-center justify-center whitespace-nowrap rounded-[53.204px] bg-[#898989] px-3 py-1.5 text-[12px] font-semibold leading-[130%] tracking-[-0.287px] text-white"
-                  href={NavigationPathname.MateWrite}
-                >
-                  글쓰기
-                </Link>
-              </div>
-            </div>
-          </CommunityMateFixedTopArea>
-          <DessertCategoryFilter categories={COMMUNITY_MATE_CATEGORIES} />
-        </div>
+        <CommunityMateFixedTopArea>
+          <CommunityMateTitle />
+        </CommunityMateFixedTopArea>
+        <DessertCategoryFilter categories={COMMUNITY_MATE_CATEGORIES} />
         <CommunityMateSection q={q ?? null} />
       </CommunityDessertCategorySearchProvider>
     </main>
