@@ -71,8 +71,9 @@ export interface GetMateReplyListRequest {
 }
 
 export interface RawGetMateReplyListResponse {
-  mates: RawMateReply[];
-  isLast: boolean;
+  mateReplies: RawMateReply[];
+  count: number;
+  last: boolean;
 }
 
 export interface GetMateReplyListResponse {
