@@ -4,62 +4,48 @@ import Link from 'next/link';
 import CommunityDessertMateSVG from './_assets/svgs/icon-dessert-mate.svg';
 import CommunityDessertReviewSVG from './_assets/svgs/icon-dessert-review.svg';
 import CommunityNickName from './_components/CommunityNickName';
+import CommunityMainCard from './_components/CommunityMainCard';
 
+const COMMUNITY_NAVIGATION = [
+  {
+    path: NavigationPathname.CommunityDessertMate,
+    title: '디저트 메이트',
+    description: `나에게 딱 맞는\n디저트 친구 찾기`,
+    imgSrc: CommunityDessertMateSVG,
+    imgAlt: 'community-dessert-mate',
+  },
+  {
+    path: NavigationPathname.CommunityDessertReview,
+    title: '디저트 리뷰',
+    description: ` 다양한 디저트 가게\n리뷰를 알아보기`,
+    imgSrc: CommunityDessertReviewSVG,
+    imgAlt: 'community-dessert-review',
+  },
+];
 export default async function CommunityIntroPage() {
   return (
-    <main className="flex flex-col px-5 py-6 bg-[#F6F6F6] h-[100dvh]">
-      <h1 className="text-xl text-gray-600 mb-4">커뮤니티</h1>
-
-      <h2 className="text-center text-lg mt-8 mb-8">
+    <main className="flex h-[100dvh] flex-col justify-center bg-[#F6F6F6] px-5">
+      <h1 className="mb-8 mt-8 text-center text-[22px]">
         <CommunityNickName />
-        님, 디저비의 커뮤니티
+        님,
         <br />
-        서비스를 탐색해보세요!
-      </h2>
+        커뮤니티를 탐색해보세요!
+      </h1>
 
       <div className="grid grid-cols-2 gap-4">
-        {/* 첫 번째 카드 */}
-        <div className="bg-white rounded-2xl p-4 flex flex-col justify-between items-center">
-          <Image
-            src={CommunityDessertMateSVG}
-            alt="community-dessert-mate"
-            width={96}
-            height={96}
-            priority
-          />
-          <p className="text-center text-sm mb-3">
-            <CommunityNickName />
-            님에게 딱 맞는 디저트 메이트를 찾아볼까요?
-          </p>
-          <Link
-            href={NavigationPathname.CommunityDessertMate}
-            className="w-full py-2 bg-[#939393] text-white rounded-full text-sm text-center"
-          >
-            바로가기
-          </Link>
-        </div>
-
-        {/* 두 번째 카드 */}
-        <div className="bg-white rounded-2xl p-4 flex flex-col justify-between items-center">
-          <Image
-            src={CommunityDessertReviewSVG}
-            alt="community-dessert-review"
-            width={96}
-            height={96}
-            priority
-          />
-          <p className="text-center text-sm mb-3">
-            다양한 디저트 가게의
-            <br />
-            리뷰를 알아볼까요?
-          </p>
-          <Link
-            href={NavigationPathname.CommunityDessertReview}
-            className="w-full py-2 bg-[#939393] text-white rounded-full text-center text-sm"
-          >
-            바로가기
-          </Link>
-        </div>
+        {COMMUNITY_NAVIGATION.map(
+          ({ path, title, description, imgSrc, imgAlt }) => (
+            <div key={path}>
+              <CommunityMainCard
+                path={path}
+                imgSrc={imgSrc}
+                imgAlt={imgAlt}
+                title={title}
+                description={description}
+              />
+            </div>
+          ),
+        )}
       </div>
     </main>
   );
