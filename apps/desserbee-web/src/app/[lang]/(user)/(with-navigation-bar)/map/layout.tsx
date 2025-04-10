@@ -1,4 +1,3 @@
-import { recipeKorea } from '@/app/fonts';
 import { HeaderContainer } from '../../_components/HeaderContainer';
 
 export default async function MapLayout({
@@ -12,7 +11,7 @@ export default async function MapLayout({
 }) {
   return (
     <div className="select-none">
-      <HeaderContainer fontClass={recipeKorea.className} />
+      <HeaderContainer />
       {bottomSheet}
       {sidebar}
       {children}

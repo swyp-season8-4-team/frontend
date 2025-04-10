@@ -9,7 +9,7 @@ interface CommunityMainCardProps {
   description: string;
 }
 
-export default function CommunityMainCard({
+export default function CommunityIntroCard({
   path,
   imgSrc,
   imgAlt,

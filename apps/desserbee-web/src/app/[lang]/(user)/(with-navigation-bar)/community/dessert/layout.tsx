@@ -11,10 +11,10 @@ export default async function CommunityDessertLayout({
   return (
     <>
       <Header
-        backButton={<BackButton iconClassName="text-white" />}
-        title="디저비 커뮤니티"
+        backButton={<BackButton />}
+        title="디저비"
         fontClass={recipeKorea.className}
-        searchIcon={<SearchIconButton iconClassName="text-white" />}
+        searchIcon={<SearchIconButton />}
         logo={<Logo height={20} width={20} />}
       />
       {children}

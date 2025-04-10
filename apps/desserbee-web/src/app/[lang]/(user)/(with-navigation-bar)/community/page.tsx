@@ -1,10 +1,9 @@
 import { NavigationPathname } from '@repo/entity/src/navigation';
-import Image from 'next/image';
-import Link from 'next/link';
 import CommunityDessertMateSVG from './_assets/svgs/icon-dessert-mate.svg';
 import CommunityDessertReviewSVG from './_assets/svgs/icon-dessert-review.svg';
 import CommunityNickName from './_components/CommunityNickName';
-import CommunityMainCard from './_components/CommunityMainCard';
+import CommunityIntroCard from './_components/CommunityIntroCard';
+import { HeaderContainer } from '../../_components/HeaderContainer';
 
 const COMMUNITY_NAVIGATION = [
   {
@@ -24,28 +23,30 @@ const COMMUNITY_NAVIGATION = [
 ];
 export default async function CommunityIntroPage() {
   return (
-    <main className="flex h-[100dvh] flex-col justify-center bg-[#F6F6F6] px-5">
-      <h1 className="mb-8 mt-8 text-center text-[22px]">
-        <CommunityNickName />
-        님,
-        <br />
-        커뮤니티를 탐색해보세요!
-      </h1>
-
-      <div className="grid grid-cols-2 gap-4">
-        {COMMUNITY_NAVIGATION.map(
-          ({ path, title, description, imgSrc, imgAlt }) => (
-            <div key={path}>
-              <CommunityMainCard
-                path={path}
-                imgSrc={imgSrc}
-                imgAlt={imgAlt}
-                title={title}
-                description={description}
-              />
-            </div>
-          ),
-        )}
+    <main className="flex h-full min-h-[100dvh] flex-col bg-[#F2F1ED]">
+      <HeaderContainer />
+      <div className="px-base pt-[100px]">
+        <h1 className="my-8 text-center text-[22px]">
+          <CommunityNickName />
+          님,
+          <br />
+          커뮤니티를 탐색해보세요!
+        </h1>
+        <div className="grid grid-cols-2 gap-4 md:">
+          {COMMUNITY_NAVIGATION.map(
+            ({ path, title, description, imgSrc, imgAlt }) => (
+              <div key={path}>
+                <CommunityIntroCard
+                  path={path}
+                  imgSrc={imgSrc}
+                  imgAlt={imgAlt}
+                  title={title}
+                  description={description}
+                />
+              </div>
+            ),
+          )}
+        </div>
       </div>
     </main>
   );

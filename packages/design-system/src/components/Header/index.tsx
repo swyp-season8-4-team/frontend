@@ -20,14 +20,14 @@ export function Header({
   logo,
 }: HeaderProp) {
   return (
-    <header className="w-full">
-      <div className="bg-primary-80 flex w-full max-w-screen-md items-center justify-between px-[16px] py-[21px] pb-3 pt-[13px] text-[22px]">
+    <header className="h-full w-full">
+      <div className="bg-primary-80 flex max-h-[56px] w-full max-w-screen-md items-center justify-between px-[16px] py-4 text-[22px]">
         <div className="flex items-center gap-1">
           {backButton}
           {logo}
           <h1
             className={cn(
-              'mt-2 flex h-full items-center justify-center text-lg leading-[130%] tracking-[-0.54px] text-[#271900]',
+              'flex h-full items-center justify-center pt-[7px] text-lg text-[#271900]',
               fontClass,
             )}
           >
