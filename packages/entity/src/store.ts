@@ -255,7 +255,14 @@ export interface RegisterStoreRequest
   userUuid: string;
   menus: Menu[];
   // ImageFileKey?: string[]; // 메뉴 파일명
-  storeImageFiles?: File[];
+  storeImageFiles: string[];
+  ownerPickImageFiles?: string[];
+  menuImageFiles?: string[];
+}
+
+export interface RegisterStoreFromData {
+  request: RegisterStoreRequest;
+  storeImageFiles: File[];
   ownerPickImageFiles?: File[];
   menuImageFiles?: File[];
 }
@@ -651,7 +658,7 @@ export interface StoreRepository {
   registerStore({
     authorization,
     data,
-  }: BaseRequestData<RegisterStoreRequest>): Promise<RegisterStoreResponse>;
+  }: BaseRequestData<RegisterStoreFromData>): Promise<void>;
 
   editStore({
     authorization,
