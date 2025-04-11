@@ -32,7 +32,7 @@ export default async function CommunityIntroPage() {
           <br />
           커뮤니티를 탐색해보세요!
         </h1>
-        <div className="grid grid-cols-2 gap-4 md:">
+        <div className="grid grid-cols-2 gap-4">
           {COMMUNITY_NAVIGATION.map(
             ({ path, title, description, imgSrc, imgAlt }) => (
               <div key={path}>

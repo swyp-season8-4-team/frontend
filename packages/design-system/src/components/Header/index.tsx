@@ -21,7 +21,7 @@ export function Header({
 }: HeaderProp) {
   return (
     <header className="h-full w-full">
-      <div className="bg-primary-80 flex max-h-[56px] w-full max-w-screen-md items-center justify-between px-[16px] py-4 text-[22px]">
+      <div className="bg-primary-80 flex max-h-[56px] w-full items-center justify-between px-[16px] py-4 text-[22px]">
         <div className="flex items-center gap-1">
           {backButton}
           {logo}

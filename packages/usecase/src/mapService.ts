@@ -213,4 +213,11 @@ export default class MapService {
     }
     this.mapController.relayout();
   }
+
+  async convertAddressToCoordinates(address: string): Promise<MapPosition> {
+    if (!this.mapController) {
+      throw new Error('mapController is not set');
+    }
+    return await this.mapController.convertAddressToCoordinates(address);
+  }
 }

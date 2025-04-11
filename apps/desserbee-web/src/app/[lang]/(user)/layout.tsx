@@ -20,7 +20,7 @@ const userService = new UserService({
 export default async function UserLayout({ children }: WithChildren) {
   const auth = await authService.getAuthorization();
   if (!auth) {
-    return children;
+    return <MobileScreenProvider>{children} </MobileScreenProvider>;
   }
 
   const user = await userService.getMe();

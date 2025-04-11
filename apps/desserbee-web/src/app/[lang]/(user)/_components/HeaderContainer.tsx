@@ -7,12 +7,14 @@ import type { WithChildren } from '@repo/ui';
 
 export function HeaderContainer({ children }: WithChildren) {
   return (
-    <Header
-      title="디저비"
-      fontClass={recipeKorea.className}
-      logo={<Logo height={20} width={20} />}
-    >
-      {children}
-    </Header>
+    <div className="w-full max-w-screen-md">
+      <Header
+        title="디저비"
+        fontClass={recipeKorea.className}
+        logo={<Logo height={20} width={20} />}
+      >
+        {children}
+      </Header>
+    </div>
   );
 }

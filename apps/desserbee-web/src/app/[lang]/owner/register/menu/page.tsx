@@ -1,8 +1,8 @@
 'use client';
 
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useRegister, RegisterStep } from '../_contexts/RegisterContext';
-import type { Menu } from '@repo/entity/src/store';
+import type { Menu, RegisterStoreFromData } from '@repo/entity/src/store';
 import { MenuAddModal } from '../_modals/MenuAddModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { useRouter } from 'next/navigation';
@@ -12,14 +12,44 @@ import IconX from '@repo/design-system/components/icons/IconX';
 import IconPlusRound from '@repo/design-system/components/icons/IconPlusRound';
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
 import { AddButton } from '../_components/AddButton';
+import MapService from '@repo/usecase/src/mapService';
+import KakaoMapController from '@repo/infrastructures/src/controllers/kakaoMapController';
+import { KakaoMapAdapter } from '@repo/infrastructures/src/adapters/kakaoMapAdapter';
+import Script from 'next/script';
+import { registerStore } from './action';
 
 interface MenuWithImage extends Menu {
   id: string;
   imageUrls?: string[];
 }
 
+const KAKAO_MAP_API_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&libraries=services,clusterer&autoload=false`;
+
 export default function RegisterMenuPage() {
   const router = useRouter();
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+  const [mapService, setMapService] = useState<MapService | null>(null);
+
+  useEffect(() => {
+    if (isScriptLoaded && !mapService) {
+      // 카카오맵 로드
+      kakao.maps.load(() => {
+        // 임시 div 생성
+        const tempDiv = document.createElement('div');
+        const map = new kakao.maps.Map(tempDiv, {
+          center: new kakao.maps.LatLng(37.566826, 126.9786567),
+          level: 3,
+        });
+
+        // MapService 초기화
+        const adapter = new KakaoMapAdapter(map);
+        const controller = new KakaoMapController();
+        controller['map'] = adapter; // private 필드 접근을 위해 임시로 이렇게 처리
+
+        setMapService(new MapService({ mapController: controller }));
+      });
+    }
+  }, [isScriptLoaded, mapService]);
 
   const { push, pop } = useContext(PortalContext);
 
@@ -32,6 +62,8 @@ export default function RegisterMenuPage() {
     updateMenuImage,
     removeMenuImage,
     getMenuThumbnailUrl,
+    updateFormData,
+    formData,
   } = useRegister();
 
   const [menus, setMenus] = useState<MenuWithImage[]>(
@@ -79,116 +111,176 @@ export default function RegisterMenuPage() {
     setMenus((prev) => prev.filter((menu) => menu.id !== menuId));
   };
 
-  const handleNextStep = (e: React.FormEvent) => {
-    e.preventDefault();
+  const updateRegisterFormData = async () => {
+    if (!mapService) {
+      console.error('맵 서비스가 초기화되지 않았습니다.');
+      return;
+    }
 
     updateMenus(menus);
     const menuImageFiles = Array.from(storeData.menuImageMap.values());
     updateMenuImages(menuImageFiles);
 
-    completeStep(RegisterStep.MENU);
-    goToNextStep();
-    router.push(`${NavigationPathname.OwnerRegisterComplete}`);
+    try {
+      // 주소를 좌표로 변환
+      const coordinates = await mapService.convertAddressToCoordinates(
+        storeData.address,
+      );
+
+      const {
+        _storeImageFiles,
+        _ownerPickImageFiles,
+        _menuImageFiles,
+        detailAddress,
+        menuImageMap,
+        menuThumbnailUrls,
+        address,
+        ...rest
+      } = storeData;
+
+      // 좌표와 주소 정보 업데이트
+      const updatedStoreData = {
+        ...rest,
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+        address: `${address} ${detailAddress}`.trim(),
+      };
+
+      const updatedStoreFormData: RegisterStoreFromData = {
+        request: updatedStoreData,
+        storeImageFiles: _storeImageFiles,
+        ownerPickImageFiles: _ownerPickImageFiles,
+        menuImageFiles: _menuImageFiles,
+      };
+
+      updateFormData(updatedStoreFormData);
+      await registerStore(updatedStoreFormData);
+    } catch (error) {
+      console.error('가게 등록 중 오류 발생:', error);
+      return;
+    }
   };
 
-  const handlePrevStep = () => {
-    updateMenus(menus);
-    const menuImageFiles = Array.from(storeData.menuImageMap.values());
-    updateMenuImages(menuImageFiles);
-    router.back();
+  const handleNextStep = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      await updateRegisterFormData();
+
+      completeStep(RegisterStep.MENU);
+      goToNextStep();
+
+      router.push(`${NavigationPathname.OwnerRegisterComplete}`);
+    } catch (error) {
+      console.log(error);
+      return;
+    }
   };
 
   return (
-    <form onSubmit={handleNextStep}>
-      <div>
-        {menus.length === 0 ? (
-          <div className="px-base py-base flex min-h-[calc(100vh-150px)] w-full flex-col items-center justify-center gap-2">
-            <div className="flex w-full flex-col items-center gap-0">
-              <div className="text-sm text-[#424242]">
-                현재 등록된 메뉴가 없습니다.
+    <>
+      <Script
+        type="text/javascript"
+        strategy="afterInteractive"
+        async
+        src={KAKAO_MAP_API_URL}
+        onReady={() => {
+          if (!isScriptLoaded) {
+            setIsScriptLoaded(true);
+          }
+        }}
+      />
+      <form onSubmit={handleNextStep}>
+        <div>
+          {menus.length === 0 ? (
+            <div className="px-base py-base flex min-h-[calc(100vh-150px)] w-full flex-col items-center justify-center gap-2">
+              <div className="flex w-full flex-col items-center gap-0">
+                <div className="text-sm text-[#424242]">
+                  현재 등록된 메뉴가 없습니다.
+                </div>
+                <div className="text-sm text-[#424242]">
+                  새 메뉴를 추가해주세요
+                </div>
+                <AddButton
+                  onClick={openMenuAddModal}
+                  text="새 메뉴 추가"
+                  clasName="mt-[10px] max-w-[130px]"
+                />
               </div>
-              <div className="text-sm text-[#424242]">
-                새 메뉴를 추가해주세요
+            </div>
+          ) : (
+            <div className="p-base flex items-center justify-between border-y border-[#CDC8C3]">
+              <div className="flex items-center gap-[5px]">
+                <div className="text-sm font-semibold">메뉴</div>
+                <div className="text-xs text-[#898989]">{menus.length}개</div>
               </div>
               <AddButton
                 onClick={openMenuAddModal}
                 text="새 메뉴 추가"
-                clasName="mt-[10px] max-w-[130px]"
+                clasName="max-w-[130px]"
               />
             </div>
-          </div>
-        ) : (
-          <div className="p-base flex items-center justify-between border-y border-[#CDC8C3]">
-            <div className="flex items-center gap-[5px]">
-              <div className="text-sm font-semibold">메뉴</div>
-              <div className="text-xs text-[#898989]">{menus.length}개</div>
-            </div>
-            <AddButton
-              onClick={openMenuAddModal}
-              text="새 메뉴 추가"
-              clasName="max-w-[130px]"
-            />
-          </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      <div className="flex flex-col pb-[80px]">
-        {menus.map((menu) => (
-          <div
-            key={menu.id}
-            className="px-base flex gap-3 border-b border-[#CDC8C3] py-[18.5px]"
-          >
-            <div className="flex-1 flex-col justify-center">
-              <div className="font-semibold">{menu.name}</div>
-              <div
-                className="text-neutral-30 text-xs"
-                style={{
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  display: '-webkit-box',
-                  WebkitBoxOrient: 'vertical',
-                  WebkitLineClamp: 2,
-                  maxHeight: '32px',
-                  wordBreak: 'break-all',
-                }}
-              >
-                {menu.description}
-              </div>
-              <div className="text-sm font-medium">
-                {menu.price.toLocaleString()}원
-              </div>
-            </div>
-            {menu.imageFileKey?.[0] &&
-              getMenuThumbnailUrl(menu.imageFileKey[0]) && (
-                <div className="h-20 w-20 overflow-hidden rounded-md border border-[#EFEDEB]">
-                  <Image
-                    width={100}
-                    height={100}
-                    src={getMenuThumbnailUrl(menu.imageFileKey[0])!}
-                    alt={`메뉴 사진 ${menu.name}`}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              )}
-            <button
-              type="button"
-              className="flex items-start"
-              onClick={() => handleDeleteMenu(menu.id)}
+        <div className="flex flex-col pb-[80px]">
+          {menus.map((menu) => (
+            <div
+              key={menu.id}
+              className="px-base flex gap-3 border-b border-[#CDC8C3] py-[18.5px]"
             >
-              <div className="h-6 w-6">
-                <IconX className="text-neutral-40 h-full w-full" />
+              <div className="flex-1 flex-col justify-center">
+                <div className="font-semibold">{menu.name}</div>
+                <div
+                  className="text-neutral-30 text-xs"
+                  style={{
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    display: '-webkit-box',
+                    WebkitBoxOrient: 'vertical',
+                    WebkitLineClamp: 2,
+                    maxHeight: '32px',
+                    wordBreak: 'break-all',
+                  }}
+                >
+                  {menu.description}
+                </div>
+                <div className="text-sm font-medium">
+                  {menu.price.toLocaleString()}원
+                </div>
               </div>
-            </button>
-          </div>
-        ))}
-      </div>
-      <div className="fixed bottom-4 left-0 right-0 mx-4 flex gap-x-2">
-        <OliveButton
-          className="w-full font-semibold"
-          text="다음"
-          type="submit"
-        />
-      </div>
-    </form>
+              {menu.imageFileKey?.[0] &&
+                getMenuThumbnailUrl(menu.imageFileKey[0]) && (
+                  <div className="h-20 w-20 overflow-hidden rounded-md border border-[#EFEDEB]">
+                    <Image
+                      width={100}
+                      height={100}
+                      src={getMenuThumbnailUrl(menu.imageFileKey[0])!}
+                      alt={`메뉴 사진 ${menu.name}`}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                )}
+              <button
+                type="button"
+                className="flex items-start"
+                onClick={() => handleDeleteMenu(menu.id)}
+              >
+                <div className="h-6 w-6">
+                  <IconX className="text-neutral-40 h-full w-full" />
+                </div>
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className="fixed bottom-4 left-0 right-0 mx-4 flex gap-x-2">
+          <OliveButton
+            className="w-full font-semibold"
+            text="다음"
+            type="submit"
+          />
+        </div>
+      </form>
+    </>
   );
 }

@@ -38,6 +38,7 @@ import type {
   StoreDetailInfoRequest,
   SavedStoresLocationRequest,
   SavedStoresLocationData,
+  RegisterStoreFromData,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -200,9 +201,7 @@ export default class StoreService {
     return result;
   }
 
-  async registerStore(
-    params: RegisterStoreRequest,
-  ): Promise<RegisterStoreResponse> {
+  async registerStore(params: RegisterStoreFromData): Promise<void> {
     if (!this.storeRepository) {
       throw new Error('storeRepository is not set');
     } else if (!this.authRepository) {
@@ -217,8 +216,6 @@ export default class StoreService {
     };
 
     const response = await this.storeRepository.registerStore(requestData);
-
-    return response;
   }
 
   async editStore(params: EditStoreRequest): Promise<EditStoreResponse> {

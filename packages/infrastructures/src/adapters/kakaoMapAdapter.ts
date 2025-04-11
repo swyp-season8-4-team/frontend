@@ -310,4 +310,21 @@ export class KakaoMapAdapter implements ExternalMap {
     // 마커 배열에 추가
     this.markers.push(marker);
   }
+
+  async convertAddressToCoordinates(address: string): Promise<MapPosition> {
+    return new Promise((resolve, reject) => {
+      const geocoder = new kakao.maps.services.Geocoder();
+
+      geocoder.addressSearch(address, (result: any[], status: any) => {
+        if (status === kakao.maps.services.Status.OK) {
+          resolve({
+            latitude: Number(result[0].y),
+            longitude: Number(result[0].x),
+          });
+        } else {
+          reject(new Error('주소를 좌표로 변환하는데 실패했습니다.'));
+        }
+      });
+    });
+  }
 }

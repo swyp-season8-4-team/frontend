@@ -12,11 +12,11 @@ import IconLocationOutline from '@repo/design-system/components/icons/IconLocati
 
 export default function RegisterCompletePage() {
   const router = useRouter();
-  const { storeData } = useRegister();
+  const { storeData, formData } = useRegister();
 
   // 컴포넌트 마운트 시 초기화
   useEffect(() => {
-    console.log(storeData);
+    console.log(formData);
     return () => {
       // 컴포넌트 언마운트 시 정리 작업 (선택 사항)
     };
@@ -57,7 +57,7 @@ export default function RegisterCompletePage() {
             >
               {storeData.storeImageFiles?.[0] ? (
                 <Image
-                  src={URL.createObjectURL(storeData.storeImageFiles[0])}
+                  src={URL.createObjectURL(storeData._storeImageFiles[0])}
                   alt="가게 대표 이미지"
                   width={200}
                   height={111}
@@ -89,7 +89,7 @@ export default function RegisterCompletePage() {
       </div>
 
       <div className="px-base flex w-full flex-col gap-y-5 py-5 pb-10">
-        <button >
+        <button>
           <OliveButton text="사장님 대시보드" onClick={goToMapPage} />
         </button>
         <button

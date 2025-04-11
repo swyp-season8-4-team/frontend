@@ -45,6 +45,7 @@ import type {
   StoreDetailInfoRequest,
   SavedStoresLocationData,
   SavedStoresLocationRequest,
+  RegisterStoreFromData,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -219,25 +220,81 @@ export default class StoreAPIRepository
     return response;
   }
 
+  // async registerStore({
+  //   authorization,
+  //   data,
+  // }: BaseRequestData<RegisterStoreRequest>): Promise<RegisterStoreResponse> {
+  //   if (!data) {
+  //     throw Error('data required');
+  //   }
+  //   const url = `${this.endpoint}/stores`;
+
+  //   const response = await fetch<RegisterStoreRequest, RegisterStoreResponse>({
+  //     ...(authorization && {
+  //       headers: {
+  //         Authorization: authorization,
+  //         'Content-Type': 'multipart/form-data',
+  //       },
+  //     }),
+  //     data,
+  //     method: 'POST',
+  //     url,
+  //   });
+
+  //   return response;
+  // }
+
   async registerStore({
     authorization,
     data,
-  }: BaseRequestData<RegisterStoreRequest>): Promise<RegisterStoreResponse> {
+  }: BaseRequestData<RegisterStoreFromData>): Promise<void> {
     if (!data) {
       throw Error('data required');
     }
+    const { request, storeImageFiles, ownerPickImageFiles, menuImageFiles } =
+      data || {};
+
     const url = `${this.endpoint}/stores`;
 
-    const response = await fetch<RegisterStoreRequest, RegisterStoreResponse>({
+    const formData = new FormData();
+    formData.append(
+      'request',
+      new Blob([JSON.stringify(request)], { type: 'application/json' }),
+    );
+    if (storeImageFiles.length !== 0) {
+      if (Array.isArray(storeImageFiles)) {
+        storeImageFiles.forEach((image, index) => {
+          formData.append('storeImageFiles', image);
+        });
+      } else {
+        formData.append('storeImageFiles', storeImageFiles);
+      }
+    }
+
+    if (ownerPickImageFiles && ownerPickImageFiles?.length !== 0) {
+      if (Array.isArray(ownerPickImageFiles)) {
+        ownerPickImageFiles.forEach((image, index) => {
+          formData.append('ownerPickImageFiles', image);
+        });
+      }
+    }
+
+    if (menuImageFiles && menuImageFiles.length !== 0) {
+      if (Array.isArray(menuImageFiles)) {
+        menuImageFiles.forEach((image, index) => {
+          formData.append('menuImageFiles', image);
+        });
+      }
+    }
+    const response = await fetch<RegisterStoreFromData, void>({
       ...(authorization && {
         headers: {
           Authorization: authorization,
-          'Content-Type': 'multipart/form-data',
         },
       }),
-      data,
       method: 'POST',
-      url,
+      url: url,
+      formData,
     });
 
     return response;
