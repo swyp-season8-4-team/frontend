@@ -263,15 +263,15 @@ export default function RegisterBasicInfoPage() {
 
     if (!isFormValid) return;
 
-    const { latitude, longitude } = { latitude: 0, longitude: 0 }; // TODO: 이건 마지막 API 보낼 때 업데이트하도록. 지금은 임시
+    const { tags, ...rest } = data;
 
     updateBasicInfo({
-      ...data,
+      ...rest,
       primaryStoreLink:
         primaryLinkIndex !== undefined ? storeLinks[primaryLinkIndex] : '',
       storeLinks: storeLinks,
     });
-    updateTags(data.tags);
+    updateTags(tags);
     updateStoreImages(data.storeImageFiles);
     updateOwnerPickImages(data.ownerPickImageFiles);
     updateFeatures(data.features);

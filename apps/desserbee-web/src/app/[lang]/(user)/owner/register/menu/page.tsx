@@ -16,14 +16,12 @@ import MapService from '@repo/usecase/src/mapService';
 import KakaoMapController from '@repo/infrastructures/src/controllers/kakaoMapController';
 import { KakaoMapAdapter } from '@repo/infrastructures/src/adapters/kakaoMapAdapter';
 import Script from 'next/script';
-import { registerStore } from './action';
+import { UserContext } from '@/contexts/UserContext';
 
 interface MenuWithImage extends Menu {
   id: string;
   imageUrls?: string[];
 }
-
-const KAKAO_MAP_API_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&libraries=services,clusterer&autoload=false`;
 
 export default function RegisterMenuPage() {
   const router = useRouter();
@@ -63,7 +61,6 @@ export default function RegisterMenuPage() {
     removeMenuImage,
     getMenuThumbnailUrl,
     updateFormData,
-    formData,
   } = useRegister();
 
   const [menus, setMenus] = useState<MenuWithImage[]>(
@@ -102,94 +99,27 @@ export default function RegisterMenuPage() {
   const handleDeleteMenu = (menuId: string) => {
     const menuToDelete = menus.find((menu) => menu.id === menuId);
 
-    if (menuToDelete?.imageFileKey?.length) {
-      menuToDelete.imageFileKey.forEach((key) => {
-        removeMenuImage(key);
-      });
+    if (menuToDelete?.imageFileKey) {
+      removeMenuImage(menuToDelete.imageFileKey);
     }
 
     setMenus((prev) => prev.filter((menu) => menu.id !== menuId));
   };
 
-  const updateRegisterFormData = async () => {
-    if (!mapService) {
-      console.error('맵 서비스가 초기화되지 않았습니다.');
-      return;
-    }
+  const handleNextStep = async (e: React.FormEvent) => {
+    e.preventDefault();
 
     updateMenus(menus);
     const menuImageFiles = Array.from(storeData.menuImageMap.values());
     updateMenuImages(menuImageFiles);
 
-    try {
-      // 주소를 좌표로 변환
-      const coordinates = await mapService.convertAddressToCoordinates(
-        storeData.address,
-      );
-
-      const {
-        _storeImageFiles,
-        _ownerPickImageFiles,
-        _menuImageFiles,
-        detailAddress,
-        menuImageMap,
-        menuThumbnailUrls,
-        address,
-        ...rest
-      } = storeData;
-
-      // 좌표와 주소 정보 업데이트
-      const updatedStoreData = {
-        ...rest,
-        latitude: coordinates.latitude,
-        longitude: coordinates.longitude,
-        address: `${address} ${detailAddress}`.trim(),
-      };
-
-      const updatedStoreFormData: RegisterStoreFromData = {
-        request: updatedStoreData,
-        storeImageFiles: _storeImageFiles,
-        ownerPickImageFiles: _ownerPickImageFiles,
-        menuImageFiles: _menuImageFiles,
-      };
-
-      updateFormData(updatedStoreFormData);
-      await registerStore(updatedStoreFormData);
-    } catch (error) {
-      console.error('가게 등록 중 오류 발생:', error);
-      return;
-    }
-  };
-
-  const handleNextStep = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    try {
-      await updateRegisterFormData();
-
-      completeStep(RegisterStep.MENU);
-      goToNextStep();
-
-      router.push(`${NavigationPathname.OwnerRegisterComplete}`);
-    } catch (error) {
-      console.log(error);
-      return;
-    }
+    completeStep(RegisterStep.MENU);
+    goToNextStep();
+    router.push(`${NavigationPathname.OwnerRegisterLoading}`);
   };
 
   return (
     <>
-      <Script
-        type="text/javascript"
-        strategy="afterInteractive"
-        async
-        src={KAKAO_MAP_API_URL}
-        onReady={() => {
-          if (!isScriptLoaded) {
-            setIsScriptLoaded(true);
-          }
-        }}
-      />
       <form onSubmit={handleNextStep}>
         <div>
           {menus.length === 0 ? (

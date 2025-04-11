@@ -43,7 +43,7 @@ export interface Menu {
   price: number;
   isPopular?: boolean;
   description?: string;
-  imageFileKey?: string[]; // 파일명임. 확장자 포함해야함 ex) menu_cake6.jpeg"
+  imageFileKey?: string; // 파일명임. 확장자 포함해야함 ex) menu_cake6.jpeg"
   images?: string[]; // 응답
 }
 
