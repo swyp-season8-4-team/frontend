@@ -105,8 +105,8 @@ export default function RegisterBasicInfoPage() {
       primaryStoreLink: storeData.primaryStoreLink,
       description: storeData.description,
       tags: storeData.tagIds || [],
-      storeImageFiles: storeData.storeImageFiles || [],
-      ownerPickImageFiles: storeData.ownerPickImageFiles || [],
+      storeImageFiles: storeData._storeImageFiles || [],
+      ownerPickImageFiles: storeData._ownerPickImageFiles || [],
       features: {
         animalYn: storeData.animalYn || false,
         tumblerYn: storeData.tumblerYn || false,

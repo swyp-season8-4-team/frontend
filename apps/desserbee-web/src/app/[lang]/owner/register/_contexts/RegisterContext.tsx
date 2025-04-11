@@ -12,6 +12,7 @@ import type {
   Menu,
   OperatingHoursItem,
   HolidaysItem,
+  RegisterStoreFromData,
 } from '@repo/entity/src/store';
 import { useRouter, usePathname } from 'next/navigation';
 
@@ -54,9 +55,12 @@ export const STEP_TO_PATH: Record<RegisterStep, string> = {
 
 interface StoreData extends RegisterStoreRequest {
   detailAddress: string;
-  // 메뉴 이미지 파일과 썸네일 관리를 위한 필드 추가
   menuImageMap: Map<string, File>;
   menuThumbnailUrls: Map<string, string>;
+  // File 객체들은 별도로 관리
+  _storeImageFiles: File[];
+  _ownerPickImageFiles: File[];
+  _menuImageFiles: File[];
 }
 
 // 초기 상태 정의
@@ -97,10 +101,15 @@ const initialStoreData: StoreData = {
   // 메뉴 정보
   menus: [],
 
-  // 이미지 파일
+  // 이미지 파일명 배열 (RegisterStoreRequest 요구사항)
   storeImageFiles: [],
   ownerPickImageFiles: [],
   menuImageFiles: [],
+
+  // 실제 File 객체 배열
+  _storeImageFiles: [],
+  _ownerPickImageFiles: [],
+  _menuImageFiles: [],
 
   menuImageMap: new Map(),
   menuThumbnailUrls: new Map(),
@@ -130,7 +139,7 @@ type RegisterContextType = {
     name: string;
     phone: string;
     address: string;
-    detailAddress: string; // 클라이언트에서만 사용, api 연동할 때 address랑 합쳐야함
+    detailAddress: string;
     latitude: number;
     longitude: number;
     storeLinks?: string[];
@@ -169,11 +178,6 @@ type RegisterContextType = {
   updateNoticeItem: (index: number, item: string) => void;
   removeNoticeItem: (index: number) => void;
 
-  // 이미지 파일 관리
-  updateStoreImages: (files: File[]) => void;
-  updateOwnerPickImages: (files: File[]) => void;
-  updateMenuImages: (files: File[]) => void;
-
   // 메뉴 관리
   updateMenus: (menus: Menu[]) => void;
   addMenu: (menu: Omit<Menu, 'menuUuid' | 'images'>) => void;
@@ -183,13 +187,21 @@ type RegisterContextType = {
   ) => void;
   removeMenu: (index: number) => void;
 
-  // 메뉴 이미지 연결
-  setMenuImageFile: (menuIndex: number, file: File) => void;
+  // 이미지 파일 관리
+  updateStoreImages: (files: File[]) => void;
+  updateOwnerPickImages: (files: File[]) => void;
+  updateMenuImages: (files: File[]) => void;
+
+  // 메뉴 이미지 관리
+  updateMenuImage: (menuId: string, file: File) => void;
+  removeMenuImage: (menuId: string) => void;
+  getMenuImage: (menuId: string) => File | undefined;
+  getMenuThumbnailUrl: (menuId: string) => string | undefined;
 
   // 폼 제출
   submitForm: () => Promise<{
     success: boolean;
-    storeId?: string;
+    data?: RegisterStoreFromData;
     error?: string;
   }>;
 
@@ -201,14 +213,12 @@ type RegisterContextType = {
   isFormDirty: boolean;
   setIsFormDirty: (isDirty: boolean) => void;
 
-  // 단계별 경로 가져오기 (언어 포함)
+  // 단계별 경로 가져오기
   getStepPath: (step: RegisterStep) => string;
 
-  // 메뉴 이미지 관리
-  updateMenuImage: (menuId: string, file: File) => void;
-  removeMenuImage: (menuId: string) => void;
-  getMenuImage: (menuId: string) => File | undefined;
-  getMenuThumbnailUrl: (menuId: string) => string | undefined;
+  // formData 관리
+  formData: RegisterStoreFromData | null;
+  updateFormData: (data: RegisterStoreFromData) => void;
 };
 
 // Context 생성
@@ -220,6 +230,7 @@ const RegisterContext = createContext<RegisterContextType | undefined>(
 export function RegisterProvider({ children }: { children: ReactNode }) {
   // 상태 정의
   const [storeData, setStoreData] = useState<StoreData>(initialStoreData);
+
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -237,6 +248,9 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
   // 라우터
   const router = useRouter();
   const pathname = usePathname();
+
+  // formData 상태 추가
+  const [formData, setFormData] = useState<RegisterStoreFromData | null>(null);
 
   // 데이터 변경 시 isFormDirty 설정
   useEffect(() => {
@@ -468,49 +482,25 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
   const updateStoreImages = (files: File[]) => {
     setStoreData((prev) => ({
       ...prev,
-      storeImageFiles: files,
+      _storeImageFiles: files,
+      storeImageFiles: files.map((file) => file.name),
     }));
   };
 
   const updateOwnerPickImages = (files: File[]) => {
     setStoreData((prev) => ({
       ...prev,
-      ownerPickImageFiles: files,
+      _ownerPickImageFiles: files,
+      ownerPickImageFiles: files.map((file) => file.name),
     }));
   };
 
   const updateMenuImages = (files: File[]) => {
     setStoreData((prev) => ({
       ...prev,
-      menuImageFiles: files,
+      _menuImageFiles: files,
+      menuImageFiles: files.map((file) => file.name),
     }));
-  };
-
-  // 메뉴 이미지 연결
-  const setMenuImageFile = (menuIndex: number, file: File) => {
-    // 기존 menuImageFiles 배열에 추가
-    setStoreData((prev) => {
-      const updatedMenuImageFiles = [...(prev.menuImageFiles || []), file];
-      const fileIndex = updatedMenuImageFiles.length - 1;
-
-      // 메뉴와 이미지 파일 매핑 업데이트
-      const newMapping = new Map(menuImageMapping);
-      newMapping.set(menuIndex, fileIndex);
-      setMenuImageMapping(newMapping);
-
-      // 메뉴의 imageFileKey 업데이트
-      const updatedMenus = [...prev.menus];
-      updatedMenus[menuIndex] = {
-        ...updatedMenus[menuIndex],
-        imageFileKey: [file.name], // 파일명을 imageFileKey로 설정
-      };
-
-      return {
-        ...prev,
-        menuImageFiles: updatedMenuImageFiles,
-        menus: updatedMenus,
-      };
-    });
   };
 
   // 유효성 검사
@@ -562,56 +552,32 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
         throw new Error('사용자 정보가 없습니다. 로그인 후 다시 시도해주세요.');
       }
 
-      // FormData 객체 생성
-      const formData = new FormData();
+      // RegisterStoreFromData 형식으로 데이터 구성
+      const formData: RegisterStoreFromData = {
+        request: {
+          ...storeData,
+          // File 관련 내부 필드 제거
+          _storeImageFiles: undefined,
+          _ownerPickImageFiles: undefined,
+          _menuImageFiles: undefined,
+          menuImageMap: undefined,
+          menuThumbnailUrls: undefined,
+          detailAddress: undefined,
+        } as RegisterStoreRequest,
+        // 실제 File 객체 배열
+        storeImageFiles: storeData._storeImageFiles,
+        ownerPickImageFiles: storeData._ownerPickImageFiles,
+        menuImageFiles: storeData._menuImageFiles,
+      };
 
-      // 기본 데이터를 JSON으로 변환하여 추가
-      const basicData = { ...storeData };
-      delete basicData.storeImageFiles;
-      delete basicData.ownerPickImageFiles;
-      delete basicData.menuImageFiles;
-
-      formData.append('data', JSON.stringify(basicData));
-
-      // 이미지 파일 추가
-      if (storeData.storeImageFiles) {
-        storeData.storeImageFiles.forEach((file, index) => {
-          formData.append(`storeImage_${index}`, file);
-        });
-      }
-
-      if (storeData.ownerPickImageFiles) {
-        storeData.ownerPickImageFiles.forEach((file, index) => {
-          formData.append(`ownerPickImage_${index}`, file);
-        });
-      }
-
-      if (storeData.menuImageFiles) {
-        storeData.menuImageFiles.forEach((file, index) => {
-          formData.append(`menuImage_${index}`, file);
-        });
-      }
-
-      // API 호출 //TODO: service 호출
-      const response = await fetch('/api/stores', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || '가게 등록에 실패했습니다.');
-      }
-
-      const result = await response.json();
-
+      setFormData(formData);
       return {
         success: true,
-        storeId: result.storeUuid,
+        data: formData,
       };
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : '가게 등록에 실패했습니다.';
+        error instanceof Error ? error.message : '데이터 구성에 실패했습니다.';
       setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
@@ -704,6 +670,11 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
     return storeData.menuThumbnailUrls.get(menuId);
   };
 
+  // formData 업데이트 함수
+  const updateFormData = (data: RegisterStoreFromData) => {
+    setFormData(data);
+  };
+
   // cleanup effect
   useEffect(() => {
     return () => {
@@ -730,8 +701,7 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
 
         isStepCompleted: (step: RegisterStep) => completedSteps.includes(step),
         canAccessStep: (step: RegisterStep) => {
-          // Implement access logic based on completed steps
-          return true; // Placeholder, actual implementation needed
+          return true;
         },
         completeStep,
         redirectToStep,
@@ -765,7 +735,6 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
         updateStoreImages,
         updateOwnerPickImages,
         updateMenuImages,
-        setMenuImageFile,
 
         submitForm,
         validateCurrentStep,
@@ -778,6 +747,9 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
         removeMenuImage,
         getMenuImage,
         getMenuThumbnailUrl,
+
+        formData,
+        updateFormData,
       }}
     >
       {children}
