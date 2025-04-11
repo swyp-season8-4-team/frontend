@@ -131,6 +131,15 @@ export default function RegisterBasicInfoPage() {
     undefined,
   );
 
+  // storeLinks가 변경될 때마다 primaryLinkIndex와 isFormValid 업데이트
+  useEffect(() => {
+    if (storeLinks.length > 0 && primaryLinkIndex === undefined) {
+      setPrimaryLinkIndex(0);
+    } else if (storeLinks.length === 0) {
+      setPrimaryLinkIndex(undefined);
+    }
+  }, [storeLinks, primaryLinkIndex]);
+
   // useEffect를 사용하여 클라이언트 사이드에서만 저장된 데이터 불러오기
   useEffect(() => {
     if (storeData.storeLinks?.length) {
@@ -619,10 +628,13 @@ export default function RegisterBasicInfoPage() {
           {/* 링크 목록 */}
           {storeLinks.map((link, index) => (
             <div key={index} className="flex items-center gap-[15.5px]">
-              <CheckButton
-                setFunction={() => setPrimaryLinkIndex(index)}
-                isChecked={primaryLinkIndex === index}
-              />
+              <label className="flex gap-2">
+                <CheckButton
+                  setFunction={() => setPrimaryLinkIndex(index)}
+                  isChecked={primaryLinkIndex === index}
+                />
+                <div className="text-nowrap text-xs">대표</div>
+              </label>
               <div className="relative w-full">
                 <input
                   type="text"
