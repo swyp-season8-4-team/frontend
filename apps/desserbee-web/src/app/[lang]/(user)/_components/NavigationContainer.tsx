@@ -34,5 +34,9 @@ export default function NavigationContainer() {
     [],
   );
 
-  return <NavBar menuList={NAVBAR_BUTTON_CONTENT} pathname={currentPathName} />;
+  return (
+    <div className="z-navbar fixed bottom-0 w-full max-w-screen-md">
+      <NavBar menuList={NAVBAR_BUTTON_CONTENT} pathname={currentPathName} />
+    </div>
+  );
 }
