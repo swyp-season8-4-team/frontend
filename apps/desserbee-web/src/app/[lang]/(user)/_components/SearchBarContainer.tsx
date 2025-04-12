@@ -16,7 +16,7 @@ export const SearchBarContainer = memo(function SearchBarContainer() {
   } = useHashSearch();
 
   return (
-    <div className="bg-page z-10 w-full">
+    <div className="z-modal w-full">
       <SearchBar
         searchTerm={searchTerm}
         onChange={onChange}
@@ -26,7 +26,7 @@ export const SearchBarContainer = memo(function SearchBarContainer() {
         handleSearchPanelShow={handleSearchPanelShow}
       />
       {isSearchPanelShow && (
-        <div className="">
+        <div className="absolute z-[100]">
           <SearchBarPanel onChange={onChange} onSearch={onSearch} />
         </div>
       )}
