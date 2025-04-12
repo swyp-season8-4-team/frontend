@@ -1,8 +1,6 @@
 'use client';
 
 import { UserContext } from '@/contexts/UserContext';
-import IconButton from '@repo/design-system/components/buttons/IconButton';
-import { IconSize } from '@repo/design-system/components/icons';
 import IconBookmark from '@repo/design-system/components/icons/IconBookmark2';
 import { useCallback, useContext, useState } from 'react';
 import { saveMateBookmark, cancelMateBookmark } from './action';

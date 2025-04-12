@@ -5,8 +5,6 @@ import { cn } from '@repo/ui/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import CommunityMateCardBookmarkButton from '../CommunityMateCardBookmarkButton';
-import IconPeople from '@repo/design-system/components/icons/IconPeople';
-import IconLocationOutline2 from '@repo/design-system/components/icons/IconLocationOutline2';
 
 interface Props {
   mate: Mate;
@@ -58,6 +56,7 @@ export default function CommunityMateCard({ mate }: Props) {
                   </span>
                 )}
               </div>
+              {/* 주석처리한 것들 - 디자인에는 있지만 백엔드 api 업데이트 안되어 ui 구현만해두고 주석처리 */}
               {/* <div className="text-neutral-40 flex items-center gap-1">
                 <div className="h-3 w-3 md:h-4 md:w-4">
                   <IconPeople className="h-full w-full" />
