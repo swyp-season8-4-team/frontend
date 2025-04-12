@@ -2,10 +2,9 @@
 
 import { UserContext } from '@/contexts/UserContext';
 import { useCallback, useContext, useState } from 'react';
-import { IconSize } from '@repo/design-system/components/icons';
 import IconBookmark from '@repo/design-system/components/icons/IconBookmark';
-import IconButton from '@repo/design-system/components/buttons/IconButton';
 import { cancelSave, saveReview } from './action';
+import { cn } from '@repo/ui/lib/utils';
 
 interface Props {
   saved: boolean;
@@ -19,27 +18,36 @@ export default function CommunityReviewBookmarkButton({
   const { user } = useContext(UserContext);
   const [isBookmarked, setIsBookmarked] = useState(saved);
 
-  const handleClick = useCallback(async () => {
-    if (!user) {
-      return;
-    }
+  const handleClick = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      e.preventDefault();
 
-    setIsBookmarked((prev) => !prev);
-    // api
-    if (!isBookmarked) {
-      await saveReview({ reviewUuid: reviewId });
-    } else {
-      await cancelSave({ reviewUuid: reviewId });
-    }
-  }, [isBookmarked, user, reviewId]);
+      if (!user) {
+        return;
+      }
+
+      setIsBookmarked((prev) => !prev);
+      // api
+      if (!isBookmarked) {
+        await saveReview({ reviewUuid: reviewId });
+      } else {
+        await cancelSave({ reviewUuid: reviewId });
+      }
+    },
+    [isBookmarked, user, reviewId],
+  );
 
   return (
-    <IconButton
-      size={IconSize.s}
-      className={isBookmarked ? 'text-[#714115]' : 'text-white'}
-      onClick={handleClick}
-    >
-      <IconBookmark />
-    </IconButton>
+    <button onClick={handleClick}>
+      <div className="h-3 w-3 md:h-4 md:w-4">
+        <IconBookmark
+          className={cn(
+            'h-full w-full',
+            isBookmarked ? 'text-primary-80' : 'text-neutral-40',
+          )}
+        />
+      </div>
+    </button>
   );
 }

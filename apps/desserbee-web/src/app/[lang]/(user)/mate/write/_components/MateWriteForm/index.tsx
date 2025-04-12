@@ -234,6 +234,9 @@ export default function MateWriteForm({ initialMate }: Props) {
               <Image
                 src={uploadedImage}
                 alt="업로드 이미지"
+                width={0}
+                height={0}
+                sizes="100vw"
                 className="h-auto w-full rounded-md"
               />
               <button

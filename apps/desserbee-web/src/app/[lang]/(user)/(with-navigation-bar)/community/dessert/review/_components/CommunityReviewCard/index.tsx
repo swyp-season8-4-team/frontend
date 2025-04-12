@@ -21,58 +21,62 @@ export default function CommunityReviewCard({ review }: Props) {
   const content = contents.find((content) => content.type === 'text')?.value;
 
   return (
-    <div className="flex flex-col items-start gap-[10.704px] rounded-[11.893px] bg-white px-[9px] py-[9.515px]">
-      <div className="flex justify-between items-center self-stretch">
-        <Chip
-          className="rounded-[44.317px] border-[0.443px] border-[#6F6F6F] text-[12px] w-[70px]"
-          text={category}
-        />
-        <CommunityReviewBookmarkButton saved={saved} reviewId={review.id} />
-      </div>
-      <div className="flex items-center gap-[9.515px] self-stretch">
-        <div
-          className={cn(
-            'flex items-center justify-center w-[66.6px] h-[66.6px]',
-            !thumbnailImage ? 'bg-[#D9D9D9]' : '',
-          )}
-        >
-          <Image
-            src={thumbnailImage ? thumbnailImage : defaultImage}
-            alt={`${title}-review-image`}
-            width={thumbnailImage ? 66.6 : 44}
-            height={thumbnailImage ? 89.46 : 44}
-            className={thumbnailImage ? 'object-cover w-full h-full' : ''}
-          />
-        </div>
-        <div className="flex flex-col items-start gap-[13.105px] flex-1">
-          <div className="flex flex-col items-start gap-[4.914px] self-stretch">
-            <span className="line-clamp-1 self-stretch overflow-hidden text-ellipsis text-[#393939] text-[13.105px] font-semibold tracking-[-0.393px]">
-              {title}
-            </span>
-            <span className="line-clamp-1 self-stretch overflow-hidden text-ellipsis text-[#393939] text-[11.467px] font-medium tracking-[-0.344px]">
-              {content}
-            </span>
+    <Link href={`/review/${review.id}`}>
+      <div className="flex flex-col rounded-[10px] border border-[#EFEDEB] bg-white p-[10px]">
+        <div className="flex w-full gap-[10px]">
+          <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-[5.71px]">
+            <Image
+              alt={`review-image`}
+              src={thumbnailImage || defaultImage}
+              width={80}
+              height={80}
+              className={cn(
+                'h-full w-full',
+                thumbnailImage ? 'object-cover' : 'object-contain',
+              )}
+            />
+            <div
+              className="absolute left-1 top-1"
+              // onClick={handleBookmarkClick}
+            >
+              <CommunityReviewBookmarkButton
+                saved={saved}
+                reviewId={review.id}
+              />
+            </div>
           </div>
-          <div className="flex justify-between items-center self-stretch">
-            <div className="flex items-center gap-[9.829px]">
-              <span className="text-gray-800 text-xs font-medium tracking-tight">
-                {nickname}
-              </span>
-              <span className="text-[#9F9F9F] text-[11.467px] font-medium tracking-[-0.344px]">
-                {formatDate(updatedAt)} 조회:{viewCount}
+          <div className="flex flex-1 flex-col items-start gap-[13.105px]">
+            <div className="flex items-center justify-between self-stretch">
+              <Chip
+                className="bg-success-80 rounded-[99px] border-[0.443px] px-[6px] py-[3px] text-[10px]"
+                text={category}
+              />
+              <div className="text-neutral-30 text-[10px]">
+                조회:{viewCount}
+              </div>
+            </div>
+            <div className="flex flex-col items-start gap-[4.914px] self-stretch">
+              <span className="line-clamp-1 text-sm font-medium">{title}</span>
+              <span className="line-clamp-1 self-stretch overflow-hidden text-ellipsis text-[11.467px] font-medium tracking-[-0.344px] text-[#393939]">
+                {content}
               </span>
             </div>
-            <Link href={`/review/${review.id}`}>
-              <Chip
-                className={cn(
-                  'border-none rounded-[75.63px] px-[12.101px] py-[4.538px] text-white bg-[#FFB700]',
-                )}
-                text={'보러가기'}
-              />
-            </Link>
+            <div className="flex w-full items-center justify-between gap-[9.829px]">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  {/* <span className="h-4 w-4 rounded-full bg-[#DFDFDF]"></span> */}
+                  <span className="text-neutral-30 text-[10px]">
+                    {nickname}
+                  </span>
+                </div>
+              </div>
+              <div className="text-[10px] text-neutral-50">
+                {formatDate(updatedAt)}
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

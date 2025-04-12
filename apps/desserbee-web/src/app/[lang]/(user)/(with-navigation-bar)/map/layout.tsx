@@ -1,4 +1,5 @@
 import { HeaderContainer } from '../../_components/HeaderContainer';
+import { SearchBarContainer } from '../../_components/SearchBarContainer';
 
 export default async function MapLayout({
   bottomSheet,
@@ -11,7 +12,11 @@ export default async function MapLayout({
 }) {
   return (
     <div className="select-none">
-      <HeaderContainer />
+      <HeaderContainer>
+        <div className="bg-primary-80">
+          <SearchBarContainer />
+        </div>
+      </HeaderContainer>
       {bottomSheet}
       {sidebar}
       {children}

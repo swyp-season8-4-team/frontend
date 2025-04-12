@@ -928,7 +928,7 @@ export function Map({ preferenceCategories }: MapProps) {
       />
       <div
         ref={mapRef}
-        className="relative z-0 mb-[9px] h-[calc(100dvh-135px)] w-full overflow-x-hidden bg-[#E8E8E8]"
+        className="relative z-0 mb-[9px] h-[calc(100dvh-205px)] w-full overflow-x-hidden bg-[#E8E8E8]"
       >
         {error && (
           <div className="absolute left-1/2 top-1/2 z-20 w-[200px] -translate-x-1/2 transform rounded border border-red-400 bg-red-100 px-4 py-2 text-center text-red-700">

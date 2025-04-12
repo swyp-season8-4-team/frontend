@@ -5,6 +5,7 @@ import type { WithChildren } from '@repo/ui';
 import { createContext, useEffect, useMemo, useState } from 'react';
 import DefaultMaleAvatar from '@/assets/images/image-default-male-profile.png';
 import DefaultFemaleAvatar from '@/assets/images/image-default-female-profile.png';
+import DefaultProfileImage from '@/assets/svg/logo-bee.svg';
 import type { StaticImageData } from 'next/image';
 import UserService from '@repo/usecase/src/userService';
 import UserAPIRepository from '@repo/infrastructures/src/repositories/userAPIRepository';
@@ -25,7 +26,7 @@ export const UserContext = createContext<State>(defaultState);
 
 const userService = new UserService({
   userRepository: new UserAPIRepository(),
-})
+});
 
 interface Props extends WithChildren {
   user: User | null;
@@ -43,12 +44,14 @@ export function UserProvider({ children, user: initialUser }: Props) {
       return user.profileImageUrl;
     }
 
-    if (user.gender === 'MALE') {
-      return DefaultMaleAvatar;
-    }
+    // if (user.gender === 'MALE') {
+    //   return DefaultMaleAvatar;
+    // }
 
-    return DefaultFemaleAvatar;
-  }, [user])
+    // return DefaultFemaleAvatar;
+
+    return DefaultProfileImage;
+  }, [user]);
 
   const updateUserProfile = async (profileData: Partial<User>) => {
     if (!user) {

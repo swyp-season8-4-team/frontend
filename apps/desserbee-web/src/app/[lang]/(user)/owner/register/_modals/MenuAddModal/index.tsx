@@ -13,7 +13,6 @@ interface MenuAddModalProps {
 
 interface MenuInput extends Menu {
   menuImageFiles?: File[];
-  imageFileKey?: string[];
 }
 
 export function MenuAddModal({ onClose }: MenuAddModalProps) {
@@ -30,7 +29,7 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
       name: '',
       price: 0,
       description: '',
-      imageFileKey: [],
+      imageFileKey: '',
       menuImageFiles: [],
     },
   });
@@ -42,22 +41,17 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
       const file = e.target.files[0];
       const fileKey = `${Date.now()}-${file.name}`;
       setValue('menuImageFiles', [file]);
-      setValue('imageFileKey', [fileKey]);
+      setValue('imageFileKey', fileKey);
     }
   };
 
   const handleRemoveImageFiles = (index: number) => {
     const currentFiles = watch('menuImageFiles') || [];
-    const currentFileKeys = watch('imageFileKey') || [];
-
     setValue(
       'menuImageFiles',
       currentFiles.filter((_, i) => i !== index),
     );
-    setValue(
-      'imageFileKey',
-      currentFileKeys.filter((_, i) => i !== index),
-    );
+    setValue('imageFileKey', '');
   };
 
   const handleReset = () => {
@@ -65,7 +59,7 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
       name: '',
       price: 0,
       description: '',
-      imageFileKey: [],
+      imageFileKey: '',
       menuImageFiles: [],
     });
   };
@@ -79,7 +73,7 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
       name: data.name,
       price: Number(data.price),
       description: data.description || '',
-      imageFileKey: data.imageFileKey || [],
+      imageFileKey: data.imageFileKey || '',
     };
 
     onClose(menu, data.menuImageFiles || []);
