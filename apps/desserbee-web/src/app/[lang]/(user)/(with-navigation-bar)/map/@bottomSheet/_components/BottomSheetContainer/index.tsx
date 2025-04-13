@@ -54,7 +54,6 @@ export function BottomSheetContainer({
     address: storeSummary.address,
     operatingHours: storeSummary.operatingHours,
     phone: storeSummary.phone,
-    primaryStoreLink: storeSummary.primaryStoreLink,
     storeLinks: storeSummary.storeLinks,
     description: storeSummary.description,
     holidays: storeSummary.holidays,
