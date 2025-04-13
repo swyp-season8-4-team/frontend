@@ -74,7 +74,7 @@ export default function RegisterLoadingPage() {
             parkingYn: storeData.parkingYn,
 
             averageRating: 0,
-            status: 'PENDING',
+            // status: 'PENDING',
 
             // 운영 정보
             operatingHours: storeData.operatingHours,

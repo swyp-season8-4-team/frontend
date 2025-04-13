@@ -89,7 +89,7 @@ const initialStoreData: StoreData = {
   tagIds: [],
 
   // 상태 정보
-  status: 'ACTIVE', // 기본값
+  // status: 'ACTIVE', // 기본값
 
   // 운영 정보
   operatingHours: [],
