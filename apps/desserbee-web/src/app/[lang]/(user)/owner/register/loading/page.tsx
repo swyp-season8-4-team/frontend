@@ -65,7 +65,6 @@ export default function RegisterLoadingPage() {
             longitude: coordinates.longitude,
             phone: storeData.phone,
             address: `${storeData.address} ${storeData.detailAddress}`.trim(),
-            primaryStoreLink: storeData.primaryStoreLink || '',
             storeLinks: storeData.storeLinks || [],
 
             // 특성 정보를 최상위에 직접 포함
@@ -94,9 +93,10 @@ export default function RegisterLoadingPage() {
           menuImageFiles: Array.from(storeData.menuImageMap.values()),
         };
 
-        console.log(updatedStoreFormData);
-        // await registerStore(updatedStoreFormData);
-        // router.push(`${NavigationPathname.OwnerRegisterComplete}`);
+        // console.log(updatedStoreFormData);
+        await registerStore(updatedStoreFormData);
+
+        router.push(`${NavigationPathname.OwnerRegisterComplete}`);
       } catch (error) {
         console.error('가게 등록 중 오류 발생:', error);
         router.back();

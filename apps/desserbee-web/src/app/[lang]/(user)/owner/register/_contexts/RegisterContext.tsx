@@ -13,6 +13,7 @@ import type {
   OperatingHoursItem,
   HolidaysItem,
   RegisterStoreFromData,
+  StoreLink,
 } from '@repo/entity/src/store';
 import { useRouter, usePathname } from 'next/navigation';
 
@@ -74,7 +75,6 @@ const initialStoreData: StoreData = {
   phone: '',
   address: '',
   detailAddress: '',
-  primaryStoreLink: '',
   storeLinks: [],
   latitude: 0,
   longitude: 0,
@@ -146,8 +146,7 @@ type RegisterContextType = {
     detailAddress: string;
     latitude: number;
     longitude: number;
-    storeLinks?: string[];
-    primaryStoreLink: string;
+    storeLinks?: StoreLink[];
     description?: string;
   }) => void;
 

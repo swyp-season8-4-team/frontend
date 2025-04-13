@@ -17,7 +17,6 @@ type StoreInfoProps = Pick<
   | 'address'
   | 'operatingHours'
   | 'phone'
-  | 'primaryStoreLink'
   | 'storeLinks'
   | 'description'
   | 'holidays'
@@ -26,7 +25,6 @@ export function StoreInfo({
   address,
   operatingHours,
   phone,
-  primaryStoreLink,
   storeLinks,
   description,
   holidays,
