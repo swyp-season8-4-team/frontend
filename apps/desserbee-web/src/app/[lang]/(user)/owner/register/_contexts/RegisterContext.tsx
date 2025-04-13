@@ -61,6 +61,10 @@ interface StoreData extends RegisterStoreRequest {
   _storeImageFiles: File[];
   _ownerPickImageFiles: File[];
   _menuImageFiles: File[];
+
+  storeImageFiles: string[]; // 안쓰지만 혹시 모르니 둠
+  ownerPickImageFiles?: string[]; // 안쓰지만 혹시 모르니 둠
+  menuImageFiles?: string[]; // 안쓰지만 혹시 모르니 둠
 }
 
 // 초기 상태 정의
@@ -423,10 +427,18 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
 
   // 메뉴 관리
   const updateMenus = (menus: Menu[]) => {
-    setStoreData((prev) => ({
-      ...prev,
-      menus,
-    }));
+    setStoreData((prev) => {
+      // 기존 이미지 URL들 정리
+      prev.menuThumbnailUrls.forEach((url) => {
+        URL.revokeObjectURL(url);
+      });
+
+      return {
+        ...prev,
+        menus,
+        // 이미지맵과 썸네일URL맵 초기화하지 않음
+      };
+    });
   };
 
   const addMenu = (menu: Omit<Menu, 'menuUuid' | 'images'>) => {
@@ -632,8 +644,17 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
       newImageMap.set(menuId, file);
       newThumbnailUrls.set(menuId, URL.createObjectURL(file));
 
+      // menus 배열에서 해당 메뉴를 찾아 imageFileKey 업데이트
+      const updatedMenus = prev.menus.map((menu) => {
+        if (menu.imageFileKey === menuId) {
+          return menu;
+        }
+        return menu;
+      });
+
       return {
         ...prev,
+        menus: updatedMenus,
         menuImageMap: newImageMap,
         menuThumbnailUrls: newThumbnailUrls,
       };
@@ -654,8 +675,18 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
       newImageMap.delete(menuId);
       newThumbnailUrls.delete(menuId);
 
+      // menus 배열에서 해당 메뉴의 imageFileKey 제거
+      const updatedMenus = prev.menus.map((menu) => {
+        if (menu.imageFileKey === menuId) {
+          const { imageFileKey, ...menuWithoutImage } = menu;
+          return menuWithoutImage;
+        }
+        return menu;
+      });
+
       return {
         ...prev,
+        menus: updatedMenus,
         menuImageMap: newImageMap,
         menuThumbnailUrls: newThumbnailUrls,
       };

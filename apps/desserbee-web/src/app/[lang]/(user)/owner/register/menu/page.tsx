@@ -20,7 +20,6 @@ import { UserContext } from '@/contexts/UserContext';
 
 interface MenuWithImage extends Menu {
   id: string;
-  imageUrls?: string[];
 }
 
 export default function RegisterMenuPage() {
@@ -63,6 +62,18 @@ export default function RegisterMenuPage() {
     updateFormData,
   } = useRegister();
 
+  // 초기 메뉴 설정 시 이미지 미리보기도 함께 설정
+  useEffect(() => {
+    storeData.menus.forEach((menu) => {
+      if (menu.imageFileKey) {
+        const file = storeData.menuImageMap.get(menu.imageFileKey);
+        if (file) {
+          updateMenuImage(menu.imageFileKey, file);
+        }
+      }
+    });
+  }, []);
+
   const [menus, setMenus] = useState<MenuWithImage[]>(
     (storeData.menus || []).map((menu) => ({
       ...menu,
@@ -85,12 +96,8 @@ export default function RegisterMenuPage() {
 
       setMenus((prev) => [...prev, menuWithId]);
 
-      if (files?.length && menu.imageFileKey?.length) {
-        files.forEach((file, index) => {
-          if (menu.imageFileKey?.[index]) {
-            updateMenuImage(menu.imageFileKey[index], file);
-          }
-        });
+      if (files?.length && menu.imageFileKey) {
+        updateMenuImage(menu.imageFileKey, files[0]);
       }
     }
     pop('modal');
@@ -161,36 +168,24 @@ export default function RegisterMenuPage() {
             >
               <div className="flex-1 flex-col justify-center">
                 <div className="font-semibold">{menu.name}</div>
-                <div
-                  className="text-neutral-30 text-xs"
-                  style={{
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    display: '-webkit-box',
-                    WebkitBoxOrient: 'vertical',
-                    WebkitLineClamp: 2,
-                    maxHeight: '32px',
-                    wordBreak: 'break-all',
-                  }}
-                >
+                <div className="text-neutral-30 text-xs">
                   {menu.description}
                 </div>
                 <div className="text-sm font-medium">
                   {menu.price.toLocaleString()}원
                 </div>
               </div>
-              {menu.imageFileKey?.[0] &&
-                getMenuThumbnailUrl(menu.imageFileKey[0]) && (
-                  <div className="h-20 w-20 overflow-hidden rounded-md border border-[#EFEDEB]">
-                    <Image
-                      width={100}
-                      height={100}
-                      src={getMenuThumbnailUrl(menu.imageFileKey[0])!}
-                      alt={`메뉴 사진 ${menu.name}`}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                )}
+              {menu.imageFileKey && (
+                <div className="h-20 w-20 overflow-hidden rounded-md border border-[#EFEDEB]">
+                  <Image
+                    width={100}
+                    height={100}
+                    src={getMenuThumbnailUrl(menu.imageFileKey) || ''}
+                    alt={`메뉴 사진 ${menu.name}`}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )}
               <button
                 type="button"
                 className="flex items-start"

@@ -255,9 +255,9 @@ export interface RegisterStoreRequest
   userUuid: string;
   menus: Menu[];
   // ImageFileKey?: string[]; // 메뉴 파일명
-  storeImageFiles: string[];
-  ownerPickImageFiles?: string[];
-  menuImageFiles?: string[];
+  // storeImageFiles: string[];
+  // ownerPickImageFiles?: string[];
+  // menuImageFiles?: string[];
 }
 
 export interface RegisterStoreFromData {
