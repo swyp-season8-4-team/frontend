@@ -1,6 +1,11 @@
 import type { BaseRequestData } from './appMetadata';
 import type { Preference } from './preference';
 
+export interface StoreLink {
+  url: string;
+  isPrimary: boolean;
+}
+
 export interface Store {
   storeId: number;
   storeUuid: string;
@@ -8,8 +13,8 @@ export interface Store {
   phone: string;
   address: string;
   // storeLink: string; //TODO: 가게 간략페이지, 상세페이지에서도 수정 !!!!
-  primaryStoreLink: string;
-  storeLinks: string[];
+  storeLinks: StoreLink[];
+
   latitude: number;
   longitude: number;
   description?: string;
@@ -152,7 +157,6 @@ export interface StoreSummaryInfoData
     | 'name'
     | 'address'
     | 'phone'
-    | 'primaryStoreLink'
     | 'storeLinks'
     | 'animalYn'
     | 'tumblerYn'
@@ -180,7 +184,6 @@ export interface StoreDetailInfoData
     | 'name'
     | 'address'
     | 'phone'
-    | 'primaryStoreLink'
     | 'storeLinks'
     | 'animalYn'
     | 'tumblerYn'
@@ -237,7 +240,6 @@ export interface RegisterStoreRequest
     | 'name'
     | 'phone'
     | 'address'
-    | 'primaryStoreLink'
     | 'storeLinks'
     | 'latitude'
     | 'longitude'
@@ -246,7 +248,6 @@ export interface RegisterStoreRequest
     | 'parkingYn'
     | 'averageRating'
     | 'tagIds'
-    | 'status'
     | 'operatingHours'
     | 'holidays'
     | 'description'
@@ -255,9 +256,9 @@ export interface RegisterStoreRequest
   userUuid: string;
   menus: Menu[];
   // ImageFileKey?: string[]; // 메뉴 파일명
-  storeImageFiles: string[];
-  ownerPickImageFiles?: string[];
-  menuImageFiles?: string[];
+  // storeImageFiles: string[];
+  // ownerPickImageFiles?: string[];
+  // menuImageFiles?: string[];
 }
 
 export interface RegisterStoreFromData {
@@ -275,7 +276,6 @@ export interface RegisterStoreResponse
     | 'name'
     | 'phone'
     | 'address'
-    | 'primaryStoreLink'
     | 'storeLinks'
     | 'description'
     | 'latitude'
@@ -321,7 +321,6 @@ export interface EditStoreRequest
     | 'name'
     | 'phone'
     | 'address'
-    | 'primaryStoreLink'
     | 'storeLinks'
     | 'description'
     | 'animalYn'
@@ -360,7 +359,6 @@ export interface EditStoreResponse
     | 'name'
     | 'address'
     | 'phone'
-    | 'primaryStoreLink'
     | 'storeLinks'
     | 'animalYn'
     | 'tumblerYn'

@@ -45,37 +45,55 @@ export default function RegisterLoadingPage() {
       if (!mapService) return;
 
       try {
-        // 주소를 좌표로 변환
         const coordinates = await mapService.convertAddressToCoordinates(
           storeData.address,
         );
 
-        const {
-          _storeImageFiles,
-          _ownerPickImageFiles,
-          _menuImageFiles,
-          detailAddress,
-          menuImageMap,
-          menuThumbnailUrls,
-        
-          ...rest
-        } = storeData;
+        const formattedMenus = storeData.menus.map((menu) => ({
+          name: menu.name,
+          price: menu.price,
+          description: menu.description || '',
+          isPopular: false,
+          ...(menu.imageFileKey ? { imageFileKey: menu.imageFileKey } : {}),
+        }));
 
         const updatedStoreFormData: RegisterStoreFromData = {
           request: {
-            ...rest,
+            userUuid: user?.id as string,
+            name: storeData.name,
             latitude: coordinates.latitude,
             longitude: coordinates.longitude,
+            phone: storeData.phone,
             address: `${storeData.address} ${storeData.detailAddress}`.trim(),
-            userUuid: user?.id as string,
+            storeLinks: storeData.storeLinks || [],
+
+            // 특성 정보를 최상위에 직접 포함
+            animalYn: storeData.animalYn,
+            tumblerYn: storeData.tumblerYn,
+            parkingYn: storeData.parkingYn,
+
+            averageRating: 0,
+            // status: 'PENDING',
+
+            // 운영 정보
+            operatingHours: storeData.operatingHours,
+            holidays: storeData.holidays || [],
+
+            // 메뉴 정보
+            menus: formattedMenus,
+
+            // 설명 및 기타 정보
+            description: storeData.description || '',
+            notice: storeData.notice || [],
+            tagIds: storeData.tagIds || [],
           },
-          storeImageFiles: _storeImageFiles,
-          ownerPickImageFiles: _ownerPickImageFiles,
-          menuImageFiles: _menuImageFiles,
+          // 파일 데이터
+          storeImageFiles: storeData._storeImageFiles,
+          ownerPickImageFiles: storeData._ownerPickImageFiles,
+          menuImageFiles: Array.from(storeData.menuImageMap.values()),
         };
 
-        console.log(updatedStoreFormData);
-        // 서버 액션 실행
+        // console.log(updatedStoreFormData);
         await registerStore(updatedStoreFormData);
 
         router.push(`${NavigationPathname.OwnerRegisterComplete}`);

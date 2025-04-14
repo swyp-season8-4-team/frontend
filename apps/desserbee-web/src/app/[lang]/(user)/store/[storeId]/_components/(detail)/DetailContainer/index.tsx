@@ -43,7 +43,6 @@ export function DetailContainer({
     address: storeDetail.address,
     operatingHours: storeDetail.operatingHours,
     phone: storeDetail.phone,
-    primaryStoreLink: storeDetail.primaryStoreLink,
     storeLinks: storeDetail.storeLinks,
     description: storeDetail.description,
     storeImages: storeDetail.storeImages,

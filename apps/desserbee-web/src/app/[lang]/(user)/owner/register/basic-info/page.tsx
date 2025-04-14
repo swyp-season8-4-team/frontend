@@ -25,6 +25,7 @@ import { HiddenImageInput } from '../_components/HiddenImageInput';
 import { NoneImageBox } from '../_components/NoneImageBox';
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
 import { AddButton } from '../_components/AddButton';
+import type { StoreLink } from '@repo/entity/src/store';
 
 const FEATURES = [
   {
@@ -50,7 +51,6 @@ interface FormInputs
     | 'name'
     | 'phone'
     | 'address'
-    | 'primaryStoreLink'
     | 'storeLinks'
     | 'latitude'
     | 'longitude'
@@ -102,7 +102,6 @@ export default function RegisterBasicInfoPage() {
       address: storeData.address,
       detailAddress: storeData.detailAddress,
       storeLinks: storeData.storeLinks,
-      primaryStoreLink: storeData.primaryStoreLink,
       description: storeData.description,
       tags: storeData.tagIds || [],
       storeImageFiles: storeData._storeImageFiles || [],
@@ -126,33 +125,46 @@ export default function RegisterBasicInfoPage() {
   // isValid 상태 관리
   const [isFormValid, setIsFormValid] = useState(false);
 
-  const [storeLinks, setStoreLinks] = useState<string[]>([]);
-  const [primaryLinkIndex, setPrimaryLinkIndex] = useState<number | undefined>(
-    undefined,
-  );
+  const [storeLinks, setStoreLinks] = useState<StoreLink[]>([]);
 
-  // storeLinks가 변경될 때마다 primaryLinkIndex와 isFormValid 업데이트
-  useEffect(() => {
-    if (storeLinks.length > 0 && primaryLinkIndex === undefined) {
-      setPrimaryLinkIndex(0);
-    } else if (storeLinks.length === 0) {
-      setPrimaryLinkIndex(undefined);
-    }
-  }, [storeLinks, primaryLinkIndex]);
-
-  // useEffect를 사용하여 클라이언트 사이드에서만 저장된 데이터 불러오기
+  // 초기 데이터 로드
   useEffect(() => {
     if (storeData.storeLinks?.length) {
-      setStoreLinks(storeData.storeLinks);
-
-      if (storeData.primaryStoreLink) {
-        const index = storeData.storeLinks?.findIndex(
-          (link) => link === storeData.primaryStoreLink,
-        );
-        setPrimaryLinkIndex(index >= 0 ? index : undefined);
-      }
+      setStoreLinks(
+        storeData.storeLinks.map((link, index) => ({
+          url: typeof link === 'string' ? link : link.url,
+          isPrimary: typeof link === 'string' ? index === 0 : link.isPrimary,
+        })),
+      );
     }
-  }, [storeData.storeLinks, storeData.primaryStoreLink]);
+  }, [storeData.storeLinks]);
+
+  // 링크 추가 버튼 핸들러
+  const handleAddLink = () => {
+    setStoreLinks([...storeLinks, { url: '', isPrimary: false }]);
+  };
+
+  // 링크 수정 핸들러
+  const handleLinkChange = (index: number, url: string) => {
+    const newLinks = storeLinks.map((link, i) =>
+      i === index ? { ...link, url } : link,
+    );
+    setStoreLinks(newLinks);
+  };
+
+  // 대표 링크 설정 핸들러
+  const handleSetPrimary = (index: number) => {
+    const newLinks = storeLinks.map((link, i) => ({
+      ...link,
+      isPrimary: i === index,
+    }));
+    setStoreLinks(newLinks);
+  };
+
+  // 링크 삭제 핸들러
+  const handleRemoveLink = (index: number) => {
+    setStoreLinks(storeLinks.filter((_, i) => i !== index));
+  };
 
   useEffect(() => {
     const isValid =
@@ -267,9 +279,10 @@ export default function RegisterBasicInfoPage() {
 
     updateBasicInfo({
       ...rest,
-      primaryStoreLink:
-        primaryLinkIndex !== undefined ? storeLinks[primaryLinkIndex] : '',
-      storeLinks: storeLinks,
+      storeLinks: storeLinks.map((link) => ({
+        url: link.url,
+        isPrimary: link.isPrimary,
+      })),
     });
     updateTags(tags);
     updateStoreImages(data.storeImageFiles);
@@ -618,54 +631,33 @@ export default function RegisterBasicInfoPage() {
           <div className="text-neutral-40 text-xs">최대 3개 추가</div>
           {storeLinks.length < 3 && (
             <AddButton
-              onClick={() => setStoreLinks([...storeLinks, ''])}
+              onClick={handleAddLink}
               text="링크 추가"
               clasName="w-fit px-[10px] py-2"
             />
           )}
         </label>
         <div className="space-y-2">
-          {/* 링크 목록 */}
           {storeLinks.map((link, index) => (
             <div key={index} className="flex items-center gap-[15.5px]">
               <label className="flex gap-2">
                 <CheckButton
-                  setFunction={() => setPrimaryLinkIndex(index)}
-                  isChecked={primaryLinkIndex === index}
+                  setFunction={() => handleSetPrimary(index)}
+                  isChecked={link.isPrimary}
                 />
                 <div className="text-nowrap text-xs">대표</div>
               </label>
               <div className="relative w-full">
                 <input
                   type="text"
-                  value={link}
-                  onChange={(e) => {
-                    const newLinks = [...storeLinks];
-                    newLinks[index] = e.target.value;
-                    setStoreLinks(newLinks);
-                  }}
+                  value={link.url}
+                  onChange={(e) => handleLinkChange(index, e.target.value)}
                   className="border-neutral-40 w-full flex-1 rounded-[6px] border px-3 py-2 pr-10 text-sm"
                   placeholder="http://"
                 />
                 <button
                   type="button"
-                  onClick={() => {
-                    const newLinks = storeLinks.filter((_, i) => i !== index);
-                    setStoreLinks(newLinks);
-
-                    if (newLinks.length === 0) {
-                      setPrimaryLinkIndex(undefined);
-                    } else if (index === primaryLinkIndex) {
-                      setPrimaryLinkIndex(undefined);
-                    } else if (
-                      primaryLinkIndex !== undefined &&
-                      index < primaryLinkIndex
-                    ) {
-                      setPrimaryLinkIndex((prev) =>
-                        prev ? prev - 1 : undefined,
-                      );
-                    }
-                  }}
+                  onClick={() => handleRemoveLink(index)}
                   className="absolute right-4 top-[50%] z-10 flex h-[18px] w-[18px] -translate-y-1/2 items-center justify-center"
                 >
                   <div className="h-[15px] w-[15px]">

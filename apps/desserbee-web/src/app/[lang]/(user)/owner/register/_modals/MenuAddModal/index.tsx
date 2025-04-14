@@ -39,7 +39,7 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
   const handleImageFilesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       const file = e.target.files[0];
-      const fileKey = `${Date.now()}-${file.name}`;
+      const fileKey = file.name;
       setValue('menuImageFiles', [file]);
       setValue('imageFileKey', fileKey);
     }
@@ -73,7 +73,10 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
       name: data.name,
       price: Number(data.price),
       description: data.description || '',
-      imageFileKey: data.imageFileKey || '',
+      // imageFileKey는 이미지가 있을 때만 포함
+      ...(data.menuImageFiles?.length
+        ? { imageFileKey: data.imageFileKey }
+        : {}),
     };
 
     onClose(menu, data.menuImageFiles || []);

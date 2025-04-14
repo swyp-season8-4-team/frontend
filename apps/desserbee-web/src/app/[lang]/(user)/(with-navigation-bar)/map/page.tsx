@@ -4,6 +4,7 @@ import { BannerCarousel } from './_components/BannerCarousel';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import NotFound from '@/app/[lang]/[...not-found]/page';
+import { GoOwnerPageModal } from './_components/GoOwnerPageModal';
 
 export default async function MapPage() {
   const storeService = new StoreService({
@@ -25,7 +26,8 @@ export default async function MapPage() {
   };
 
   return (
-    <div className="scroll-none h-full overflow-hidden">
+    <div className="scroll-none relative h-full overflow-hidden">
+      <GoOwnerPageModal />
       <Map {...mapProps} />
     </div>
   );
