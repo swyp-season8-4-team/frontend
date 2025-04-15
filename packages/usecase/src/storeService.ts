@@ -215,7 +215,7 @@ export default class StoreService {
       authorization,
     };
 
-    const response = await this.storeRepository.registerStore(requestData);
+    await this.storeRepository.registerStore(requestData);
   }
 
   async editStore(params: EditStoreRequest): Promise<EditStoreResponse> {

@@ -4,7 +4,7 @@ import { BannerCarousel } from './_components/BannerCarousel';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import NotFound from '@/app/[lang]/[...not-found]/page';
-import { GoOwnerPageModal } from './_components/GoOwnerPageModal';
+import { GoOwnerPageModal } from './_modals/GoOwnerPageModal';
 
 export default async function MapPage() {
   const storeService = new StoreService({
