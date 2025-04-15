@@ -41,12 +41,12 @@ export function GoOwnerPageModal() {
 
   return (
     <div className="z-modal fixed inset-0 flex items-center justify-center bg-transparent">
-      <div className="relative h-[200px] w-[200px] overflow-hidden rounded-md shadow-md md:h-[300px] md:w-[300px]">
+      <div className="relative h-[200px] w-[200px] shadow-md md:h-[300px] md:w-[300px]">
         <Image
           src={ownerPopupImage}
           alt="owner-popup-img"
           fill
-          className="object-cover"
+          className="rounded-t-md object-cover"
         />
         <button
           onClick={() => setIsOpen(false)}
@@ -61,20 +61,21 @@ export function GoOwnerPageModal() {
           >
             디저비에 가게 등록하러 가기
           </button>
-          <button className="flex items-center gap-1">
-            <input
-              type="checkbox"
-              id="not-today"
-              onChange={handleNotTodayClick}
-            />
-            <label
-              htmlFor="not-today"
-              className="text-neutral-40 w-full cursor-pointer text-center text-[10px] md:text-sm"
-            >
-              오늘 하루 다신 보지 않기
-            </label>
-          </button>
         </div>
+        <button className="z-modal absolute -bottom-2 flex w-full items-center gap-1 rounded-b-md bg-white pl-1 md:-bottom-4">
+          <input
+            type="checkbox"
+            id="not-today"
+            className="h-2 w-2 md:h-[11px] md:w-[11px]"
+            onChange={handleNotTodayClick}
+          />
+          <label
+            htmlFor="not-today"
+            className="text-neutral-40 w-full cursor-pointer text-start text-[8px] md:text-[11px]"
+          >
+            오늘 하루 다신 보지 않기
+          </label>
+        </button>
       </div>
     </div>
   );
