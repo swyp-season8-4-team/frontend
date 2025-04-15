@@ -82,6 +82,7 @@ async function handleTokens(
 
       // tokenInfo.exp는 밀리초 단위이므로 초 단위로 변환
       const maxAgeInSeconds = Math.floor((tokenInfo.exp ?? 0) / 1000);
+      
 
       response.cookies.set('accessToken', tokenInfo.token, {
         httpOnly: true,
