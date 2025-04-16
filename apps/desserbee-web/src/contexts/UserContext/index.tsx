@@ -44,13 +44,13 @@ export function UserProvider({ children, user: initialUser }: Props) {
       return user.profileImageUrl;
     }
 
-    // if (user.gender === 'MALE') {
-    //   return DefaultMaleAvatar;
-    // }
+    if (user.gender === 'MALE') {
+      return DefaultMaleAvatar;
+    }
 
-    // return DefaultFemaleAvatar;
+    return DefaultFemaleAvatar;
 
-    return DefaultProfileImage;
+    // return DefaultProfileImage;
   }, [user]);
 
   const updateUserProfile = async (profileData: Partial<User>) => {
