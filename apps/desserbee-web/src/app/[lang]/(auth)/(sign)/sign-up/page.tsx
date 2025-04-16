@@ -5,7 +5,7 @@ export default async function SignUpPage() {
   const verifyToken = await getVerifyTokenAction();
 
   return (
-    <main className="px-4 flex flex-col flex-1 mt-[56px] gap-[12px] overflow-hidden">
+    <main>
       <SignUpController token={verifyToken ?? null} />
     </main>
   );
