@@ -67,21 +67,21 @@ export interface SignInResponse
   isPreferenceSet: boolean;
 }
 
+export interface SignOutData {
+  authorization: string;
+}
+
 export interface SignInData {
   email: string;
   password: string;
   keepLoggedIn: boolean;
 }
 
-export interface SignOutData {
-  authorization: string;
-}
-
 export interface SignUpData extends Omit<SignInData, 'keepLoggedIn'> {
   confirmPassword: string;
   nickname: string;
-  name?: string;
-  phoneNumber?: string;
+  name: string;
+  phoneNumber: string;
   address?: string;
   gender: Gender;
   preferenceIds?: number[];
