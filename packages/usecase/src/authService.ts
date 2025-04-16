@@ -25,13 +25,15 @@ export enum VerifyEmailPurpose {
 }
 
 export enum SignUpStep {
-  EMAIL = 'email',
-  EMAIL_CODE = 'email-code',
-  PASSWORD = 'password',
-  GENDER = 'gender',
-  NICKNAME = 'nickname',
-  AGREE = 'agree',
-  TERMS_OF_SERVICE = 'terms-of-service',
+  // EMAIL = 'email',
+  // EMAIL_CODE = 'email-code',
+  // PASSWORD = 'password',
+  // GENDER = 'gender',
+  // NICKNAME = 'nickname',
+  // AGREE = 'agree',
+  // TERMS_OF_SERVICE = 'terms-of-service',
+  ONE = 'one',
+  TWO = 'two',
 }
 
 export enum EmailAuthSessionKey {
