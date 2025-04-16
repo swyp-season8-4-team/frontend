@@ -220,30 +220,6 @@ export default class StoreAPIRepository
     return response;
   }
 
-  // async registerStore({
-  //   authorization,
-  //   data,
-  // }: BaseRequestData<RegisterStoreRequest>): Promise<RegisterStoreResponse> {
-  //   if (!data) {
-  //     throw Error('data required');
-  //   }
-  //   const url = `${this.endpoint}/stores`;
-
-  //   const response = await fetch<RegisterStoreRequest, RegisterStoreResponse>({
-  //     ...(authorization && {
-  //       headers: {
-  //         Authorization: authorization,
-  //         'Content-Type': 'multipart/form-data',
-  //       },
-  //     }),
-  //     data,
-  //     method: 'POST',
-  //     url,
-  //   });
-
-  //   return response;
-  // }
-
   async registerStore({
     authorization,
     data,

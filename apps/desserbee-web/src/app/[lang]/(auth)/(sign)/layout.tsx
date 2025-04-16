@@ -9,7 +9,7 @@ export default async function SignLayout({ children }: WithChildren) {
   return (
     <MobileScreenProvider>
       <div className="flex max-h-screen min-h-screen flex-col overflow-y-scroll bg-white">
-        <div className="fixed top-0 w-full">
+        <div className="fixed top-0 w-full max-w-screen-md">
           <Header
             title="디저비"
             fontClass={recipeKorea.className}
