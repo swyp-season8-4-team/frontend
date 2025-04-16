@@ -18,13 +18,15 @@ import { TextField } from '@repo/design-system/components/inputs/TextField';
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
 import { HoneyButton } from '@repo/design-system/components/buttons/FillButtons/Honey';
 import { WhiteButton } from '@repo/design-system/components/buttons/FillButtons/White';
+import { useRouter } from 'next/navigation';
+import { NavigationPathname } from '@repo/entity/src/navigation';
 
 const authService = new AuthService({
   authRepository: new AuthAPIRepository(),
   storageRepository: new SessionStorageRepository(),
 });
 
-interface SignUpFormData {
+interface Step0neFormData {
   email: string;
   verificationCode: string;
   password: string;
@@ -36,6 +38,8 @@ interface Props {
 }
 
 export default function SignUpStepOne({ updateStep }: Props) {
+  const router = useRouter();
+
   const { updateEmail } = useContext(SignUpContext);
   const [isLoading, setLoading] = useState(false);
   const [isEmailVerified, setEmailVerified] = useState(false);
@@ -58,7 +62,7 @@ export default function SignUpStepOne({ updateStep }: Props) {
     watch,
     setError,
     setValue,
-  } = useForm<SignUpFormData>({
+  } = useForm<Step0neFormData>({
     mode: 'onChange',
   });
 
@@ -145,7 +149,14 @@ export default function SignUpStepOne({ updateStep }: Props) {
     return true;
   };
 
-  const onSubmit = async (data: SignUpFormData) => {
+  const handlePrevClick = () => {
+    const result = confirm('회원가입을 취소하시겠습니까?');
+    if (result) {
+      router.replace(NavigationPathname.SignIn);
+    }
+  };
+
+  const onSubmit = async (data: Step0neFormData) => {
     if (!isEmailVerified || !isCodeVerified) {
       return;
     }
@@ -305,9 +316,10 @@ export default function SignUpStepOne({ updateStep }: Props) {
       {/* 이전/다음 버튼 */}
       <div className="flex gap-[10px]">
         <WhiteButton
+          onClick={handlePrevClick}
           type="button"
           className="text-lg"
-          isDisabled={true}
+          // isDisabled={true}
           text="이전"
         />
         <HoneyButton

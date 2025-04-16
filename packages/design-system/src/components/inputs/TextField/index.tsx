@@ -40,7 +40,7 @@ export const TextField = forwardRef<HTMLInputElement, InputProps>(
         <input
           ref={ref}
           className={cn(
-            'px-base w-full rounded-[6px] border bg-[#FCFAF8] py-[14.5px] text-sm placeholder:text-[#BABABA] focus:outline-none',
+            'px-base w-full rounded-[6px] border bg-[#FCFAF8] py-[14.5px] pr-10 text-sm placeholder:text-[#BABABA] focus:outline-none',
             error ? 'border-[#FF3B30]' : 'border-[#A6A6A6]/[50%]',
             className,
           )}
