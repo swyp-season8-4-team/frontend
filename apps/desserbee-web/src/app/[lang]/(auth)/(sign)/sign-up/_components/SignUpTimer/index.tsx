@@ -52,7 +52,7 @@ export default function SignUpTimer({ onExpire }: Props) {
   const remainingSeconds = seconds % 60;
 
   return (
-    <span className="text-sm text-orange-500">
+    <span className="text-error-60 text-xs">
       {`${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`}
     </span>
   );
