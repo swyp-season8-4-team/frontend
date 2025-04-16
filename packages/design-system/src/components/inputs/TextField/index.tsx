@@ -3,23 +3,29 @@ import { forwardRef, type InputHTMLAttributes } from 'react';
 import { ResetButton } from '../../buttons/ResetButton';
 import IconEye from '../../icons/IconEye';
 import IconEyeBan from '../../icons/IconEyeBan';
+import IconWarn from '../../icons/IconWarn';
+import IconCheckRound from '../../icons/IconCheckRound';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: boolean;
   errorMessage?: string;
+  successMessage?: string;
   onReset?: () => void;
   showReset?: boolean;
   showPasswordToggle?: boolean;
   onPasswordToggle?: () => void;
   isPasswordVisible?: boolean;
+  containerClassName?: string;
 }
 
-export const SignUpInput = forwardRef<HTMLInputElement, InputProps>(
+export const TextField = forwardRef<HTMLInputElement, InputProps>(
   (
     {
       error,
       errorMessage,
+      successMessage,
       className,
+      containerClassName,
       onReset,
       showReset,
       showPasswordToggle,
@@ -30,7 +36,7 @@ export const SignUpInput = forwardRef<HTMLInputElement, InputProps>(
     ref,
   ) => {
     return (
-      <div className="relative">
+      <div className={cn('relative', containerClassName)}>
         <input
           ref={ref}
           className={cn(
@@ -52,18 +58,35 @@ export const SignUpInput = forwardRef<HTMLInputElement, InputProps>(
               type="button"
               tabIndex={-1}
               onClick={onPasswordToggle}
-              className="text-neutral-30"
+              className="text-neutral-30 h-[18px] w-[18px]"
             >
-              {isPasswordVisible ? <IconEye /> : <IconEyeBan />}
+              {isPasswordVisible ? (
+                <IconEye className="h-full w-full" />
+              ) : (
+                <IconEyeBan className="h-full w-full" />
+              )}
             </button>
           )}
         </div>
         {error && errorMessage && (
-          <p className="absolute mt-1 text-sm text-[#FF3B30]">{errorMessage}</p>
+          <div className="text-error-60 absolute mt-3 flex items-center gap-[5px] text-sm">
+            <div className="h-4 w-4">
+              <IconWarn className="h-full w-full" />
+            </div>
+            {errorMessage}
+          </div>
+        )}
+        {successMessage && !error && (
+          <div className="text-success-60 absolute mt-3 flex items-center gap-[5px] text-sm">
+            <div className="h-4 w-4">
+              <IconCheckRound className="h-full w-full" />
+            </div>
+            {successMessage}
+          </div>
         )}
       </div>
     );
   },
 );
 
-SignUpInput.displayName = 'SignUpInput';
+TextField.displayName = 'TextField';
