@@ -12,13 +12,15 @@ const authService = new AuthService({
 
 interface Props {
   onExpire?: () => void;
+  expirationTime: number;
 }
 
-export default function SignUpTimer({ onExpire }: Props) {
-  const [seconds, setSeconds] = useState(() => {
-    const session = authService.getEmailAuthSession(EmailAuthSessionKey.SIGNUP);
-    return session ? session.expirationTimes : 0;
-  });
+export default function SignUpTimer({ onExpire, expirationTime }: Props) {
+  const [seconds, setSeconds] = useState(expirationTime);
+
+  useEffect(() => {
+    setSeconds(expirationTime);
+  }, [expirationTime]);
 
   useEffect(() => {
     if (seconds <= 0) {
@@ -29,18 +31,6 @@ export default function SignUpTimer({ onExpire }: Props) {
     const interval = setInterval(() => {
       setSeconds((prevSeconds) => {
         const newSeconds = prevSeconds - 1;
-
-        // 세션 스토리지 업데이트
-        const session = authService.getEmailAuthSession(
-          EmailAuthSessionKey.SIGNUP,
-        );
-        if (session) {
-          authService.saveEmailAuthSession(EmailAuthSessionKey.SIGNUP, {
-            ...session,
-            expirationTimes: newSeconds,
-          });
-        }
-
         return newSeconds;
       });
     }, 1000);
