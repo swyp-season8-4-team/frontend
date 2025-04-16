@@ -145,7 +145,7 @@ export function ForgotPasswordAuthCodeForm({
             </p>
           )}
           {successMessage && !error && (
-            <p className="text-sucess-60 flex items-center gap-[5px] text-sm">
+            <p className="text-success-60 flex items-center gap-[5px] text-sm">
               <div className="h-4 w-4">
                 <IconCheckRound className="h-full w-full" />
               </div>
