@@ -210,7 +210,6 @@ export default function SignUpStepTwo({ updateStep }: Props) {
     try {
       setLoading(true);
 
-      // context 업데이트
       updateNickname(data.nickname);
       updateName(data.name);
       updatePhoneNumber(data.phone);
@@ -218,11 +217,8 @@ export default function SignUpStepTwo({ updateStep }: Props) {
       if (data.profileImage) {
         updateProfileImage(data.profileImage);
       }
-
-      // TODO: 회원가입 완료 API 호출
-      // updateStep(SignUpStep.);
     } catch (error) {
-      // 에러 처리
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -425,7 +421,7 @@ export default function SignUpStepTwo({ updateStep }: Props) {
             !watch('gender') ||
             isLoading
           }
-          text="완료"
+          text="다음"
         />
       </div>
     </form>

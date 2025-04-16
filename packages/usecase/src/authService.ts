@@ -34,6 +34,7 @@ export enum SignUpStep {
   // TERMS_OF_SERVICE = 'terms-of-service',
   ONE = 'one',
   TWO = 'two',
+  THREE = 'three',
 }
 
 export enum EmailAuthSessionKey {

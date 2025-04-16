@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { SignUpProvider } from '../../_contexts/SignUpContext';
 import SignUpStepOne from '../SignUpStepOne';
 import SignUpStepTwo from '../SignUpStepTwo';
+import SignUpTermsOfServiceForm from '../SignUpTermsOfServiceForm';
 
 interface Props {
   token: string | null;
@@ -19,8 +20,9 @@ export default function SignUpController({ token }: Props) {
 
   return (
     <SignUpProvider>
-      {step === SignUpStep.TWO && <SignUpStepOne updateStep={updateStep} />}
-      {step === SignUpStep.ONE && <SignUpStepTwo updateStep={updateStep} />}
+      {step === SignUpStep.ONE && <SignUpStepOne updateStep={updateStep} />}
+      {step === SignUpStep.TWO && <SignUpStepTwo updateStep={updateStep} />}
+      {step === SignUpStep.THREE && <SignUpTermsOfServiceForm />}
     </SignUpProvider>
   );
 }
