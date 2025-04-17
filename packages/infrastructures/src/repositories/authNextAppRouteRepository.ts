@@ -11,6 +11,7 @@ import type {
   VerifyEmailRequestData,
   VerifyEmailRequestResponse,
   VerifyEmailResponse,
+  SignUpData,
 } from '@repo/entity/src/auth';
 import { headers } from 'next/headers';
 
@@ -59,6 +60,9 @@ export default class AuthNextAppRouteRepository implements AuthRepository {
   verifyEmail(
     data: BaseRequestData<VerifyEmailData>,
   ): Promise<VerifyEmailResponse> {
+    throw new Error('Method not implemented.');
+  }
+  signUpWithProfileImage(data: BaseRequestData<SignUpData>): Promise<unknown> {
     throw new Error('Method not implemented.');
   }
 }
