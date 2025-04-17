@@ -110,6 +110,8 @@ export default function SignUpStepOne({ updateStep }: Props) {
   };
 
   const handleCodeVerification = async () => {
+    if (isCodeVerified) return;
+
     const email = watch('email');
     const code = watch('verificationCode');
 
@@ -134,6 +136,7 @@ export default function SignUpStepOne({ updateStep }: Props) {
         ...prev,
         verificationCode: '인증이 완료되었습니다.',
       }));
+      setShowTimer(false);
     } catch (error) {
       setSuccessMessages((prev) => ({ ...prev, verificationCode: '' }));
       if (error instanceof Error) {
@@ -335,7 +338,7 @@ export default function SignUpStepOne({ updateStep }: Props) {
       </div>
 
       {/* 이전/다음 버튼 */}
-      <div className="flex gap-[10px]">
+      <div className="my-4 flex gap-[10px]">
         <WhiteButton
           onClick={handlePrevClick}
           type="button"
