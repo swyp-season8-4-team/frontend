@@ -10,7 +10,7 @@ import AuthService, {
   VerifyEmailPurpose,
 } from '@repo/usecase/src/authService';
 import { validateEmail } from '@repo/utility/src/regex';
-import { useCallback, useContext, useState } from 'react';
+import { useContext, useState } from 'react';
 import { SignUpContext } from '../../_contexts/SignUpContext';
 import SignUpTimer from '../SignUpTimer';
 import { verifyTokenAction } from '@/actions/verfiyTokenAction';
@@ -20,6 +20,8 @@ import { HoneyButton } from '@repo/design-system/components/buttons/FillButtons/
 import { WhiteButton } from '@repo/design-system/components/buttons/FillButtons/White';
 import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
+import IconCheckRound from '@repo/design-system/components/icons/IconCheckRound';
+import IconWarn from '@repo/design-system/components/icons/IconWarn';
 
 const authService = new AuthService({
   authRepository: new AuthAPIRepository(),
@@ -90,11 +92,25 @@ export default function SignUpStepOne({ updateStep }: Props) {
 
       updateEmail(watch('email'));
       setEmailVerified(true);
-      setShowTimer(true);
-      setExpirationTime(expirationMinutes * 60);
+
+      // 인증 코드 확인 상태 초기화
+      setCodeVerified(false);
+
+      // 인증 코드 입력 필드 초기화
+      setValue('verificationCode', '');
+
+      // 타이머 초기화 및 재시작
+      setShowTimer(false); // 먼저 타이머를 숨김
+      setTimeout(() => {
+        setExpirationTime(expirationMinutes * 60); // 새로운 만료 시간 설정
+        setShowTimer(true); // 타이머 다시 표시
+      }, 10);
+
+      // 성공 메시지 업데이트
       setSuccessMessages((prev) => ({
         ...prev,
-        email: '인증 코드가 이메일로 전송되었습니다.',
+        email: '인증 코드가 이메일로 재전송되었습니다.',
+        verificationCode: '', // 인증 코드 성공 메시지 초기화
       }));
     } catch (error) {
       setSuccessMessages((prev) => ({ ...prev, email: '' }));
@@ -220,12 +236,9 @@ export default function SignUpStepOne({ updateStep }: Props) {
                 {...register('verificationCode')}
                 placeholder="인증번호를 입력해주세요"
                 maxLength={6}
-                error={!!errors.verificationCode}
-                errorMessage={errors.verificationCode?.message}
-                disabled={!isEmailVerified}
+                // disabled={!isEmailVerified}
                 showReset={!!watch('verificationCode') && !isCodeVerified}
                 onReset={() => setValue('verificationCode', '')}
-                successMessage={successMessages.verificationCode}
               />
               {showTimer && (
                 <div className="absolute right-11 top-1/2 -translate-y-1/2">
@@ -255,11 +268,33 @@ export default function SignUpStepOne({ updateStep }: Props) {
               text="인증확인"
             />
           </div>
-          <div className="flex gap-[10px] text-sm text-[#595959]">
-            <div>인증 코드를 아직 받지 못하셨나요?</div>
-            <button onClick={handleCodeSend} className="underline">
-              재전송
-            </button>
+          <div className="flex flex-col gap-2">
+            <div className="flex gap-[10px] text-sm text-[#595959]">
+              <div>인증 코드를 아직 받지 못하셨나요?</div>
+              <button
+                type="button"
+                onClick={handleCodeSend}
+                className="underline"
+              >
+                재전송
+              </button>
+            </div>
+            {!!errors.verificationCode && (
+              <div className="text-error-60 flex items-center gap-[5px] text-sm">
+                <div className="h-4 w-4">
+                  <IconWarn className="h-full w-full" />
+                </div>
+                {errors.verificationCode?.message}
+              </div>
+            )}
+            {successMessages.verificationCode && !errors.verificationCode && (
+              <div className="text-success-60 flex items-center gap-[5px] text-sm">
+                <div className="h-4 w-4">
+                  <IconCheckRound className="h-full w-full" />
+                </div>
+                {successMessages.verificationCode}
+              </div>
+            )}
           </div>
         </div>
 
