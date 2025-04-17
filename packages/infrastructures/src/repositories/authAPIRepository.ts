@@ -113,7 +113,15 @@ export default class AuthAPIRepository
       throw new Error('authorization is not exist');
     }
 
-    const { email, password, confirmPassword, nickname, gender } = data;
+    const {
+      email,
+      password,
+      confirmPassword,
+      nickname,
+      gender,
+      name,
+      phoneNumber,
+    } = data;
 
     const response = await fetch<SignUpData, unknown>({
       headers: {
@@ -125,6 +133,8 @@ export default class AuthAPIRepository
         confirmPassword,
         nickname,
         gender,
+        name,
+        phoneNumber,
       },
       method: 'POST',
       url: `${this.endpoint}/auth/signup`,
