@@ -154,16 +154,28 @@ export default function SignUpStepTwo({ updateStep }: Props) {
       const file = e.target.files?.[0];
       if (!file) return;
 
-      // 파일 유효성 검사 (이미지 파일인지 확인)
-      if (!file.type.startsWith('image/')) {
-        alert('이미지 파일만 업로드 가능합니다.');
+      // 파일 유효성 검사 (이미지 파일 형식 확인)
+      const allowedTypes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+      ];
+      if (!allowedTypes.includes(file.type)) {
+        alert('JPG, JPEG, PNG, GIF 형식의 이미지 파일만 업로드 가능합니다.');
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
         return;
       }
 
       // 파일 크기 제한 (5MB)
-      const maxSize = 5 * 1024 * 1024;
+      const maxSize = 5 * 1024 * 1024; // 5MB
       if (file.size > maxSize) {
         alert('파일 크기는 5MB 이하여야 합니다.');
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
         return;
       }
 
@@ -176,6 +188,9 @@ export default function SignUpStepTwo({ updateStep }: Props) {
       } catch (error) {
         console.error('Error creating preview:', error);
         alert('이미지 미리보기 생성에 실패했습니다.');
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
       }
     },
     [setValue],
@@ -207,6 +222,16 @@ export default function SignUpStepTwo({ updateStep }: Props) {
       return;
     }
 
+    if (data.name === '') {
+      setError('name', { message: '이름을 입력해주세요.' });
+      return;
+    }
+
+    if (data.phone === '') {
+      setError('phone', { message: '전화번호를 입력해주세요.' });
+      return;
+    }
+
     try {
       setLoading(true);
 
@@ -217,6 +242,7 @@ export default function SignUpStepTwo({ updateStep }: Props) {
       if (data.profileImage) {
         updateProfileImage(data.profileImage);
       }
+      router.push(NavigationPathname.TermsOfService);
     } catch (error) {
       console.log(error);
     } finally {
@@ -229,7 +255,7 @@ export default function SignUpStepTwo({ updateStep }: Props) {
       onSubmit={handleSubmit(onSubmit)}
       className="px-base mt-[106px] flex h-[calc(100dvh-110px)] flex-col justify-between pb-4"
     >
-      <div className="mb-[37px] flex flex-col gap-[54px]">
+      <div className="flex flex-col gap-[54px]">
         {/* 닉네임 */}
         <div className="flex flex-col gap-[5px]">
           <label className="text-sm text-[#635F59]">닉네임</label>
@@ -336,7 +362,9 @@ export default function SignUpStepTwo({ updateStep }: Props) {
         {/* 프로필 이미지 */}
         {watch('gender') && (
           <div className="flex flex-col gap-[5px]">
-            <label className="text-sm text-[#635F59]">프로필 이미지</label>
+            <label className="text-sm text-[#635F59]">
+              프로필 이미지 (JPG, JPEG, PNG, GIF 형식의 5MB 이하 파일만 허용)
+            </label>
             <div className="flex items-center justify-center">
               <div className="relative flex h-[90px] w-[90px] items-center justify-center rounded-full bg-[#DFDFDF]">
                 {/* 기본 이미지가 아닐 때는 이미지가 원을 꽉 채우도록 설정 */}
@@ -404,7 +432,7 @@ export default function SignUpStepTwo({ updateStep }: Props) {
       </div>
 
       {/* 이전/완료 버튼 */}
-      <div className="flex gap-[10px] py-4">
+      <div className="my-10 flex gap-[10px]">
         <WhiteButton
           onClick={handlePrevClick}
           type="button"

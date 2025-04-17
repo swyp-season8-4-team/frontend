@@ -338,7 +338,7 @@ export default function SignUpStepOne({ updateStep }: Props) {
       </div>
 
       {/* 이전/다음 버튼 */}
-      <div className="my-4 flex gap-[10px]">
+      <div className="my-10 flex gap-[10px]">
         <WhiteButton
           onClick={handlePrevClick}
           type="button"
