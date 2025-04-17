@@ -45,10 +45,7 @@ export async function loginAction(
 
     const cookieList = await cookies();
 
-    const domain =
-      process.env.NEXT_PUBLIC_APP_ENV !== 'local' //TODO: 바꾸기
-        ? process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN
-        : '';
+    const domain = process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN;
 
     // 토큰 저장
     const decodedAccessToken = decodeJWT(accessToken);

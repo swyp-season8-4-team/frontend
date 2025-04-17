@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRegister } from '../_contexts/RegisterContext';
 import { registerStore } from './action';
@@ -11,6 +11,7 @@ import { KakaoMapAdapter } from '@repo/infrastructures/src/adapters/kakaoMapAdap
 import Script from 'next/script';
 import type { RegisterStoreFromData } from '@repo/entity/src/store';
 import { UserContext } from '@/contexts/UserContext';
+import { HTTPError } from '@repo/api/src/error';
 
 const KAKAO_MAP_API_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&libraries=services,clusterer&autoload=false`;
 
@@ -18,9 +19,13 @@ export default function RegisterLoadingPage() {
   const { user } = useContext(UserContext);
 
   const router = useRouter();
-  const { formData, updateFormData, storeData } = useRegister();
+  const { formData, storeData, updateBasicInfo } = useRegister();
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [mapService, setMapService] = useState<MapService | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 첫 번째 렌더링에서만 실행되도록 ref 사용
+  const hasSubmitted = useRef(false);
 
   useEffect(() => {
     if (isScriptLoaded && !mapService) {
@@ -42,12 +47,34 @@ export default function RegisterLoadingPage() {
 
   useEffect(() => {
     const submitForm = async () => {
-      if (!mapService) return;
+      // 이미 제출했거나 mapService가 없으면 실행하지 않음
+      if (!mapService || hasSubmitted.current) return;
+
+      // 제출 상태 표시
+      hasSubmitted.current = true;
 
       try {
         const coordinates = await mapService.convertAddressToCoordinates(
           storeData.address,
         );
+
+        if (!coordinates || !coordinates.latitude || !coordinates.longitude) {
+          console.error('주소를 좌표로 변환하는데 실패했습니다.');
+          alert(
+            '주소를 지도 좌표로 변환하는데 실패했습니다. 다시 시도해주세요.',
+          );
+          router.back();
+          return;
+        }
+
+        updateBasicInfo({
+          name: storeData.name,
+          phone: storeData.phone,
+          address: storeData.address,
+          detailAddress: storeData.detailAddress,
+          latitude: coordinates.latitude,
+          longitude: coordinates.longitude,
+        });
 
         const formattedMenus = storeData.menus.map((menu) => ({
           name: menu.name,
@@ -93,20 +120,23 @@ export default function RegisterLoadingPage() {
           menuImageFiles: Array.from(storeData.menuImageMap.values()),
         };
 
-        // console.log(updatedStoreFormData);
         await registerStore(updatedStoreFormData);
 
         router.push(`${NavigationPathname.OwnerRegisterComplete}`);
       } catch (error) {
-        console.error('가게 등록 중 오류 발생:', error);
+        // 오류 발생 시 제출 상태 초기화
+        hasSubmitted.current = false;
+        if (error instanceof HTTPError) {
+          console.log(error.data);
+        }
+        alert('가게 등록 중 오류가 발생했습니다. 다시 시도해주세요.');
         router.back();
       }
     };
 
-    if (mapService) {
-      submitForm();
-    }
-  }, [mapService, formData, router, storeData, user?.id]);
+    submitForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapService]);
 
   return (
     <>
