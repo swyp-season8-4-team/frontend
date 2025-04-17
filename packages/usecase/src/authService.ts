@@ -25,13 +25,16 @@ export enum VerifyEmailPurpose {
 }
 
 export enum SignUpStep {
-  EMAIL = 'email',
-  EMAIL_CODE = 'email-code',
-  PASSWORD = 'password',
-  GENDER = 'gender',
-  NICKNAME = 'nickname',
-  AGREE = 'agree',
-  TERMS_OF_SERVICE = 'terms-of-service',
+  // EMAIL = 'email',
+  // EMAIL_CODE = 'email-code',
+  // PASSWORD = 'password',
+  // GENDER = 'gender',
+  // NICKNAME = 'nickname',
+  // AGREE = 'agree',
+  // TERMS_OF_SERVICE = 'terms-of-service',
+  ONE = 'one',
+  TWO = 'two',
+  THREE = 'three',
 }
 
 export enum EmailAuthSessionKey {
@@ -122,12 +125,19 @@ export default class AuthService {
       throw new Error('authRepository is not set');
     }
 
-    const response = await this.authRepository.signUp({
-      data,
-      authorization: verificationToken,
-    });
-
-    return response;
+    if ('profileImage' in data && data.profileImage) {
+      const response = await this.authRepository.signUpWithProfileImage({
+        data,
+        authorization: verificationToken,
+      });
+      return response;
+    } else {
+      const response = await this.authRepository.signUp({
+        data,
+        authorization: verificationToken,
+      });
+      return response;
+    }
   }
 
   async signOut(authorization: string): Promise<void> {
