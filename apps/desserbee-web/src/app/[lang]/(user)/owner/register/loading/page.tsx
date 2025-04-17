@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useRegister } from '../_contexts/RegisterContext';
 import { registerStore } from './action';
@@ -22,6 +22,10 @@ export default function RegisterLoadingPage() {
   const { formData, storeData, updateBasicInfo } = useRegister();
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [mapService, setMapService] = useState<MapService | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 첫 번째 렌더링에서만 실행되도록 ref 사용
+  const hasSubmitted = useRef(false);
 
   useEffect(() => {
     if (isScriptLoaded && !mapService) {
@@ -43,22 +47,17 @@ export default function RegisterLoadingPage() {
 
   useEffect(() => {
     const submitForm = async () => {
-      if (!mapService) return;
+      // 이미 제출했거나 mapService가 없으면 실행하지 않음
+      if (!mapService || hasSubmitted.current) return;
 
-      const coordinates = await mapService.convertAddressToCoordinates(
-        storeData.address,
-      );
-
-      updateBasicInfo({
-        name: storeData.name,
-        phone: storeData.phone,
-        address: storeData.address,
-        detailAddress: storeData.detailAddress,
-        latitude: coordinates.latitude,
-        longitude: coordinates.longitude,
-      });
+      // 제출 상태 표시
+      hasSubmitted.current = true;
 
       try {
+        const coordinates = await mapService.convertAddressToCoordinates(
+          storeData.address,
+        );
+
         if (!coordinates || !coordinates.latitude || !coordinates.longitude) {
           console.error('주소를 좌표로 변환하는데 실패했습니다.');
           alert(
@@ -67,6 +66,15 @@ export default function RegisterLoadingPage() {
           router.back();
           return;
         }
+
+        updateBasicInfo({
+          name: storeData.name,
+          phone: storeData.phone,
+          address: storeData.address,
+          detailAddress: storeData.detailAddress,
+          latitude: coordinates.latitude,
+          longitude: coordinates.longitude,
+        });
 
         const formattedMenus = storeData.menus.map((menu) => ({
           name: menu.name,
@@ -116,6 +124,8 @@ export default function RegisterLoadingPage() {
 
         router.push(`${NavigationPathname.OwnerRegisterComplete}`);
       } catch (error) {
+        // 오류 발생 시 제출 상태 초기화
+        hasSubmitted.current = false;
         if (error instanceof HTTPError) {
           console.log(error.data);
         }
@@ -124,10 +134,9 @@ export default function RegisterLoadingPage() {
       }
     };
 
-    if (mapService) {
-      submitForm();
-    }
-  }, [mapService, formData, router, storeData, user?.id, updateBasicInfo]);
+    submitForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mapService]);
 
   return (
     <>
