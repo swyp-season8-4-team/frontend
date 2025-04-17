@@ -242,7 +242,7 @@ export default function SignUpStepTwo({ updateStep }: Props) {
       if (data.profileImage) {
         updateProfileImage(data.profileImage);
       }
-      router.push(NavigationPathname.TermsOfService);
+      updateStep(SignUpStep.THREE);
     } catch (error) {
       console.log(error);
     } finally {
