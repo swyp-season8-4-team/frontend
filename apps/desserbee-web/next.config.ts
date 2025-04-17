@@ -24,8 +24,10 @@ const NextFunctionConfig = async (phase: any) => {
 
       return config;
     },
-    serverActions: {
-      bodySizeLimit: '100mb',
+    experimental: {
+      serverActions: {
+        bodySizeLimit: '100mb',
+      },
     },
     images: {
       remotePatterns: [
