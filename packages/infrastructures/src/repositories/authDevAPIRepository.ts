@@ -14,6 +14,7 @@ import type {
   VerifyEmailRequestData,
   VerifyEmailRequestResponse,
   VerifyEmailResponse,
+  SignUpData,
 } from '@repo/entity/src/auth';
 import AuthConverter from '../mappers/authConverter';
 import APIRepository from './apiRepository';
@@ -53,7 +54,7 @@ export default class AuthDevAPIRepository
     throw new Error('Method not implemented.');
   }
 
-  signUp(data: BaseRequestData<unknown>): Promise<unknown> {
+  async signUp(data: BaseRequestData<unknown>): Promise<unknown> {
     throw new Error('Method not implemented.');
   }
   signOut(data: BaseRequestData<SignOutData>): Promise<void> {
@@ -83,6 +84,13 @@ export default class AuthDevAPIRepository
     throw new Error('Method not implemented.');
   }
   getAuthorization(accessToken?: string): Promise<string | null> {
+    throw new Error('Method not implemented.');
+  }
+
+  async signUpWithProfileImage({
+    data,
+    authorization,
+  }: BaseRequestData<SignUpData>): Promise<unknown> {
     throw new Error('Method not implemented.');
   }
 }
