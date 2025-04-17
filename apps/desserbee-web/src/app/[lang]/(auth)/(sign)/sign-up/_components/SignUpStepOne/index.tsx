@@ -2,18 +2,12 @@
 
 import { useForm } from 'react-hook-form';
 import { HTTPError } from '@repo/api/src/error';
-import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
-import SessionStorageRepository from '@repo/infrastructures/src/repositories/sessionStorageRepository';
-import AuthService, {
-  EmailAuthSessionKey,
-  SignUpStep,
-  VerifyEmailPurpose,
-} from '@repo/usecase/src/authService';
+
 import { validateEmail } from '@repo/utility/src/regex';
 import { useContext, useState } from 'react';
 import { SignUpContext } from '../../_contexts/SignUpContext';
 import SignUpTimer from '../SignUpTimer';
-import { verifyTokenAction } from '@/actions/verfiyTokenAction';
+// import { verifyTokenAction } from '@/actions/verfiyTokenAction';
 import { TextField } from '@repo/design-system/components/inputs/TextField';
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
 import { HoneyButton } from '@repo/design-system/components/buttons/FillButtons/Honey';
@@ -22,11 +16,13 @@ import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import IconCheckRound from '@repo/design-system/components/icons/IconCheckRound';
 import IconWarn from '@repo/design-system/components/icons/IconWarn';
-
-const authService = new AuthService({
-  authRepository: new AuthAPIRepository(),
-  storageRepository: new SessionStorageRepository(),
-});
+import {
+  clearEmailAuthSession,
+  sendVerifyEmailRequest,
+  verifyEmail,
+  verifyTokenAction,
+} from './action';
+import { SignUpStep } from '@repo/usecase/src/authService';
 
 interface Step0neFormData {
   email: string;
@@ -80,36 +76,27 @@ export default function SignUpStepOne({ updateStep }: Props) {
 
     try {
       setLoading(true);
-      const { expirationMinutes } = await authService.verifyEmailRequest({
+      const { expirationMinutes } = await sendVerifyEmailRequest({
         email: watch('email'),
-        purpose: VerifyEmailPurpose.SIGNUP,
-      });
-
-      authService.saveEmailAuthSession(EmailAuthSessionKey.SIGNUP, {
-        email: watch('email'),
-        expirationTimes: expirationMinutes * 60,
       });
 
       updateEmail(watch('email'));
       setEmailVerified(true);
 
-      // 인증 코드 확인 상태 초기화
       setCodeVerified(false);
-
-      // 인증 코드 입력 필드 초기화
       setValue('verificationCode', '');
 
       // 타이머 초기화 및 재시작
-      setShowTimer(false); // 먼저 타이머를 숨김
+      setShowTimer(false);
       setTimeout(() => {
         setExpirationTime(expirationMinutes * 60); // 새로운 만료 시간 설정
-        setShowTimer(true); // 타이머 다시 표시
+        setShowTimer(true);
       }, 10);
 
       // 성공 메시지 업데이트
       setSuccessMessages((prev) => ({
         ...prev,
-        email: '인증 코드가 이메일로 재전송되었습니다.',
+        email: '인증 코드가 이메일로 전송되었습니다.',
         verificationCode: '', // 인증 코드 성공 메시지 초기화
       }));
     } catch (error) {
@@ -133,14 +120,15 @@ export default function SignUpStepOne({ updateStep }: Props) {
 
     try {
       setLoading(true);
-      const { verificationToken } = await authService.verifyEmail({
+      const { verificationToken } = await verifyEmail({
         email,
         code,
-        purpose: VerifyEmailPurpose.SIGNUP,
       });
 
       await verifyTokenAction({ token: verificationToken });
-      authService.clearEmailAuthSession(EmailAuthSessionKey.SIGNUP);
+
+      clearEmailAuthSession();
+
       setCodeVerified(true);
       setSuccessMessages((prev) => ({
         ...prev,
@@ -237,17 +225,15 @@ export default function SignUpStepOne({ updateStep }: Props) {
                 placeholder="인증번호를 입력해주세요"
                 maxLength={6}
                 // disabled={!isEmailVerified}
-                showReset={!!watch('verificationCode') && !isCodeVerified}
-                onReset={() => setValue('verificationCode', '')}
+                // showReset={!!watch('verificationCode') && !isCodeVerified}
+                // onReset={() => setValue('verificationCode', '')}
               />
               {showTimer && (
-                <div className="absolute right-11 top-1/2 -translate-y-1/2">
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
                   <SignUpTimer
                     expirationTime={expirationTime}
                     onExpire={() => {
-                      authService.clearEmailAuthSession(
-                        EmailAuthSessionKey.SIGNUP,
-                      );
+                      clearEmailAuthSession();
                       setShowTimer(false);
                     }}
                   />
