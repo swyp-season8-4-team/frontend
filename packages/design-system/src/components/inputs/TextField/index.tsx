@@ -69,19 +69,19 @@ export const TextField = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {error && errorMessage && (
-          <div className="text-error-60 absolute mt-3 flex items-center gap-[5px] text-sm">
-            <div className="h-4 w-4">
+          <div className="text-error-60 absolute mt-3 flex items-center gap-[5px] whitespace-nowrap text-sm">
+            <div className="h-4 w-4 flex-shrink-0">
               <IconWarn className="h-full w-full" />
             </div>
-            {errorMessage}
+            <span>{errorMessage}</span>
           </div>
         )}
         {successMessage && !error && (
-          <div className="text-success-60 absolute mt-3 flex items-center gap-[5px] text-sm">
-            <div className="h-4 w-4">
+          <div className="text-success-60 absolute mt-3 flex items-center gap-[5px] whitespace-nowrap text-sm">
+            <div className="h-4 w-4 flex-shrink-0">
               <IconCheckRound className="h-full w-full" />
             </div>
-            {successMessage}
+            <span>{successMessage}</span>
           </div>
         )}
       </div>
