@@ -19,7 +19,7 @@ export default function RegisterLoadingPage() {
   const { user } = useContext(UserContext);
 
   const router = useRouter();
-  const { formData, updateFormData, storeData } = useRegister();
+  const { formData, storeData, updateBasicInfo } = useRegister();
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [mapService, setMapService] = useState<MapService | null>(null);
 
@@ -48,6 +48,15 @@ export default function RegisterLoadingPage() {
       const coordinates = await mapService.convertAddressToCoordinates(
         storeData.address,
       );
+
+      updateBasicInfo({
+        name: storeData.name,
+        phone: storeData.phone,
+        address: storeData.address,
+        detailAddress: storeData.detailAddress,
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+      });
 
       try {
         if (!coordinates || !coordinates.latitude || !coordinates.longitude) {
@@ -118,7 +127,7 @@ export default function RegisterLoadingPage() {
     if (mapService) {
       submitForm();
     }
-  }, [mapService, formData, router, storeData, user?.id]);
+  }, [mapService, formData, router, storeData, user?.id, updateBasicInfo]);
 
   return (
     <>
