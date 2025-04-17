@@ -125,12 +125,19 @@ export default class AuthService {
       throw new Error('authRepository is not set');
     }
 
-    const response = await this.authRepository.signUp({
-      data,
-      authorization: verificationToken,
-    });
-
-    return response;
+    if ('profileImage' in data && data.profileImage) {
+      const response = await this.authRepository.signUpWithProfileImage({
+        data,
+        authorization: verificationToken,
+      });
+      return response;
+    } else {
+      const response = await this.authRepository.signUp({
+        data,
+        authorization: verificationToken,
+      });
+      return response;
+    }
   }
 
   async signOut(authorization: string): Promise<void> {

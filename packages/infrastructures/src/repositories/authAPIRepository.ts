@@ -121,6 +121,7 @@ export default class AuthAPIRepository
       gender,
       name,
       phoneNumber,
+      role,
     } = data;
 
     const response = await fetch<SignUpData, unknown>({
@@ -135,9 +136,65 @@ export default class AuthAPIRepository
         gender,
         name,
         phoneNumber,
+        role,
       },
       method: 'POST',
       url: `${this.endpoint}/auth/signup`,
+    });
+
+    return response;
+  }
+
+  async signUpWithProfileImage({
+    data,
+    authorization,
+  }: BaseRequestData<SignUpData>): Promise<unknown> {
+    if (!data) {
+      throw new Error('data is not exist');
+    }
+
+    if (!authorization) {
+      throw new Error('authorization is not exist');
+    }
+
+    const {
+      email,
+      password,
+      confirmPassword,
+      nickname,
+      gender,
+      name,
+      phoneNumber,
+      role,
+      profileImage,
+    } = data;
+
+    // FormData 객체 생성
+    const formData = new FormData();
+
+    // 텍스트 데이터 추가
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('confirmPassword', confirmPassword);
+    if (nickname) formData.append('nickname', nickname);
+    if (gender) formData.append('gender', gender);
+    if (name) formData.append('name', name);
+    if (phoneNumber) formData.append('phoneNumber', phoneNumber);
+    if (role) formData.append('role', role);
+
+    // 프로필 이미지 추가
+    if (profileImage) {
+      formData.append('profileImage', profileImage);
+    }
+
+    const response = await fetch<FormData, unknown>({
+      headers: {
+        'X-Email-Verification-Token': authorization as string,
+        // Content-Type은 자동으로 설정됨 (multipart/form-data)
+      },
+      formData,
+      method: 'POST',
+      url: `${this.endpoint}/auth/signup-with-profile`,
     });
 
     return response;

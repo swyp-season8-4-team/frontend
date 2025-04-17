@@ -85,6 +85,8 @@ export interface SignUpData extends Omit<SignInData, 'keepLoggedIn'> {
   address?: string;
   gender: Gender;
   preferenceIds?: number[];
+  role: 'ROLE_USER' | 'ROLE_OWNER';
+  profileImage?: File;
 }
 
 export interface OAuthSignInData {
@@ -124,6 +126,7 @@ export interface AuthRepository {
   socialSignIn(data: BaseRequestData<OAuthSignInData>): Promise<SignInResponse>; // 소셜 로그인
   signIn(data: BaseRequestData<SignInData>): Promise<SignInResponse>; // 일반 로그인
   signUp(data: BaseRequestData<unknown>): Promise<unknown>; // 회원가입
+  signUpWithProfileImage(data: BaseRequestData<unknown>): Promise<unknown>; // 회원가입
   signOut(data: BaseRequestData<SignOutData>): Promise<void>;
   resetPassword(
     data: BaseRequestData<ResetPasswordData>,
