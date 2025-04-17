@@ -1,18 +1,14 @@
 'use client';
 
-import signUpAction from '@/actions/signUpAction';
 import { NavigationPathname } from '@repo/entity/src/navigation';
-import UserAPIRepository from '@repo/infrastructures/src/repositories/userAPIRepository';
-import UserService from '@repo/usecase/src/userService';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useContext, useState } from 'react';
 import { SignUpContext } from '../../_contexts/SignUpContext';
 import { HoneyButton } from '@repo/design-system/components/buttons/FillButtons/Honey';
-
-const userService = new UserService({
-  userRepository: new UserAPIRepository(),
-});
+import signUpAction from './action';
+import { HTTPError } from '@repo/api/src/error';
 
 export default function SignUpTermsOfServiceForm() {
   const {
@@ -72,7 +68,7 @@ export default function SignUpTermsOfServiceForm() {
       try {
         setIsLoading(true);
 
-        await signUpAction({
+        const result = await signUpAction({
           email,
           password,
           nickname,
@@ -80,16 +76,21 @@ export default function SignUpTermsOfServiceForm() {
           gender,
           name,
           phoneNumber,
+          ...(profileImage ? { profileImage } : {}),
+          role: 'ROLE_OWNER',
         });
 
-        if (profileImage) {
-          await userService.uploadProfileImage(profileImage);
-        }
+        alert('회원가입에 성공했습니다.');
+        router.replace(NavigationPathname.SignIn);
       } catch (error) {
         console.error('회원가입 오류:', error);
+
+        if (error instanceof HTTPError) {
+          console.error('HTTP 오류:', error.message, error.data);
+          alert(`회원가입 실패: '회원가입 중 오류가 발생했습니다.`);
+        }
       } finally {
         setIsLoading(false);
-        router.replace(NavigationPathname.SignIn);
       }
     }
   };
