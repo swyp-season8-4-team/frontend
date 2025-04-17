@@ -40,7 +40,7 @@ export function GoOwnerPageModal() {
   };
 
   return (
-    <div className="z-modal fixed inset-0 flex items-center justify-center bg-transparent">
+    <div className="z-modal fixed inset-0 flex items-center justify-center bg-black/10">
       <div className="relative h-[200px] w-[200px] shadow-md md:h-[300px] md:w-[300px]">
         <Image
           src={ownerPopupImage}
