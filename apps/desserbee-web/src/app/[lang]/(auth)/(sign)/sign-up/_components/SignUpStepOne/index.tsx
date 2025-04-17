@@ -38,7 +38,8 @@ interface Props {
 export default function SignUpStepOne({ updateStep }: Props) {
   const router = useRouter();
 
-  const { updateEmail } = useContext(SignUpContext);
+  const { updateEmail, updatePassword, updateConfirmPassword } =
+    useContext(SignUpContext);
   const [isLoading, setLoading] = useState(false);
   const [isEmailVerified, setEmailVerified] = useState(false);
   const [isCodeVerified, setCodeVerified] = useState(false);
@@ -178,6 +179,8 @@ export default function SignUpStepOne({ updateStep }: Props) {
       return;
     }
 
+    updatePassword(data.password);
+    updateConfirmPassword(data.confirmPassword);
     updateStep(SignUpStep.TWO);
   };
 
