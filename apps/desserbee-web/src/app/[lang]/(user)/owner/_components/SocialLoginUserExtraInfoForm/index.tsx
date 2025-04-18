@@ -68,8 +68,6 @@ export default function SocialLoginUserExtraInfoForm({
 
   // 성별이 변경될 때마다 기본 이미지 업데이트
   useEffect(() => {
-    if (nickname) {
-    }
     // 사용자가 업로드한 이미지가 없을 때만 기본 이미지 적용
     if (!profileImageUrl) {
       const gender = watch('gender');
@@ -77,10 +75,19 @@ export default function SocialLoginUserExtraInfoForm({
         gender === 'MALE' ? DefaultMaleAvatar.src : DefaultFemaleAvatar.src,
       );
     }
-  }, [watch('gender'), profileImageUrl]);
+  }, [profileImageUrl, watch]);
 
   // 닉네임 유효성 검사 함수
   const validateNicknameFormat = (nickname: string) => {
+    // 입력값이 없는 경우 처리
+    if (!nickname) {
+      return { isValid: false, message: '닉네임을 입력해주세요.' };
+    }
+
+    if (watch('nickname') === nickname) {
+      return { isValid: true, message: '' };
+    }
+
     // 한글, 영문, 숫자만 허용하는 정규식 (띄어쓰기 제외)
     const nicknameRegex = /^[가-힣a-zA-Z0-9]+$/;
 
@@ -112,6 +119,7 @@ export default function SocialLoginUserExtraInfoForm({
     const nicknameInput = watch('nickname');
 
     const validation = validateNicknameFormat(nicknameInput as string);
+
     if (!validation.isValid) {
       setError('nickname', { message: validation.message });
       setSuccessMessages((prev) => ({ ...prev, nickname: '' }));
@@ -460,12 +468,7 @@ export default function SocialLoginUserExtraInfoForm({
         <HoneyButton
           type="submit"
           className="my-10 text-lg"
-          isDisabled={
-            !isNicknameVerified ||
-            !watch('name') ||
-            !watch('phone') ||
-            isLoading
-          }
+          isDisabled={!watch('name') || !watch('phone') || isLoading}
           text="다음"
         />
       </form>
