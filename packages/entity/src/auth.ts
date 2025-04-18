@@ -142,5 +142,8 @@ export interface AuthRepository {
     data: BaseRequestData<VerifyEmailData>,
   ): Promise<VerifyEmailResponse>; // 이메일 검증
   getAuthorization(accessToken?: string): Promise<string | null>;
-  refreshAccessToken(refreshToken: string): Promise<JWTRefreshTokens>;
+  refreshAccessToken(
+    refreshToken: string,
+    deviceId?: string,
+  ): Promise<JWTRefreshTokens>;
 }
