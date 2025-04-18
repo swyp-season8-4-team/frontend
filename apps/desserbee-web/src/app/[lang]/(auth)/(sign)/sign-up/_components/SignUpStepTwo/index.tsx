@@ -12,8 +12,6 @@ import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import Image from 'next/image';
 import { cn } from '@repo/ui/lib/utils';
-import UserService from '@repo/usecase/src/userService';
-import UserAPIRepository from '@repo/infrastructures/src/repositories/userAPIRepository';
 import IconCamera from '@repo/design-system/components/icons/IconCamera';
 import IconXRound from '@repo/design-system/components/icons/IconXRound';
 import { validateNickname } from './action';
@@ -32,10 +30,6 @@ interface StepTwoFormData {
 interface Props {
   updateStep: (step: SignUpStep) => void;
 }
-
-const userService = new UserService({
-  userRepository: new UserAPIRepository(),
-});
 
 export default function SignUpStepTwo({ updateStep }: Props) {
   const router = useRouter();
@@ -62,6 +56,7 @@ export default function SignUpStepTwo({ updateStep }: Props) {
     formState: { errors },
     watch,
     setError,
+    clearErrors,
     setValue,
   } = useForm<StepTwoFormData>({
     mode: 'onChange',
@@ -116,7 +111,6 @@ export default function SignUpStepTwo({ updateStep }: Props) {
   const handleNicknameCheck = async () => {
     const nickname = watch('nickname');
 
-    // 클라이언트 측 유효성 검사
     const validation = validateNicknameFormat(nickname);
     if (!validation.isValid) {
       setError('nickname', { message: validation.message });
@@ -130,11 +124,14 @@ export default function SignUpStepTwo({ updateStep }: Props) {
 
       if (result.success) {
         setNicknameVerified(true);
+        clearErrors('nickname');
         setSuccessMessages((prev) => ({
           ...prev,
           nickname: result.message,
         }));
       } else {
+        setNicknameVerified(false);
+        setLoading(false);
         setSuccessMessages((prev) => ({ ...prev, nickname: '' }));
         setError('nickname', { message: result.message });
       }
@@ -280,16 +277,18 @@ export default function SignUpStepTwo({ updateStep }: Props) {
                 }}
                 successMessage={successMessages.nickname}
                 onChange={(e) => {
-                  // 입력 시 공백 제거하고 폼 값 업데이트
                   const withoutSpaces = e.target.value.replace(/\s/g, '');
                   setValue('nickname', withoutSpaces);
+                  setNicknameVerified(false);
+                  setSuccessMessages((prev) => ({ ...prev, nickname: '' }));
+                  clearErrors('nickname');
                 }}
               />
             </div>
             <OliveButton
               type="button"
               onClick={handleNicknameCheck}
-              isDisabled={!watch('nickname') || !!errors.nickname || isLoading}
+              isDisabled={!watch('nickname') || isNicknameVerified || isLoading}
               className="w-24 text-sm"
               text="중복확인"
             />
@@ -306,6 +305,9 @@ export default function SignUpStepTwo({ updateStep }: Props) {
             errorMessage={errors.name?.message}
             showReset={!!watch('name')}
             onReset={() => setValue('name', '')}
+            onChange={() => {
+              clearErrors('name');
+            }}
           />
         </div>
 
@@ -325,6 +327,9 @@ export default function SignUpStepTwo({ updateStep }: Props) {
             errorMessage={errors.phone?.message}
             showReset={!!watch('phone')}
             onReset={() => setValue('phone', '')}
+            onChange={() => {
+              clearErrors('phone');
+            }}
           />
         </div>
 
@@ -446,7 +451,6 @@ export default function SignUpStepTwo({ updateStep }: Props) {
             !isNicknameVerified ||
             !watch('name') ||
             !watch('phone') ||
-            !watch('gender') ||
             isLoading
           }
           text="다음"
