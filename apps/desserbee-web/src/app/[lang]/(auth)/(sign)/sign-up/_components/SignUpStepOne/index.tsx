@@ -111,7 +111,7 @@ export default function SignUpStepOne({ updateStep }: Props) {
   };
 
   const handleCodeVerification = async () => {
-    if (isCodeVerified) return;
+    if (!isEmailVerified || isCodeVerified) return;
 
     const email = watch('email');
     const code = watch('verificationCode');
@@ -230,7 +230,7 @@ export default function SignUpStepOne({ updateStep }: Props) {
                 {...register('verificationCode')}
                 placeholder="인증번호를 입력해주세요"
                 maxLength={6}
-                // disabled={!isEmailVerified}
+                disabled={!isEmailVerified}
                 // showReset={!!watch('verificationCode') && !isCodeVerified}
                 // onReset={() => setValue('verificationCode', '')}
               />
