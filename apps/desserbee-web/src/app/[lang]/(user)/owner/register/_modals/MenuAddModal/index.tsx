@@ -6,6 +6,7 @@ import { useRef } from 'react';
 import IconXRound from '@repo/design-system/components/icons/IconXRound';
 import IconPlusRound from '@repo/design-system/components/icons/IconPlusRound';
 import { cn } from '@repo/ui/lib/utils';
+import { ValidationError } from '../../_components/ValidationError';
 
 interface MenuAddModalProps {
   onClose: (menu?: Menu, imageFiles?: File[]) => void;
@@ -32,6 +33,7 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
       imageFileKey: '',
       menuImageFiles: [],
     },
+    mode: 'onChange',
   });
 
   const priceInputRef = useRef<HTMLInputElement>(null);
@@ -65,7 +67,13 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
   };
 
   const onSubmit = (data: MenuInput) => {
-    if (!data.name || !data.price) {
+    if (
+      !data.name ||
+      !data.price ||
+      Number(data.price) <= 0 ||
+      Number(data.price) > 99999999
+    ) {
+      trigger(['name', 'price']);
       return;
     }
 
@@ -163,14 +171,25 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
             <Controller
               name="name"
               control={control}
-              rules={{ required: true }}
+              rules={{
+                required: '메뉴명을 입력해주세요',
+                minLength: { value: 1, message: '메뉴명을 입력해주세요' },
+              }}
               render={({ field }) => (
-                <input
-                  {...field}
-                  className="w-full rounded-[5px] border border-[#9F9F9F] p-[10px] text-sm font-medium"
-                  type="text"
-                  placeholder="메뉴명 입력"
-                />
+                <div className="relative">
+                  <input
+                    {...field}
+                    className={cn(
+                      'mb-2 w-full rounded-[5px] border p-[10px] text-sm font-medium',
+                      errors.name ? 'border-[#FF3B30]' : 'border-[#9F9F9F]',
+                    )}
+                    type="text"
+                    placeholder="메뉴명 입력"
+                  />
+                  {errors.name && (
+                    <ValidationError errorMessage={errors.name.message} />
+                  )}
+                </div>
               )}
             />
           </div>
@@ -181,11 +200,26 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
               <div className="text-sm font-medium">가격</div>
               <div className="text-error-60 text-xs">*</div>
             </label>
-            <div className="inline-block w-full rounded-[5px] border border-[#9F9F9F] p-[10px]">
+            <div
+              className={cn(
+                'inline-block w-full rounded-[5px] border p-[10px]',
+                errors.price ? 'border-[#FF3B30]' : 'border-[#9F9F9F]',
+              )}
+            >
               <Controller
                 name="price"
                 control={control}
-                rules={{ required: true }}
+                rules={{
+                  required: '가격을 입력해주세요',
+                  validate: (value) => {
+                    if (!value) return '가격을 입력해주세요';
+                    const numValue = Number(value);
+                    if (numValue <= 0) return '가격은 0보다 커야 합니다';
+                    if (numValue > 99999999)
+                      return '최대 가격은 99,999,999원입니다';
+                    return true;
+                  },
+                }}
                 render={({ field: { value, onChange, ...rest } }) => {
                   return (
                     <div
@@ -205,7 +239,10 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
                               /[^\d,]/g,
                               '',
                             );
-                            onChange(newValue.replace(/,/g, ''));
+                            const numValue = Number(newValue.replace(/,/g, ''));
+                            if (numValue <= 99999999) {
+                              onChange(newValue.replace(/,/g, ''));
+                            }
                           }}
                           className={cn(
                             value ? 'w-full' : 'w-[50px]',
@@ -214,7 +251,7 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
                           placeholder="0원"
                           type="text"
                           autoComplete="off"
-                          maxLength={12}
+                          maxLength={11}
                         />
                       </div>
                       {value ? (
@@ -225,6 +262,9 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
                 }}
               />
             </div>
+            {errors.price && (
+              <ValidationError errorMessage={errors.price.message} />
+            )}
           </div>
 
           {/* 한 줄 소개 */}
