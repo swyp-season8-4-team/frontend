@@ -83,11 +83,14 @@ async function handleTokens(
       // tokenInfo.exp는 밀리초 단위이므로 초 단위로 변환
       const maxAgeInSeconds = Math.floor((tokenInfo.exp ?? 0) / 1000);
 
+      const domain = process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN;
+
       response.cookies.set('accessToken', tokenInfo.token, {
         httpOnly: true,
         secure: isProd,
         sameSite: 'lax',
         maxAge: maxAgeInSeconds, // 초 단위로 변환된 값 사용
+        domain,
       });
 
       return response;
