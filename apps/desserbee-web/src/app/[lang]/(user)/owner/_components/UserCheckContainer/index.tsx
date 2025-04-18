@@ -18,15 +18,13 @@ export function UserCheckContainer() {
 
   return (
     <div className="h-full flex-1">
-      {/* {!user?.gender ? (
-        <SocialLoginUserExtraInfoForm />
+      {!user?.gender ? (
+        <SocialLoginUserExtraInfoForm nickname={user?.nickname} />
       ) : user?.gender && !user?.name && !user?.phoneNumber ? (
         <AppRegisterUserExtraInfoForm />
       ) : (
         <OwnerIntro />
-      )} */}
-      {/* <SocialLoginUserExtraInfoForm nickName={user?.nickname} /> */}
-      <SocialLoginUserExtraInfoForm nickname={'닉네임있음'} />
+      )}
     </div>
   );
 }
