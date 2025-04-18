@@ -80,6 +80,29 @@ export default function SocialLoginUserExtraInfoForm({
   // 전화번호 유효성 검사 정규식 (앞자리 3~4자리 허용)
   const phoneRegex = /^\d{3,4}-\d{4}-\d{4}$/;
 
+  const phone = watch('phone');
+
+  // 전화번호 유효성 검사를 useEffect로 이동
+  useEffect(() => {
+    if (phone) {
+      const validation = validatePhoneFormat(phone);
+      if (!validation.isValid) {
+        setError('phone', { message: validation.message });
+      } else {
+        clearErrors('phone');
+      }
+      setValidationState((prev) => ({
+        ...prev,
+        phone: validation.isValid,
+      }));
+    } else {
+      setValidationState((prev) => ({
+        ...prev,
+        phone: false,
+      }));
+    }
+  }, [phone, setError, clearErrors]);
+
   // 성별이 변경될 때마다 기본 이미지 업데이트
   useEffect(() => {
     // 사용자가 업로드한 이미지가 없을 때만 기본 이미지 적용
@@ -128,6 +151,19 @@ export default function SocialLoginUserExtraInfoForm({
 
     return { isValid: true, message: '' };
   };
+
+  useEffect(() => {
+    // 기존 닉네임과 같을 때는 자동으로 유효성 검사 통과
+    if (watch('nickname') === user.nickname) {
+      setNicknameVerified(true);
+      setValidationState((prev) => ({
+        ...prev,
+        nickname: true,
+      }));
+      clearErrors('nickname');
+      return;
+    }
+  }, [watch('nickname'), user.nickname, clearErrors]);
 
   const handleNicknameCheck = async () => {
     const nicknameInput = watch('nickname');
@@ -342,6 +378,14 @@ export default function SocialLoginUserExtraInfoForm({
                   {...register('nickname', {
                     required: '닉네임을 입력해주세요.',
                     validate: (value) => {
+                      // 기존 닉네임과 같을 때는 검증 통과
+                      if (value === user.nickname) {
+                        setValidationState((prev) => ({
+                          ...prev,
+                          nickname: true,
+                        }));
+                        return true;
+                      }
                       const validation = validateNicknameFormat(
                         value as string,
                       );
@@ -449,32 +493,22 @@ export default function SocialLoginUserExtraInfoForm({
           <div className="flex flex-col gap-[5px]">
             <label className="text-sm text-[#635F59]">전화번호</label>
             <TextField
-              {...register('phone', {
-                required: '전화번호를 입력해주세요.',
-                validate: (value) => {
-                  const validation = validatePhoneFormat(value);
-                  setValidationState((prev) => ({
-                    ...prev,
-                    phone: validation.isValid,
-                  }));
-                  return validation.isValid || validation.message;
-                },
-              })}
+              {...register('phone')}
               placeholder="전화번호 (예.0000-0000-0000)"
               error={!!errors.phone}
               errorMessage={errors.phone?.message}
               showReset={!!watch('phone')}
-              onReset={() => setValue('phone', '')}
-              onChange={(e) => {
+              onReset={() => {
+                setValue('phone', '');
                 clearErrors('phone');
-                const validation = validatePhoneFormat(e.target.value);
                 setValidationState((prev) => ({
                   ...prev,
-                  phone: validation.isValid,
+                  phone: false,
                 }));
-                if (!validation.isValid) {
-                  setError('phone', { message: validation.message });
-                }
+              }}
+              onChange={(e) => {
+                const value = e.target.value.replace(/[^0-9-]/g, '');
+                setValue('phone', value);
               }}
             />
           </div>
@@ -591,7 +625,7 @@ export default function SocialLoginUserExtraInfoForm({
             !watch('name') ||
             !watch('phone') ||
             isLoading ||
-            !validationState.nickname ||
+            !isNicknameVerified ||
             !validationState.name ||
             !validationState.phone ||
             !validationState.profileImage
