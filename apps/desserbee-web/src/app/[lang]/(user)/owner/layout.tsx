@@ -3,7 +3,5 @@ export default function OwnerLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="flex min-h-screen flex-col overflow-auto">{children}</div>
-  );
+  return <div className="flex flex-col overflow-auto">{children}</div>;
 }

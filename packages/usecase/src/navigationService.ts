@@ -30,7 +30,8 @@ export default class NavigationService {
       pathname.endsWith(NavigationPathname.Community) ||
       pathname.includes(NavigationPathname.CommunityDessertMate) ||
       pathname.includes(NavigationPathname.MateWrite) ||
-      pathname.includes(NavigationPathname.My)
+      pathname.includes(NavigationPathname.My) ||
+      pathname.includes(NavigationPathname.Owner)
     );
   }
 }

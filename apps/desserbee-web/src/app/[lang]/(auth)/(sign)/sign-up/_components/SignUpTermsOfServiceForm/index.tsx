@@ -87,7 +87,7 @@ export default function SignUpTermsOfServiceForm() {
 
         if (error instanceof HTTPError) {
           console.error('HTTP 오류:', error.message, error.data);
-          alert(`회원가입 실패: '회원가입 중 오류가 발생했습니다.`);
+          alert(`회원가입 실패: 회원가입 중 오류가 발생했습니다.`);
         }
       } finally {
         setIsLoading(false);
