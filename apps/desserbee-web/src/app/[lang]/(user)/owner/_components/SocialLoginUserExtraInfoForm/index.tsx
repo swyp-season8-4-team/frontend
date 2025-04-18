@@ -12,6 +12,7 @@ import Image from 'next/image';
 import { cn } from '@repo/ui/lib/utils';
 import IconCamera from '@repo/design-system/components/icons/IconCamera';
 import IconXRound from '@repo/design-system/components/icons/IconXRound';
+import IconRetry from '@repo/design-system/components/icons/IconRetry';
 
 import DefaultMaleAvatar from '@/assets/images/image-default-male-profile.png';
 import DefaultFemaleAvatar from '@/assets/images/image-default-female-profile.png';
@@ -36,7 +37,9 @@ export default function SocialLoginUserExtraInfoForm({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isLoading, setLoading] = useState(false);
-  const [isNicknameVerified, setNicknameVerified] = useState(false);
+  const [isNicknameVerified, setNicknameVerified] = useState(
+    !!nickname || false,
+  );
   const [profileImageUrl, setProfileImageUrl] = useState<string>('');
   const [successMessages, setSuccessMessages] = useState({
     nickname: '',
@@ -106,18 +109,20 @@ export default function SocialLoginUserExtraInfoForm({
   };
 
   const handleNicknameCheck = async () => {
-    const nickname = watch('nickname');
+    const nicknameInput = watch('nickname');
 
-    const validation = validateNicknameFormat(nickname as string);
+    const validation = validateNicknameFormat(nicknameInput as string);
     if (!validation.isValid) {
       setError('nickname', { message: validation.message });
       setSuccessMessages((prev) => ({ ...prev, nickname: '' }));
       return;
     }
 
+    if (watch('nickname') === nickname) return;
+
     try {
       setLoading(true);
-      const result = await validateNickname(nickname as string);
+      const result = await validateNickname(nicknameInput as string);
 
       if (result.success) {
         setNicknameVerified(true);
@@ -252,6 +257,7 @@ export default function SocialLoginUserExtraInfoForm({
                       return validation.isValid || validation.message;
                     },
                   })}
+                  className="pr-16"
                   placeholder="한글/영문/숫자만 허용, 최대 20자"
                   error={!!errors.nickname}
                   errorMessage={errors.nickname?.message}
@@ -268,14 +274,40 @@ export default function SocialLoginUserExtraInfoForm({
                     setNicknameVerified(false);
                     setSuccessMessages((prev) => ({ ...prev, nickname: '' }));
                     clearErrors('nickname');
+
+                    const validation = validateNicknameFormat(withoutSpaces);
+                    if (!validation.isValid) {
+                      setError('nickname', { message: validation.message });
+                    } else {
+                      clearErrors('nickname');
+                    }
                   }}
                 />
+                {watch('nickname') !== nickname && watch('nickname') && (
+                  <button
+                    type="button"
+                    className="text-primary-20 absolute right-10 top-1/2 -translate-y-1/2 text-sm"
+                    onClick={() => {
+                      clearErrors('nickname');
+                      setValue('nickname', nickname);
+                      setNicknameVerified(false);
+                      setSuccessMessages((prev) => ({ ...prev, nickname: '' }));
+                    }}
+                  >
+                    <div className="h-[18px] w-[18px]">
+                      <IconRetry className="h-full w-full" />
+                    </div>
+                  </button>
+                )}
               </div>
               <OliveButton
                 type="button"
                 onClick={handleNicknameCheck}
                 isDisabled={
-                  !watch('nickname') || isNicknameVerified || isLoading
+                  !watch('nickname') ||
+                  isNicknameVerified ||
+                  isLoading ||
+                  watch('nickname') === nickname
                 }
                 className="w-24 text-sm"
                 text="중복확인"
