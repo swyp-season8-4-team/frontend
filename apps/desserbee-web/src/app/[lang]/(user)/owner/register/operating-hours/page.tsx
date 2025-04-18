@@ -271,11 +271,13 @@ export default function RegisterOperatingHoursPage() {
                         휴무
                       </div>
                     )}
-                    <div className="flex items-center">
-                      <div>{formatTimeTo12Hour(openingTime)}</div>
-                      <div>~</div>
-                      <div>{formatTimeTo12Hour(closingTime)}</div>
-                    </div>
+                    {regularClosureType !== 'WEEKLY' && (
+                      <div className="flex items-center">
+                        <div>{formatTimeTo12Hour(openingTime)}</div>
+                        <div>~</div>
+                        <div>{formatTimeTo12Hour(closingTime)}</div>
+                      </div>
+                    )}
                     {breakTimes && (
                       <div>
                         휴게시간 {formatTimeTo12Hour(breakTimes[0].startTime)}~
