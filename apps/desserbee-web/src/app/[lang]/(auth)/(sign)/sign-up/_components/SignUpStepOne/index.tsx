@@ -102,8 +102,12 @@ export default function SignUpStepOne({ updateStep }: Props) {
       }));
     } catch (error) {
       setSuccessMessages((prev) => ({ ...prev, email: '' }));
-      if (error instanceof HTTPError) {
-        setError('email', { message: error.message });
+      if (error && typeof error === 'object' && 'message' in error) {
+        setError('email', {
+          type: 'manual',
+          message: (error as Error).message,
+        });
+        setEmailVerified(false);
       }
     } finally {
       setLoading(false);
