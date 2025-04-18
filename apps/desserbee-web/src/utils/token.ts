@@ -11,6 +11,7 @@ const savedTokens: { [key: string]: TokenInfo } = {};
 export async function getTokenInfo(
   accessToken: string | undefined,
   refreshToken: string | undefined,
+  deviceId: string | undefined,
 ): Promise<TokenInfo> {
   if (!accessToken && !refreshToken) {
     return { token: null };
@@ -28,13 +29,18 @@ export async function getTokenInfo(
     }
   }
 
-  return await refreshTokenIfNeeded(accessToken ?? null, refreshToken ?? null);
+  return await refreshTokenIfNeeded(
+    accessToken ?? null,
+    refreshToken ?? null,
+    deviceId,
+  );
 }
 
 // 토큰 갱신 처리
 async function refreshTokenIfNeeded(
   accessToken: string | null,
   refreshToken: string | null,
+  deviceId: string | undefined,
 ): Promise<TokenInfo> {
   const isAccessTokenExpired = isExpiredJWT(accessToken);
   const isRefreshTokenExpired = refreshToken
@@ -50,8 +56,9 @@ async function refreshTokenIfNeeded(
       const authService = new AuthService({
         authRepository: new AuthAPIRepository(),
       });
+
       const { accessToken: newToken, expiresIn } =
-        await authService.refreshAccessToken(refreshToken);
+        await authService.refreshAccessToken(refreshToken, deviceId);
 
       return {
         token: newToken,

@@ -262,16 +262,26 @@ export default class AuthAPIRepository
     return response;
   }
 
-  async refreshAccessToken(refreshToken: string): Promise<JWTRefreshTokens> {
+  async refreshAccessToken(
+    refreshToken: string,
+    deviceId?: string,
+  ): Promise<JWTRefreshTokens> {
     if (!isServer) {
       // 서버 사이드에서만 refreshToken 접근 가능
       throw new Error('This method is only available on the server side.');
     }
 
+    const headers: Record<string, string> = {
+      authorization: `Bearer ${refreshToken}`,
+    };
+
+    // deviceId가 제공된 경우 쿠키 헤더에 추가
+    if (deviceId) {
+      headers['Cookie'] = `deviceId=${deviceId}`;
+    }
+
     const response = await fetch<void, JWTRefreshTokens>({
-      headers: {
-        authorization: `Bearer ${refreshToken}`,
-      },
+      headers,
       method: 'POST',
       url: `${this.endpoint}/auth/token/refresh`,
     });

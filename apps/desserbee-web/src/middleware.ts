@@ -68,8 +68,8 @@ async function handleTokens(
   // 액세스 토큰 처리
   const prevAccessToken = cookies.get('accessToken')?.value;
   const refreshToken = cookies.get('refreshToken')?.value;
-
-  const tokenInfo = await getTokenInfo(prevAccessToken, refreshToken);
+  const deviceId = cookies.get('deviceId')?.value;
+  const tokenInfo = await getTokenInfo(prevAccessToken, refreshToken, deviceId);
 
   if (tokenInfo.token) {
     requestHeaders.set('authorization', `Bearer ${tokenInfo.token}`);
@@ -82,7 +82,6 @@ async function handleTokens(
 
       // tokenInfo.exp는 밀리초 단위이므로 초 단위로 변환
       const maxAgeInSeconds = Math.floor((tokenInfo.exp ?? 0) / 1000);
-      
 
       response.cookies.set('accessToken', tokenInfo.token, {
         httpOnly: true,

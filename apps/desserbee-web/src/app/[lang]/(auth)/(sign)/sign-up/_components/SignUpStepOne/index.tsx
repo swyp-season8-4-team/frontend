@@ -102,8 +102,12 @@ export default function SignUpStepOne({ updateStep }: Props) {
       }));
     } catch (error) {
       setSuccessMessages((prev) => ({ ...prev, email: '' }));
-      if (error instanceof HTTPError) {
-        setError('email', { message: error.message });
+      if (error && typeof error === 'object' && 'message' in error) {
+        setError('email', {
+          type: 'manual',
+          message: (error as Error).message,
+        });
+        setEmailVerified(false);
       }
     } finally {
       setLoading(false);
@@ -111,7 +115,7 @@ export default function SignUpStepOne({ updateStep }: Props) {
   };
 
   const handleCodeVerification = async () => {
-    if (isCodeVerified) return;
+    if (!isEmailVerified || isCodeVerified) return;
 
     const email = watch('email');
     const code = watch('verificationCode');
@@ -230,7 +234,7 @@ export default function SignUpStepOne({ updateStep }: Props) {
                 {...register('verificationCode')}
                 placeholder="인증번호를 입력해주세요"
                 maxLength={6}
-                // disabled={!isEmailVerified}
+                disabled={!isEmailVerified}
                 // showReset={!!watch('verificationCode') && !isCodeVerified}
                 // onReset={() => setValue('verificationCode', '')}
               />

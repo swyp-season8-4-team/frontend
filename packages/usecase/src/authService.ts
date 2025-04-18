@@ -90,12 +90,18 @@ export default class AuthService {
     return response;
   }
 
-  async refreshAccessToken(refreshToken: string): Promise<JWTRefreshTokens> {
+  async refreshAccessToken(
+    refreshToken: string,
+    deviceId?: string,
+  ): Promise<JWTRefreshTokens> {
     if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }
 
-    const response = await this.authRepository.refreshAccessToken(refreshToken);
+    const response = await this.authRepository.refreshAccessToken(
+      refreshToken,
+      deviceId,
+    );
 
     return response;
   }
