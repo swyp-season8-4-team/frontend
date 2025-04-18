@@ -1,12 +1,10 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { useState, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { TextField } from '@repo/design-system/components/inputs/TextField';
 import { HoneyButton } from '@repo/design-system/components/buttons/FillButtons/Honey';
 import { useRouter } from 'next/navigation';
-import { NavigationPathname } from '@repo/entity/src/navigation';
-import { cn } from '@repo/ui/lib/utils';
 
 import { updateUserInfo } from './action';
 import type { User } from '@repo/entity/src/user';
@@ -25,8 +23,11 @@ export default function AppRegisterUserExtraInfoForm({
   user,
 }: AppRegisterUserExtraInfoFormProps) {
   const router = useRouter();
-
   const [isLoading, setLoading] = useState(false);
+  const [validationState, setValidationState] = useState({
+    name: false,
+    phone: false,
+  });
 
   const {
     register,
@@ -40,14 +41,30 @@ export default function AppRegisterUserExtraInfoForm({
     mode: 'onChange',
   });
 
+  const phone = watch('phone');
+
+  useEffect(() => {
+    if (phone) {
+      const validation = validatePhoneFormat(phone);
+      if (!validation.isValid) {
+        setError('phone', { message: validation.message });
+      } else {
+        clearErrors('phone');
+      }
+      setValidationState((prev) => ({
+        ...prev,
+        phone: validation.isValid,
+      }));
+    } else {
+      setValidationState((prev) => ({
+        ...prev,
+        phone: false,
+      }));
+    }
+  }, [phone, setError, clearErrors]);
+
   // 전화번호 유효성 검사 정규식 (앞자리 3~4자리 허용)
   const phoneRegex = /^\d{3,4}-\d{4}-\d{4}$/;
-
-  // 각 필드의 유효성 상태를 관리하는 state
-  const [validationState, setValidationState] = useState({
-    name: false,
-    phone: false,
-  });
 
   // 이름 유효성 검사 함수 추가
   const validateNameFormat = (name: string) => {
@@ -69,7 +86,7 @@ export default function AppRegisterUserExtraInfoForm({
     if (!/^[가-힣a-zA-Z\s]+$/.test(name)) {
       return {
         isValid: false,
-        message: '이름에는 한글, 영문만 입력 가능합니다.',
+        message: '이름에는 완성된 한글, 영문만 입력 가능합니다.',
       };
     }
 
@@ -171,38 +188,22 @@ export default function AppRegisterUserExtraInfoForm({
           <div className="flex flex-col gap-[5px]">
             <label className="text-sm text-[#635F59]">전화번호</label>
             <TextField
-              {...register('phone', {
-                required: '전화번호를 입력해주세요.',
-                validate: (value) => {
-                  const validation = validatePhoneFormat(value);
-                  setValidationState((prev) => ({
-                    ...prev,
-                    phone: validation.isValid,
-                  }));
-                  return validation.isValid || validation.message;
-                },
-              })}
+              {...register('phone')}
               placeholder="전화번호 (예.0000-0000-0000)"
               error={!!errors.phone}
               errorMessage={errors.phone?.message}
               showReset={!!watch('phone')}
               onReset={() => {
                 setValue('phone', '');
+                clearErrors('phone');
                 setValidationState((prev) => ({
                   ...prev,
                   phone: false,
                 }));
               }}
               onChange={(e) => {
-                clearErrors('phone');
-                const validation = validatePhoneFormat(e.target.value);
-                setValidationState((prev) => ({
-                  ...prev,
-                  phone: validation.isValid,
-                }));
-                if (!validation.isValid) {
-                  setError('phone', { message: validation.message });
-                }
+                const value = e.target.value.replace(/[^0-9-]/g, '');
+                setValue('phone', value);
               }}
             />
           </div>
@@ -213,11 +214,7 @@ export default function AppRegisterUserExtraInfoForm({
           type="submit"
           className="my-10 text-lg"
           isDisabled={
-            !watch('name') ||
-            !watch('phone') ||
-            isLoading ||
-            !validationState.name ||
-            !validationState.phone
+            !validationState.name || !validationState.phone || isLoading
           }
           text="완료"
         />
