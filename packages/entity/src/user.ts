@@ -8,6 +8,8 @@ export enum UserType {
 
 export type Gender = 'MALE' | 'FEMALE';
 
+export type Role = 'ROLE_OWNER' | 'ROLE_USER';
+
 export interface User {
   id: string;
   email: string;
@@ -21,6 +23,7 @@ export interface User {
   profileImageUrl?: string;
   createdAt?: string;
   updatedAt?: string;
+  roles?: Role[];
 }
 
 export interface TargetUser {
