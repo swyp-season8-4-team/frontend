@@ -38,33 +38,54 @@ export async function validateNickname(nickname: string) {
   }
 }
 
-interface changeUserInfoProps {
+interface updateUserInfoProps {
   user: User;
   nickname?: string; // 이미 있을 경우 안 보냄
   name: string;
   phoneNumber: string;
   gender: 'MALE' | 'FEMALE';
-  profileImage?: File;
 }
 
-export const changeUserInfo = async ({
+export const updateUserInfo = async ({
   user,
   nickname,
   name,
   phoneNumber,
   gender,
-  profileImage,
-}: changeUserInfoProps) => {
-  await userService.updateMe({
-    ...user,
-    ...(nickname && { nickname }),
-    name,
-    phoneNumber,
-    gender,
-    roles: ['ROLE_OWNER', 'ROLE_USER'],
-  });
+}: updateUserInfoProps) => {
+  try {
+    const result = await userService.updateMe({
+      ...user,
+      ...(nickname !== user.nickname && { nickname }),
+      name,
+      phoneNumber,
+      gender,
+      roles: ['ROLE_OWNER', 'ROLE_USER'],
+    });
 
-  if (profileImage) {
-    await userService.uploadProfileImage(profileImage);
+    return { success: true, data: result };
+  } catch (error) {
+    if (error instanceof HTTPError) {
+      console.log(error.data);
+    }
+    throw error;
+  }
+};
+
+interface updateUserProfileImageProps {
+  profileImage: File;
+}
+
+export const updateUserProfileImage = async ({
+  profileImage,
+}: updateUserProfileImageProps) => {
+  try {
+    const result = await userService.uploadProfileImage(profileImage);
+    return { success: true, data: result };
+  } catch (error) {
+    if (error instanceof HTTPError) {
+      console.log(error.data);
+    }
+    throw error;
   }
 };

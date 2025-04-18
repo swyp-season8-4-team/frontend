@@ -16,7 +16,13 @@ import IconRetry from '@repo/design-system/components/icons/IconRetry';
 
 import DefaultMaleAvatar from '@/assets/images/image-default-male-profile.png';
 import DefaultFemaleAvatar from '@/assets/images/image-default-female-profile.png';
-import { validateNickname } from './action';
+import {
+  updateUserInfo,
+  updateUserProfileImage,
+  validateNickname,
+} from './action';
+import type { User } from '@repo/entity/src/user';
+import { HTTPError } from '@repo/api/src/error';
 
 interface SocialLoginUserExtraInfoFormData {
   nickname?: string;
@@ -27,18 +33,18 @@ interface SocialLoginUserExtraInfoFormData {
 }
 
 interface SocialLoginUserExtraInfoFormProps {
-  nickname?: string;
+  user: User;
 }
 
 export default function SocialLoginUserExtraInfoForm({
-  nickname,
+  user,
 }: SocialLoginUserExtraInfoFormProps) {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isLoading, setLoading] = useState(false);
   const [isNicknameVerified, setNicknameVerified] = useState(
-    !!nickname || false,
+    !!user.nickname || false,
   );
   const [profileImageUrl, setProfileImageUrl] = useState<string>('');
   const [successMessages, setSuccessMessages] = useState({
@@ -58,7 +64,7 @@ export default function SocialLoginUserExtraInfoForm({
   } = useForm<SocialLoginUserExtraInfoFormData>({
     mode: 'onChange',
     defaultValues: {
-      nickname: nickname,
+      nickname: user.nickname,
       gender: 'MALE',
     },
   });
@@ -126,7 +132,7 @@ export default function SocialLoginUserExtraInfoForm({
       return;
     }
 
-    if (watch('nickname') === nickname) return;
+    if (watch('nickname') === user.nickname) return;
 
     try {
       setLoading(true);
@@ -233,8 +239,24 @@ export default function SocialLoginUserExtraInfoForm({
 
     try {
       setLoading(true);
+      await updateUserInfo({
+        user,
+        nickname: data.nickname,
+        name: data.name,
+        phoneNumber: data.phone,
+        gender: data.gender,
+      });
+
+      if (data.profileImage) {
+        await updateUserProfileImage({ profileImage: data.profileImage });
+      }
+      router.refresh();
     } catch (error) {
+      if (error instanceof HTTPError) {
+        console.log(error.data);
+      }
       console.log(error);
+      alert(`정보 등록 실패: 등록 중 오류가 발생했습니다.`);
     } finally {
       setLoading(false);
     }
@@ -291,13 +313,13 @@ export default function SocialLoginUserExtraInfoForm({
                     }
                   }}
                 />
-                {watch('nickname') !== nickname && watch('nickname') && (
+                {watch('nickname') !== user.nickname && watch('nickname') && (
                   <button
                     type="button"
                     className="text-primary-20 absolute right-10 top-1/2 -translate-y-1/2 text-sm"
                     onClick={() => {
                       clearErrors('nickname');
-                      setValue('nickname', nickname);
+                      setValue('nickname', user.nickname);
                       setNicknameVerified(false);
                       setSuccessMessages((prev) => ({ ...prev, nickname: '' }));
                     }}
@@ -315,7 +337,7 @@ export default function SocialLoginUserExtraInfoForm({
                   !watch('nickname') ||
                   isNicknameVerified ||
                   isLoading ||
-                  watch('nickname') === nickname
+                  watch('nickname') === user.nickname
                 }
                 className="w-24 text-sm"
                 text="중복확인"
@@ -469,7 +491,7 @@ export default function SocialLoginUserExtraInfoForm({
           type="submit"
           className="my-10 text-lg"
           isDisabled={!watch('name') || !watch('phone') || isLoading}
-          text="다음"
+          text="완료"
         />
       </form>
     </>

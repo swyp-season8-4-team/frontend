@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from 'react';
 import { OwnerIntro } from '../OwnerIntro';
 import SocialLoginUserExtraInfoForm from '../SocialLoginUserExtraInfoForm';
 import { AppRegisterUserExtraInfoForm } from '../AppRegisterUserExtraInfoForm';
+import type { User } from '@repo/entity/src/user';
 
 export function UserCheckContainer() {
   const { user } = useContext(UserContext);
@@ -18,15 +19,13 @@ export function UserCheckContainer() {
 
   return (
     <div className="h-full flex-1">
-      {/* {!user?.gender ? (
-        <SocialLoginUserExtraInfoForm nickname={user?.nickname} />
+      {!user?.gender ? (
+        <SocialLoginUserExtraInfoForm user={user as User} />
       ) : user?.gender && !user?.name && !user?.phoneNumber ? (
         <AppRegisterUserExtraInfoForm />
       ) : (
         <OwnerIntro />
-      )}] */}
-
-      <SocialLoginUserExtraInfoForm nickname={'닉네임있음'} />
+      )}
     </div>
   );
 }
