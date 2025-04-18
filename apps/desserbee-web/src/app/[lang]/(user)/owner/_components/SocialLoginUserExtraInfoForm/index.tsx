@@ -53,6 +53,14 @@ export default function SocialLoginUserExtraInfoForm({
     phone: '',
   });
 
+  // validation state에 profileImage 추가
+  const [validationState, setValidationState] = useState({
+    nickname: false,
+    name: false,
+    phone: false,
+    profileImage: true, // 선택적이므로 기본값 true
+  });
+
   const {
     register,
     handleSubmit,
@@ -161,34 +169,44 @@ export default function SocialLoginUserExtraInfoForm({
     }
   };
 
+  // 이미지 유효성 검사 함수
+  const validateImageFormat = (file: File) => {
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+
+    if (!allowedTypes.includes(file.type)) {
+      return {
+        isValid: false,
+        message: 'JPG, JPEG, PNG, GIF 형식의 이미지 파일만 업로드 가능합니다.',
+      };
+    }
+
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      return {
+        isValid: false,
+        message: '파일 크기는 5MB 이하여야 합니다.',
+      };
+    }
+
+    return { isValid: true, message: '' };
+  };
+
   // 이미지 업로드 핸들러 수정
   const handleImageUpload = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      if (!file) return;
-
-      // 파일 유효성 검사 (이미지 파일 형식 확인)
-      const allowedTypes = [
-        'image/jpeg',
-        'image/jpg',
-        'image/png',
-        'image/gif',
-      ];
-      if (!allowedTypes.includes(file.type)) {
-        alert('JPG, JPEG, PNG, GIF 형식의 이미지 파일만 업로드 가능합니다.');
-        if (fileInputRef.current) {
-          fileInputRef.current.value = '';
-        }
+      if (!file) {
+        setValidationState((prev) => ({ ...prev, profileImage: true }));
         return;
       }
 
-      // 파일 크기 제한 (5MB)
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (file.size > maxSize) {
-        alert('파일 크기는 5MB 이하여야 합니다.');
+      const validation = validateImageFormat(file);
+      if (!validation.isValid) {
+        alert(validation.message);
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
+        setValidationState((prev) => ({ ...prev, profileImage: false }));
         return;
       }
 
@@ -196,6 +214,7 @@ export default function SocialLoginUserExtraInfoForm({
         const objectUrl = URL.createObjectURL(file);
         setValue('profileImage', file);
         setProfileImageUrl(objectUrl);
+        setValidationState((prev) => ({ ...prev, profileImage: true }));
 
         return () => URL.revokeObjectURL(objectUrl);
       } catch (error) {
@@ -204,6 +223,7 @@ export default function SocialLoginUserExtraInfoForm({
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
+        setValidationState((prev) => ({ ...prev, profileImage: false }));
       }
     },
     [setValue],
@@ -219,6 +239,47 @@ export default function SocialLoginUserExtraInfoForm({
         gender === 'MALE' ? DefaultMaleAvatar.src : DefaultFemaleAvatar.src,
       );
     }
+  };
+
+  // 이름 유효성 검사 함수 추가
+  const validateNameFormat = (name: string) => {
+    if (!name) {
+      return { isValid: false, message: '이름을 입력해주세요.' };
+    }
+
+    if (name.length < 2) {
+      return { isValid: false, message: '이름은 최소 2자 이상이어야 합니다.' };
+    }
+
+    if (name.length > 50) {
+      return {
+        isValid: false,
+        message: '이름은 최대 50자까지 입력 가능합니다.',
+      };
+    }
+
+    if (!/^[가-힣a-zA-Z\s]+$/.test(name)) {
+      return {
+        isValid: false,
+        message: '이름에는 한글, 영문만 입력 가능합니다.',
+      };
+    }
+
+    return { isValid: true, message: '' };
+  };
+
+  // 전화번호 유효성 검사 함수
+  const validatePhoneFormat = (phone: string) => {
+    if (!phone) {
+      return { isValid: false, message: '전화번호를 입력해주세요.' };
+    }
+    if (!phoneRegex.test(phone)) {
+      return {
+        isValid: false,
+        message: '0000-0000-0000 형식으로 입력해주세요.',
+      };
+    }
+    return { isValid: true, message: '' };
   };
 
   const onSubmit = async (data: SocialLoginUserExtraInfoFormData) => {
@@ -284,6 +345,10 @@ export default function SocialLoginUserExtraInfoForm({
                       const validation = validateNicknameFormat(
                         value as string,
                       );
+                      setValidationState((prev) => ({
+                        ...prev,
+                        nickname: validation.isValid && isNicknameVerified,
+                      }));
                       return validation.isValid || validation.message;
                     },
                   })}
@@ -304,12 +369,13 @@ export default function SocialLoginUserExtraInfoForm({
                     setNicknameVerified(false);
                     setSuccessMessages((prev) => ({ ...prev, nickname: '' }));
                     clearErrors('nickname');
-
+                    setValidationState((prev) => ({
+                      ...prev,
+                      nickname: false,
+                    }));
                     const validation = validateNicknameFormat(withoutSpaces);
                     if (!validation.isValid) {
                       setError('nickname', { message: validation.message });
-                    } else {
-                      clearErrors('nickname');
                     }
                   }}
                 />
@@ -349,14 +415,32 @@ export default function SocialLoginUserExtraInfoForm({
           <div className="flex flex-col gap-[5px]">
             <label className="text-sm text-[#635F59]">이름</label>
             <TextField
-              {...register('name', { required: '이름을 입력해주세요.' })}
+              {...register('name', {
+                required: '이름을 입력해주세요.',
+                validate: (value) => {
+                  const validation = validateNameFormat(value);
+                  setValidationState((prev) => ({
+                    ...prev,
+                    name: validation.isValid,
+                  }));
+                  return validation.isValid || validation.message;
+                },
+              })}
               placeholder="이름을 입력해주세요"
               error={!!errors.name}
               errorMessage={errors.name?.message}
               showReset={!!watch('name')}
               onReset={() => setValue('name', '')}
-              onChange={() => {
+              onChange={(e) => {
                 clearErrors('name');
+                const validation = validateNameFormat(e.target.value);
+                setValidationState((prev) => ({
+                  ...prev,
+                  name: validation.isValid,
+                }));
+                if (!validation.isValid) {
+                  setError('name', { message: validation.message });
+                }
               }}
             />
           </div>
@@ -367,9 +451,13 @@ export default function SocialLoginUserExtraInfoForm({
             <TextField
               {...register('phone', {
                 required: '전화번호를 입력해주세요.',
-                pattern: {
-                  value: phoneRegex,
-                  message: '0000-0000-0000 형식으로 입력해주세요.',
+                validate: (value) => {
+                  const validation = validatePhoneFormat(value);
+                  setValidationState((prev) => ({
+                    ...prev,
+                    phone: validation.isValid,
+                  }));
+                  return validation.isValid || validation.message;
                 },
               })}
               placeholder="전화번호 (예.0000-0000-0000)"
@@ -377,8 +465,16 @@ export default function SocialLoginUserExtraInfoForm({
               errorMessage={errors.phone?.message}
               showReset={!!watch('phone')}
               onReset={() => setValue('phone', '')}
-              onChange={() => {
+              onChange={(e) => {
                 clearErrors('phone');
+                const validation = validatePhoneFormat(e.target.value);
+                setValidationState((prev) => ({
+                  ...prev,
+                  phone: validation.isValid,
+                }));
+                if (!validation.isValid) {
+                  setError('phone', { message: validation.message });
+                }
               }}
             />
           </div>
@@ -490,7 +586,16 @@ export default function SocialLoginUserExtraInfoForm({
         <HoneyButton
           type="submit"
           className="my-10 text-lg"
-          isDisabled={!watch('name') || !watch('phone') || isLoading}
+          isDisabled={
+            !watch('nickname') ||
+            !watch('name') ||
+            !watch('phone') ||
+            isLoading ||
+            !validationState.nickname ||
+            !validationState.name ||
+            !validationState.phone ||
+            !validationState.profileImage
+          }
           text="완료"
         />
       </form>

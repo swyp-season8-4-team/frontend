@@ -4,8 +4,9 @@ import { UserContext } from '@/contexts/UserContext';
 import { useContext, useEffect, useState } from 'react';
 import { OwnerIntro } from '../OwnerIntro';
 import SocialLoginUserExtraInfoForm from '../SocialLoginUserExtraInfoForm';
-import { AppRegisterUserExtraInfoForm } from '../AppRegisterUserExtraInfoForm';
+
 import type { User } from '@repo/entity/src/user';
+import AppRegisterUserExtraInfoForm from '../AppRegisterUserExtraInfoForm';
 
 export function UserCheckContainer() {
   const { user } = useContext(UserContext);
@@ -22,7 +23,7 @@ export function UserCheckContainer() {
       {!user?.gender ? (
         <SocialLoginUserExtraInfoForm user={user as User} />
       ) : user?.gender && !user?.name && !user?.phoneNumber ? (
-        <AppRegisterUserExtraInfoForm />
+        <AppRegisterUserExtraInfoForm user={user as User} />
       ) : (
         <OwnerIntro />
       )}
