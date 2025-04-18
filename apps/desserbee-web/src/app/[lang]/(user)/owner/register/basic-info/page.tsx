@@ -16,7 +16,14 @@ import { cn } from '@repo/ui/lib/utils';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { TagSelectModal } from '../_modals/TagSelectModal';
 import { TAG_CATEGORIES, TAGS } from '../_consts/tag';
-import { useContext, useEffect, useState, type ChangeEvent } from 'react';
+import {
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+  type ChangeEvent,
+} from 'react';
 import { CheckButton } from '@repo/design-system/components/CheckButton';
 import { PhotoAddBox } from '@repo/design-system/components/PhotoAddBox';
 import { PhotoBox } from '@repo/design-system/components/PhotoBox';
@@ -26,6 +33,8 @@ import { NoneImageBox } from '../_components/NoneImageBox';
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
 import { AddButton } from '../_components/AddButton';
 import type { StoreLink } from '@repo/entity/src/store';
+import IconWarn from '@repo/design-system/components/icons/IconWarn';
+import { ValidationError } from '../_components/ValidationError';
 
 const FEATURES = [
   {
@@ -119,8 +128,8 @@ export default function RegisterBasicInfoPage() {
   const name = watch('name');
   const phone = watch('phone');
   const address = watch('address');
-  const detailAddress = watch('detailAddress');
   const tags = watch('tags');
+  const storeImageFiles = watch('storeImageFiles');
 
   // isValid 상태 관리
   const [isFormValid, setIsFormValid] = useState(false);
@@ -172,10 +181,10 @@ export default function RegisterBasicInfoPage() {
       !!phone?.trim() &&
       validatePhoneNumber(phone) &&
       !!address?.trim() &&
-      !!detailAddress?.trim() &&
+      storeImageFiles.length > 0 &&
       tags?.length > 0;
     setIsFormValid(isValid);
-  }, [name, phone, address, detailAddress, tags]);
+  }, [name, phone, address, tags, storeImageFiles]);
 
   // 초기 마운트 시 유효성 검사 실행
   useEffect(() => {
@@ -221,46 +230,74 @@ export default function RegisterBasicInfoPage() {
     });
   };
 
-  const handleStoreImageFilesChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    const currentLength = watch('storeImageFiles').length;
-    const remainingSlots = 3 - currentLength;
+  const handleStoreImageFilesChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const files = Array.from(e.target.files || []);
+      const currentLength = watch('storeImageFiles').length;
+      const remainingSlots = 3 - currentLength;
 
-    if (remainingSlots <= 0) return;
+      if (remainingSlots <= 0) return;
 
-    const newFiles = files.slice(0, remainingSlots);
-    const currentFiles = watch('storeImageFiles');
-    setValue('storeImageFiles', [...currentFiles, ...newFiles]);
+      const newFiles = files.slice(0, remainingSlots);
+      const currentFiles = watch('storeImageFiles');
+      setValue('storeImageFiles', [...currentFiles, ...newFiles]);
 
-    // 입력 필드 초기화
-    e.target.value = '';
-  };
+      e.target.value = '';
+    },
+    [watch, setValue],
+  );
 
-  const handleRemoveStoreImageFiles = (index: number) => {
-    const currentFiles = watch('storeImageFiles');
-    setValue(
-      'storeImageFiles',
-      currentFiles.filter((_, i) => i !== index),
-    );
-  };
+  const handleRemoveStoreImageFiles = useCallback(
+    (index: number) => {
+      const currentFiles = watch('storeImageFiles');
+      setValue(
+        'storeImageFiles',
+        currentFiles.filter((_, i) => i !== index),
+      );
+    },
+    [watch, setValue],
+  );
 
-  const handleOwnerPickImageFilesChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    if (e.target.files) {
-      const fileArray = Array.from(e.target.files);
+  const handleOwnerPickImageFilesChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files) {
+        const fileArray = Array.from(e.target.files);
+        const currentFiles = watch('ownerPickImageFiles');
+        setValue('ownerPickImageFiles', [...currentFiles, ...fileArray]);
+      }
+    },
+    [watch, setValue],
+  );
+
+  const handleRemoveOwnerPickImageFiles = useCallback(
+    (index: number) => {
       const currentFiles = watch('ownerPickImageFiles');
-      setValue('ownerPickImageFiles', [...currentFiles, ...fileArray]);
-    }
-  };
+      setValue(
+        'ownerPickImageFiles',
+        currentFiles.filter((_, i) => i !== index),
+      );
+    },
+    [watch, setValue],
+  );
 
-  const handleRemoveOwnerPickImageFiles = (index: number) => {
-    const currentFiles = watch('ownerPickImageFiles');
-    setValue(
-      'ownerPickImageFiles',
-      currentFiles.filter((_, i) => i !== index),
+  // 이미지 URL 메모이제이션
+  const storeImageUrls = useMemo(() => {
+    return watch('storeImageFiles').map((file) => URL.createObjectURL(file));
+  }, [watch('storeImageFiles')]);
+
+  const ownerPickImageUrls = useMemo(() => {
+    return watch('ownerPickImageFiles').map((file) =>
+      URL.createObjectURL(file),
     );
-  };
+  }, [watch('ownerPickImageFiles')]);
+
+  // cleanup function for URLs
+  useEffect(() => {
+    return () => {
+      storeImageUrls.forEach(URL.revokeObjectURL);
+      ownerPickImageUrls.forEach(URL.revokeObjectURL);
+    };
+  }, [storeImageUrls, ownerPickImageUrls]);
 
   const validatePhoneNumber = (phone: string): boolean => {
     const phoneRegex = /^(\d{3,4})-(\d{4})-(\d{4})$/;
@@ -306,12 +343,18 @@ export default function RegisterBasicInfoPage() {
         <Controller
           name="name"
           control={control}
-          rules={{ required: true }}
+          rules={{
+            required: '가게명을 입력해주세요',
+            minLength: { value: 1, message: '가게명을 입력해주세요' },
+          }}
           render={({ field }) => (
             <div className="relative">
               <input
                 {...field}
-                className="w-full rounded-[5px] border border-[#A6A6A6] p-[10px] pr-10 text-sm font-medium"
+                className={cn(
+                  'mb-2 w-full rounded-[5px] border p-[10px] pr-10 text-sm font-medium',
+                  errors.name ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
+                )}
                 type="text"
                 placeholder="사업자등록증에 기재된 가게명 입력"
               />
@@ -323,6 +366,10 @@ export default function RegisterBasicInfoPage() {
                 >
                   <IconXRound className="h-full w-full text-[#CDC8C3]" />
                 </button>
+              )}
+
+              {errors.name && (
+                <ValidationError errorMessage={errors.name.message} />
               )}
             </div>
           )}
@@ -351,16 +398,20 @@ export default function RegisterBasicInfoPage() {
             <Controller
               name="storeImageFiles"
               control={control}
+              rules={{
+                validate: (value) =>
+                  value.length > 0 || '대표 사진을 1장 이상 업로드해주세요',
+              }}
               render={({ field: { value } }) => (
                 <>
-                  {value.map((image, index) => (
+                  {value.map((_, index) => (
                     <div key={index} className="relative">
                       <PhotoBox
                         image={
                           <Image
                             width={100}
                             height={100}
-                            src={URL.createObjectURL(image)}
+                            src={storeImageUrls[index]}
                             alt={`가게 사진 ${index + 1}`}
                             className="h-full w-full object-cover"
                           />
@@ -384,12 +435,15 @@ export default function RegisterBasicInfoPage() {
               )}
             />
           </div>
+          {errors.storeImageFiles && (
+            <ValidationError errorMessage={errors.storeImageFiles.message} />
+          )}
         </div>
       </div>
 
       {/* 사장님 픽 사진 */}
       <div className="flex flex-col">
-        <TitleLabel title=" 추가 사진" description="1~n장 업로드 가능" />
+        <TitleLabel title="추가 사진" description="1~n장 업로드 가능" />
         <div className="flex flex-col gap-2">
           <HiddenImageInput
             id="ownerPickImageFiles"
@@ -406,14 +460,14 @@ export default function RegisterBasicInfoPage() {
                 control={control}
                 render={({ field: { value } }) => (
                   <>
-                    {value.map((image, index) => (
+                    {value.map((_, index) => (
                       <div key={index} className="relative flex-shrink-0">
                         <PhotoBox
                           image={
                             <Image
                               width={100}
                               height={100}
-                              src={URL.createObjectURL(image)}
+                              src={ownerPickImageUrls[index]}
                               alt={`홍보용 가게 사진 ${index + 1}`}
                               className="h-full w-full object-cover"
                             />
@@ -447,12 +501,20 @@ export default function RegisterBasicInfoPage() {
         <Controller
           name="phone"
           control={control}
-          rules={{ required: true }}
+          rules={{
+            required: '전화번호를 입력해주세요',
+            validate: (value) =>
+              validatePhoneNumber(value) ||
+              '전화번호 형식을 확인해주세요 (예: 0000-0000-0000)',
+          }}
           render={({ field }) => (
             <div className="relative">
               <input
                 {...field}
-                className="w-full rounded-[5px] border border-[#A6A6A6] p-[10px] pr-10 text-sm"
+                className={cn(
+                  'mb-2 w-full rounded-[5px] border p-[10px] pr-10 text-sm',
+                  errors.phone ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
+                )}
                 type="text"
                 placeholder="전화번호 (예. 010-1234-5567)"
                 onChange={(e) => {
@@ -468,6 +530,9 @@ export default function RegisterBasicInfoPage() {
                 >
                   <IconXRound className="h-full w-full text-[#CDC8C3]" />
                 </button>
+              )}
+              {errors.phone && (
+                <ValidationError errorMessage={errors.phone.message} />
               )}
             </div>
           )}
@@ -487,22 +552,26 @@ export default function RegisterBasicInfoPage() {
           <Controller
             name="address"
             control={control}
-            rules={{ required: true }}
+            rules={{ required: '주소를 입력해주세요' }}
             render={({ field }) => (
-              <input
-                {...field}
-                className="pointer-events-none w-full rounded-[5px] border border-[#A6A6A6] bg-[#F0F0F0] p-[10px] text-sm font-medium"
-                type="text"
-                placeholder="주소 검색"
-                disabled
-              />
+              <div className="relative">
+                <input
+                  {...field}
+                  className={cn(
+                    'pointer-events-none w-full rounded-[5px] border bg-[#F0F0F0] p-[10px] text-sm font-medium',
+                    errors.address ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
+                  )}
+                  type="text"
+                  placeholder="주소 검색"
+                  disabled
+                />
+              </div>
             )}
           />
         </div>
         <Controller
           name="detailAddress"
           control={control}
-          rules={{ required: true }}
           render={({ field }) => (
             <div className="relative">
               <input
@@ -523,6 +592,9 @@ export default function RegisterBasicInfoPage() {
             </div>
           )}
         />
+        {errors.address && (
+          <ValidationError errorMessage={errors.address.message} />
+        )}
       </div>
 
       {/* 특성 태그 */}
@@ -535,7 +607,10 @@ export default function RegisterBasicInfoPage() {
         <Controller
           name="tags"
           control={control}
-          rules={{ required: true }}
+          rules={{
+            required: '특성 태그를 선택해주세요',
+            validate: (value) => value.length > 0 || '특성 태그를 선택해주세요',
+          }}
           render={({ field: { value } }) =>
             value.length > 0 ? (
               <div className="relative cursor-pointer" onClick={openTagModal}>
@@ -583,6 +658,7 @@ export default function RegisterBasicInfoPage() {
             )
           }
         />
+        {errors.tags && <ValidationError errorMessage={errors.tags.message} />}
       </div>
 
       {/* 한 줄 소개 */}
