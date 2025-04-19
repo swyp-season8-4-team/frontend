@@ -278,13 +278,13 @@ export default function RegisterOperatingHoursPage() {
                         <div>{formatTimeTo12Hour(closingTime)}</div>
                       </div>
                     )}
-                    {breakTimes && (
+                    {regularClosureType !== 'WEEKLY' && breakTimes && (
                       <div>
                         휴게시간 {formatTimeTo12Hour(breakTimes[0].startTime)}~
                         {formatTimeTo12Hour(breakTimes[0].endTime)}
                       </div>
                     )}
-                    {lastOrderTime && (
+                    {regularClosureType !== 'WEEKLY' && lastOrderTime && (
                       <div>라스트 오더 {formatTimeTo12Hour(lastOrderTime)}</div>
                     )}
                   </div>
