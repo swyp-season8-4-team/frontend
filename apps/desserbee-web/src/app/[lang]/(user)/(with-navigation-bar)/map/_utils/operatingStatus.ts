@@ -41,7 +41,44 @@ export function getOperationStatus(
     .map(Number);
 
   const openTimeMinutes = openHour * 60 + openMinute;
-  const closeTimeMinutes = closeHour * 60 + closeMinute;
+  let closeTimeMinutes = closeHour * 60 + closeMinute;
+
+  // 영업 종료 시간이 오픈 시간보다 작은 경우 (다음날까지 영업)
+  if (closeTimeMinutes < openTimeMinutes) {
+    closeTimeMinutes += 24 * 60; // 24시간을 더해줌
+  }
+
+  // 현재 시간이 자정을 넘었고, 오픈 시간 이전인 경우
+  if (currentTimeMinutes < openTimeMinutes) {
+    const yesterdayMinutes = currentTimeMinutes + 24 * 60;
+    const yesterdayIndex =
+      (operatingHours.findIndex(
+        (schedule) => schedule.dayOfWeek === currentDay,
+      ) -
+        1 +
+        7) %
+      7;
+    const yesterdaySchedule = operatingHours[yesterdayIndex];
+
+    if (yesterdaySchedule && !yesterdaySchedule.isClosed) {
+      const [yesterdayCloseHour, yesterdayCloseMinute] =
+        yesterdaySchedule.closingTime.split(':').map(Number);
+      let yesterdayCloseTimeMinutes =
+        yesterdayCloseHour * 60 + yesterdayCloseMinute;
+
+      if (yesterdayCloseTimeMinutes < openTimeMinutes) {
+        yesterdayCloseTimeMinutes += 24 * 60;
+
+        if (yesterdayMinutes < yesterdayCloseTimeMinutes) {
+          return {
+            status: 'OPEN',
+            isOpen: true,
+            message: `${yesterdaySchedule.closingTime}에 영업 종료`,
+          };
+        }
+      }
+    }
+  }
 
   if (currentTimeMinutes < openTimeMinutes) {
     return {
