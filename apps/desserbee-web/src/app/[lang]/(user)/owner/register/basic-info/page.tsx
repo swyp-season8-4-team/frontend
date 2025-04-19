@@ -186,6 +186,7 @@ export default function RegisterBasicInfoPage() {
       'storeLinks',
       storeLinks.filter((_, i) => i !== index),
     );
+    trigger('storeLinks'); // 삭제 후 유효성 검사 트리거
   };
 
   useEffect(() => {
