@@ -185,12 +185,13 @@ export interface StoreSummaryInfoData
     | 'averageRating'
     | 'description'
     | 'operatingHours'
-    | 'tags'
     | 'holidays'
     | 'storeImages'
     | 'ownerPickImages'
     | 'topPreferences'
-  > {}
+  > {
+  tags: string[];
+}
 
 export interface StoreDetailInfoRequest {
   storeUuid: string;
