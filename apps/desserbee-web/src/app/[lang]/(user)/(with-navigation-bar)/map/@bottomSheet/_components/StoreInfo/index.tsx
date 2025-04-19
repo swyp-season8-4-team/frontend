@@ -187,7 +187,7 @@ export function StoreInfo({
           </div>
           <div className="flex flex-col gap-1">
             {storeLinks.map((link, index) => (
-              <a className="underline" key={index} href={link}>
+              <a className="break-all underline" key={index} href={link}>
                 {link}
               </a>
             ))}
