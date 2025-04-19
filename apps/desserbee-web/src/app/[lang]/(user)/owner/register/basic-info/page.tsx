@@ -70,7 +70,7 @@ interface FormInputs
     | 'status'
     | 'holidays'
     | 'description'
-    | 'notice'
+    | 'notices'
   > {
   detailAddress: string;
   tags: number[];

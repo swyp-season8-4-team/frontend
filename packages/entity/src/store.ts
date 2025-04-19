@@ -178,7 +178,6 @@ export interface StoreSummaryInfoData
     | 'name'
     | 'address'
     | 'phone'
-    | 'storeLinks'
     | 'animalYn'
     | 'tumblerYn'
     | 'parkingYn'
@@ -191,6 +190,7 @@ export interface StoreSummaryInfoData
     | 'topPreferences'
   > {
   tags: string[];
+  storeLinks: string[];
 }
 
 export interface StoreDetailInfoRequest {
@@ -206,7 +206,6 @@ export interface StoreDetailInfoData
     | 'name'
     | 'address'
     | 'phone'
-    | 'storeLinks'
     | 'animalYn'
     | 'tumblerYn'
     | 'parkingYn'
@@ -223,13 +222,13 @@ export interface StoreDetailInfoData
     | 'ownerPickImages'
     | 'storeImages'
     | 'primaryStoreLink'
-    | 'storeLinks'
   > {
   userId: number | null;
   userUuid: string | null;
   ownerId: number;
   ownerUuid: string;
   menus: Menu[];
+  storeLinks: string[];
 
   totalReviewCount: number;
   storeReviews: OneLineReview[];
@@ -276,7 +275,6 @@ export interface RegisterStoreRequest
     | 'operatingHours'
     | 'holidays'
     | 'description'
-    | 'notices'
   > {
   userUuid: string;
   menus: Menu[];

@@ -97,7 +97,6 @@ const initialStoreData: StoreData = {
 
   // 설명 정보
   description: '',
-  notice: [], // 주의: Store에서는 string[] 타입
 
   // 사용자 정보
   userUuid: '', // 로그인 시 설정
@@ -174,12 +173,6 @@ type RegisterContextType = {
   addHoliday: (holiday: HolidaysItem) => void;
   updateHoliday: (index: number, holiday: Partial<HolidaysItem>) => void;
   removeHoliday: (index: number) => void;
-
-  // 공지사항 관리
-  updateNotice: (notice: string[]) => void;
-  addNoticeItem: (item: string) => void;
-  updateNoticeItem: (index: number, item: string) => void;
-  removeNoticeItem: (index: number) => void;
 
   // 메뉴 관리
   updateMenus: (menus: Menu[]) => void;
@@ -383,43 +376,6 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
       return {
         ...prev,
         holidays: updatedHolidays,
-      };
-    });
-  };
-
-  // 공지사항 관리
-  const updateNotice = (notice: string[]) => {
-    setStoreData((prev) => ({
-      ...prev,
-      notice,
-    }));
-  };
-
-  const addNoticeItem = (item: string) => {
-    setStoreData((prev) => ({
-      ...prev,
-      notice: [...prev.notice, item],
-    }));
-  };
-
-  const updateNoticeItem = (index: number, item: string) => {
-    setStoreData((prev) => {
-      const updatedNotice = [...prev.notice];
-      updatedNotice[index] = item;
-      return {
-        ...prev,
-        notice: updatedNotice,
-      };
-    });
-  };
-
-  const removeNoticeItem = (index: number) => {
-    setStoreData((prev) => {
-      const updatedNotice = [...prev.notice];
-      updatedNotice.splice(index, 1);
-      return {
-        ...prev,
-        notice: updatedNotice,
       };
     });
   };
@@ -751,11 +707,6 @@ export function RegisterProvider({ children }: { children: ReactNode }) {
         addHoliday,
         updateHoliday,
         removeHoliday,
-
-        updateNotice,
-        addNoticeItem,
-        updateNoticeItem,
-        removeNoticeItem,
 
         updateMenus,
         addMenu,
