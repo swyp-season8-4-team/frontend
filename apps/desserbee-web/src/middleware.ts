@@ -65,35 +65,44 @@ async function handleTokens(
     requestHeaders.set('X-Email-Verification-Token', verificationToken);
   }
 
-  // 액세스 토큰 처리
   const prevAccessToken = cookies.get('accessToken')?.value;
   const refreshToken = cookies.get('refreshToken')?.value;
   const deviceId = cookies.get('deviceId')?.value;
-  const tokenInfo = await getTokenInfo(prevAccessToken, refreshToken, deviceId);
 
-  if (tokenInfo.token) {
-    requestHeaders.set('authorization', `Bearer ${tokenInfo.token}`);
+  // refreshToken이 있다면 accessToken이 없어도 재발급 시도
+  if (refreshToken) {
+    const tokenInfo = await getTokenInfo(
+      prevAccessToken,
+      refreshToken,
+      deviceId,
+    );
 
-    // 토큰 갱신이 필요한 경우
-    if (tokenInfo.isExpired && tokenInfo.token !== prevAccessToken) {
-      const response = NextResponse.next({
-        request: { headers: requestHeaders },
-      });
+    if (tokenInfo.token) {
+      requestHeaders.set('authorization', `Bearer ${tokenInfo.token}`);
 
-      // tokenInfo.exp는 밀리초 단위이므로 초 단위로 변환
-      const maxAgeInSeconds = Math.floor((tokenInfo.exp ?? 0) / 1000);
+      // 새로운 토큰이 발급되었거나 기존 토큰이 만료된 경우
+      if (
+        !prevAccessToken ||
+        tokenInfo.isExpired ||
+        tokenInfo.token !== prevAccessToken
+      ) {
+        const response = NextResponse.next({
+          request: { headers: requestHeaders },
+        });
 
-      const domain = process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN;
+        const maxAgeInSeconds = Math.floor((tokenInfo.exp ?? 0) / 1000);
+        const domain = process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN;
 
-      response.cookies.set('accessToken', tokenInfo.token, {
-        httpOnly: true,
-        secure: isProd,
-        sameSite: 'lax',
-        maxAge: maxAgeInSeconds, // 초 단위로 변환된 값 사용
-        domain,
-      });
+        response.cookies.set('accessToken', tokenInfo.token, {
+          httpOnly: true,
+          secure: isProd,
+          sameSite: 'lax',
+          maxAge: maxAgeInSeconds,
+          domain,
+        });
 
-      return response;
+        return response;
+      }
     }
   }
 
