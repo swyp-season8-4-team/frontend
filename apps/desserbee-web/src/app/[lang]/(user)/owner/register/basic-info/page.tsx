@@ -147,12 +147,19 @@ export default function RegisterBasicInfoPage() {
           isPrimary: typeof link === 'string' ? index === 0 : link.isPrimary,
         })),
       );
+    } else {
+      // 초기 데이터가 없을 때 빈 배열로 초기화
+      setValue('storeLinks', []);
     }
   }, [storeData.storeLinks, setValue]);
 
   // 링크 추가 버튼 핸들러
   const handleAddLink = () => {
-    setValue('storeLinks', [...storeLinks, { url: '', isPrimary: false }]);
+    const isFirstLink = storeLinks.length === 0;
+    setValue('storeLinks', [
+      ...storeLinks,
+      { url: '', isPrimary: isFirstLink },
+    ]);
   };
 
   // 링크 수정 핸들러
@@ -322,7 +329,7 @@ export default function RegisterBasicInfoPage() {
 
     updateBasicInfo({
       ...rest,
-      storeLinks: data.storeLinks, // form에서 직접 storeLinks 사용
+      storeLinks: data.storeLinks,
     });
     updateTags(tags);
     updateStoreImages(data.storeImageFiles);
