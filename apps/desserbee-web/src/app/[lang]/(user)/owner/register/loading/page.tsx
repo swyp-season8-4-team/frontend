@@ -111,7 +111,6 @@ export default function RegisterLoadingPage() {
 
             // 설명 및 기타 정보
             description: storeData.description || '',
-            notice: storeData.notice || [],
             tagIds: storeData.tagIds || [],
           },
           // 파일 데이터
@@ -121,13 +120,16 @@ export default function RegisterLoadingPage() {
         };
 
         await registerStore(updatedStoreFormData);
-
+        // console.log(updatedStoreFormData);
         router.push(`${NavigationPathname.OwnerRegisterComplete}`);
       } catch (error) {
         // 오류 발생 시 제출 상태 초기화
         hasSubmitted.current = false;
         if (error instanceof HTTPError) {
           console.log(error.data);
+        }
+        if (error instanceof Error) {
+          console.log(error.message);
         }
         alert('가게 등록 중 오류가 발생했습니다. 다시 시도해주세요.');
         router.back();

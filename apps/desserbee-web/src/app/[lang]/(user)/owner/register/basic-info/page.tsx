@@ -70,7 +70,7 @@ interface FormInputs
     | 'status'
     | 'holidays'
     | 'description'
-    | 'notice'
+    | 'notices'
   > {
   detailAddress: string;
   tags: number[];
@@ -368,7 +368,7 @@ export default function RegisterBasicInfoPage() {
               <input
                 {...field}
                 className={cn(
-                  'mb-2 w-full rounded-[5px] border p-[10px] pr-10 text-sm font-medium',
+                  'w-full rounded-[5px] border p-[10px] pr-10 text-sm font-medium',
                   errors.name ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
                 )}
                 type="text"
@@ -377,15 +377,16 @@ export default function RegisterBasicInfoPage() {
               {field.value && (
                 <button
                   type="button"
-                  className="absolute right-4 top-[50%] flex h-4 w-4 -translate-y-1/2 items-center justify-center"
+                  className="absolute right-4 top-1/2 flex h-4 w-4 -translate-y-1/2 items-center justify-center"
                   onClick={() => field.onChange('')}
                 >
                   <IconXRound className="h-full w-full text-[#CDC8C3]" />
                 </button>
               )}
-
               {errors.name && (
-                <ValidationError errorMessage={errors.name.message} />
+                <div className="mt-2">
+                  <ValidationError errorMessage={errors.name.message} />
+                </div>
               )}
             </div>
           )}
@@ -524,31 +525,36 @@ export default function RegisterBasicInfoPage() {
               '전화번호 형식을 확인해주세요 (예: 0000-0000-0000)',
           }}
           render={({ field }) => (
-            <div className="relative">
-              <input
-                {...field}
-                className={cn(
-                  'mb-2 w-full rounded-[5px] border p-[10px] pr-10 text-sm',
-                  errors.phone ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
+            <div>
+              <div className="relative">
+                <input
+                  {...field}
+                  className={cn(
+                    'w-full rounded-[5px] border p-[10px] pr-10 text-sm font-medium',
+                    errors.phone ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
+                  )}
+                  type="text"
+                  placeholder="전화번호 (예. 010-1234-5567)"
+                  onChange={(e) => {
+                    const value = e.target.value.replace(/[^0-9-]/g, '');
+                    field.onChange(value);
+                  }}
+                />
+                {field.value && (
+                  <button
+                    type="button"
+                    className="absolute right-4 top-1/2 flex h-4 w-4 -translate-y-1/2 items-center justify-center"
+                    onClick={() => field.onChange('')}
+                  >
+                    <IconXRound className="h-full w-full text-[#CDC8C3]" />
+                  </button>
                 )}
-                type="text"
-                placeholder="전화번호 (예. 010-1234-5567)"
-                onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9-]/g, '');
-                  field.onChange(value);
-                }}
-              />
-              {field.value && (
-                <button
-                  type="button"
-                  className="absolute right-4 top-[50%] flex h-4 w-4 -translate-y-1/2 items-center justify-center"
-                  onClick={() => field.onChange('')}
-                >
-                  <IconXRound className="h-full w-full text-[#CDC8C3]" />
-                </button>
-              )}
+              </div>
+
               {errors.phone && (
-                <ValidationError errorMessage={errors.phone.message} />
+                <div className="mt-2">
+                  <ValidationError errorMessage={errors.phone.message} />
+                </div>
               )}
             </div>
           )}
@@ -609,7 +615,9 @@ export default function RegisterBasicInfoPage() {
           )}
         />
         {errors.address && (
-          <ValidationError errorMessage={errors.address.message} />
+          <div className="mt-2">
+            <ValidationError errorMessage={errors.address.message} />
+          </div>
         )}
       </div>
 
@@ -665,7 +673,10 @@ export default function RegisterBasicInfoPage() {
                   <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
                 </button>
                 <input
-                  className="pointer-events-none w-full rounded-[5px] border border-[#A6A6A6] bg-[#F0F0F0] p-[10px] text-sm font-medium"
+                  className={cn(
+                    'pointer-events-none w-full rounded-[5px] border bg-[#F0F0F0] p-[10px] pr-10 text-sm font-medium',
+                    errors.tags ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
+                  )}
                   type="text"
                   placeholder="특성 태그 선택"
                   disabled
@@ -674,7 +685,11 @@ export default function RegisterBasicInfoPage() {
             )
           }
         />
-        {errors.tags && <ValidationError errorMessage={errors.tags.message} />}
+        {errors.tags && (
+          <div className="mt-2">
+            <ValidationError errorMessage={errors.tags.message} />
+          </div>
+        )}
       </div>
 
       {/* 한 줄 소개 */}
@@ -766,7 +781,7 @@ export default function RegisterBasicInfoPage() {
                       value={link.url}
                       onChange={(e) => handleLinkChange(index, e.target.value)}
                       className={cn(
-                        'border-neutral-40 w-full flex-1 rounded-[6px] border px-3 py-2 pr-10 text-sm',
+                        'w-full rounded-[5px] border p-[10px] pr-10 text-sm font-medium',
                         errors.storeLinks
                           ? 'border-[#FF3B30]'
                           : 'border-[#A6A6A6]',
@@ -776,17 +791,17 @@ export default function RegisterBasicInfoPage() {
                     <button
                       type="button"
                       onClick={() => handleRemoveLink(index)}
-                      className="absolute right-4 top-[50%] z-10 flex h-[18px] w-[18px] -translate-y-1/2 items-center justify-center"
+                      className="absolute right-4 top-1/2 flex h-4 w-4 -translate-y-1/2 items-center justify-center"
                     >
-                      <div className="h-[15px] w-[15px]">
-                        <IconMinusRound className="text-neutral-30 h-full w-full" />
-                      </div>
+                      <IconMinusRound className="text-neutral-30 h-full w-full" />
                     </button>
                   </div>
                 </div>
               ))}
               {errors.storeLinks && (
-                <ValidationError errorMessage={errors.storeLinks.message} />
+                <div className="mt-2">
+                  <ValidationError errorMessage={errors.storeLinks.message} />
+                </div>
               )}
             </div>
           )}

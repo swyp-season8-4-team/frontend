@@ -114,6 +114,8 @@ export default function RegisterMenuPage() {
   const handleNextStep = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (menus.length === 0) return;
+
     updateMenus(menus);
     const menuImageFiles = Array.from(storeData.menuImageMap.values());
     updateMenuImages(menuImageFiles);
@@ -198,6 +200,7 @@ export default function RegisterMenuPage() {
         </div>
         <div className="fixed bottom-4 left-0 right-0 mx-4 flex gap-x-2">
           <OliveButton
+            isDisabled={menus.length === 0}
             className="w-full font-semibold"
             text="다음"
             type="submit"

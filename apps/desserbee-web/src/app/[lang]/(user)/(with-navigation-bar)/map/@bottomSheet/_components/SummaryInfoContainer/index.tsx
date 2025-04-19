@@ -98,15 +98,15 @@ export function SummaryInfoContainer({
           {name}
         </span>
         <span className="flex flex-wrap">
-          {tags.map((tag, index) => (
+          {/* {tags.map((tag, index) => (
             <span
-              className="md:text-t20 text-[10px] font-medium text-[#6F6F6F]"
+              className="font-medium text-[#6F6F6F] text-[10px] md:text-t20"
               key={tag}
             >
               {tag}
               {index < tags.length - 1 && ', '}&nbsp;
             </span>
-          ))}
+          ))} */}
         </span>
       </div>
       <StoreInfo {...storeInfoProps} />

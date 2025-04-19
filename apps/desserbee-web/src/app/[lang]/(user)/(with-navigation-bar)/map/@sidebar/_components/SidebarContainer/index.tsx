@@ -126,35 +126,35 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
     <SideBar
       {...{
         className:
-          'absolute top-[105px] md:top-[110px] md:w-[370px] right-4 h-[calc(100dvh-287px)] ',
+          'absolute top-[120px] md:top-[115px] md:w-[370px] right-4 h-[calc(100dvh-230px)] ',
         isSideBarOpen: showSidebar,
         handleSideBarClose,
       }}
     >
-      <div className="flex flex-col h-full" onClick={handleGlobalClick}>
+      <div className="flex h-full flex-col" onClick={handleGlobalClick}>
         <div className="flex-none">
-          <div className="flex p-2 w-full font-semibold text-[#393939] md:text-[22px] text-xs text-start">
+          <div className="flex w-full p-2 text-start text-xs font-semibold text-[#393939] md:text-[22px]">
             <span>저장 리스트 &nbsp;</span>
             <span>{totalSavedList.length}</span>
           </div>
           {totalSavedList.length < 10 && (
             <button
-              className="flex items-center my-[11.97px] md:my-[22px]"
+              className="my-[11.97px] flex items-center md:my-[22px]"
               onClick={() => {
                 handleSideBarClose();
                 handleCreateListBtnClick();
               }}
             >
-              <span className="flex justify-center items-center mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm w-[20.7px] md:w-[30.45px] aspect-square">
-                <IconPlus className="w-[70%] h-[70%] text-[#6F6F6F]" />
+              <span className="mr-2 flex aspect-square w-[20.7px] items-center justify-center rounded-sm border-[0.5px] border-[#D5D5D5] md:w-[30.45px]">
+                <IconPlus className="h-[70%] w-[70%] text-[#6F6F6F]" />
               </span>
-              <span className="text-[#6F6F6F] md:text-[18px] text-xs">
+              <span className="text-xs text-[#6F6F6F] md:text-[18px]">
                 새 리스트 만들기
               </span>
             </button>
           )}
         </div>
-        <div className="[&::-webkit-scrollbar]:hidden flex-grow pr-1 [-ms-overflow-style:none] overflow-y-auto [scrollbar-width:none]">
+        <div className="flex-grow overflow-y-auto pr-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {totalSavedList.map((saveListItem, index) => (
             <div
               onClick={() =>
@@ -162,18 +162,18 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
               }
               key={saveListItem.listName}
               className={cn(
-                index !== 0 && 'border-t-[#6F6F6F] border-t-[0.5px]',
+                index !== 0 && 'border-t-[0.5px] border-t-[#6F6F6F]',
                 saveListItem.storeCount !== 0 ? 'cursor-pointer' : '',
                 'relative py-[11.97px] md:py-[22px]',
               )}
             >
-              <div className="flex justify-between items-center">
-                <div className="flex justify-start items-center">
-                  <div className="mr-2 border-[#D5D5D5] border-[0.5px] rounded-sm w-[20.45px] md:w-[37.5px] aspect-square">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center justify-start">
+                  <div className="mr-2 aspect-square w-[20.45px] rounded-sm border-[0.5px] border-[#D5D5D5] md:w-[37.5px]">
                     <IconFlower
                       className={cn(
                         getIconColor(saveListItem.iconColorId),
-                        'w-full h-full',
+                        'h-full w-full',
                       )}
                     />
                   </div>
@@ -182,8 +182,8 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
                       {saveListItem.listName}
                     </div>
                     <div className="flex items-center text-[#6F6F6F]">
-                      <span className="flex justify-center items-center mr-[4.35px] md:mr-2 h-[6.26px] md:h-[11.5px]">
-                        <IconPin className="w-full h-full text-[#6F6F6F]" />
+                      <span className="mr-[4.35px] flex h-[6.26px] items-center justify-center md:mr-2 md:h-[11.5px]">
+                        <IconPin className="h-full w-full text-[#6F6F6F]" />
                       </span>
                       <span className="text-[8px] md:text-[14px]">
                         {saveListItem.storeCount}
@@ -195,17 +195,17 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
                   <div className="group">
                     <button
                       onClick={(e) => handleDotsClick(saveListItem.listId, e)}
-                      className="flex flex-col gap-[4.35px] md:gap-2 p-2"
+                      className="flex flex-col gap-[4.35px] p-2 md:gap-2"
                     >
-                      <div className="bg-[#6F6F6F] group-hover:bg-[#F9C22E] rounded-full w-0.5 md:w-1 h-0.5 md:h-1"></div>
-                      <div className="bg-[#6F6F6F] group-hover:bg-[#F9C22E] rounded-full w-0.5 md:w-1 h-0.5 md:h-1"></div>
-                      <div className="bg-[#6F6F6F] group-hover:bg-[#F9C22E] rounded-full w-0.5 md:w-1 h-0.5 md:h-1"></div>
+                      <div className="h-0.5 w-0.5 rounded-full bg-[#6F6F6F] group-hover:bg-[#F9C22E] md:h-1 md:w-1"></div>
+                      <div className="h-0.5 w-0.5 rounded-full bg-[#6F6F6F] group-hover:bg-[#F9C22E] md:h-1 md:w-1"></div>
+                      <div className="h-0.5 w-0.5 rounded-full bg-[#6F6F6F] group-hover:bg-[#F9C22E] md:h-1 md:w-1"></div>
                     </button>
                   </div>
                   {selectedListId === saveListItem.listId && (
                     <div
                       ref={modalRef}
-                      className="top-6 right-0 z-modal absolute gap-[4.35px] md:gap-2 bg-white shadow-[2px_2px_5px_0px_rgba(0,0,0,0.05)] px-3 rounded-[10px] w-fit"
+                      className="z-modal absolute right-0 top-6 w-fit gap-[4.35px] rounded-[10px] bg-white px-3 shadow-[2px_2px_5px_0px_rgba(0,0,0,0.05)] md:gap-2"
                     >
                       {/* <div className="flex items-center md:py-[11.5px] border-[#D2D2D2] border-b">
                             <span className="flex justify-center items-center mr-2 w-3 md:w-5 h-3 md:h-5">
@@ -224,11 +224,11 @@ export function SideBarContainer({ showSidebar }: SideBarContainerProps) {
                             </button>
                           </div> */}
                       <div className="flex items-center md:py-[11.5px]">
-                        <span className="flex justify-center items-center mr-2 w-3 md:w-5 h-3 md:h-5">
-                          <IconTrashCan className="w-full h-full" />
+                        <span className="mr-2 flex h-3 w-3 items-center justify-center md:h-5 md:w-5">
+                          <IconTrashCan className="h-full w-full" />
                         </span>
                         <button
-                          className="text-[8px] md:text-[14px] text-nowrap"
+                          className="text-nowrap text-[8px] md:text-[14px]"
                           onClick={(e) =>
                             handleDeleteList(saveListItem.listId, e)
                           }

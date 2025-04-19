@@ -42,7 +42,8 @@ export function DetailInfoContainer({
   latitude,
   longitude,
   holidays,
-  notice,
+  notices,
+  primaryStoreLink,
   topPreferences,
   parentlistInfo,
   saved,
@@ -113,12 +114,9 @@ export function DetailInfoContainer({
           </span>
           <StoreFeatureIconList {...storeFeatureIconListProps} />
           <span className="ml-[5.55px] flex text-[10px] md:ml-[13px] md:text-base">
-            {tags.map((tag, index) => (
-              <span
-                className="md:text-t20 font-medium text-[#6F6F6F]"
-                key={tag}
-              >
-                {tag}
+            {tags.map(({ category, id, name }, index) => (
+              <span className="md:text-t20 font-medium text-[#6F6F6F]" key={id}>
+                {name}
                 {index < tags.length - 1 && ', '}&nbsp;
               </span>
             ))}
@@ -188,14 +186,16 @@ export function DetailInfoContainer({
         </div>
       </div>
       <div className="flex flex-col gap-[6px] md:gap-3">
-        {notice.map((content) => (
-          <div
-            key={content}
-            className="w-full rounded-[4.27px] bg-[#F6F6F6] p-[6px] text-[10px] leading-3 md:rounded-[10px] md:p-[13px] md:text-base"
-          >
-            {content}
-          </div>
-        ))}
+        {notices.map(
+          ({ content, title, createdAt, noticeId, tag, updatedAt }, index) => (
+            <div
+              key={`${noticeId} - ${index}`}
+              className="w-full rounded-[4.27px] bg-[#F6F6F6] p-[6px] text-[10px] leading-3 md:rounded-[10px] md:p-[13px] md:text-base"
+            >
+              {title}
+            </div>
+          ),
+        )}
       </div>
     </div>
   );

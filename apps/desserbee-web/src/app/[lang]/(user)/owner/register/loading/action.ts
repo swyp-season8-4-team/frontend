@@ -17,12 +17,7 @@ export const registerStore = async (storeFormData: RegisterStoreFromData) => {
   } catch (error) {
     if (error instanceof HTTPError) {
       console.error('HTTP 에러 발생:', error.data);
-      throw new Error(
-        JSON.stringify({
-          data: error.data,
-          message: error.message,
-        }),
-      );
+      throw error;
     }
     throw error;
   }

@@ -6,30 +6,51 @@ export interface StoreLink {
   isPrimary: boolean;
 }
 
+export interface Notice {
+  noticeId: number;
+  tag: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+export interface StoreTagCategory {
+  id: number;
+  name: string;
+}
+
+export interface StoreTag {
+  id: number;
+  name: string;
+  category: StoreTagCategory;
+}
+
 export interface Store {
   storeId: number;
   storeUuid: string;
   name: string;
   phone: string;
   address: string;
+  primaryStoreLink: string;
   // storeLink: string; //TODO: 가게 간략페이지, 상세페이지에서도 수정 !!!!
   storeLinks: StoreLink[];
-
   latitude: number;
   longitude: number;
   description?: string;
+  descriptionUpdateTime: string;
   animalYn: boolean;
   parkingYn: boolean;
   tumblerYn: boolean;
   operatingHours: OperatingHoursItem[];
   holidays: HolidaysItem[];
   averageRating: number;
-  notice: string[];
+  notices: Notice[];
   status?: string;
   createdAt?: string;
   updatedAt?: string;
   tagIds: number[];
-  tags: string[];
+  tags: StoreTag[];
   topPreferences: string[];
   storeImages?: string[];
   ownerPickImages?: string[];
@@ -139,10 +160,10 @@ export interface NearByStoreData
     | 'latitude'
     | 'longitude'
     | 'operatingHours'
-    | 'tags'
   > {
   storeImage: string;
   shortReviewCount: number;
+  tags: string[];
 }
 
 export interface StoreSummaryInfoRequest {
@@ -157,19 +178,20 @@ export interface StoreSummaryInfoData
     | 'name'
     | 'address'
     | 'phone'
-    | 'storeLinks'
     | 'animalYn'
     | 'tumblerYn'
     | 'parkingYn'
     | 'averageRating'
     | 'description'
     | 'operatingHours'
-    | 'tags'
     | 'holidays'
     | 'storeImages'
     | 'ownerPickImages'
     | 'topPreferences'
-  > {}
+  > {
+  tags: string[];
+  storeLinks: string[];
+}
 
 export interface StoreDetailInfoRequest {
   storeUuid: string;
@@ -184,7 +206,6 @@ export interface StoreDetailInfoData
     | 'name'
     | 'address'
     | 'phone'
-    | 'storeLinks'
     | 'animalYn'
     | 'tumblerYn'
     | 'parkingYn'
@@ -194,18 +215,21 @@ export interface StoreDetailInfoData
     | 'description'
     | 'operatingHours'
     | 'holidays'
-    | 'notice'
+    | 'notices'
     | 'storeImages'
     | 'tags'
     | 'topPreferences'
     | 'ownerPickImages'
     | 'storeImages'
+    | 'primaryStoreLink'
   > {
   userId: number | null;
   userUuid: string | null;
   ownerId: number;
   ownerUuid: string;
   menus: Menu[];
+  storeLinks: string[];
+
   totalReviewCount: number;
   storeReviews: OneLineReview[];
   communityReviews: {
@@ -251,7 +275,6 @@ export interface RegisterStoreRequest
     | 'operatingHours'
     | 'holidays'
     | 'description'
-    | 'notice'
   > {
   userUuid: string;
   menus: Menu[];
@@ -288,7 +311,7 @@ export interface RegisterStoreResponse
     | 'status'
     | 'operatingHours'
     | 'holidays'
-    | 'notice'
+    | 'notices'
     | 'tags'
     | 'topPreferences'
     | 'storeImages'
@@ -329,7 +352,7 @@ export interface EditStoreRequest
     | 'averageRating'
     | 'operatingHours'
     | 'holidays'
-    | 'notice'
+    | 'notices'
     | 'tags'
     | 'topPreferences'
     | 'storeImages'
@@ -368,7 +391,7 @@ export interface EditStoreResponse
     | 'storeImages'
     | 'ownerPickImages'
     | 'tags'
-    | 'notice'
+    | 'notices'
     | 'operatingHours'
     | 'holidays'
     | 'topPreferences'

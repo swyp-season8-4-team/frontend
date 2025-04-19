@@ -21,6 +21,7 @@ type StoreInfoProps = Pick<
   | 'description'
   | 'holidays'
 >;
+
 export function StoreInfo({
   address,
   operatingHours,
@@ -76,36 +77,73 @@ export function StoreInfo({
                   closingTime,
                   lastOrderTime,
                   isClosed,
-                }) => (
-                  <div
-                    key={dayOfWeek}
-                    className={cn(isClosed ? 'font-semibold' : '')}
-                  >
-                    <div className="ap-[6px] flex items-center md:leading-[100%]">
-                      <div className="w-4"></div>
-                      <div className="flex gap-[10px] pl-[10px] md:pl-10">
-                        <div>{convertDayToKorean(dayOfWeek)}</div>
-                        {!isClosed ? (
-                          <div className="flex flex-col md:gap-[6px]">
-                            <div className="flex">
-                              <span>{openingTime}</span>
-                              <span>&nbsp;-&nbsp;</span>
-                              <span>{closingTime}</span>
-                            </div>
-                            {lastOrderTime && (
-                              <div>
-                                <span>{lastOrderTime}&nbsp;</span>
-                                <span>라스트 오더</span>
+                  regularClosureType,
+                  regularClosureWeeks,
+                }) => {
+                  const weekNumbers = regularClosureWeeks
+                    ?.split(',')
+                    .map((week) => {
+                      switch (week) {
+                        case '1':
+                          return '첫째';
+                        case '2':
+                          return '둘째';
+                        case '3':
+                          return '셋째';
+                        case '4':
+                          return '넷째';
+                        case '5':
+                          return '다섯째';
+                        default:
+                          return '';
+                      }
+                    });
+
+                  return (
+                    <div
+                      key={dayOfWeek}
+                      className={cn(
+                        isClosed || regularClosureType === 'WEEKLY'
+                          ? 'font-semibold'
+                          : '',
+                      )}
+                    >
+                      <div className="flex items-center gap-2 md:gap-0 md:leading-[100%]">
+                        <div className="w-4"></div>
+                        <div className="flex gap-[10px] pl-[10px] md:pl-10">
+                          <div>{convertDayToKorean(dayOfWeek)}</div>
+                          {!isClosed && regularClosureType !== 'WEEKLY' ? (
+                            <div className="flex flex-col gap-0 md:gap-1">
+                              <div className="flex items-center">
+                                <span>{openingTime}</span>
+                                <span>&nbsp;-&nbsp;</span>
+                                <span>{closingTime}</span>
                               </div>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="font-semibold">정기 휴무</div>
-                        )}
+                              {regularClosureType === 'MONTHLY' &&
+                                weekNumbers && (
+                                  <span className="text-secondary-50 text-[10px] font-medium md:text-sm">
+                                    {weekNumbers.join(', ')}주 휴무
+                                  </span>
+                                )}
+                              {lastOrderTime && (
+                                <div>
+                                  <span>{lastOrderTime}&nbsp;</span>
+                                  <span>라스트 오더</span>
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="font-semibold">
+                              {regularClosureType === 'WEEKLY'
+                                ? '매주 휴무'
+                                : '정기 휴무'}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ),
+                  );
+                },
               )}
               <div>
                 <div className="flex">
@@ -142,16 +180,20 @@ export function StoreInfo({
         </div>
       )}
       {/* 디자인 나오는대로 수정필요 */}
-      {/* {storeLink && (
+      {storeLinks && (
         <div className="flex items-start gap-[6px]">
           <div className="mt-[3px] w-[10px] flex-shrink-0 md:mt-[5px] md:w-4">
             <IconBaseball className="h-full w-full text-[#BABABA]" />
           </div>
-          <a className="break-all underline" href={storeLink}>
-            {storeLink}
-          </a>
+          <div className="flex flex-col gap-1">
+            {storeLinks.map((link, index) => (
+              <a className="break-all underline" key={index} href={link}>
+                {link}
+              </a>
+            ))}
+          </div>
         </div>
-      )} */}
+      )}
     </div>
   );
 }
