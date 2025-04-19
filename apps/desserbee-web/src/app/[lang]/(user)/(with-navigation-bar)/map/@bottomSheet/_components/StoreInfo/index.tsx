@@ -108,7 +108,7 @@ export function StoreInfo({
                           : '',
                       )}
                     >
-                      <div className="flex items-center gap-4 md:leading-[100%]">
+                      <div className="flex items-center gap-2 md:gap-0 md:leading-[100%]">
                         <div className="w-4"></div>
                         <div className="flex gap-[10px] pl-[10px] md:pl-10">
                           <div>{convertDayToKorean(dayOfWeek)}</div>
@@ -121,7 +121,7 @@ export function StoreInfo({
                               </div>
                               {regularClosureType === 'MONTHLY' &&
                                 weekNumbers && (
-                                  <span className="text-neutral-30 text-[7px] md:text-sm">
+                                  <span className="text-secondary-50 text-[10px] font-medium md:text-sm">
                                     {weekNumbers.join(', ')}주 휴무
                                   </span>
                                 )}
