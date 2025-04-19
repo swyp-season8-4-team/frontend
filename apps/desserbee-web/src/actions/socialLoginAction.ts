@@ -13,6 +13,7 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { decodeJWT } from '@repo/utility/src/jwt';
 import { calculateTokenMaxAge } from '@/utils/token';
+import { HTTPError } from '@repo/api/src/error';
 
 const authService = new AuthService({
   authRepository: new AuthAPIRepository(),
@@ -29,55 +30,65 @@ export default async function socialLoginAction({
   provider,
   // next,
 }: ActionData) {
-  const response = await authService.socialSignIn({ code, provider });
+  try {
+    const response = await authService.socialSignIn({ code, provider });
 
-  const { accessToken, refreshToken, userId, isPreferenceSet, deviceId } =
-    response;
+    const { accessToken, refreshToken, userId, isPreferenceSet, deviceId } =
+      response;
 
-  const cookieList = await cookies();
-  const domain =
-    process.env.NEXT_PUBLIC_APP_ENV !== 'local'
-      ? process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN
-      : '';
+    const cookieList = await cookies();
+    const domain =
+      process.env.NEXT_PUBLIC_APP_ENV !== 'local'
+        ? process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN
+        : '';
 
-  // 토큰 저장
-  const decodedAccessToken = decodeJWT(accessToken);
-  const decodedRefreshToken = decodeJWT(refreshToken);
+    // 토큰 저장
+    const decodedAccessToken = decodeJWT(accessToken);
+    const decodedRefreshToken = decodeJWT(refreshToken);
 
-  let accessTokenMaxAge = 3600; // 기본값 1시간
-  let refreshTokenMaxAge = 10 * 24 * 60 * 60;
+    let accessTokenMaxAge = 3600; // 기본값 1시간
+    let refreshTokenMaxAge = 10 * 24 * 60 * 60;
 
-  cookieList.set('deviceId', deviceId, {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: 'strict',
-    domain,
-    maxAge:
-      calculateTokenMaxAge(decodedRefreshToken?.exp) || refreshTokenMaxAge,
-  });
+    cookieList.set('deviceId', deviceId, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: 'strict',
+      domain,
+      maxAge:
+        calculateTokenMaxAge(decodedRefreshToken?.exp) || refreshTokenMaxAge,
+    });
 
-  cookieList.set('accessToken', accessToken, {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: 'lax',
-    domain,
-    maxAge: calculateTokenMaxAge(decodedAccessToken?.exp) || accessTokenMaxAge,
-  });
+    cookieList.set('accessToken', accessToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: 'lax',
+      domain,
+      maxAge:
+        calculateTokenMaxAge(decodedAccessToken?.exp) || accessTokenMaxAge,
+    });
 
-  cookieList.set('refreshToken', refreshToken, {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: 'strict',
-    domain,
-    maxAge:
-      calculateTokenMaxAge(decodedRefreshToken?.exp) || refreshTokenMaxAge,
-  });
+    cookieList.set('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: 'strict',
+      domain,
+      maxAge:
+        calculateTokenMaxAge(decodedRefreshToken?.exp) || refreshTokenMaxAge,
+    });
 
-  if (!isPreferenceSet) {
-    redirect(
-      `${NavigationLanguageGroup.ko}${NavigationPathGroup.Preference}${userId}`,
-    );
+    if (!isPreferenceSet) {
+      redirect(
+        `${NavigationLanguageGroup.ko}${NavigationPathGroup.Preference}${userId}`,
+      );
+    }
+
+    redirect(NavigationPathname.Map);
+  } catch (error) {
+    if (error instanceof HTTPError) {
+      console.log(error.data);
+      throw error;
+    }
+
+    throw error;
   }
-
-  redirect(NavigationPathname.Map);
 }

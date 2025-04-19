@@ -2,13 +2,13 @@
 
 import { HTTPError } from '@repo/api/src/error';
 import UserAPIRepository from '@repo/infrastructures/src/repositories/userAPIRepository';
-import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
 import UserService from '@repo/usecase/src/userService';
 import type { User } from '@repo/entity/src/user';
+import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 
 const userService = new UserService({
   userRepository: new UserAPIRepository(),
-  authRepository: new AuthAPIRepository(),
+  authRepository: new AuthNextAppRouteRepository(),
 });
 
 export async function validateNickname(nickname: string) {
@@ -67,6 +67,7 @@ export const updateUserInfo = async ({
   } catch (error) {
     if (error instanceof HTTPError) {
       console.log(error.data);
+      throw error;
     }
     throw error;
   }
@@ -85,6 +86,7 @@ export const updateUserProfileImage = async ({
   } catch (error) {
     if (error instanceof HTTPError) {
       console.log(error.data);
+      throw error;
     }
     throw error;
   }

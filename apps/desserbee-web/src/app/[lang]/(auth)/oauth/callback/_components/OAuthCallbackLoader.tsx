@@ -18,7 +18,10 @@ export default function OAuthCallbackLoader({ code, next, provider }: Props) {
         await socialLoginAction({ code, provider, next });
       } catch (error) {
         if (error instanceof HTTPError) {
-          console.error(error);
+          console.error(error.data);
+        }
+        if (error instanceof Error) {
+          console.log(error.message);
         }
       }
     })();

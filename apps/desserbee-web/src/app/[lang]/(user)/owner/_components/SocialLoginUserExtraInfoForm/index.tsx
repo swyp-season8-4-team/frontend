@@ -196,6 +196,12 @@ export default function SocialLoginUserExtraInfoForm({
         setError('nickname', { message: result.message });
       }
     } catch (error) {
+      if (error instanceof HTTPError) {
+        console.log(error.data);
+      }
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
       setSuccessMessages((prev) => ({ ...prev, nickname: '' }));
       setError('nickname', {
         message: '닉네임 검증 중 오류가 발생했습니다.',
@@ -347,11 +353,17 @@ export default function SocialLoginUserExtraInfoForm({
       if (data.profileImage) {
         await updateUserProfileImage({ profileImage: data.profileImage });
       }
-      router.refresh();
+
+      alert('사장님 계정 전환을 위한 추가 정보 입력이 완료되었습니다.');
+      router.replace(NavigationPathname.Owner);
     } catch (error) {
       if (error instanceof HTTPError) {
         console.log(error.data);
       }
+      if (error instanceof Error) {
+        console.log(error.message);
+      }
+
       console.log(error);
       alert(`정보 등록 실패: 등록 중 오류가 발생했습니다.`);
     } finally {
