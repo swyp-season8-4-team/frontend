@@ -83,6 +83,11 @@ interface FormInputs
   };
 }
 
+const isValidURL = (url: string) => {
+  const urlRegex = /^(https?|ftp):\/\/(-\.)?([^\s\/?\.#-]+\.?)+(\/[^\s]*)?$/i;
+  return urlRegex.test(url);
+};
+
 export default function RegisterBasicInfoPage() {
   const router = useRouter();
   const { push, pop } = useContext(PortalContext);
@@ -729,9 +734,18 @@ export default function RegisterBasicInfoPage() {
           control={control}
           rules={{
             validate: (links) => {
+              if (links.length === 0) return true;
+
+              // 빈 URL 체크
               if (links.some((link) => !link.url.trim())) {
                 return 'SNS 링크를 입력하거나 삭제해주세요';
               }
+
+              // URL 형식 체크
+              if (links.some((link) => !isValidURL(link.url.trim()))) {
+                return '올바른 URL 형식이 아닙니다 (예: https://www.example.com)';
+              }
+
               return true;
             },
           }}
@@ -757,7 +771,7 @@ export default function RegisterBasicInfoPage() {
                           ? 'border-[#FF3B30]'
                           : 'border-[#A6A6A6]',
                       )}
-                      placeholder="http://"
+                      placeholder="https://"
                     />
                     <button
                       type="button"
