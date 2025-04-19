@@ -110,7 +110,7 @@ export default function RegisterBasicInfoPage() {
       phone: storeData.phone,
       address: storeData.address,
       detailAddress: storeData.detailAddress,
-      storeLinks: storeData.storeLinks,
+      storeLinks: storeData.storeLinks || [],
       description: storeData.description,
       tags: storeData.tagIds || [],
       storeImageFiles: storeData._storeImageFiles || [],
@@ -134,23 +134,25 @@ export default function RegisterBasicInfoPage() {
   // isValid 상태 관리
   const [isFormValid, setIsFormValid] = useState(false);
 
-  const [storeLinks, setStoreLinks] = useState<StoreLink[]>([]);
+  // storeLinks state 제거하고 form으로 관리
+  const storeLinks = watch('storeLinks');
 
   // 초기 데이터 로드
   useEffect(() => {
     if (storeData.storeLinks?.length) {
-      setStoreLinks(
+      setValue(
+        'storeLinks',
         storeData.storeLinks.map((link, index) => ({
           url: typeof link === 'string' ? link : link.url,
           isPrimary: typeof link === 'string' ? index === 0 : link.isPrimary,
         })),
       );
     }
-  }, [storeData.storeLinks]);
+  }, [storeData.storeLinks, setValue]);
 
   // 링크 추가 버튼 핸들러
   const handleAddLink = () => {
-    setStoreLinks([...storeLinks, { url: '', isPrimary: false }]);
+    setValue('storeLinks', [...storeLinks, { url: '', isPrimary: false }]);
   };
 
   // 링크 수정 핸들러
@@ -158,7 +160,8 @@ export default function RegisterBasicInfoPage() {
     const newLinks = storeLinks.map((link, i) =>
       i === index ? { ...link, url } : link,
     );
-    setStoreLinks(newLinks);
+    setValue('storeLinks', newLinks);
+    trigger('storeLinks'); // 유효성 검사 트리거
   };
 
   // 대표 링크 설정 핸들러
@@ -167,12 +170,15 @@ export default function RegisterBasicInfoPage() {
       ...link,
       isPrimary: i === index,
     }));
-    setStoreLinks(newLinks);
+    setValue('storeLinks', newLinks);
   };
 
   // 링크 삭제 핸들러
   const handleRemoveLink = (index: number) => {
-    setStoreLinks(storeLinks.filter((_, i) => i !== index));
+    setValue(
+      'storeLinks',
+      storeLinks.filter((_, i) => i !== index),
+    );
   };
 
   useEffect(() => {
@@ -305,10 +311,10 @@ export default function RegisterBasicInfoPage() {
   };
 
   const onSubmit = (data: FormInputs) => {
-    if (!validatePhoneNumber(data.phone)) {
-      alert('전화번호 형식을 확인해주세요.\n예시: 0000-0000-0000');
-      return;
-    }
+    // if (!validatePhoneNumber(data.phone)) {
+    //   alert('전화번호 형식을 확인해주세요.\n예시: 0000-0000-0000');
+    //   return;
+    // }
 
     if (!isFormValid) return;
 
@@ -316,10 +322,7 @@ export default function RegisterBasicInfoPage() {
 
     updateBasicInfo({
       ...rest,
-      storeLinks: storeLinks.map((link) => ({
-        url: link.url,
-        isPrimary: link.isPrimary,
-      })),
+      storeLinks: data.storeLinks, // form에서 직접 storeLinks 사용
     });
     updateTags(tags);
     updateStoreImages(data.storeImageFiles);
@@ -713,37 +716,59 @@ export default function RegisterBasicInfoPage() {
             />
           )}
         </label>
-        <div className="space-y-2">
-          {storeLinks.map((link, index) => (
-            <div key={index} className="flex items-center gap-[15.5px]">
-              <label className="flex gap-2">
-                <CheckButton
-                  setFunction={() => handleSetPrimary(index)}
-                  isChecked={link.isPrimary}
-                />
-                <div className="text-nowrap text-xs">대표</div>
-              </label>
-              <div className="relative w-full">
-                <input
-                  type="text"
-                  value={link.url}
-                  onChange={(e) => handleLinkChange(index, e.target.value)}
-                  className="border-neutral-40 w-full flex-1 rounded-[6px] border px-3 py-2 pr-10 text-sm"
-                  placeholder="http://"
-                />
-                <button
-                  type="button"
-                  onClick={() => handleRemoveLink(index)}
-                  className="absolute right-4 top-[50%] z-10 flex h-[18px] w-[18px] -translate-y-1/2 items-center justify-center"
-                >
-                  <div className="h-[15px] w-[15px]">
-                    <IconMinusRound className="text-neutral-30 h-full w-full" />
+        <Controller
+          name="storeLinks"
+          control={control}
+          rules={{
+            validate: (links) => {
+              if (links.some((link) => !link.url.trim())) {
+                return 'SNS 링크를 입력하거나 삭제해주세요';
+              }
+              return true;
+            },
+          }}
+          render={({ field }) => (
+            <div className="space-y-2">
+              {storeLinks.map((link, index) => (
+                <div key={index} className="flex items-center gap-[15.5px]">
+                  <label className="flex gap-2">
+                    <CheckButton
+                      setFunction={() => handleSetPrimary(index)}
+                      isChecked={link.isPrimary}
+                    />
+                    <div className="text-nowrap text-xs">대표</div>
+                  </label>
+                  <div className="relative w-full">
+                    <input
+                      type="text"
+                      value={link.url}
+                      onChange={(e) => handleLinkChange(index, e.target.value)}
+                      className={cn(
+                        'border-neutral-40 w-full flex-1 rounded-[6px] border px-3 py-2 pr-10 text-sm',
+                        errors.storeLinks
+                          ? 'border-[#FF3B30]'
+                          : 'border-[#A6A6A6]',
+                      )}
+                      placeholder="http://"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveLink(index)}
+                      className="absolute right-4 top-[50%] z-10 flex h-[18px] w-[18px] -translate-y-1/2 items-center justify-center"
+                    >
+                      <div className="h-[15px] w-[15px]">
+                        <IconMinusRound className="text-neutral-30 h-full w-full" />
+                      </div>
+                    </button>
                   </div>
-                </button>
-              </div>
+                </div>
+              ))}
+              {errors.storeLinks && (
+                <ValidationError errorMessage={errors.storeLinks.message} />
+              )}
             </div>
-          ))}
-        </div>
+          )}
+        />
       </div>
 
       {/* 기타 정보 */}
