@@ -180,18 +180,20 @@ export function StoreInfo({
         </div>
       )}
       {/* 디자인 나오는대로 수정필요 */}
-      {/* {storeLinks && (
+      {storeLinks && (
         <div className="flex items-start gap-[6px]">
-          <div className="flex-shrink-0 mt-[3px] md:mt-[5px] w-[10px] md:w-4">
-            <IconBaseball className="w-full h-full text-[#BABABA]" />
+          <div className="mt-[3px] w-[10px] flex-shrink-0 md:mt-[5px] md:w-4">
+            <IconBaseball className="h-full w-full text-[#BABABA]" />
           </div>
-          {storeLinks.map(({ url, isPrimary }, index) => (
-            <a className="underline break-all" key={index} href={url}>
-              {url}
-            </a>
-          ))}
+          <div className="flex flex-col gap-1">
+            {storeLinks.map((link, index) => (
+              <a className="underline" key={index} href={link}>
+                {link}
+              </a>
+            ))}
+          </div>
         </div>
-      )} */}
+      )}
     </div>
   );
 }
