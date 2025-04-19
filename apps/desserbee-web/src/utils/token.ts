@@ -13,11 +13,12 @@ export async function getTokenInfo(
   refreshToken: string | undefined,
   deviceId: string | undefined,
 ): Promise<TokenInfo> {
-  if (!accessToken && !refreshToken) {
+  // refreshToken이 없는 경우에만 토큰 없음 처리
+  if (!refreshToken) {
     return { token: null };
   }
 
-  // 캐시된 유효한 토큰이 있는지 확인
+  // accessToken이 있는 경우 캐시 확인
   if (accessToken) {
     const decodedToken = decodeJWT(accessToken);
     if (decodedToken?.sub) {
@@ -29,9 +30,10 @@ export async function getTokenInfo(
     }
   }
 
+  // accessToken이 없거나 만료된 경우 refreshToken으로 재발급 시도
   return await refreshTokenIfNeeded(
     accessToken ?? null,
-    refreshToken ?? null,
+    refreshToken,
     deviceId,
   );
 }
