@@ -86,6 +86,7 @@ export default async function socialLoginAction({
   } catch (error) {
     if (error instanceof HTTPError) {
       console.log(error.data);
+      throw error;
     }
 
     throw error;
