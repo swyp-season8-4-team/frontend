@@ -160,10 +160,10 @@ export interface NearByStoreData
     | 'latitude'
     | 'longitude'
     | 'operatingHours'
-    | 'tags'
   > {
   storeImage: string;
   shortReviewCount: number;
+  tags: string[];
 }
 
 export interface StoreSummaryInfoRequest {
