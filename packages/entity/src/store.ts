@@ -15,6 +15,17 @@ export interface Notice {
   updatedAt?: string;
 }
 
+export interface StoreTagCategory {
+  id: number;
+  name: string;
+}
+
+export interface StoreTag {
+  id: number;
+  name: string;
+  category: StoreTagCategory;
+}
+
 export interface Store {
   storeId: number;
   storeUuid: string;
@@ -39,7 +50,7 @@ export interface Store {
   createdAt?: string;
   updatedAt?: string;
   tagIds: number[];
-  tags: string[];
+  tags: StoreTag[];
   topPreferences: string[];
   storeImages?: string[];
   ownerPickImages?: string[];
