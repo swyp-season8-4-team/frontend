@@ -2,6 +2,8 @@
 
 import React, { createContext } from 'react';
 import { useMeasure } from 'react-use';
+import { usePathname } from 'next/navigation';
+import NavigationService from '@repo/usecase/src/navigationService';
 
 import type { WithChildren } from '@repo/ui/index';
 import { useInnerSize } from '../../_hooks/useInnerSize';
@@ -22,9 +24,16 @@ interface Props extends WithChildren {
 
 export const MobileScreenProvider = (props: Props) => {
   const { children } = props;
+  const pathname = usePathname();
+  const navigationService = new NavigationService({});
+  const isFullWidth = navigationService.isFullWidthPath(pathname);
 
   const [ref, { width }] = useMeasure<HTMLDivElement>();
   const { innerHeight } = useInnerSize();
+
+  if (isFullWidth) {
+    return <>{children}</>;
+  }
 
   return (
     <MobileScreenContext.Provider value={{ width }}>
