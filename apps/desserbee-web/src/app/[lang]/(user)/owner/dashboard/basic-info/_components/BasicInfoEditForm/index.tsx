@@ -30,7 +30,6 @@ import { TitleLabel } from '../../../../register/_components/TitleLabel';
 import { HiddenImageInput } from '../../../../register/_components/HiddenImageInput';
 import { NoneImageBox } from '../../../../register/_components/NoneImageBox';
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
-import { AddButton } from '../../../../register/_components/AddButton';
 import { ValidationError } from '../../../../register/_components/ValidationError';
 import IconPlusRound from '@repo/design-system/components/icons/IconPlusRound';
 import { ModalHeader } from '../../../../_components/ModalHeader';

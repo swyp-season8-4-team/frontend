@@ -1,3 +1,7 @@
 export default function DashBoardHomePage() {
-  return <></>;
+  return (
+    <>
+      <div>대시보드 홈</div>
+    </>
+  );
 }
