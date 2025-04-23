@@ -33,6 +33,7 @@ import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/
 import { AddButton } from '../../../../register/_components/AddButton';
 import { ValidationError } from '../../../../register/_components/ValidationError';
 import IconPlusRound from '@repo/design-system/components/icons/IconPlusRound';
+import { ModalHeader } from '../../../../_components/ModalHeader';
 
 // 깜빡하고 말씀 안 드렸는데, 아이콘은 재사용을 위해 정해진 양식으로 작성 후 따로 관리가 됩니다.
 // @repo/design-system/components/icons에서 확인 가능
@@ -312,196 +313,36 @@ export function BasicInfoEditForm() {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="mx-auto flex flex-col gap-y-6 p-4"
-    >
-      {/* 가게명 */}
-      <div className="flex flex-col gap-2">
-        <TitleLabel title="가게명" isPrimary={true} />
-        <Controller
-          name="name"
-          control={control}
-          rules={{
-            required: '가게명을 입력해주세요',
-            minLength: { value: 1, message: '가게명을 입력해주세요' },
-          }}
-          render={({ field }) => (
-            <div className="relative">
-              <input
-                {...field}
-                className={cn(
-                  'w-full rounded-[5px] border p-[10px] pr-10 text-sm font-medium',
-                  errors.name ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
-                )}
-                type="text"
-                placeholder="사업자등록증에 기재된 가게명 입력"
-              />
-              {field.value && (
-                <button
-                  type="button"
-                  className="absolute right-4 top-1/2 flex h-4 w-4 -translate-y-1/2 items-center justify-center"
-                  onClick={() => field.onChange('')}
-                >
-                  <IconXRound className="h-full w-full text-[#CDC8C3]" />
-                </button>
-              )}
-              {errors.name && (
-                <div className="mt-2">
-                  <ValidationError errorMessage={errors.name.message} />
-                </div>
-              )}
-            </div>
-          )}
-        />
-      </div>
-
-      {/* 가게사진 */}
-      <div className="flex flex-col gap-2">
-        <TitleLabel
-          title="대표 사진"
-          isPrimary={true}
-          description="1~3장 업로드 가능"
-        />
+    <div>
+      <ModalHeader
+        title="기본 정보 관리하기"
+        isSub={true}
+        onClose={() => router.back()}
+      />
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="mx-auto flex flex-col gap-y-6 p-4"
+      >
+        {/* 가게명 */}
         <div className="flex flex-col gap-2">
-          <HiddenImageInput
-            id="storeImages"
-            onChange={handleStoreImageFilesChange}
-            disabled={watch('storeImageFiles').length >= 3}
-            multiple
-          />
-          <div className="flex flex-wrap gap-[15px]">
-            <PhotoAddBox
-              htmlFor="storeImages"
-              disabled={watch('storeImageFiles').length >= 3}
-            />
-            <Controller
-              name="storeImageFiles"
-              control={control}
-              rules={{
-                validate: (value) =>
-                  value.length > 0 || '대표 사진을 1장 이상 업로드해주세요',
-              }}
-              render={({ field: { value } }) => (
-                <>
-                  {value.map((_, index) => (
-                    <div key={index} className="relative">
-                      <PhotoBox
-                        image={
-                          <Image
-                            width={100}
-                            height={100}
-                            src={storeImageUrls[index]}
-                            alt={`가게 사진 ${index + 1}`}
-                            className="h-full w-full object-cover"
-                          />
-                        }
-                        deleteFunction={() =>
-                          handleRemoveStoreImageFiles(index)
-                        }
-                      />
-                    </div>
-                  ))}
-                  <NoneImageBox
-                    isShown={value.length < 1}
-                    description={
-                      <>
-                        <div>가게를 대표하는 사진을</div>
-                        <div>3장 선택해주세요</div>
-                      </>
-                    }
-                  />
-                </>
-              )}
-            />
-          </div>
-          {errors.storeImageFiles && (
-            <ValidationError errorMessage={errors.storeImageFiles.message} />
-          )}
-        </div>
-      </div>
-
-      {/* 추가사진 */}
-      <div className="flex flex-col">
-        <TitleLabel title="추가 사진" description="1~n장 업로드 가능" />
-        <div className="flex flex-col gap-2">
-          <HiddenImageInput
-            id="ownerPickImageFiles"
-            onChange={handleOwnerPickImageFilesChange}
-            multiple
-          />
-          <div className="flex items-center gap-[15px]">
-            <div className="pt-2">
-              <PhotoAddBox htmlFor="ownerPickImageFiles" />
-            </div>
-            <div className="flex flex-1 gap-[15px] overflow-x-auto pt-2">
-              <Controller
-                name="ownerPickImageFiles"
-                control={control}
-                render={({ field: { value } }) => (
-                  <>
-                    {value.map((_, index) => (
-                      <div key={index} className="relative flex-shrink-0">
-                        <PhotoBox
-                          image={
-                            <Image
-                              width={100}
-                              height={100}
-                              src={ownerPickImageUrls[index]}
-                              alt={`홍보용 가게 사진 ${index + 1}`}
-                              className="h-full w-full object-cover"
-                            />
-                          }
-                          deleteFunction={() =>
-                            handleRemoveOwnerPickImageFiles(index)
-                          }
-                        />
-                      </div>
-                    ))}
-                    <NoneImageBox
-                      isShown={value.length < 1}
-                      description={
-                        <>
-                          <div>사장님 픽 홍보용 사진을</div>
-                          <div>선택해주세요</div>
-                        </>
-                      }
-                    />
-                  </>
-                )}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 전화번호 */}
-      <div className="flex flex-col gap-2">
-        <TitleLabel title="전화번호" isPrimary={true} />
-        <Controller
-          name="phone"
-          control={control}
-          rules={{
-            required: '전화번호를 입력해주세요',
-            validate: (value) =>
-              validatePhoneNumber(value) ||
-              '전화번호 형식을 확인해주세요 (예: 0000-0000-0000)',
-          }}
-          render={({ field }) => (
-            <div>
+          <TitleLabel title="가게명" isPrimary={true} />
+          <Controller
+            name="name"
+            control={control}
+            rules={{
+              required: '가게명을 입력해주세요',
+              minLength: { value: 1, message: '가게명을 입력해주세요' },
+            }}
+            render={({ field }) => (
               <div className="relative">
                 <input
                   {...field}
                   className={cn(
                     'w-full rounded-[5px] border p-[10px] pr-10 text-sm font-medium',
-                    errors.phone ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
+                    errors.name ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
                   )}
                   type="text"
-                  placeholder="전화번호 (예. 010-1234-5567)"
-                  onChange={(e) => {
-                    const value = e.target.value.replace(/[^0-9-]/g, '');
-                    field.onChange(value);
-                  }}
+                  placeholder="사업자등록증에 기재된 가게명 입력"
                 />
                 {field.value && (
                   <button
@@ -512,109 +353,254 @@ export function BasicInfoEditForm() {
                     <IconXRound className="h-full w-full text-[#CDC8C3]" />
                   </button>
                 )}
-              </div>
-
-              {errors.phone && (
-                <div className="mt-2">
-                  <ValidationError errorMessage={errors.phone.message} />
-                </div>
-              )}
-            </div>
-          )}
-        />
-      </div>
-
-      {/* 주소 */}
-      <div className="flex flex-col gap-2">
-        <TitleLabel title="주소" isPrimary={true} />
-        <div onClick={openAddressModal} className="relative cursor-pointer">
-          <button
-            type="button"
-            className="pointer-events-none absolute right-[10px] top-[50%] -translate-y-1/2"
-          >
-            <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
-          </button>
-          <Controller
-            name="address"
-            control={control}
-            rules={{ required: '주소를 입력해주세요' }}
-            render={({ field }) => (
-              <div className="relative">
-                <input
-                  {...field}
-                  className={cn(
-                    'pointer-events-none w-full rounded-[5px] border bg-[#F0F0F0] p-[10px] text-sm font-medium',
-                    errors.address ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
-                  )}
-                  type="text"
-                  placeholder="주소 검색"
-                  disabled
-                />
+                {errors.name && (
+                  <div className="mt-2">
+                    <ValidationError errorMessage={errors.name.message} />
+                  </div>
+                )}
               </div>
             )}
           />
         </div>
-        <Controller
-          name="detailAddress"
-          control={control}
-          render={({ field }) => (
-            <div className="relative">
-              <input
-                {...field}
-                className="w-full rounded-[5px] border border-[#A6A6A6] p-[10px] pr-10 text-sm"
-                type="text"
-                placeholder="상세주소"
-              />
-              {field.value && (
-                <button
-                  type="button"
-                  className="absolute right-[10px] top-[50%] flex h-4 w-4 -translate-y-1/2 items-center justify-center"
-                  onClick={() => field.onChange('')}
-                >
-                  <IconXRound className="h-full w-full text-[#CDC8C3]" />
-                </button>
-              )}
-            </div>
-          )}
-        />
-        {errors.address && (
-          <div className="mt-2">
-            <ValidationError errorMessage={errors.address.message} />
-          </div>
-        )}
-      </div>
 
-      {/* 스페셜 휴무일 */}
-      <div className="flex flex-col gap-2">
-        <label htmlFor="holiday" className="flex flex-col gap-[5px]">
-          <div className="flex items-center justify-between">
-            <TitleLabel title="스페셜 휴무일" />
+        {/* 가게사진 */}
+        <div className="flex flex-col gap-2">
+          <TitleLabel
+            title="대표 사진"
+            isPrimary={true}
+            description="1~3장 업로드 가능"
+          />
+          <div className="flex flex-col gap-2">
+            <HiddenImageInput
+              id="storeImages"
+              onChange={handleStoreImageFilesChange}
+              disabled={watch('storeImageFiles').length >= 3}
+              multiple
+            />
+            <div className="flex flex-wrap gap-[15px]">
+              <PhotoAddBox
+                htmlFor="storeImages"
+                disabled={watch('storeImageFiles').length >= 3}
+              />
+              <Controller
+                name="storeImageFiles"
+                control={control}
+                rules={{
+                  validate: (value) =>
+                    value.length > 0 || '대표 사진을 1장 이상 업로드해주세요',
+                }}
+                render={({ field: { value } }) => (
+                  <>
+                    {value.map((_, index) => (
+                      <div key={index} className="relative">
+                        <PhotoBox
+                          image={
+                            <Image
+                              width={100}
+                              height={100}
+                              src={storeImageUrls[index]}
+                              alt={`가게 사진 ${index + 1}`}
+                              className="h-full w-full object-cover"
+                            />
+                          }
+                          deleteFunction={() =>
+                            handleRemoveStoreImageFiles(index)
+                          }
+                        />
+                      </div>
+                    ))}
+                    <NoneImageBox
+                      isShown={value.length < 1}
+                      description={
+                        <>
+                          <div>가게를 대표하는 사진을</div>
+                          <div>3장 선택해주세요</div>
+                        </>
+                      }
+                    />
+                  </>
+                )}
+              />
+            </div>
+            {errors.storeImageFiles && (
+              <ValidationError errorMessage={errors.storeImageFiles.message} />
+            )}
+          </div>
+        </div>
+
+        {/* 추가사진 */}
+        <div className="flex flex-col">
+          <TitleLabel title="추가 사진" description="1~n장 업로드 가능" />
+          <div className="flex flex-col gap-2">
+            <HiddenImageInput
+              id="ownerPickImageFiles"
+              onChange={handleOwnerPickImageFilesChange}
+              multiple
+            />
+            <div className="flex items-center gap-[15px]">
+              <div className="pt-2">
+                <PhotoAddBox htmlFor="ownerPickImageFiles" />
+              </div>
+              <div className="flex flex-1 gap-[15px] overflow-x-auto pt-2">
+                <Controller
+                  name="ownerPickImageFiles"
+                  control={control}
+                  render={({ field: { value } }) => (
+                    <>
+                      {value.map((_, index) => (
+                        <div key={index} className="relative flex-shrink-0">
+                          <PhotoBox
+                            image={
+                              <Image
+                                width={100}
+                                height={100}
+                                src={ownerPickImageUrls[index]}
+                                alt={`홍보용 가게 사진 ${index + 1}`}
+                                className="h-full w-full object-cover"
+                              />
+                            }
+                            deleteFunction={() =>
+                              handleRemoveOwnerPickImageFiles(index)
+                            }
+                          />
+                        </div>
+                      ))}
+                      <NoneImageBox
+                        isShown={value.length < 1}
+                        description={
+                          <>
+                            <div>사장님 픽 홍보용 사진을</div>
+                            <div>선택해주세요</div>
+                          </>
+                        }
+                      />
+                    </>
+                  )}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 전화번호 */}
+        <div className="flex flex-col gap-2">
+          <TitleLabel title="전화번호" isPrimary={true} />
+          <Controller
+            name="phone"
+            control={control}
+            rules={{
+              required: '전화번호를 입력해주세요',
+              validate: (value) =>
+                validatePhoneNumber(value) ||
+                '전화번호 형식을 확인해주세요 (예: 0000-0000-0000)',
+            }}
+            render={({ field }) => (
+              <div>
+                <div className="relative">
+                  <input
+                    {...field}
+                    className={cn(
+                      'w-full rounded-[5px] border p-[10px] pr-10 text-sm font-medium',
+                      errors.phone ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
+                    )}
+                    type="text"
+                    placeholder="전화번호 (예. 010-1234-5567)"
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/[^0-9-]/g, '');
+                      field.onChange(value);
+                    }}
+                  />
+                  {field.value && (
+                    <button
+                      type="button"
+                      className="absolute right-4 top-1/2 flex h-4 w-4 -translate-y-1/2 items-center justify-center"
+                      onClick={() => field.onChange('')}
+                    >
+                      <IconXRound className="h-full w-full text-[#CDC8C3]" />
+                    </button>
+                  )}
+                </div>
+
+                {errors.phone && (
+                  <div className="mt-2">
+                    <ValidationError errorMessage={errors.phone.message} />
+                  </div>
+                )}
+              </div>
+            )}
+          />
+        </div>
+
+        {/* 주소 */}
+        <div className="flex flex-col gap-2">
+          <TitleLabel title="주소" isPrimary={true} />
+          <div onClick={openAddressModal} className="relative cursor-pointer">
             <button
               type="button"
-              onClick={() => {
-                //스페셜 휴무일 추가 함수
-              }}
-              className="text-primary-60 flex items-center gap-[5px]"
+              className="pointer-events-none absolute right-[10px] top-[50%] -translate-y-1/2"
             >
-              <div className="h-[13px] w-[13px]">
-                <IconPlusRound className="h-full w-full" />
-              </div>
-              <div className="text-xs">추가</div>
+              <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
             </button>
+            <Controller
+              name="address"
+              control={control}
+              rules={{ required: '주소를 입력해주세요' }}
+              render={({ field }) => (
+                <div className="relative">
+                  <input
+                    {...field}
+                    className={cn(
+                      'pointer-events-none w-full rounded-[5px] border bg-[#F0F0F0] p-[10px] text-sm font-medium',
+                      errors.address ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
+                    )}
+                    type="text"
+                    placeholder="주소 검색"
+                    disabled
+                  />
+                </div>
+              )}
+            />
           </div>
-        </label>
-        {/* 스페셜 휴무일 ui 구현 */}
-      </div>
+          <Controller
+            name="detailAddress"
+            control={control}
+            render={({ field }) => (
+              <div className="relative">
+                <input
+                  {...field}
+                  className="w-full rounded-[5px] border border-[#A6A6A6] p-[10px] pr-10 text-sm"
+                  type="text"
+                  placeholder="상세주소"
+                />
+                {field.value && (
+                  <button
+                    type="button"
+                    className="absolute right-[10px] top-[50%] flex h-4 w-4 -translate-y-1/2 items-center justify-center"
+                    onClick={() => field.onChange('')}
+                  >
+                    <IconXRound className="h-full w-full text-[#CDC8C3]" />
+                  </button>
+                )}
+              </div>
+            )}
+          />
+          {errors.address && (
+            <div className="mt-2">
+              <ValidationError errorMessage={errors.address.message} />
+            </div>
+          )}
+        </div>
 
-      {/* SNS 링크 */}
-      <div className="flex flex-col gap-2">
-        <label htmlFor="storeLink" className="flex flex-col gap-[5px]">
-          <div className="flex items-center justify-between">
-            <TitleLabel title="SNS 링크" />
-            {storeLinks.length < 3 && (
+        {/* 스페셜 휴무일 */}
+        <div className="flex flex-col gap-2">
+          <label htmlFor="holiday" className="flex flex-col gap-[5px]">
+            <div className="flex items-center justify-between">
+              <TitleLabel title="스페셜 휴무일" />
               <button
                 type="button"
-                onClick={handleAddLink}
+                onClick={() => {
+                  //스페셜 휴무일 추가 함수
+                }}
                 className="text-primary-60 flex items-center gap-[5px]"
               >
                 <div className="h-[13px] w-[13px]">
@@ -622,236 +608,261 @@ export function BasicInfoEditForm() {
                 </div>
                 <div className="text-xs">추가</div>
               </button>
-            )}
-          </div>
-          <div className="text-neutral-40 text-xs">최대 3개 추가</div>
-        </label>
-        <Controller
-          name="storeLinks"
-          control={control}
-          rules={{
-            validate: (links) => {
-              if (links.length === 0) return true;
+            </div>
+          </label>
+          {/* 스페셜 휴무일 ui 구현 */}
+        </div>
 
-              // 빈 URL 체크
-              if (links.some((link) => !link.url.trim())) {
-                return 'SNS 링크를 입력하거나 삭제해주세요';
-              }
-
-              // URL 형식 체크
-              if (links.some((link) => !isValidURL(link.url.trim()))) {
-                return '올바른 URL 형식이 아닙니다 (예: https://www.example.com)';
-              }
-
-              return true;
-            },
-          }}
-          render={({ field }) => (
-            <div className="space-y-2">
-              {storeLinks.map((link, index) => (
-                <div key={index} className="flex items-center gap-[15.5px]">
-                  <label className="flex gap-2">
-                    <CheckButton
-                      setFunction={() => handleSetPrimary(index)}
-                      isChecked={link.isPrimary}
-                    />
-                    <div className="text-nowrap text-xs">대표</div>
-                  </label>
-                  <div className="relative w-full">
-                    <input
-                      type="text"
-                      value={link.url}
-                      onChange={(e) => handleLinkChange(index, e.target.value)}
-                      className={cn(
-                        'w-full rounded-[5px] border p-[10px] pr-10 text-sm font-medium',
-                        errors.storeLinks
-                          ? 'border-[#FF3B30]'
-                          : 'border-[#A6A6A6]',
-                      )}
-                      placeholder="https://"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveLink(index)}
-                      className="absolute right-4 top-1/2 flex h-4 w-4 -translate-y-1/2 items-center justify-center"
-                    >
-                      <IconMinusRound className="text-neutral-30 h-full w-full" />
-                    </button>
+        {/* SNS 링크 */}
+        <div className="flex flex-col gap-2">
+          <label htmlFor="storeLink" className="flex flex-col gap-[5px]">
+            <div className="flex items-center justify-between">
+              <TitleLabel title="SNS 링크" />
+              {storeLinks.length < 3 && (
+                <button
+                  type="button"
+                  onClick={handleAddLink}
+                  className="text-primary-60 flex items-center gap-[5px]"
+                >
+                  <div className="h-[13px] w-[13px]">
+                    <IconPlusRound className="h-full w-full" />
                   </div>
-                </div>
-              ))}
-              {errors.storeLinks && (
-                <div className="mt-2">
-                  <ValidationError errorMessage={errors.storeLinks.message} />
-                </div>
+                  <div className="text-xs">추가</div>
+                </button>
               )}
             </div>
-          )}
-        />
-      </div>
-
-      {/* 특성 태그 */}
-      <div className="flex flex-col gap-2">
-        <TitleLabel
-          title="특성 태그"
-          isPrimary={true}
-          description="최대 3개 선택"
-        />
-        <Controller
-          name="tags"
-          control={control}
-          rules={{
-            required: '특성 태그를 선택해주세요',
-            validate: (value) => value.length > 0 || '특성 태그를 선택해주세요',
-          }}
-          render={({ field: { value } }) =>
-            value.length > 0 ? (
-              <div className="relative cursor-pointer" onClick={openTagModal}>
-                <button
-                  type="button"
-                  className="pointer-events-none absolute right-[10px] top-5 -translate-y-1/2"
-                >
-                  <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
-                </button>
-                <div className="pointer-events-none flex w-full flex-wrap gap-1 rounded-[5px] border border-[#A6A6A6] bg-[#F0F0F0] p-[10px] pr-8 text-sm">
-                  {value.map((tagId) => {
-                    const tag = TAGS.find((t) => t.id === tagId);
-                    const category = tag
-                      ? TAG_CATEGORIES.find(
-                          (cat) => cat.categoryId === tag.parentId,
-                        )
-                      : null;
-
-                    return tag && category ? (
-                      <div
-                        key={tagId}
-                        className="rounded-[3px] border-[0.3px] border-[#A6A6A6] bg-white px-2 py-1 text-xs text-[#393939]"
-                      >
-                        {category.categoryName}&nbsp;{'>'}&nbsp;{tag.name}
-                      </div>
-                    ) : null;
-                  })}
-                </div>
-              </div>
-            ) : (
-              <div className="relative cursor-pointer" onClick={openTagModal}>
-                <button
-                  type="button"
-                  className="pointer-events-none absolute right-[10px] top-[50%] -translate-y-1/2"
-                >
-                  <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
-                </button>
-                <input
-                  className={cn(
-                    'pointer-events-none w-full rounded-[5px] border bg-[#F0F0F0] p-[10px] pr-10 text-sm font-medium',
-                    errors.tags ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
-                  )}
-                  type="text"
-                  placeholder="특성 태그 선택"
-                  disabled
-                />
-              </div>
-            )
-          }
-        />
-        {errors.tags && (
-          <div className="mt-2">
-            <ValidationError errorMessage={errors.tags.message} />
-          </div>
-        )}
-      </div>
-
-      {/* 한 줄 소개 */}
-      <div className="flex flex-col gap-2">
-        <label htmlFor="description" className="flex justify-between">
-          <TitleLabel title="한 줄 소개" />
+            <div className="text-neutral-40 text-xs">최대 3개 추가</div>
+          </label>
           <Controller
-            name="description"
+            name="storeLinks"
             control={control}
-            render={({ field: { value } }) => (
-              <div className="flex items-center text-xs">
-                <div className="text-[#424242]">
-                  {(value?.length as number) > 100 ? 100 : value?.length}
-                </div>
-                <div className="text-neutral-50">/100</div>
+            rules={{
+              validate: (links) => {
+                if (links.length === 0) return true;
+
+                // 빈 URL 체크
+                if (links.some((link) => !link.url.trim())) {
+                  return 'SNS 링크를 입력하거나 삭제해주세요';
+                }
+
+                // URL 형식 체크
+                if (links.some((link) => !isValidURL(link.url.trim()))) {
+                  return '올바른 URL 형식이 아닙니다 (예: https://www.example.com)';
+                }
+
+                return true;
+              },
+            }}
+            render={({ field }) => (
+              <div className="space-y-2">
+                {storeLinks.map((link, index) => (
+                  <div key={index} className="flex items-center gap-[15.5px]">
+                    <label className="flex gap-2">
+                      <CheckButton
+                        setFunction={() => handleSetPrimary(index)}
+                        isChecked={link.isPrimary}
+                      />
+                      <div className="text-nowrap text-xs">대표</div>
+                    </label>
+                    <div className="relative w-full">
+                      <input
+                        type="text"
+                        value={link.url}
+                        onChange={(e) =>
+                          handleLinkChange(index, e.target.value)
+                        }
+                        className={cn(
+                          'w-full rounded-[5px] border p-[10px] pr-10 text-sm font-medium',
+                          errors.storeLinks
+                            ? 'border-[#FF3B30]'
+                            : 'border-[#A6A6A6]',
+                        )}
+                        placeholder="https://"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveLink(index)}
+                        className="absolute right-4 top-1/2 flex h-4 w-4 -translate-y-1/2 items-center justify-center"
+                      >
+                        <IconMinusRound className="text-neutral-30 h-full w-full" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {errors.storeLinks && (
+                  <div className="mt-2">
+                    <ValidationError errorMessage={errors.storeLinks.message} />
+                  </div>
+                )}
               </div>
             )}
           />
-        </label>
-        <Controller
-          name="description"
-          control={control}
-          render={({ field }) => (
-            <textarea
-              {...field}
-              className="min-h-[108px] w-full resize-none rounded-[5px] border border-[#A6A6A6] p-3 text-sm"
-              maxLength={100}
-              placeholder="사장님 가게를 소개해주세요"
-              onInput={(e) => {
-                const value = e.currentTarget.value;
-                if (value.length > 100) {
-                  e.currentTarget.value = value.slice(0, 100); // 100자 이상 입력 방지
-                }
-              }}
-            />
-          )}
-        />
-      </div>
+        </div>
 
-      {/* 기타 정보 */}
-      <div className="flex flex-col gap-2">
-        <TitleLabel title="기타 정보" />
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={() => {
-              FEATURES.forEach(({ id }) => {
-                setValue(`features.${id}` as any, false);
-              });
+        {/* 특성 태그 */}
+        <div className="flex flex-col gap-2">
+          <TitleLabel
+            title="특성 태그"
+            isPrimary={true}
+            description="최대 3개 선택"
+          />
+          <Controller
+            name="tags"
+            control={control}
+            rules={{
+              required: '특성 태그를 선택해주세요',
+              validate: (value) =>
+                value.length > 0 || '특성 태그를 선택해주세요',
             }}
-            className={cn(
-              'text-neutral-30 flex min-w-[93px] items-center justify-center rounded-[6px] border px-[10px] py-2',
-              Object.values(watch('features')).every((v) => !v)
-                ? 'border-primary-60 bg-primary-90'
-                : 'border-[#CDC8C3] bg-white',
-            )}
-          >
-            <div className="text-[11px]">선택 안함</div>
-          </button>
+            render={({ field: { value } }) =>
+              value.length > 0 ? (
+                <div className="relative cursor-pointer" onClick={openTagModal}>
+                  <button
+                    type="button"
+                    className="pointer-events-none absolute right-[10px] top-5 -translate-y-1/2"
+                  >
+                    <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
+                  </button>
+                  <div className="pointer-events-none flex w-full flex-wrap gap-1 rounded-[5px] border border-[#A6A6A6] bg-[#F0F0F0] p-[10px] pr-8 text-sm">
+                    {value.map((tagId) => {
+                      const tag = TAGS.find((t) => t.id === tagId);
+                      const category = tag
+                        ? TAG_CATEGORIES.find(
+                            (cat) => cat.categoryId === tag.parentId,
+                          )
+                        : null;
 
-          {/* 기존 feature 버튼들 */}
-          {FEATURES.map(({ icon, title, id }) => (
+                      return tag && category ? (
+                        <div
+                          key={tagId}
+                          className="rounded-[3px] border-[0.3px] border-[#A6A6A6] bg-white px-2 py-1 text-xs text-[#393939]"
+                        >
+                          {category.categoryName}&nbsp;{'>'}&nbsp;{tag.name}
+                        </div>
+                      ) : null;
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <div className="relative cursor-pointer" onClick={openTagModal}>
+                  <button
+                    type="button"
+                    className="pointer-events-none absolute right-[10px] top-[50%] -translate-y-1/2"
+                  >
+                    <IconDirection className="h-full w-full -rotate-90 text-[#6F6F6F]" />
+                  </button>
+                  <input
+                    className={cn(
+                      'pointer-events-none w-full rounded-[5px] border bg-[#F0F0F0] p-[10px] pr-10 text-sm font-medium',
+                      errors.tags ? 'border-[#FF3B30]' : 'border-[#A6A6A6]',
+                    )}
+                    type="text"
+                    placeholder="특성 태그 선택"
+                    disabled
+                  />
+                </div>
+              )
+            }
+          />
+          {errors.tags && (
+            <div className="mt-2">
+              <ValidationError errorMessage={errors.tags.message} />
+            </div>
+          )}
+        </div>
+
+        {/* 한 줄 소개 */}
+        <div className="flex flex-col gap-2">
+          <label htmlFor="description" className="flex justify-between">
+            <TitleLabel title="한 줄 소개" />
             <Controller
-              key={id}
-              name={`features.${id}` as any}
+              name="description"
               control={control}
-              render={({ field: { value, onChange } }) => (
-                <button
-                  type="button"
-                  onClick={() => onChange(!value)}
-                  className={cn(
-                    'text-neutral-30 flex min-w-[93px] items-center justify-center gap-2 rounded-[6px] border px-[10px] py-2 text-[11px]',
-                    value
-                      ? 'border-primary-60 bg-primary-90'
-                      : 'border-[#CDC8C3] bg-white',
-                  )}
-                >
-                  <div className="h-4 w-4">{icon}</div>
-                  <div className="text-[11px]">{title}</div>
-                </button>
+              render={({ field: { value } }) => (
+                <div className="flex items-center text-xs">
+                  <div className="text-[#424242]">
+                    {(value?.length as number) > 100 ? 100 : value?.length}
+                  </div>
+                  <div className="text-neutral-50">/100</div>
+                </div>
               )}
             />
-          ))}
+          </label>
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <textarea
+                {...field}
+                className="min-h-[108px] w-full resize-none rounded-[5px] border border-[#A6A6A6] p-3 text-sm"
+                maxLength={100}
+                placeholder="사장님 가게를 소개해주세요"
+                onInput={(e) => {
+                  const value = e.currentTarget.value;
+                  if (value.length > 100) {
+                    e.currentTarget.value = value.slice(0, 100); // 100자 이상 입력 방지
+                  }
+                }}
+              />
+            )}
+          />
         </div>
-      </div>
 
-      {/* 초기화 버튼 구현 필요 */}
-      <OliveButton
-        type="submit"
-        className="font-semibold"
-        text="완료"
-        isDisabled={!isFormValid}
-      />
-    </form>
+        {/* 기타 정보 */}
+        <div className="flex flex-col gap-2">
+          <TitleLabel title="기타 정보" />
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                FEATURES.forEach(({ id }) => {
+                  setValue(`features.${id}` as any, false);
+                });
+              }}
+              className={cn(
+                'text-neutral-30 flex min-w-[93px] items-center justify-center rounded-[6px] border px-[10px] py-2',
+                Object.values(watch('features')).every((v) => !v)
+                  ? 'border-primary-60 bg-primary-90'
+                  : 'border-[#CDC8C3] bg-white',
+              )}
+            >
+              <div className="text-[11px]">선택 안함</div>
+            </button>
+
+            {/* 기존 feature 버튼들 */}
+            {FEATURES.map(({ icon, title, id }) => (
+              <Controller
+                key={id}
+                name={`features.${id}` as any}
+                control={control}
+                render={({ field: { value, onChange } }) => (
+                  <button
+                    type="button"
+                    onClick={() => onChange(!value)}
+                    className={cn(
+                      'text-neutral-30 flex min-w-[93px] items-center justify-center gap-2 rounded-[6px] border px-[10px] py-2 text-[11px]',
+                      value
+                        ? 'border-primary-60 bg-primary-90'
+                        : 'border-[#CDC8C3] bg-white',
+                    )}
+                  >
+                    <div className="h-4 w-4">{icon}</div>
+                    <div className="text-[11px]">{title}</div>
+                  </button>
+                )}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* 초기화 버튼 구현 필요 */}
+        <OliveButton
+          type="submit"
+          className="font-semibold"
+          text="완료"
+          isDisabled={!isFormValid}
+        />
+      </form>
+    </div>
   );
 }
