@@ -26,8 +26,8 @@ export default async function UserLayout({ children }: WithChildren) {
   const user = await userService.getMe();
 
   return (
-    <MobileScreenProvider>
-      <UserProvider user={user}>{children}</UserProvider>
-    </MobileScreenProvider>
+    // <MobileScreenProvider>
+    <UserProvider user={user}>{children}</UserProvider>
+    // </MobileScreenProvider>
   );
 }

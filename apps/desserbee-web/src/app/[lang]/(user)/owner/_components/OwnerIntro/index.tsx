@@ -29,15 +29,15 @@ const OWNER_NAVIGATIONS = [
   //   ),
   //   path: '',
   // },
-  // {
-  //   index: '03.',
-  //   title: '내 가게\n관리하기',
-  //   description: '가게의 이벤트, 통계를 확인해보세요.',
-  //   icon: (
-  //     <IconReport className="w-[43.52px] md:w-[97px] h-[43.52px] md:h-[97px] aspect-square" />
-  //   ),
-  //   path: '',
-  // },
+  {
+    index: '03.',
+    title: '내 가게\n관리하기',
+    description: '가게의 이벤트, 통계를 확인해보세요.',
+    icon: (
+      <IconReport className="aspect-square h-[43.52px] w-[43.52px] md:h-[97px] md:w-[97px]" />
+    ),
+    path: navigationService.getHref(NavigationPathname.OwnerDashboard),
+  },
 ];
 
 export function OwnerIntro() {
