@@ -34,4 +34,8 @@ export default class NavigationService {
       pathname.includes(NavigationPathname.Owner)
     );
   }
+
+  isFullWidthPath(pathname: string): boolean {
+    return pathname.includes(NavigationPathname.Owner);
+  }
 }
