@@ -4,12 +4,14 @@ import { Logo } from '@/app/[lang]/_components/Logo';
 import { recipeKorea } from '@/app/fonts';
 import { ShopInfo } from './_components/ShopInfo';
 import { ShopDetail } from './_components/ShopDetail';
+import { Notice } from './_components/Notice';
+import { MenuList } from './_components/MenuList';
 
 export default function DashBoardHomePage() {
   return (
     <div className="h-full bg-[#EBEBEB]">
       <div className="flex h-[56px] w-full items-center">
-        <div className="flex w-4/5 h-full items-center gap-2 p-3">
+        <div className="flex h-full w-4/5 items-center gap-2 p-3">
           <Logo width={30} height={30} />
           <div className={`${recipeKorea.className} text-xl`}>디저비</div>
         </div>
@@ -31,6 +33,11 @@ export default function DashBoardHomePage() {
       <div className="flex flex-col gap-4">
         <ShopInfo />
         <ShopDetail />
+        <MenuList title="메뉴리스트" />
+        <Notice
+          title="최근 공지"
+          content="런던 베이글 뮤지엄 안국점 현장대기 및 원격줄서기는 캐치테이블을 이용부탁드립니다🌼 많은 관심과 이용부탁드립니다💚"
+        />
       </div>
     </div>
   );

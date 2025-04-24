@@ -25,6 +25,11 @@ export function ShopDetail() {
 
         <div>
           <p className="mb-2 text-[#4B4B4B]">기타 정보</p>
+          <div className="flex gap-6">
+            <p>주차 가능</p>
+            <p>반려동물 동반</p>
+            <p>텀블러 할인</p>
+          </div>
         </div>
       </div>
     </div>
