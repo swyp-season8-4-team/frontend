@@ -373,7 +373,7 @@ export default function SocialLoginUserExtraInfoForm({
 
   return (
     <>
-      <header className="z-modal fixed top-0 w-full max-w-screen-md bg-[#FAFAFA] py-[14px] text-center font-medium text-[#1D1B20]">
+      <header className="z-modal fixed top-0 w-full bg-[#FAFAFA] py-[14px] text-center font-medium text-[#1D1B20]">
         프로필 입력
       </header>
       <form

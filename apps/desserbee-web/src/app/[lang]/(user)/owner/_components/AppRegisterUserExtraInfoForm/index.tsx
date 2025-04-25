@@ -142,7 +142,7 @@ export default function AppRegisterUserExtraInfoForm({
 
   return (
     <>
-      <header className="z-modal fixed top-0 w-full max-w-screen-md bg-[#FAFAFA] py-[14px] text-center font-medium text-[#1D1B20]">
+      <header className="z-modal fixed top-0 w-full bg-[#FAFAFA] py-[14px] text-center font-medium text-[#1D1B20]">
         기본 정보
       </header>
       <form
