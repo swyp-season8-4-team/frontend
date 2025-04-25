@@ -44,7 +44,6 @@ export async function commonErrorHandler<T>(
     return await promise;
   } catch (e) {
     if (!(e instanceof HTTPError)) {
-      console.log('----[Error 발생]----');
       console.log(e);
       throw e;
     }
@@ -54,7 +53,6 @@ export async function commonErrorHandler<T>(
       action(options);
     }
 
-    console.error('----[HTTPError]----');
     console.error(e.data);
     throw e;
   }
