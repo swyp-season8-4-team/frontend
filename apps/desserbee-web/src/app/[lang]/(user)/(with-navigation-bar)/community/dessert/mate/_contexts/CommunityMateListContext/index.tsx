@@ -1,13 +1,17 @@
 'use client';
 
-import { SearchMessageAction, type SearchMessageData } from "@/types/postMessage";
-import type { CommunityCategory } from "@repo/entity/src/community";
-import type { Mate } from "@repo/entity/src/mate";
-import MateAPIRepository from "@repo/infrastructures/src/repositories/mateAPIRepository";
-import type { WithChildren } from "@repo/ui";
-import useMessageEvent from "@repo/ui/hooks/useMessageEvent";
-import MateService from "@repo/usecase/src/mateService";
-import { createContext, useCallback, useState } from "react";
+import { commonErrorHandler } from '@/error/commonErrorHandler';
+import {
+  SearchMessageAction,
+  type SearchMessageData,
+} from '@/types/postMessage';
+import type { CommunityCategory } from '@repo/entity/src/community';
+import type { Mate } from '@repo/entity/src/mate';
+import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRepository';
+import type { WithChildren } from '@repo/ui';
+import useMessageEvent from '@repo/ui/hooks/useMessageEvent';
+import MateService from '@repo/usecase/src/mateService';
+import { createContext, useCallback, useState } from 'react';
 
 interface State {
   mates: Mate[];
@@ -32,67 +36,84 @@ const mateService = new MateService({
   mateRepository: new MateAPIRepository(),
 });
 
-export function CommunityMateListProvider({ children, initialIsLast, initialMates }: Props) {
+export function CommunityMateListProvider({
+  children,
+  initialIsLast,
+  initialMates,
+}: Props) {
   const [mates, setMates] = useState<Mate[]>(initialMates);
   const [isLast, setIsLast] = useState(initialIsLast);
   const [page, setPage] = useState(10);
   const [keyword, setKeyword] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<CommunityCategory | null>(null);
+  const [selectedCategory, setSelectedCategory] =
+    useState<CommunityCategory | null>(null);
 
   const loadMore = useCallback(async () => {
     if (isLast) {
       return;
     }
-    
-    const response = await mateService.getMateList({
-      from: page,
-      to: page + 9,
-      ...(!!selectedCategory && { mateCategoryId: selectedCategory }),
-      ...(!!keyword && { keyword }),
-    });
 
-    setMates(prev => [...prev, ...response.mates]);
+    const response = await commonErrorHandler(
+      mateService.getMateList({
+        from: page,
+        to: page + 9,
+        ...(!!selectedCategory && { mateCategoryId: selectedCategory }),
+        ...(!!keyword && { keyword }),
+      }),
+    );
+
+    setMates((prev) => [...prev, ...response.mates]);
     setIsLast(response.isLast);
     setPage(page + 10);
   }, [isLast, keyword, page, selectedCategory]);
 
   // FIXME: 중복코드
-  const messageReceiveHandler = useCallback(async ({ action, payload }: SearchMessageData) => {
-    if (action === SearchMessageAction.GetCategories) {
-      const response = await mateService.getMateList({
-        ...(payload?.selectedCategory && { from: 0, to: page }),
-        mateCategoryId: payload?.selectedCategory
-      });
+  const messageReceiveHandler = useCallback(
+    async ({ action, payload }: SearchMessageData) => {
+      if (action === SearchMessageAction.GetCategories) {
+        const response = await commonErrorHandler(
+          mateService.getMateList({
+            ...(payload?.selectedCategory && { from: 0, to: page }),
+            mateCategoryId: payload?.selectedCategory,
+          }),
+        );
 
-      if (!!payload?.selectedCategory) {
-        setSelectedCategory(payload?.selectedCategory);
+        if (!!payload?.selectedCategory) {
+          setSelectedCategory(payload?.selectedCategory);
+        }
+
+        setMates((prev) => {
+          return response.mates.filter(
+            (mate) => !prev.some((prevMate) => prevMate.id === mate.id),
+          );
+        });
+        setIsLast(response.isLast);
+        return;
       }
 
-      setMates((prev) => {
-        return response.mates.filter((mate) => !prev.some((prevMate) => prevMate.id === mate.id));
-      });
-      setIsLast(response.isLast);
-      return;
-    }
+      if (action === SearchMessageAction.GetSearch) {
+        const response = await commonErrorHandler(
+          mateService.getMateList({
+            ...(!payload?.keyword && { from: 0, to: page }),
+            ...(!!payload?.keyword && { keyword: payload?.keyword }),
+          }),
+        );
 
-    if (action === SearchMessageAction.GetSearch) {
-      const response = await mateService.getMateList({
-        ...(!payload?.keyword && { from: 0, to: page }),
-        ...(!!payload?.keyword && { keyword: payload?.keyword }),
-      });
+        if (!!payload?.keyword) {
+          setKeyword(payload?.keyword);
+        }
 
-      if (!!payload?.keyword) {
-        setKeyword(payload?.keyword);
+        setMates((prev) => {
+          return response.mates.filter(
+            (mate) => !prev.some((prevMate) => prevMate.id === mate.id),
+          );
+        });
+        setIsLast(response.isLast);
+        return;
       }
-
-      setMates((prev) => {
-        return response.mates.filter((mate) => !prev.some((prevMate) => prevMate.id === mate.id));
-      });
-      setIsLast(response.isLast);
-      return;
-    }
-
-  }, [page]);
+    },
+    [page],
+  );
 
   useMessageEvent(messageReceiveHandler);
 
@@ -100,5 +121,5 @@ export function CommunityMateListProvider({ children, initialIsLast, initialMate
     <CommunityMateListContext.Provider value={{ mates, isLast, loadMore }}>
       {children}
     </CommunityMateListContext.Provider>
-  )
+  );
 }

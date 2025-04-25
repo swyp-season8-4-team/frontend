@@ -5,6 +5,7 @@ import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import NotFound from '@/app/[lang]/[...not-found]/page';
 import { GoOwnerPageModal } from './_modals/GoOwnerPageModal';
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 export default async function MapPage() {
   const storeService = new StoreService({
@@ -14,7 +15,9 @@ export default async function MapPage() {
   let preferenceCategories;
 
   try {
-    preferenceCategories = await storeService.getAllPreference();
+    preferenceCategories = await commonErrorHandler(
+      storeService.getAllPreference(),
+    );
   } catch (error) {
     console.log(error);
 

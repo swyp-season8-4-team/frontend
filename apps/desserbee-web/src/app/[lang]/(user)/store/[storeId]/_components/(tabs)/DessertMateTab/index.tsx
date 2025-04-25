@@ -9,6 +9,7 @@ import MateAPIRepository from '@repo/infrastructures/src/repositories/mateAPIRep
 import { UserContext } from '@/contexts/UserContext';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import { useRouter } from 'next/navigation';
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 interface DessertMateTabProps {
   mate: StoreDetailInfoData['mate']; // 자체가 배열로 타입 지정
@@ -39,9 +40,15 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
         const currentSaved = optimisticState[index].saved;
         addOptimistic(index);
         if (currentSaved) {
-          await mateService.cancelSave({ id: uuid, userId: user.id });
+          await commonErrorHandler(
+            mateService.cancelSave({ id: uuid, userId: user.id }),
+            { router },
+          );
         } else {
-          await mateService.save({ id: uuid, userId: user.id });
+          await commonErrorHandler(
+            mateService.save({ id: uuid, userId: user.id }),
+            { router },
+          );
         }
       }
     });
@@ -61,10 +68,10 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
         <div className="text-[10px] font-semibold md:text-lg">
           디저트 메이트
         </div>
-        <div className="w-full text-[10px] md:text-base text-center">
+        <div className="w-full text-center text-[10px] md:text-base">
           아직 등록된 디저트 메이트 게시글이 없어요.
         </div>
-        <div className="flex justify-end w-full py-3">
+        <div className="flex w-full justify-end py-3">
           <button
             className="text-[10px] md:text-base"
             onClick={handleGoCommunityMateBtnClick}
@@ -78,7 +85,7 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
 
   return (
     <div>
-      <div className="font-semibold text-[10px] md:text-lg mb-3">
+      <div className="mb-3 text-[10px] font-semibold md:text-lg">
         디저트 메이트
       </div>
       <div className="flex flex-col gap-y-[5px] md:gap-y-3">
@@ -96,27 +103,27 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
             },
             index,
           ) => (
-            <div className="bg-[#F6F6F6] rounded-[4.02px] p-[13px]" key={index}>
-              <div className="flex justify-between items-center">
-                <div className="text-[10px] px-1 md:px-2 md:py-1 md:text-[14px] h-fit border rounded-[40.24px] md:rounded-[60px] border-[#6F6F6F] text-[#6F6F6F]">
+            <div className="rounded-[4.02px] bg-[#F6F6F6] p-[13px]" key={index}>
+              <div className="flex items-center justify-between">
+                <div className="h-fit rounded-[40.24px] border border-[#6F6F6F] px-1 text-[10px] text-[#6F6F6F] md:rounded-[60px] md:px-2 md:py-1 md:text-[14px]">
                   {/* <div className="text-[10px] md:text-[14px]"> */}
                   <div className="text-[8px] md:text-[12px]">
                     {mateCategory}
                   </div>
                 </div>
-                <div className="flex gap-x-[4.83px] items-center text-[10px] md:text-[14px]">
+                <div className="flex items-center gap-x-[4.83px] text-[10px] md:text-[14px]">
                   <div className="text-[10px] md:text-[14px]">
                     {recruitYn ? '모집중' : '마감'}
                   </div>
-                  <div className="border-[#714115] rounded-full aspect-square border">
+                  <div className="aspect-square rounded-full border border-[#714115]">
                     <button
-                      className="w-[10.46px] h-[10.46px] md:w-[26px] md:h-[26px] flex justify-center items-center"
+                      className="flex h-[10.46px] w-[10.46px] items-center justify-center md:h-[26px] md:w-[26px]"
                       onClick={() => handleToggleSaved(mateUuid, index)}
                     >
                       <IconBookmark
                         className={cn(
                           saved ? 'text-[#AA6120]' : 'text-page',
-                          'md:w-4 md:h-4 w-2 h-2 ',
+                          'h-2 w-2 md:h-4 md:w-4',
                         )}
                       />
                     </button>
@@ -125,9 +132,9 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
               </div>
               <div className="flex items-center">
                 {thumbnail && (
-                  <div className="w-[45px] h-[45px] flex-shrink-0 m-1 aspect-square bg-[#D9D9D9] overflow-hidden  md:w-[97px] md:h-[97px]">
+                  <div className="m-1 aspect-square h-[45px] w-[45px] flex-shrink-0 overflow-hidden bg-[#D9D9D9] md:h-[97px] md:w-[97px]">
                     <Image
-                      className="w-full h-full"
+                      className="h-full w-full"
                       src={thumbnail}
                       width={50}
                       height={50}
@@ -136,13 +143,13 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
                   </div>
                 )}
                 <div className="flex flex-col leading-3">
-                  <div className="font-semibold text-[10px] md:text-base">
+                  <div className="text-[10px] font-semibold md:text-base">
                     {title}
                   </div>
-                  <div className="text-[10px] md:text-[14px] font-medium ">
+                  <div className="text-[10px] font-medium md:text-[14px]">
                     {content}
                   </div>
-                  <div className="text-[10px] md:text-[14px] font-medium md:mt-[25px]">
+                  <div className="text-[10px] font-medium md:mt-[25px] md:text-[14px]">
                     {nickname}님
                   </div>
                 </div>
@@ -151,7 +158,7 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
           ),
         )}
       </div>
-      <div className="flex justify-end w-full py-3">
+      <div className="flex w-full justify-end py-3">
         <button onClick={handleGoCommunityMateBtnClick}>
           디저트 메이트 찾으러 가기
         </button>
