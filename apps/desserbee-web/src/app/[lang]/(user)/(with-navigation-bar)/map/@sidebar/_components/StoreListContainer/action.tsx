@@ -48,3 +48,8 @@ export async function getStoreSummary({ storeUuid }: { storeUuid: string }) {
   const storeSummary = await storeService.getStoreSummary(storeUuid);
   return storeSummary;
 }
+
+export async function getOwnerStoreList() {
+  const storeLists = await storeService.getOwnerStoreList();
+  return storeLists;
+}

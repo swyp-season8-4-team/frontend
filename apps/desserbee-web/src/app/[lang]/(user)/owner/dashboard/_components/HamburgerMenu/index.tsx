@@ -1,28 +1,34 @@
 'use client';
 import { useEffect } from 'react';
+import Link from 'next/link';
+import NavigationService from '@repo/usecase/src/navigationService';
+import { NavigationPathname } from '@repo/entity/src/navigation';
+
+const navigationService = new NavigationService({});
+
 type HamburgerMenuProps = {
   onClose: () => void;
 };
 
 export function HamburgerMenu({ onClose }: HamburgerMenuProps) {
-  const data = [
-    "내 가게 홈",
-    "기본 정보 관리",
-    "운영 시간 관리",
-    "메뉴 관리",
-    "공지 관리",
-    "쿠폰 등록",
-    "통계 대시보드",
-    "트렌드 리포트"
+  type NavigationPathnameKey = keyof typeof NavigationPathname;
+  const data: { name: string; Link?: NavigationPathnameKey }[] = [
+    { name: '내 가게 홈', Link: undefined },
+    { name: '기본 정보 관리', Link: undefined },
+    { name: '운영 시간 관리', Link: undefined },
+    { name: '메뉴 관리', Link: undefined },
+    { name: '공지 관리', Link: 'OwnerDashboardNotices' },
+    { name: '쿠폰 등록', Link: undefined },
+    { name: '통계 대시보드', Link: undefined },
+    { name: '트렌드 리포트', Link: undefined },
   ];
 
-  // ESC 키로 닫기 (선택사항)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === 'Escape') onClose();
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
   return (
@@ -38,24 +44,23 @@ export function HamburgerMenu({ onClose }: HamburgerMenuProps) {
         </button>
       </div>
       {/* 메뉴 리스트 */}
-      <nav className="flex-1 flex flex-col gap-2 px-6 text-[#6D6D6D]">
+      <nav className="flex flex-1 flex-col gap-2 px-6 text-[#6D6D6D]">
         {data.map((item, idx) => (
-          <div
-            key={item}
-            className={`
-              py-3 px-2 text-lg rounded cursor-pointer
-              ${idx === 0 ? "bg-[#ededed] text-[#9F9F9F] font-semibold" : ""}
-              hover:bg-[#f3f3f3] flex items-center
-            `}
+          <Link
+            key={item.name}
+            href="/owner/dashboard/notices" // 변경 필요
+            className={`cursor-pointer rounded px-2 py-3 text-lg ${idx === 0 ? 'bg-[#ededed] font-semibold text-[#9F9F9F]' : ''} flex items-center hover:bg-[#f3f3f3]`}
           >
-            {item}
-            {item === "트렌드 리포트" && (
-              <span className="ml-2 px-2 py-0.5 text-xs rounded-xl bg-[#6C4CE3] text-white">유료</span>
+            {item.name}
+            {item.name === '트렌드 리포트' && (
+              <span className="ml-2 rounded-xl bg-[#6C4CE3] px-2 py-0.5 text-xs text-white">
+                유료
+              </span>
             )}
-          </div>
+          </Link>
         ))}
       </nav>
-      <div className="h-[28px] bg-[#EBEBEB] w-full mt-auto" />
+      <div className="mt-auto h-[28px] w-full bg-[#EBEBEB]" />
     </div>
   );
 }

@@ -39,6 +39,7 @@ import type {
   SavedStoresLocationRequest,
   SavedStoresLocationData,
   RegisterStoreFromData,
+  getOwnerStoreListResponse,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -262,6 +263,20 @@ export default class StoreService {
     };
 
     await this.storeRepository.deleteStore(requestData);
+  }
+
+  async getOwnerStoreList(): Promise<getOwnerStoreListResponse[]> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set'); // 디버깅 위해서 에러 처리
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+    const authorization = await this.authRepository.getAuthorization();
+    const requestData = {
+      authorization,
+    };
+    const response = await this.storeRepository.getOwnerStoreList(requestData);
+    return response;
   }
 
   async updateCouponCount() {

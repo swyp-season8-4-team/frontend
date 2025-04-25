@@ -1,4 +1,10 @@
 import { ShopInfoCard } from '../ShopInfoCard';
+import Link from 'next/link';
+import { NavigationPathname } from '@repo/entity/src/navigation';
+import NavigationService from '@repo/usecase/src/navigationService';
+
+const navigationService = new NavigationService({});
+
 export function ShopInfo() {
   const data = [
     {
@@ -51,7 +57,7 @@ export function ShopInfo() {
   ];
   return (
     <div className="m-auto flex w-[95%] flex-col items-center justify-center rounded-md bg-white p-2">
-      <div className="w-[95%] ">
+      <div className="w-[95%]">
         <div className="mb-6 flex gap-2">
           <div className="w-4/5">사진</div>
           <div className="w-1/5 flex-col">
@@ -60,15 +66,23 @@ export function ShopInfo() {
             <div>사진</div>
           </div>
         </div>
-        <button className="w-full rounded-md mb-8 border border-[#949494] bg-[#F5F5F5] px-4 py-2 text-black hover:bg-[#C9C9C9]">
+        <Link
+          href={navigationService.getHref(
+            NavigationPathname.OwnerDashboardBasicInfo,
+          )}
+          className="mb-8 block w-full rounded-md border border-[#949494] bg-[#F5F5F5] px-4 py-2 text-center text-black hover:bg-[#C9C9C9]"
+        >
           가게 정보 수정
-        </button>
+        </Link>
 
         <div>
-          <p className="font-bold text-[20px]">{data[0].name}</p>
+          <p className="text-[20px] font-bold">{data[0].name}</p>
           <ShopInfoCard title="전화번호" content={data[0].phone} />
           <ShopInfoCard title="주소" content={data[0].address} />
-          <ShopInfoCard title="운영시간" content={data[0].operatingHours[0].openingTime} />
+          <ShopInfoCard
+            title="운영시간"
+            content={data[0].operatingHours[0].openingTime}
+          />
           <ShopInfoCard title="SNS" content={data[0].phone} />
         </div>
       </div>
