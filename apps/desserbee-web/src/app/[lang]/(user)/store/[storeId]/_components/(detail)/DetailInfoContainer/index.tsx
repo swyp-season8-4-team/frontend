@@ -20,6 +20,7 @@ import IconFlowerOutline from '@repo/design-system/components/icons/IconFlowerOu
 import { UserContext } from '@/contexts/UserContext';
 import { useRouter } from 'next/navigation';
 import { NeedLoginModal } from '../../../_modals/NeedLoginModal';
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 interface DetailInfoContainerProps
   extends Omit<StoreDetailInfoData, 'communityReviews'> {
@@ -90,7 +91,10 @@ export function DetailInfoContainer({
       component: <CouponIsNotReadyModal onClose={closeModal} />,
     });
 
-    await storeService.updateCouponCount();
+    await commonErrorHandler(storeService.updateCouponCount(), {
+      isClient: true,
+      router,
+    });
   };
 
   const handleIconFlowerClick = useCallback(() => {

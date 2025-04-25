@@ -1,5 +1,6 @@
 'use server';
 
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 import type {
   CreateOnelineReviewRequestFormData,
   EditOnelineReviewRequest,
@@ -34,7 +35,7 @@ const storeService = new StoreService({
 });
 
 export async function editOnelineReview(data: EditOnelineReviewRequest) {
-  await storeService.editOnelineReview(data);
+  await commonErrorHandler(storeService.editOnelineReview(data));
 }
 
 interface DeleteOnelineReviewProps {
@@ -45,11 +46,13 @@ export async function deleteOnelineReview({
   storeUuid,
   reviewUuid,
 }: DeleteOnelineReviewProps) {
-  await storeService.deleteOnelineReview({ storeUuid, reviewUuid });
+  await commonErrorHandler(
+    storeService.deleteOnelineReview({ storeUuid, reviewUuid }),
+  );
 }
 
 export async function createStoreOnlineReviews(
   data: CreateOnelineReviewRequestFormData,
 ) {
-  await storeService.createStoreOnlineReviews(data);
+  await commonErrorHandler(storeService.createStoreOnlineReviews(data));
 }

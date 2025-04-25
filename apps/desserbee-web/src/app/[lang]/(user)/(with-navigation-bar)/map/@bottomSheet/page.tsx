@@ -1,6 +1,7 @@
 import { BottomSheetContainer } from './_components/BottomSheetContainer';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 export default async function BottomSheetPage({
   searchParams,
@@ -19,7 +20,9 @@ export default async function BottomSheetPage({
     });
 
     try {
-      storeSummary = await storeService.getStoreSummary(storeId);
+      storeSummary = await commonErrorHandler(
+        storeService.getStoreSummary(storeId),
+      );
     } catch (error) {
       console.log(error);
     }

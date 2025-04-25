@@ -1,6 +1,7 @@
 'use client';
 
 import { UserContext } from '@/contexts/UserContext';
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 import UserAPIRepository from '@repo/infrastructures/src/repositories/userAPIRepository';
 import UserService from '@repo/usecase/src/userService';
 import Image, { type StaticImageData } from 'next/image';
@@ -38,7 +39,9 @@ export default function ProfileSection() {
     }
 
     try {
-      const { profileImageUrl } = await userService.uploadProfileImage(file);
+      const { profileImageUrl } = await commonErrorHandler(
+        userService.uploadProfileImage(file),
+      );
       if (profileImageUrl) {
         setImageUrl(profileImageUrl);
       }
@@ -51,7 +54,7 @@ export default function ProfileSection() {
   return (
     <section className="flex flex-col items-center">
       <div
-        className="relative w-20 h-20 mb-3 cursor-pointer"
+        className="relative mb-3 h-20 w-20 cursor-pointer"
         onClick={handleImageClick}
       >
         <Image

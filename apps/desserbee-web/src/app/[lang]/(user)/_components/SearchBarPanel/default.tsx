@@ -125,19 +125,19 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
   if (!popularSearchData || !recentSearchData) return;
 
   return (
-    <div className="w-full h-full pt-[21px] md:pt-7 pb-4">
+    <div className="h-full w-full pb-4 pt-[21px] md:pt-7">
       {popularSearchData && (
         <div className="px-base">
-          <div className="w-full flex justify-between items-center">
-            <div className="text-xs md:text-[22px] font-semibold">
+          <div className="flex w-full items-center justify-between">
+            <div className="text-xs font-semibold md:text-[22px]">
               인기 검색어
             </div>
             <div className="text-[10px] md:text-lg">
               {formatDateToHHMM(popularSearchData.lastUpdatedTime)} 업데이트
             </div>
           </div>
-          <div className="w-full flex justify-between mt-4 gap-[16.24px] md:gap-[37px] ">
-            <div className="w-1/2 flex flex-col gap-y-[10px] md:gap-y-6">
+          <div className="mt-4 flex w-full justify-between gap-[16.24px] md:gap-[37px]">
+            <div className="flex w-1/2 flex-col gap-y-[10px] md:gap-y-6">
               {popularSearchData.searches.slice(0, 5).map((popularKeyword) => (
                 <button
                   onClick={() => {
@@ -153,7 +153,7 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
                 </button>
               ))}
             </div>
-            <div className="w-1/2 flex flex-col gap-y-[10px] md:gap-y-6">
+            <div className="flex w-1/2 flex-col gap-y-[10px] md:gap-y-6">
               {popularSearchData.searches.slice(5, 10).map((popularKeyword) => (
                 <button
                   onClick={() => {
@@ -172,11 +172,11 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
           </div>
         </div>
       )}
-      <div className="w-full h-[3px] md:h-[7px] bg-[#E8E8E8] my-[10px] md:my-[26px]"></div>
+      <div className="my-[10px] h-[3px] w-full bg-[#E8E8E8] md:my-[26px] md:h-[7px]"></div>
       <div>
         <div className="px-base">
-          <div className="w-full flex justify-between items-center">
-            <div className="text-xs md:text-[22px] font-semibold">
+          <div className="flex w-full items-center justify-between">
+            <div className="text-xs font-semibold md:text-[22px]">
               최근 검색어
             </div>
             <button
@@ -186,7 +186,7 @@ export function DefaultPanel({ onSearchAction }: DefaultPanelProps) {
               전체 삭제
             </button>
           </div>
-          <div className="flex flex-col mt-[7px] md:mt-[22px] gap-[7px] md:gap-[22px] pb-[111px]">
+          <div className="mt-[7px] flex flex-col gap-[7px] pb-[111px] md:mt-[22px] md:gap-[22px]">
             {recentSearchData.map((recentKeyword) => (
               <div
                 className="cursor-pointer"

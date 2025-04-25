@@ -6,6 +6,7 @@ import { OneLineReviewItem } from '../_components/(tabs)/OnelineReviewTab/item';
 import type { OneLineReview } from '@repo/entity/src/store';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 interface OneLineReviewPageProps {
   params: Promise<{ storeId: string }>;
@@ -29,15 +30,17 @@ export default async function OneLineReviewPage({
   let reviewPageData;
   console.log(storeId);
   try {
-    reviewPageData = await storeService.getStoreOnlineReviews({
-      storeUuid: storeId,
-    });
+    reviewPageData = await commonErrorHandler(
+      storeService.getStoreOnlineReviews({
+        storeUuid: storeId,
+      }),
+    );
   } catch (err) {
     console.log(err);
   }
 
   return (
-    <div className="min-w-[100vw] md:min-w-[768px] pb-10">
+    <div className="min-w-[100vw] pb-10 md:min-w-[768px]">
       <DetailPageHeader />
       <div className="px-base">
         <OneLineReviewHeader

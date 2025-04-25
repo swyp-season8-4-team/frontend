@@ -1,5 +1,6 @@
 'use client';
 
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 import type { SearchMessageData } from '@/types/postMessage';
 import { SearchMessageAction } from '@/types/postMessage';
 import type { CommunityCategory } from '@repo/entity/src/community';
@@ -49,12 +50,14 @@ export const CommunityReviewListProvider = ({
       return;
     }
 
-    const response = await reviewService.getAll({
-      from: page,
-      to: page + 9,
-      ...(!!selectedCategory && { categoryId: selectedCategory }),
-      ...(!!keyword && { keyword }),
-    });
+    const response = await commonErrorHandler(
+      reviewService.getAll({
+        from: page,
+        to: page + 9,
+        ...(!!selectedCategory && { categoryId: selectedCategory }),
+        ...(!!keyword && { keyword }),
+      }),
+    );
 
     setReviews((prev) => [...prev, ...response.reviews]);
     setIsLast(response.isLast);
@@ -64,13 +67,15 @@ export const CommunityReviewListProvider = ({
   const messageReceiveHandler = useCallback(
     async ({ action, payload }: SearchMessageData) => {
       if (action === SearchMessageAction.GetCategories) {
-        const response = await reviewService.getAll({
-          ...(payload?.selectedCategory && {
-            from: 0,
-            to: page,
-            categoryId: payload?.selectedCategory,
+        const response = await commonErrorHandler(
+          reviewService.getAll({
+            ...(payload?.selectedCategory && {
+              from: 0,
+              to: page,
+              categoryId: payload?.selectedCategory,
+            }),
           }),
-        });
+        );
 
         if (payload?.selectedCategory) {
           setSelectedCategory(payload?.selectedCategory);
@@ -86,13 +91,15 @@ export const CommunityReviewListProvider = ({
       }
 
       if (action === SearchMessageAction.GetSearch) {
-        const response = await reviewService.getAll({
-          ...(payload?.keyword && {
-            from: 0,
-            to: page,
-            keyword: payload?.keyword,
+        const response = await commonErrorHandler(
+          reviewService.getAll({
+            ...(payload?.keyword && {
+              from: 0,
+              to: page,
+              keyword: payload?.keyword,
+            }),
           }),
-        });
+        );
 
         if (payload?.keyword) {
           setKeyword(payload?.keyword);
