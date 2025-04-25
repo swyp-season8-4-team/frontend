@@ -92,7 +92,6 @@ export function DetailInfoContainer({
     });
 
     await commonErrorHandler(storeService.updateCouponCount(), {
-      isClient: true,
       router,
     });
   };

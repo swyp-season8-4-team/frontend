@@ -42,12 +42,12 @@ export function DessertMateTab({ mate }: DessertMateTabProps) {
         if (currentSaved) {
           await commonErrorHandler(
             mateService.cancelSave({ id: uuid, userId: user.id }),
-            { isClient: true, router },
+            { router },
           );
         } else {
           await commonErrorHandler(
             mateService.save({ id: uuid, userId: user.id }),
-            { isClient: true, router },
+            { router },
           );
         }
       }
