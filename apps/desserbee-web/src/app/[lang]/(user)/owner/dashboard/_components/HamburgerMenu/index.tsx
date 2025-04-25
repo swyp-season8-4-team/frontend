@@ -1,0 +1,66 @@
+'use client';
+import { useEffect } from 'react';
+import Link from 'next/link';
+import NavigationService from '@repo/usecase/src/navigationService';
+import { NavigationPathname } from '@repo/entity/src/navigation';
+
+const navigationService = new NavigationService({});
+
+type HamburgerMenuProps = {
+  onClose: () => void;
+};
+
+export function HamburgerMenu({ onClose }: HamburgerMenuProps) {
+  type NavigationPathnameKey = keyof typeof NavigationPathname;
+  const data: { name: string; Link?: NavigationPathnameKey }[] = [
+    { name: '내 가게 홈', Link: undefined },
+    { name: '기본 정보 관리', Link: undefined },
+    { name: '운영 시간 관리', Link: undefined },
+    { name: '메뉴 관리', Link: undefined },
+    { name: '공지 관리', Link: 'OwnerDashboardNotices' },
+    { name: '쿠폰 등록', Link: undefined },
+    { name: '통계 대시보드', Link: undefined },
+    { name: '트렌드 리포트', Link: undefined },
+  ];
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col bg-white bg-opacity-95">
+      {/* 닫기 버튼 */}
+      <div className="flex justify-end p-4">
+        <button
+          className="text-2xl text-[#9F9F9F] hover:text-[#7A7A7A]"
+          aria-label="메뉴 닫기"
+          onClick={onClose}
+        >
+          ✕
+        </button>
+      </div>
+      {/* 메뉴 리스트 */}
+      <nav className="flex flex-1 flex-col gap-2 px-6 text-[#6D6D6D]">
+        {data.map((item, idx) => (
+          <Link
+            key={item.name}
+            href="/owner/dashboard/notices" // 변경 필요
+            className={`cursor-pointer rounded px-2 py-3 text-lg ${idx === 0 ? 'bg-[#ededed] font-semibold text-[#9F9F9F]' : ''} flex items-center hover:bg-[#f3f3f3]`}
+          >
+            {item.name}
+            {item.name === '트렌드 리포트' && (
+              <span className="ml-2 rounded-xl bg-[#6C4CE3] px-2 py-0.5 text-xs text-white">
+                유료
+              </span>
+            )}
+          </Link>
+        ))}
+      </nav>
+      <div className="mt-auto h-[28px] w-full bg-[#EBEBEB]" />
+    </div>
+  );
+}

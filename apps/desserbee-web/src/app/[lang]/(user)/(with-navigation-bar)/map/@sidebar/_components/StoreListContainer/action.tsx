@@ -50,3 +50,15 @@ export async function deleteStoreInSavedList({
 
   return response;
 }
+
+export async function getStoreSummary({ storeUuid }: { storeUuid: string }) {
+  const storeSummary = await commonErrorHandler(
+    storeService.getStoreSummary(storeUuid),
+  );
+  return storeSummary;
+}
+
+export async function getOwnerStoreList() {
+  const storeLists = await commonErrorHandler(storeService.getOwnerStoreList());
+  return storeLists;
+}

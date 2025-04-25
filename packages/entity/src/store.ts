@@ -542,6 +542,12 @@ export interface DeleteStoreInSavedListRequest {
   storeUuid: string;
 }
 
+export interface getOwnerStoreListResponse {
+  storeId: number;
+  storeUuid: string;
+  name: string;
+}
+
 // menu
 export interface Id {
   storeUuid: string;
@@ -786,4 +792,10 @@ export interface StoreRepository {
     authorization,
     data,
   }: BaseRequestData<EditOnelineReviewRequest>): Promise<OneLineReview>;
+
+  getAllPreference(): Promise<PreferenceData[]>;
+
+  getOwnerStoreList({
+    authorization,
+  }: BaseRequestData<void>): Promise<getOwnerStoreListResponse[]>;
 }

@@ -46,6 +46,7 @@ import type {
   SavedStoresLocationData,
   SavedStoresLocationRequest,
   RegisterStoreFromData,
+  getOwnerStoreListResponse,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -586,6 +587,28 @@ export default class StoreAPIRepository
     const response = await fetch<
       SavedStoresLocationRequest,
       SavedStoresLocationData[]
+    >({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      method: 'GET',
+      url,
+    });
+
+    return response;
+  }
+
+  // owner 가게 목록 조회
+  async getOwnerStoreList({
+    authorization,
+  }: BaseRequestData<void>): Promise<getOwnerStoreListResponse[]> {
+    const url = `${this.endpoint}/stores/owner`;
+
+    const response = await fetch<
+      BaseRequestData<void>,
+      getOwnerStoreListResponse[]
     >({
       ...(authorization && {
         headers: {
