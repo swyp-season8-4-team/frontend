@@ -43,3 +43,8 @@ export async function deleteStoreInSavedList({
 
   return response;
 }
+
+export async function getStoreSummary({ storeUuid }: { storeUuid: string }) {
+  const storeSummary = await storeService.getStoreSummary(storeUuid);
+  return storeSummary;
+}
