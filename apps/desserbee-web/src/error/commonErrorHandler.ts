@@ -14,6 +14,9 @@ const errorActions: Record<string, (options?: HandlerOptions) => void> = {
   A016: (options) => {
     navigateTo('/sign-out', options);
   },
+  A006: (options) => {
+    navigateTo('/sign-out', options);
+  },
   A012: (options) => {
     navigateTo('/sign-out', options);
   },
