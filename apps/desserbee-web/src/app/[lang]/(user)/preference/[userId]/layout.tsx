@@ -9,6 +9,7 @@ import UserService from '@repo/usecase/src/userService';
 import { notFound, redirect } from 'next/navigation';
 import { HeaderContainer } from '../../_components/HeaderContainer';
 import { PreferencesProvider } from './_contexts/PreferencesContext';
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 const navigationService = new NavigationService({});
 
@@ -26,7 +27,9 @@ export default async function PreferenceLayout({
     notFound();
   }
 
-  const targetUser = await userService.getTargetUser(userId);
+  const targetUser = await commonErrorHandler(
+    userService.getTargetUser(userId),
+  );
   if (!isTargetUser(targetUser)) {
     notFound();
   }

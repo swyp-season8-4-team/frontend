@@ -10,6 +10,7 @@ import { redirect } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import ReviewService from '@repo/usecase/src/reviewService';
 import ReviewAPIRepository from '@repo/infrastructures/src/repositories/reviewAPIRepository';
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 const userService = new UserService({
   authRepository: new AuthNextAppRouteRepository(),
@@ -32,18 +33,24 @@ const mateService = new MateService({
 });
 
 export default async function MyBookmarkListPage() {
-  const userUuid = await userService.getUserID();
+  const userUuid = await commonErrorHandler(userService.getUserID());
 
   if (!userUuid) redirect(NavigationPathname.SignIn);
 
-  const savedStoreList = await storeService.getSavedListAll(userUuid);
+  const savedStoreList = await commonErrorHandler(
+    storeService.getSavedListAll(userUuid),
+  );
 
-  const { mates } = await mateService.getSavedMateList({
-    from: 0,
-    to: 4,
-  });
+  const { mates } = await commonErrorHandler(
+    mateService.getSavedMateList({
+      from: 0,
+      to: 4,
+    }),
+  );
 
-  const savedReview = await reviewService.getSaved({ from: 0, to: 4 });
+  const savedReview = await commonErrorHandler(
+    reviewService.getSaved({ from: 0, to: 4 }),
+  );
 
   return (
     <BookMarkListContainer

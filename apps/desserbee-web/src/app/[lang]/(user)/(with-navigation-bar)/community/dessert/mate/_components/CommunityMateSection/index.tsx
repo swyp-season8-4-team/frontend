@@ -4,11 +4,12 @@ import { CommunityMateListProvider } from '../../_contexts/CommunityMateListCont
 import CommunityMateList from '../CommunityMateList';
 import ScrollGradient from '../../../_components/ScrollGradient';
 import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 const mateService = new MateService({
   authRepository: new AuthNextAppRouteRepository(),
   mateRepository: new MateAPIRepository(),
-})
+});
 
 interface Props {
   q: string | string[] | null;
@@ -18,15 +19,17 @@ export default async function CommunityMateSection({ q }: Props) {
   if (Array.isArray(q)) {
     throw new Error('q is not array');
   }
-  
-  const { mates, isLast } = await mateService.getMateList({ from: 0, to: 9, ...(q && { keyword: q }) });
+
+  const { mates, isLast } = await commonErrorHandler(
+    mateService.getMateList({ from: 0, to: 9, ...(q && { keyword: q }) }),
+  );
 
   return (
-    <section className="flex-1 overflow-y-auto relative [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] space-y-4">
+    <section className="relative flex-1 space-y-4 overflow-y-auto [-ms-overflow-style:'none'] [scrollbar-width:'none'] [&::-webkit-scrollbar]:hidden">
       <CommunityMateListProvider initialIsLast={isLast} initialMates={mates}>
         <CommunityMateList />
       </CommunityMateListProvider>
       {mates.length > 0 && <ScrollGradient />}
     </section>
-  )
+  );
 }

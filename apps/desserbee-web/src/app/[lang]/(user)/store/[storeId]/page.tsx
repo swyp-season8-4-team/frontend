@@ -3,6 +3,7 @@ import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPI
 import { DetailContainer } from './_components/(detail)/DetailContainer';
 import NotFound from '@/app/[lang]/[...not-found]/page';
 import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 interface StoreDetailPageProps {
   params: Promise<{
@@ -24,16 +25,20 @@ export default async function StoreDetailPage({
     return <NotFound />;
   }
 
-  const storeDetail = await storeService.getStoreDetail({
-    storeUuid: storeId,
-  });
+  const storeDetail = await commonErrorHandler(
+    storeService.getStoreDetail({
+      storeUuid: storeId,
+    }),
+  );
 
   const storeDetails = storeDetail;
 
   if (storeDetail.savedListId) {
-    const parentListInfo = await storeService.getParentSavedList({
-      listId: storeDetail.savedListId,
-    });
+    const parentListInfo = await commonErrorHandler(
+      storeService.getParentSavedList({
+        listId: storeDetail.savedListId,
+      }),
+    );
 
     return (
       <DetailContainer

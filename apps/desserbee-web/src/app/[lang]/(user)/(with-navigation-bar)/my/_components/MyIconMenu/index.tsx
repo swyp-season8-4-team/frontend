@@ -13,6 +13,7 @@ import { PointIsNotReadyModal } from '../../_modals/PointIsNotReadyModal';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import NavigationService from '@repo/usecase/src/navigationService';
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 interface IconMenuItem {
   icon: ReactNode;
@@ -73,7 +74,7 @@ export default function MyIconMenu() {
       push('modal', {
         component: <CouponIsNotReadyModal onClose={closeModal} />,
       });
-      await storeService.updateCouponCount();
+      await commonErrorHandler(storeService.updateCouponCount());
     } else {
       router.push(path);
     }

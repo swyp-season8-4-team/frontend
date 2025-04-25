@@ -1,10 +1,10 @@
-
-import type { WithParams } from "@/app";
-import ReviewWriteForm from "../_components/ReviewWriteForm";
-import { notFound } from "next/navigation";
-import ReviewService from "@repo/usecase/src/reviewService";
-import AuthNextAppRouteRepository from "@repo/infrastructures/src/repositories/authNextAppRouteRepository";
-import ReviewAPIRepository from "@repo/infrastructures/src/repositories/reviewAPIRepository";
+import type { WithParams } from '@/app';
+import ReviewWriteForm from '../_components/ReviewWriteForm';
+import { notFound } from 'next/navigation';
+import ReviewService from '@repo/usecase/src/reviewService';
+import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
+import ReviewAPIRepository from '@repo/infrastructures/src/repositories/reviewAPIRepository';
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 const reviewService = new ReviewService({
   authRepository: new AuthNextAppRouteRepository(),
@@ -17,16 +17,18 @@ export default async function ReviewWriteUpdatePage({ params }: WithParams) {
     notFound();
   }
 
-  const review = await reviewService.getDetail({
-    id: reviewId,
-  });
+  const review = await commonErrorHandler(
+    reviewService.getDetail({
+      id: reviewId,
+    }),
+  );
 
   if (!review) {
     notFound();
   }
-  
+
   return (
-    <main className="px-5 py-4 h-[calc(100dvh - 63px)]">
+    <main className="h-[calc(100dvh - 63px)] px-5 py-4">
       <ReviewWriteForm initialReview={review} />
     </main>
   );

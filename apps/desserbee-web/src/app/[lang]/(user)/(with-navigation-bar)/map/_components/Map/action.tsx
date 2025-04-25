@@ -1,5 +1,6 @@
 'use server';
 
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 import type { Preference } from '@repo/entity/src/preference';
 import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
@@ -25,13 +26,15 @@ export async function getNearbyStores({
   preferenceTagNames?: Preference[];
   searchKeyword?: string;
 }) {
-  const nearByStores = storeService.getNearbyStores({
-    latitude: latitude,
-    longitude: longitude,
-    radius: radius,
-    preferenceTagNames,
-    searchKeyword,
-  });
+  const nearByStores = await commonErrorHandler(
+    storeService.getNearbyStores({
+      latitude: latitude,
+      longitude: longitude,
+      radius: radius,
+      preferenceTagNames,
+      searchKeyword,
+    }),
+  );
 
   return nearByStores;
 }
@@ -41,9 +44,11 @@ export async function getStoresLocationInSavedList({
 }: {
   listId: number;
 }) {
-  const result = await storeService.getStoresLocationInSavedList({
-    listId,
-  });
+  const result = await commonErrorHandler(
+    storeService.getStoresLocationInSavedList({
+      listId,
+    }),
+  );
 
   console.log(result);
 

@@ -1,5 +1,6 @@
 'use server';
 
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import StoreService from '@repo/usecase/src/storeService';
@@ -12,17 +13,21 @@ const storeService = new StoreService({
 });
 
 export async function getParentSavedList({ listId }: { listId: number }) {
-  const parentList = await storeService.getParentSavedList({
-    listId,
-  });
+  const parentList = await commonErrorHandler(
+    storeService.getParentSavedList({
+      listId,
+    }),
+  );
 
   return parentList;
 }
 
 export async function getStoresInSavedList({ listId }: { listId: number }) {
-  const storeList = await storeService.getStoresInSavedList({
-    listId,
-  });
+  const storeList = await commonErrorHandler(
+    storeService.getStoresInSavedList({
+      listId,
+    }),
+  );
 
   return storeList;
 }
@@ -36,10 +41,12 @@ export async function deleteStoreInSavedList({
   listId,
   storeUuid,
 }: DeleteStoreInSavedList) {
-  const response = await storeService.deleteStoreInSavedList({
-    listId,
-    storeUuid,
-  });
+  const response = await commonErrorHandler(
+    storeService.deleteStoreInSavedList({
+      listId,
+      storeUuid,
+    }),
+  );
 
   return response;
 }

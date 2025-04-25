@@ -9,6 +9,7 @@ import MyMateDetailSection from './_components/MyMateDetailSection';
 import { MateDetailProvider } from './_contexts/MateDetailContext';
 import MateCommentListSection from './_components/MateCommentListSection';
 import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 const mateService = new MateService({
   authRepository: new AuthNextAppRouteRepository(),
@@ -22,17 +23,19 @@ export default async function MateDetailPage({ params }: WithParams) {
   }
 
   const [mateResult, waitListResult, replyListResult] =
-    await Promise.allSettled([
-      mateService.getDetails({
-        id: mateId,
-      }),
-      mateService.getWaitList({
-        id: mateId,
-      }),
-      mateService.getReplyList({
-        id: mateId,
-      }),
-    ]);
+    await commonErrorHandler(
+      Promise.allSettled([
+        mateService.getDetails({
+          id: mateId,
+        }),
+        mateService.getWaitList({
+          id: mateId,
+        }),
+        mateService.getReplyList({
+          id: mateId,
+        }),
+      ]),
+    );
 
   const mate = mateResult.status === 'fulfilled' ? mateResult.value : null;
   if (!mate) {
@@ -46,7 +49,7 @@ export default async function MateDetailPage({ params }: WithParams) {
     replyListResult.status === 'fulfilled' ? replyListResult.value : null;
 
   return (
-    <main className="flex flex-col h-[calc(100dvh - 52px)] px-4 py-4 gap-4 bg-[#f6f6f6] overflow-y-auto ">
+    <main className="h-[calc(100dvh - 52px)] flex flex-col gap-4 overflow-y-auto bg-[#f6f6f6] px-4 py-4">
       <MateDetailProvider mate={mate}>
         <MatePostSection
           mate={mate}

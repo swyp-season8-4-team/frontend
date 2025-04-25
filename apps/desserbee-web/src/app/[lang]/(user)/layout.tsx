@@ -5,6 +5,7 @@ import UserService from '@repo/usecase/src/userService';
 import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 import AuthService from '@repo/usecase/src/authService';
 import { MobileScreenProvider } from '../_contexts/MobileScreenProvider';
+import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 const authRepository = new AuthNextAppRouteRepository();
 
@@ -23,7 +24,7 @@ export default async function UserLayout({ children }: WithChildren) {
     return <MobileScreenProvider>{children} </MobileScreenProvider>;
   }
 
-  const user = await userService.getMe();
+  const user = await commonErrorHandler(userService.getMe());
 
   return (
     <MobileScreenProvider>
