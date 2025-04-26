@@ -4,7 +4,7 @@ export default function notices() {
   return (
     <div className="min-h-screen w-full bg-[#EBEBEB]">
       <DashBoardHeader title="공지 관리하기" />
-      <button className="mx-auto mb-[5px] block w-[95%] rounded-[10px] border border-solid border-[#949494] bg-[#F5F5F5] px-4 py-2">
+      <button className="mx-auto mb-[5px] block w-[95%] rounded-[10px] border border-solid border-[#949494] bg-[#F5F5F5] px-4 py-2 hover:bg-[#C9C9C9]">
         + 새 공지 추가하기
       </button>
 

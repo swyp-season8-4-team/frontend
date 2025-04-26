@@ -36,7 +36,7 @@ const OWNER_NAVIGATIONS = [
     icon: (
       <IconReport className="aspect-square h-[43.52px] w-[43.52px] md:h-[97px] md:w-[97px]" />
     ),
-    path: navigationService.getHref(NavigationPathname.OwnerDashboard),
+    path: navigationService.getHref(NavigationPathname.OwnerStoreList),
   },
 ];
 
