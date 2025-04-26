@@ -17,10 +17,10 @@ export default async function CommunityMatePage({
   const { q } = await searchParams;
 
   return (
-    <main className="relative mx-auto flex h-[calc(100dvh-65px)] max-w-screen-md flex-col overflow-hidden bg-[#f6f6f6] px-4">
+    <main className="relative mx-auto flex h-[calc(100dvh-65px)] flex-col overflow-hidden bg-[#f6f6f6] px-4">
       <Link
         href={NavigationPathname.MateWrite}
-        className="z-modal fixed bottom-24 right-4 flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#3F3C39]"
+        className="z-modal absolute bottom-24 right-4 flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#3F3C39]"
       >
         <IconWriting className="text-[#FFC858]" />
       </Link>

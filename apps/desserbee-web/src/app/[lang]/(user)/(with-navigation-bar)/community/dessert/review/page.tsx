@@ -26,7 +26,7 @@ export default function CommunityDessertReviewPage() {
       </CommunityDessertCategorySearchProvider>
       <Link
         href={NavigationPathname.CommunityReviewWrite}
-        className="z-modal fixed bottom-24 right-4 flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#3F3C39]"
+        className="z-modal absolute bottom-24 right-4 flex h-10 w-10 items-center justify-center rounded-[12px] bg-[#3F3C39]"
       >
         <IconWriting className="text-[#FFC858]" />
       </Link>
