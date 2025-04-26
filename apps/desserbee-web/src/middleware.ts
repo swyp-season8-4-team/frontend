@@ -106,7 +106,7 @@ async function handleTokens(
         }
       }
     } catch (error) {
-      redirectToSignIn(request); // 리프레시 토큰 에러 시 로그인 창으로 이동
+      console.log(error);
     }
   }
 
