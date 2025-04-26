@@ -22,14 +22,14 @@ export default async function ReviewPostSection({ review }: Props) {
   } = review;
 
   return (
-    <section className="border rounded-[10px] bg-[#ffffff] px-2 py-2">
-      <div className="flex items-center justify-between px-4 py-2 gap-6">
+    <section className="rounded-[10px] border bg-[#ffffff] px-2 py-2">
+      <div className="flex items-center justify-between gap-6 px-4 py-2">
         <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2 text-[#9F9F9F] text-[14px] font-semibold tracking-[-0.3px]">
+          <div className="flex items-center gap-2 text-[14px] font-semibold tracking-[-0.3px] text-[#9F9F9F]">
             <span className="">{category}</span>
             <span className="">{'>'}</span>
           </div>
-          <span className="text-[#393939] text-[14px] font-semibold leading-normal tracking-[-0.3px]">
+          <span className="text-[14px] font-semibold leading-normal tracking-[-0.3px] text-[#393939]">
             {title}
           </span>
         </div>
@@ -37,20 +37,22 @@ export default async function ReviewPostSection({ review }: Props) {
 
       {/* 게시글 내용 */}
       <div className="px-4 py-3">
-        <div className="flex items-start justify-between mb-4">
+        <div className="mb-4 flex items-start justify-between">
           <div className="flex items-center gap-2">
-            <Image
-              src={profileImage ? profileImage : DefaultMaleAvatar}
-              alt="profile-mate-detail"
-              width={40}
-              height={40}
-              className="rounded-full"
-            />
+            <div className="h-10 w-10 overflow-hidden rounded-full">
+              <Image
+                src={profileImage ? profileImage : DefaultMaleAvatar}
+                alt="profile-mate-detail"
+                width={40}
+                height={40}
+                className="h-full w-full object-cover"
+              />
+            </div>
             <div className="flex flex-col gap-1">
-              <span className="text-[#393939] text-[12px] leading-normal tracking-[-0.24px]">
+              <span className="text-[12px] leading-normal tracking-[-0.24px] text-[#393939]">
                 {nickname}
               </span>
-              <span className="text-[#9f9f9f] text-[12px] leading-normal tracking-[-0.24px]">
+              <span className="text-[12px] leading-normal tracking-[-0.24px] text-[#9f9f9f]">
                 {formatDate(createdAt)}
               </span>
             </div>
@@ -63,12 +65,12 @@ export default async function ReviewPostSection({ review }: Props) {
         </div>
 
         {!!place?.latitude && !!place?.longitude && (
-          <div className="flex flex-col gap-[4px] mb-4">
-            <p className="text-[#393939] text-[12px] font-medium tracking-[-0.27px]">
+          <div className="mb-4 flex flex-col gap-[4px]">
+            <p className="text-[12px] font-medium tracking-[-0.27px] text-[#393939]">
               장소: {place?.name}
             </p>
             <Link
-              className="text-[#393939] text-[12px] font-medium tracking-[-0.27px] underline"
+              className="text-[12px] font-medium tracking-[-0.27px] text-[#393939] underline"
               href={`${NavigationPathname.Map}?latitude=${place?.latitude}&longitude=${place?.longitude}&keyword=${place?.name}`}
             >
               이 가게 위치 보러가기
@@ -77,13 +79,13 @@ export default async function ReviewPostSection({ review }: Props) {
         )}
 
         {/* 컨텐츠 렌더링 */}
-        <div className="text-gray-700 mb-6 space-y-4 gap-[12px]">
+        <div className="mb-6 gap-[12px] space-y-4 text-gray-700">
           {contents.map((content, index) => {
             if (content.type === 'text') {
               return (
                 <p
                   key={`text-${index}`}
-                  className="text-[#393939] text-[12px] leading-relaxed tracking-[-0.27px]"
+                  className="text-[12px] leading-relaxed tracking-[-0.27px] text-[#393939]"
                 >
                   {content.value}
                 </p>
@@ -97,7 +99,7 @@ export default async function ReviewPostSection({ review }: Props) {
                     width={0}
                     height={0}
                     sizes="100vw"
-                    className="w-full h-auto rounded-lg"
+                    className="h-auto w-full rounded-lg"
                     priority={index < 2}
                   />
                 </div>

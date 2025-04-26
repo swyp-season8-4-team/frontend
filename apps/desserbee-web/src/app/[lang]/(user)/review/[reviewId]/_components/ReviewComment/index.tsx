@@ -10,20 +10,22 @@ export default function ReviewComment({ reviewReply }: Props) {
   return (
     <div className="flex flex-col gap-4 py-4">
       <div className="flex items-start gap-3">
-        <Image
-          alt="profile"
-          src={reviewReply.profileImage}
-          width={24}
-          height={24}
-          className="rounded-full"
-        />
+        <div className="flex h-6 w-6 overflow-hidden rounded-full">
+          <Image
+            alt="profile"
+            src={reviewReply.profileImage}
+            width={30}
+            height={30}
+            className="h-full w-full object-cover"
+          />
+        </div>
 
-        <div className="flex flex-col flex-1">
+        <div className="flex flex-1 flex-col">
           <div className="flex justify-between">
-            <span className="text-[#393939] text-[10px] font-semibold tracking-[-0.24px] leading-none">
+            <span className="text-[10px] font-semibold leading-none tracking-[-0.24px] text-[#393939]">
               {reviewReply.nickname}
             </span>
-            <span className="text-[#393939] text-[9px] font-normal leading-[130%] tracking-[-0.3px]">
+            <span className="text-[9px] font-normal leading-[130%] tracking-[-0.3px] text-[#393939]">
               {formatDate(reviewReply.createdAt) || reviewReply.createdAt}
             </span>
           </div>
