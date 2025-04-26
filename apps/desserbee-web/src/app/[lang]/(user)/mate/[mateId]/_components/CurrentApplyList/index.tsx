@@ -163,17 +163,20 @@ export default function CurrentApplyList({ waitList }: Props) {
         {localWaitList.map((wait, index) => (
           <div key={index} className="flex items-center justify-between py-2">
             <div className="flex items-center gap-2">
-              <Image
-                src={
-                  wait.profileImage
-                    ? wait.profileImage
-                    : defaultProfileImage(wait)
-                }
-                alt="profile"
-                width={32}
-                height={32}
-                className="rounded-full"
-              />
+              <div className="h-8 w-8 overflow-hidden rounded-full">
+                <Image
+                  src={
+                    wait.profileImage
+                      ? wait.profileImage
+                      : defaultProfileImage(wait)
+                  }
+                  alt="profile"
+                  width={50}
+                  height={50}
+                  className="h-full w-full"
+                />
+              </div>
+
               <span className="text-[10px] font-semibold leading-normal tracking-[-0.24px] text-[#393939]">
                 {wait.nickname}
               </span>

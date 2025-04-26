@@ -55,13 +55,16 @@ export default async function MatePostSection({ mate, replyCount }: Props) {
       <div className="px-4 py-3">
         <div className="mb-4 flex items-start justify-between">
           <div className="flex items-center gap-2">
-            <Image
-              src={profileImageUrl}
-              alt="profile-mate-detail"
-              width={40}
-              height={40}
-              className="rounded-full"
-            />
+            <div className="h-10 w-10 overflow-hidden rounded-full">
+              <Image
+                src={profileImageUrl}
+                alt="profile-mate-detail"
+                width={50}
+                height={50}
+                className="h-full w-full object-cover"
+              />
+            </div>
+
             <div className="flex flex-col gap-1">
               <span className="text-[12px] leading-normal tracking-[-0.24px] text-[#393939]">
                 {nickname}

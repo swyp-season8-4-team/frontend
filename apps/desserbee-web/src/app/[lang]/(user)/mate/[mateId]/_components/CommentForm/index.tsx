@@ -45,13 +45,15 @@ export default function MateCommentForm() {
   return (
     <form onSubmit={handleSubmit}>
       <div className="flex items-start gap-2">
-        <Image
-          src={realProfileImageUrl}
-          alt={`${user?.nickname}의 댓글`}
-          width={32}
-          height={32}
-          className="rounded-full"
-        />
+        <div className="h-8 w-8 overflow-hidden rounded-full">
+          <Image
+            src={realProfileImageUrl}
+            alt={`${user?.nickname}의 댓글`}
+            width={50}
+            height={50}
+            className="h-full w-full object-cover"
+          />
+        </div>
 
         <div className="flex-1">
           <div className="relative">
