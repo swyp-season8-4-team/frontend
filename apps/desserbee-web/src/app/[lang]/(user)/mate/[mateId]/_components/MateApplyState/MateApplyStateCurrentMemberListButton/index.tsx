@@ -49,15 +49,11 @@ export default function MateApplyStateCurrentMemberListButton({
       return;
     }
 
-    const result = await kickMember({
+    await kickMember({
       userId: member.userId,
       mateId: mate.id,
       creatorId: user.id,
     });
-
-    if (!result.success) {
-      console.error('Failed to kick member');
-    }
   };
 
   return (
@@ -75,7 +71,7 @@ export default function MateApplyStateCurrentMemberListButton({
             {myTeamMembers.length > 0 ? (
               myTeamMembers.map((myTeamMember) => (
                 <div
-                  key={myTeamMember.id}
+                  key={myTeamMember.nickname}
                   className="flex items-center gap-2 border-b border-gray-100 py-2 last:border-0"
                 >
                   <div className="flex w-full items-center gap-2">

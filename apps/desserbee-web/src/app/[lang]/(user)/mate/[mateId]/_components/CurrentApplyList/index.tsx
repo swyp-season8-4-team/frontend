@@ -13,6 +13,7 @@ import Modal from '@repo/design-system/components/Modal';
 import { Button } from '@repo/ui/components/button';
 import { MateDetailContext } from '../../_contexts/MateDetailContext';
 import { acceptMateRequest, rejectMateRequest } from './action';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   waitList: Mate[];
@@ -25,6 +26,7 @@ export default function CurrentApplyList({ waitList }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [localWaitList, setLocalWaitList] = useState<Mate[]>(waitList);
 
+  const router = useRouter();
   useEffect(() => {
     setLocalWaitList(waitList);
   }, [waitList]);
@@ -52,6 +54,7 @@ export default function CurrentApplyList({ waitList }: Props) {
       if (result.success) {
         setLocalWaitList((prev) => prev.filter((item) => item.id !== mate.id));
         closeModal();
+        router.refresh();
       } else {
         console.error('Failed to accept mate request');
       }
