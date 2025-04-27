@@ -47,7 +47,7 @@ export default function DashBoardHomePage() {
         <MenuList title="메뉴리스트" menuLists={storeInfo?.menus || []} />
         <Notice
           title="최근 공지"
-          content="런던 베이글 뮤지엄 안국점 현장대기 및 원격줄서기는 캐치테이블을 이용부탁드립니다🌼 많은 관심과 이용부탁드립니다💚"
+          notices={storeInfo?.notices || []}
         />
       </div>
     </div>
