@@ -1,17 +1,14 @@
 'use client';
 
 import { UserContext } from '@/contexts/UserContext';
-import { commonErrorHandler } from '@/error/commonErrorHandler';
-import UserAPIRepository from '@repo/infrastructures/src/repositories/userAPIRepository';
-import UserService from '@repo/usecase/src/userService';
+
 import Image, { type StaticImageData } from 'next/image';
 import { useContext, useRef, useState } from 'react';
-
-const userService = new UserService({
-  userRepository: new UserAPIRepository(),
-});
+import { uploadProfileImage } from './action';
+import { useRouter } from 'next/navigation';
 
 export default function ProfileSection() {
+  const router = useRouter();
   const { user, realProfileImageUrl } = useContext(UserContext);
   const [imageUrl, setImageUrl] = useState<string | StaticImageData>(
     realProfileImageUrl,
@@ -39,10 +36,9 @@ export default function ProfileSection() {
     }
 
     try {
-      const { profileImageUrl } = await commonErrorHandler(
-        userService.uploadProfileImage(file),
-      );
+      const { profileImageUrl } = await uploadProfileImage({ file });
       if (profileImageUrl) {
+        router.refresh();
         setImageUrl(profileImageUrl);
       }
     } catch (error) {

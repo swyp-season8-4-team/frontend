@@ -83,12 +83,9 @@ export function SummaryInfoContainer({
         </div>
         <button
           onClick={handleGoDetailBtnClick}
-          className="max-h-fit text-nowrap rounded-[42.71px] bg-[#DE8332] px-[5.6px] font-semibold text-white md:rounded-[100px] md:px-5 md:py-[5px]"
+          className="max-h-fit text-nowrap rounded-[42.71px] bg-[#DE8332] px-2 py-1 font-semibold text-white md:rounded-[100px] md:px-5 md:py-[5px]"
         >
           <div className="flex items-center">
-            <div className="mr-[0.57px] flex w-[10px] items-center justify-center md:w-[18.08px]">
-              <IconDetail className="h-full w-full" />
-            </div>
             <div className="text-[10px] md:text-lg">자세히 보기</div>
           </div>
         </button>

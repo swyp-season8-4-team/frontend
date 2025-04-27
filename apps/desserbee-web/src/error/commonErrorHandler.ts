@@ -7,6 +7,14 @@ type HandlerOptions = {
   router?: ReturnType<typeof useRouter>; // 클라이언트에서만 필요
 };
 
+// 개발 환경에서만 로그를 출력하는 함수
+function logInDevelopment(message: string, data: unknown): void {
+  if (process.env.NEXT_PUBLIC_APP_ENV !== 'prod') {
+    // env.local, dev에 NEXT_PUBLIC_APP_ENV=prod라고 되어있는거 다른 걸로 바꾸셔야 로그 나올거에요.
+    console.log(message, data);
+  }
+}
+
 export async function commonErrorHandler<T>(
   promise: Promise<T>,
   options?: HandlerOptions,
@@ -15,7 +23,7 @@ export async function commonErrorHandler<T>(
     return await promise;
   } catch (e) {
     if (!(e instanceof HTTPError)) {
-      console.log('[Error 발생]', e);
+      logInDevelopment('[Error 발생]', e);
       throw e;
     }
 
@@ -37,7 +45,7 @@ export async function commonErrorHandler<T>(
       }
     }
 
-    console.error('[HTTPError]', e.data);
+    logInDevelopment('[HTTPError]', e.data);
     throw e;
   }
 }

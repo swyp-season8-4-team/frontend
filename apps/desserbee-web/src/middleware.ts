@@ -59,7 +59,7 @@ async function handleTokens(
 ): Promise<NextResponse | null> {
   const { cookies } = request;
 
-  // 이메일 인증 토큰 처리
+  // 1. 이메일 인증 토큰 처리
   const verificationToken = cookies.get('verificationToken')?.value;
   if (verificationToken) {
     requestHeaders.set('X-Email-Verification-Token', verificationToken);
@@ -69,40 +69,44 @@ async function handleTokens(
   const refreshToken = cookies.get('refreshToken')?.value;
   const deviceId = cookies.get('deviceId')?.value;
 
-  // refreshToken이 있다면 accessToken이 없어도 재발급 시도
+  // 2. refreshToken이 있다면 accessToken이 없어도 재발급 시도
   if (refreshToken) {
-    const tokenInfo = await getTokenInfo(
-      prevAccessToken,
-      refreshToken,
-      deviceId,
-    );
+    try {
+      const tokenInfo = await getTokenInfo(
+        prevAccessToken,
+        refreshToken,
+        deviceId,
+      );
 
-    if (tokenInfo.token) {
-      requestHeaders.set('authorization', `Bearer ${tokenInfo.token}`);
+      if (tokenInfo.token) {
+        requestHeaders.set('authorization', `Bearer ${tokenInfo.token}`);
 
-      // 새로운 토큰이 발급되었거나 기존 토큰이 만료된 경우
-      if (
-        !prevAccessToken ||
-        tokenInfo.isExpired ||
-        tokenInfo.token !== prevAccessToken
-      ) {
-        const response = NextResponse.next({
-          request: { headers: requestHeaders },
-        });
+        // 새로운 토큰이 발급되었거나 기존 토큰이 만료된 경우
+        if (
+          !prevAccessToken ||
+          tokenInfo.isExpired ||
+          tokenInfo.token !== prevAccessToken
+        ) {
+          const response = NextResponse.next({
+            request: { headers: requestHeaders },
+          });
 
-        const maxAgeInSeconds = Math.floor((tokenInfo.exp ?? 0) / 1000);
-        const domain = process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN;
+          const maxAgeInSeconds = Math.floor((tokenInfo.exp ?? 0) / 1000);
+          const domain = process.env.NEXT_PUBLIC_APP_COOKIE_DOMAIN;
 
-        response.cookies.set('accessToken', tokenInfo.token, {
-          httpOnly: true,
-          secure: isProd,
-          sameSite: 'lax',
-          maxAge: maxAgeInSeconds,
-          domain,
-        });
+          response.cookies.set('accessToken', tokenInfo.token, {
+            httpOnly: true,
+            secure: isProd,
+            sameSite: 'lax',
+            maxAge: maxAgeInSeconds,
+            domain,
+          });
 
-        return response;
+          return response;
+        }
       }
+    } catch (error) {
+      console.log(error);
     }
   }
 

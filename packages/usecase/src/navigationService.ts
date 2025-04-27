@@ -36,6 +36,6 @@ export default class NavigationService {
   }
 
   isFullWidthPath(pathname: string): boolean {
-    return pathname.includes(NavigationPathname.Owner);
+    return pathname.includes(NavigationPathname.Owner); // 사장님 관련 페이지에선 w-full
   }
 }

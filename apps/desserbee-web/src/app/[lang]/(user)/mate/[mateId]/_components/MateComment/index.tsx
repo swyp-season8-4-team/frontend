@@ -10,20 +10,22 @@ export default function MateComment({ mateReply }: Props) {
   return (
     <div className="flex flex-col gap-4 py-4">
       <div className="flex items-start gap-3">
-        <Image
-          alt="profile"
-          src={mateReply.profileImage}
-          width={24}
-          height={24}
-          className="rounded-full"
-        />
+        <div className="h-6 w-6 overflow-hidden rounded-full">
+          <Image
+            alt="profile"
+            src={mateReply.profileImage}
+            width={24}
+            height={24}
+            className="h-full w-full object-cover"
+          />
+        </div>
 
-        <div className="flex flex-col flex-1">
+        <div className="flex flex-1 flex-col">
           <div className="flex justify-between">
-            <span className="text-[#393939] text-[10px] font-semibold tracking-[-0.24px] leading-none">
+            <span className="text-[10px] font-semibold leading-none tracking-[-0.24px] text-[#393939]">
               {mateReply.nickname}
             </span>
-            <span className="text-[#393939] text-[9px] font-normal leading-[130%] tracking-[-0.3px]">
+            <span className="text-[9px] font-normal leading-[130%] tracking-[-0.3px] text-[#393939]">
               {formatDate(mateReply.createdAt) || mateReply.createdAt}
             </span>
           </div>

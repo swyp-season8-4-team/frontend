@@ -5,10 +5,9 @@ import type { WithChildren } from '@repo/ui';
 import { createContext, useEffect, useMemo, useState } from 'react';
 import DefaultMaleAvatar from '@/assets/images/image-default-male-profile.png';
 import DefaultFemaleAvatar from '@/assets/images/image-default-female-profile.png';
-import DefaultProfileImage from '@/assets/svg/logo-bee.svg';
 import type { StaticImageData } from 'next/image';
-import UserService from '@repo/usecase/src/userService';
-import UserAPIRepository from '@repo/infrastructures/src/repositories/userAPIRepository';
+import { updateMe } from './action';
+import { useRouter } from 'next/navigation';
 
 interface State {
   user: User | null;
@@ -24,16 +23,13 @@ const defaultState: State = {
 
 export const UserContext = createContext<State>(defaultState);
 
-const userService = new UserService({
-  userRepository: new UserAPIRepository(),
-});
-
 interface Props extends WithChildren {
   user: User | null;
 }
 
 export function UserProvider({ children, user: initialUser }: Props) {
   const [user, setUser] = useState<User | null>(initialUser);
+  const router = useRouter();
 
   const realProfileImageUrl = useMemo(() => {
     if (!user) {
@@ -58,9 +54,16 @@ export function UserProvider({ children, user: initialUser }: Props) {
       return;
     }
 
-    const updatedUser = await userService.updateMe({ ...user, ...profileData });
+    const updatedUser = await updateMe(user, profileData);
 
-    setUser(updatedUser);
+    // 서버 액션 이후 클라이언트 상태 갱신
+    setUser((prev) => ({
+      ...prev,
+      ...updatedUser,
+    }));
+
+    // 캐시 무효화 또는 리프레시
+    router.refresh();
   };
 
   useEffect(() => {
