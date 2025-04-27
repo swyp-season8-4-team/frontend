@@ -41,7 +41,7 @@ export default function CommunityMateList() {
   }, [isLast, loadMore, isLoading]);
 
   return (
-    <div className="flex flex-col gap-[6px]">
+    <div className="flex flex-col gap-[6px] pb-[100px]">
       {mates.map((mate) => {
         return <CommunityMateCard key={mate.id || nanoid(10)} mate={mate} />;
       })}

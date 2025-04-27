@@ -7,6 +7,7 @@ import IconReport from '@repo/design-system/components/icons/IconReport';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import NavigationService from '@repo/usecase/src/navigationService';
 import Link from 'next/link';
+import { Logo } from '@/app/[lang]/_components/Logo';
 
 const navigationService = new NavigationService({});
 
@@ -44,6 +45,7 @@ export function OwnerIntro() {
   return (
     <div className="bg-page flex min-h-screen w-full flex-1 flex-col">
       <Header
+        logo={<Logo height={25} width={25} />}
         title="디저비"
         iconClass="w-[27px] md:w-[42.62px] md:h-[42.62px]"
         fontClass={cn(recipeKorea.className, 'text-lg md:text-3xl')}

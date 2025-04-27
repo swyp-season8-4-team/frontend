@@ -6,7 +6,7 @@ type StorePreviewPicListProps = Pick<StoreSummaryInfoData, 'ownerPickImages'>;
 export function StorePreviewPicList({
   ownerPickImages,
 }: StorePreviewPicListProps) {
-  if (!ownerPickImages) return null;
+  if (!ownerPickImages || ownerPickImages.length === 0) return null;
 
   // 최대 4개의 이미지만 사용
   const displayImages = ownerPickImages.slice(0, 4);
@@ -16,9 +16,9 @@ export function StorePreviewPicList({
   return (
     <div className="flex gap-[9.4px] md:gap-[22px]">
       {displayImages.map((image) => (
-        <div key={image} className="w-full aspect-square">
+        <div key={image} className="aspect-square w-full">
           <Image
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
             src={image}
             alt="가게 사진"
             width={190}
@@ -30,7 +30,7 @@ export function StorePreviewPicList({
       {Array.from({ length: emptySlots }).map((_, index) => (
         <div
           key={`empty-${index}`}
-          className="w-full aspect-square bg-gray-100"
+          className="aspect-square w-full bg-gray-100"
         />
       ))}
     </div>

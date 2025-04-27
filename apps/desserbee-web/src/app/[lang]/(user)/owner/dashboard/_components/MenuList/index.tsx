@@ -26,6 +26,7 @@ export function MenuList({title,menuLists}:MenuListprops) {
             <MenuCard img={item.images} name={item.name} description={item.description} price={item.price} />
           </div> 
         ))}
+
       </div>
     </div>
   );

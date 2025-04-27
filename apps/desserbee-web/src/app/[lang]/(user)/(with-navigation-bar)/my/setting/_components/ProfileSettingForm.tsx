@@ -2,15 +2,18 @@
 
 import { UserContext } from '@/contexts/UserContext';
 import { useState, useRef, useContext, useMemo } from 'react';
-import Image from 'next/image';
+import Image, { type StaticImageData } from 'next/image';
 import IconCamera from '@repo/design-system/components/icons/IconCamera';
 import type { Preference } from '@repo/entity/src/preference';
 
 export default function ProfileSettingForm() {
-  const { user, updateUserProfile } = useContext(UserContext);
+  const { user, updateUserProfile, realProfileImageUrl } =
+    useContext(UserContext);
 
   const [nickname, setNickname] = useState(user?.nickname || '');
-  const [profileImage, setProfileImage] = useState(user?.profileImageUrl || '');
+  const [profileImage, setProfileImage] = useState<string | StaticImageData>(
+    user?.profileImageUrl || realProfileImageUrl,
+  );
   const [isLoading, setLoading] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -96,8 +99,8 @@ export default function ProfileSettingForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6 pb-6">
       {/* 프로필 이미지 */}
-      <div className="flex flex-col items-center mt-2">
-        <div className="relative w-[120px] h-[120px] rounded-lg bg-gray-300">
+      <div className="mt-2 flex flex-col items-center">
+        <div className="relative h-[120px] w-[120px] rounded-lg bg-gray-300">
           {profileImage ? (
             <Image
               src={profileImage}
@@ -106,12 +109,12 @@ export default function ProfileSettingForm() {
               className="object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-gray-400"></div>
+            <div className="h-full w-full bg-gray-400"></div>
           )}
           <button
             type="button"
             onClick={handleImageClick}
-            className="absolute bottom-[-12px] right-[-16px] bg-white rounded-full p-1.5 shadow-md"
+            className="absolute bottom-[-12px] right-[-16px] rounded-full bg-white p-1.5 shadow-md"
             aria-label="프로필 설정 이미지 변경"
           >
             <IconCamera />
@@ -130,7 +133,7 @@ export default function ProfileSettingForm() {
       <div className="flex flex-col gap-2">
         <label
           htmlFor="nickname"
-          className="text-[#393939] font-medium text-base"
+          className="text-base font-medium text-[#393939]"
         >
           닉네임
         </label>
@@ -141,13 +144,13 @@ export default function ProfileSettingForm() {
           onChange={(e) => setNickname(e.target.value)}
           placeholder="닉네임 (최대 8자, 한글, 영어, 숫자)"
           maxLength={8}
-          className="w-full p-4 border border-gray-300 rounded-lg text-gray-700 focus:outline-none"
+          className="w-full rounded-lg border border-gray-300 p-4 text-gray-700 focus:outline-none"
         />
       </div>
 
       {/* 취향 선택 */}
       <div className="flex flex-col gap-2">
-        <label className="text-[#393939] font-medium text-base">
+        <label className="text-base font-medium text-[#393939]">
           취향 선택
         </label>
         <div className="flex flex-wrap gap-2">
@@ -155,10 +158,10 @@ export default function ProfileSettingForm() {
             <button
               key={preference}
               type="button"
-              className={`px-4 py-2 rounded-full text-sm  font-medium transition-colors shadow-base ${
+              className={`shadow-base rounded-full px-4 py-2 text-sm font-medium transition-colors ${
                 selectedPreferences.includes(preference)
-                  ? 'bg-primary text-white border '
-                  : 'bg-white text-gray-700 border border-gray-200'
+                  ? 'bg-primary border text-white'
+                  : 'border border-gray-200 bg-white text-gray-700'
               }`}
               onClick={() => togglePreference(preference)}
             >
@@ -171,10 +174,10 @@ export default function ProfileSettingForm() {
       {/* 완료 버튼 */}
       <button
         type="submit"
-        className={`w-full p-3 text-white rounded-[100px] font-medium mt-4 transition-colors ${
+        className={`mt-4 w-full rounded-[100px] p-3 font-medium text-white transition-colors ${
           isFormChanged
             ? 'bg-secondary hover:bg-[#FFC803]'
-            : 'bg-gray-400 cursor-not-allowed'
+            : 'cursor-not-allowed bg-gray-400'
         }`}
         disabled={isLoading || !isFormChanged}
       >

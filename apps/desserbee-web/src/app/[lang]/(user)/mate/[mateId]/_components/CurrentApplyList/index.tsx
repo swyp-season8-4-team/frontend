@@ -13,6 +13,7 @@ import Modal from '@repo/design-system/components/Modal';
 import { Button } from '@repo/ui/components/button';
 import { MateDetailContext } from '../../_contexts/MateDetailContext';
 import { acceptMateRequest, rejectMateRequest } from './action';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   waitList: Mate[];
@@ -25,6 +26,7 @@ export default function CurrentApplyList({ waitList }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [localWaitList, setLocalWaitList] = useState<Mate[]>(waitList);
 
+  const router = useRouter();
   useEffect(() => {
     setLocalWaitList(waitList);
   }, [waitList]);
@@ -52,6 +54,7 @@ export default function CurrentApplyList({ waitList }: Props) {
       if (result.success) {
         setLocalWaitList((prev) => prev.filter((item) => item.id !== mate.id));
         closeModal();
+        router.refresh();
       } else {
         console.error('Failed to accept mate request');
       }
@@ -163,17 +166,20 @@ export default function CurrentApplyList({ waitList }: Props) {
         {localWaitList.map((wait, index) => (
           <div key={index} className="flex items-center justify-between py-2">
             <div className="flex items-center gap-2">
-              <Image
-                src={
-                  wait.profileImage
-                    ? wait.profileImage
-                    : defaultProfileImage(wait)
-                }
-                alt="profile"
-                width={32}
-                height={32}
-                className="rounded-full"
-              />
+              <div className="h-8 w-8 overflow-hidden rounded-full">
+                <Image
+                  src={
+                    wait.profileImage
+                      ? wait.profileImage
+                      : defaultProfileImage(wait)
+                  }
+                  alt="profile"
+                  width={50}
+                  height={50}
+                  className="h-full w-full"
+                />
+              </div>
+
               <span className="text-[10px] font-semibold leading-normal tracking-[-0.24px] text-[#393939]">
                 {wait.nickname}
               </span>

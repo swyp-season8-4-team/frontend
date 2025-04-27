@@ -29,7 +29,6 @@ export default async function CommunityMateSection({ q }: Props) {
       <CommunityMateListProvider initialIsLast={isLast} initialMates={mates}>
         <CommunityMateList />
       </CommunityMateListProvider>
-      {mates.length > 0 && <ScrollGradient />}
     </section>
   );
 }
