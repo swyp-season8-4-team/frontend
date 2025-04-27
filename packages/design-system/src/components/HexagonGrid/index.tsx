@@ -65,6 +65,15 @@ export function HexagonGrid({
     { type: 'image', position: 'top-[43%] left-[58%]' },
   ];
 
+  // storeImages가 있을 때 이미지 배열 처리
+  const processedImages = storeImages && storeImages.length > 0
+    ? [
+        storeImages[0],
+        storeImages[1] || storeImages[0], // 두 번째 이미지가 없으면 첫 번째 이미지 사용
+        storeImages[2] || storeImages[0]  // 세 번째 이미지가 없으면 첫 번째 이미지 사용
+      ]
+    : undefined;
+
   return (
     <div className="relative w-[155px] md:w-[247.29px] md:max-w-[250px] aspect-square">
       {hexagonConfig.map((config, index) => (
@@ -73,8 +82,8 @@ export function HexagonGrid({
           className={config.position}
           content={config.type === 'text' ? contents[index] : undefined}
           imgSrc={
-            config.type === 'image' && storeImages
-              ? storeImages[index - 3]
+            config.type === 'image' && processedImages
+              ? processedImages[index - 3]
               : undefined
           }
         />
