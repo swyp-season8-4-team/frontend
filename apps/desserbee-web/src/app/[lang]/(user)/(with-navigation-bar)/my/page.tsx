@@ -4,16 +4,16 @@ import ProfileSection from './_components/ProfileSection';
 
 export default async function MyPage() {
   return (
-    <main className="flex flex-col h-full bg-white">
+    <main className="flex h-full flex-col bg-white">
       <div className="p-6">
-        <h1 className="text-xl font-medium text-gray-700 mb-4">마이 페이지</h1>
+        <h1 className="mb-4 text-xl font-medium text-gray-700">마이 페이지</h1>
 
-        <div className="bg-white rounded-lg p-6">
+        <div className="rounded-lg bg-white p-6">
           <ProfileSection />
           <div className="mt-8">
             <MyIconMenu />
           </div>
-          <hr className="border-t border-gray-200 my-6" />
+          <hr className="my-6 border-t border-gray-200" />
           <MenuSection />
         </div>
       </div>
