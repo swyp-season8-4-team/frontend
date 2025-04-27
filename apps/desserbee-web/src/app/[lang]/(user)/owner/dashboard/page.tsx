@@ -37,7 +37,13 @@ export default function DashBoardHomePage() {
           operatingTime={storeInfo?.operatingHours || []}
           sns={storeInfo?.storeLinks || []}
         />
-        <ShopDetail />
+        <ShopDetail
+          tags={storeInfo?.tags || []}
+          description={storeInfo?.description || ''}
+          animalYn={storeInfo?.animalYn}
+          tumblerYn={storeInfo?.tumblerYn}
+          parkingYn={storeInfo?.parkingYn}
+        />
         <MenuList title="메뉴리스트" />
         <Notice
           title="최근 공지"
