@@ -43,7 +43,6 @@ export default function StoreList() {
 
     fetchStoresWithDetails();
   }, []);
-  console.log(storesWithDetails);
 
   return (
     <div className="min-h-screen w-full bg-[#EBEBEB] pb-5">
@@ -59,6 +58,7 @@ export default function StoreList() {
             tag={store.details?.tags || []}
             description={store.details?.description || ''}
             img={store.details?.storeImages?.[0] || ''}
+            storeUuid={store.storeUuid}
           />
         ))}
       </div>

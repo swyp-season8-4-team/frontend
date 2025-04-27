@@ -62,3 +62,10 @@ export async function getOwnerStoreList() {
   const storeLists = await commonErrorHandler(storeService.getOwnerStoreList());
   return storeLists;
 }
+
+export async function getStoreDetail({ storeUuid }: { storeUuid: string }) {
+  const storeDetail = await commonErrorHandler(
+    storeService.getStoreDetail({storeUuid})
+  );
+  return storeDetail;
+}
