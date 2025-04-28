@@ -8,9 +8,10 @@ import { HamburgerMenu } from '../HamburgerMenu';
 
 interface HeaderProps {
   title: string;
+  num?: string;
 }
 
-export function DashBoardHeader({ title }: HeaderProps) {
+export function DashBoardHeader({ title, num }: HeaderProps) {
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -34,7 +35,10 @@ export function DashBoardHeader({ title }: HeaderProps) {
         </div>
         {open && <HamburgerMenu onClose={() => setOpen(false)} />}
       </div>
-      <div className="mb-4 text-center text-[18px] font-bold">{title}</div>
+      <div className="mb-4 flex w-full items-center justify-center gap-3">
+        <p className="text-center text-[18px] font-bold">{title}</p>
+        <p className="text-[18px] font-bold text-[#2FB350]">{num}</p>
+      </div>
     </>
   );
 }

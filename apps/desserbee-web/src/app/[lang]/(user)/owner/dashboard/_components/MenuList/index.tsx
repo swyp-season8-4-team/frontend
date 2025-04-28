@@ -1,9 +1,17 @@
 import { MenuCard } from '../MenuCard';
+interface menuProps {
+  description?:string;
+  images?:string[];
+  name:string;
+  price:number;
+}
 
 interface MenuListprops {
-  title: string;
+  title:string;
+  menuLists: menuProps[];
 }
-export function MenuList({ title }: MenuListprops) {
+
+export function MenuList({title,menuLists}:MenuListprops) {
   return (
     <div className="m-auto w-[95%] rounded-md bg-white">
       <div className="flex w-full items-center justify-between p-[14px]">
@@ -12,11 +20,13 @@ export function MenuList({ title }: MenuListprops) {
       </div>
       <div className="w-full border-b-[0.6px] border-b-[#B1B1B1]" />
       {/* 메뉴 카드 리스트에만 높이와 스크롤 적용 */}
-      <div className="h-56 overflow-y-auto">
-        <MenuCard name="쪽파베이글" description="상세설명" price="7,500" />
-        <MenuCard name="쪽파베이글" description="상세설명" price="7,500" />
-        <MenuCard name="쪽파베이글" description="상세설명" price="7,500" />
-        <MenuCard name="쪽파베이글" description="상세설명" price="7,500" />
+      <div className="max-h-56 overflow-y-auto">
+        {menuLists.map((item,idx)=>(
+          <div key={idx}>
+            <MenuCard img={item.images} name={item.name} description={item.description} price={item.price} />
+          </div> 
+        ))}
+
       </div>
     </div>
   );
