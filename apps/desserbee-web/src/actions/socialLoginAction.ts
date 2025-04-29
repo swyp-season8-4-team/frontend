@@ -1,7 +1,7 @@
 'use server';
 
 import { isProd } from '@/utils/env';
-import type { OAuthSocialProvider } from '@repo/entity/src/signIn';
+import { OAuthSocialProvider } from '@repo/entity/src/signIn';
 import {
   NavigationPathGroup,
   NavigationLanguageGroup,
@@ -12,7 +12,6 @@ import AuthService from '@repo/usecase/src/authService';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { decodeJWT } from '@repo/utility/src/jwt';
-import type { OAuthSignInData } from '@repo/entity/src/auth';
 import { calculateTokenMaxAge } from '@/utils/token';
 import { HTTPError } from '@repo/api/src/error';
 
@@ -20,9 +19,14 @@ const authService = new AuthService({
   authRepository: new AuthAPIRepository(),
 });
 
-interface ActionData extends OAuthSignInData {
+// ... existing code ...
+interface ActionData {
+  code: string;
+  provider: OAuthSocialProvider;
+  idToken?: string;
   next?: string;
 }
+// ... existing code ...
 
 export default async function socialLoginAction({
   code,
@@ -34,7 +38,7 @@ export default async function socialLoginAction({
   try {
     let response;
 
-    switch (data.provider) {
+    switch (provider) {
       case OAuthSocialProvider.KAKAO:
         response = await authService.socialSignIn({ code, provider });
         break;
@@ -42,7 +46,7 @@ export default async function socialLoginAction({
         response = await authService.socialSignIn({ code, idToken, provider }); // idToken 백엔드에서 안 받아도 된다고 하면 지우고 통합하기
         break;
       default:
-        throw new Error(`Unsupported social login provider: ${data.provider}`);
+        throw new Error(`Unsupported social login provider: ${provider}`);
     }
 
     const { accessToken, refreshToken, userId, isPreferenceSet, deviceId } =

@@ -14,7 +14,11 @@ export default function AppleSignInButton() {
   const [state, setState] = useState<string>('');
 
   useEffect(() => {
-    setState(getState());
+    const initState = async () => {
+      const stateValue = await getState();
+      setState(stateValue);
+    };
+    initState();
   }, []);
 
   // response_type=form_post (강제)
@@ -24,14 +28,13 @@ export default function AppleSignInButton() {
         src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/ko_KR/appleid.auth.js"
         strategy="afterInteractive"
         onReady={() => {
-          if ((window as unknown).AppleID) {
-            (window as unknown).AppleID.auth.init({
-              clientId: process.env.NEXT_PUBLIC_APPLE_SERVICE_ID,
+          if (window.AppleID?.auth?.init) {
+            window.AppleID.auth.init({
+              clientId: process.env.NEXT_PUBLIC_APPLE_SERVICE_ID as string,
               scope: 'name email',
-              redirectURI: authService.getRedirectUri(
+              redirectURI: authService.getOAuthRedirectUri(
                 OAuthSocialProvider.APPLE,
-                state,
-              ),
+              ) as string,
               state,
               usePopup: false,
             });
