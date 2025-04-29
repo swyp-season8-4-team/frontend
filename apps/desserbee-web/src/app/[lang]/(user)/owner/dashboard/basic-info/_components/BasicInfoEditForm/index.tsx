@@ -7,9 +7,7 @@ import type { Store } from '@repo/entity/src/store';
 import Image from 'next/image';
 import IconXRound from '@repo/design-system/components/icons/IconXRound';
 import IconDirection from '@repo/design-system/components/icons/IconDirection';
-import IconCar from '@repo/design-system/components/icons/IconCar2';
-import IconDog from '@repo/design-system/components/icons/IconDog2';
-import IconTumbler from '@repo/design-system/components/icons/IconTumbler2';
+
 import IconMinusRound from '@repo/design-system/components/icons/IconMinusRound';
 import { cn } from '@repo/ui/lib/utils';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
@@ -33,27 +31,11 @@ import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/
 import { ValidationError } from '../../../../register/_components/ValidationError';
 import IconPlusRound from '@repo/design-system/components/icons/IconPlusRound';
 import { ModalHeader } from '../../../../_components/ModalHeader';
+import { FEATURES } from '@/app/[lang]/(user)/_consts/store';
 
 // 깜빡하고 말씀 안 드렸는데, 아이콘은 재사용을 위해 정해진 양식으로 작성 후 따로 관리가 됩니다.
 // @repo/design-system/components/icons에서 확인 가능
 // 이 부분 설명 필요하면 따로 질문 주세요!
-const FEATURES = [
-  {
-    icon: <IconCar className="h-full w-full text-[#E06A00]" />, // 아이콘 예시
-    title: '주차 가능',
-    id: 'parkingYn',
-  },
-  {
-    icon: <IconDog className="h-full w-full" />,
-    title: '반려 함께',
-    id: 'animalYn',
-  },
-  {
-    icon: <IconTumbler className="h-full w-full" />,
-    title: '텀블러 할인',
-    id: 'tumblerYn',
-  },
-];
 
 interface FormInputs
   extends Pick<

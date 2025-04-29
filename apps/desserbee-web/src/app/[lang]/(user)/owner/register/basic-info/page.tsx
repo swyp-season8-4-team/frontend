@@ -8,9 +8,7 @@ import type { Store } from '@repo/entity/src/store';
 import Image from 'next/image';
 import IconXRound from '@repo/design-system/components/icons/IconXRound';
 import IconDirection from '@repo/design-system/components/icons/IconDirection';
-import IconCar from '@repo/design-system/components/icons/IconCar2';
-import IconDog from '@repo/design-system/components/icons/IconDog2';
-import IconTumbler from '@repo/design-system/components/icons/IconTumbler2';
+
 import IconMinusRound from '@repo/design-system/components/icons/IconMinusRound';
 import { cn } from '@repo/ui/lib/utils';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
@@ -35,24 +33,7 @@ import { AddButton } from '../_components/AddButton';
 import type { StoreLink } from '@repo/entity/src/store';
 import IconWarn from '@repo/design-system/components/icons/IconWarn';
 import { ValidationError } from '../_components/ValidationError';
-
-const FEATURES = [
-  {
-    icon: <IconCar className="h-full w-full text-[#E06A00]" />,
-    title: '주차 가능',
-    id: 'parkingYn',
-  },
-  {
-    icon: <IconDog className="h-full w-full" />,
-    title: '반려 함께',
-    id: 'animalYn',
-  },
-  {
-    icon: <IconTumbler className="h-full w-full" />,
-    title: '텀블러 할인',
-    id: 'tumblerYn',
-  },
-];
+import { FEATURES } from '../../../_consts/store';
 
 interface FormInputs
   extends Pick<
