@@ -68,6 +68,7 @@ export default class AuthService {
     return 'authService-signUpStep';
   }
 
+  // ... existing code ...
   private getRedirectUri(provider: OAuthSocialProvider) {
     switch (provider) {
       case OAuthSocialProvider.KAKAO:
@@ -79,6 +80,10 @@ export default class AuthService {
       default:
         throw new Error('Invalid provider');
     }
+  }
+
+  public getOAuthRedirectUri(provider: OAuthSocialProvider) {
+    return this.getRedirectUri(provider);
   }
 
   getServerSideUrl(provider: OAuthSocialProvider, state?: string) {
