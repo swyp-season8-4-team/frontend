@@ -7,7 +7,7 @@ import {
   NavigationPathGroup,
   NavigationPathname,
 } from '@repo/entity/src/navigation';
-import type { WithClassName } from '@repo/ui/index';
+import type { WithClassName } from '@repo/ui';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
