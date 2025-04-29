@@ -9,6 +9,7 @@ export enum NavigationLanguageGroup {
 
 export enum NavigationPathGroup {
   OAuthCallback = '/oauth/callback/',
+  AppleOAuthCallback = '/oauth/apple/callback',
   SignIn = '/sign-in/',
   Map = '/map/',
   Store = '/store/',
@@ -55,9 +56,9 @@ export enum NavigationPathname {
   OwnerRegisterComplete = '/owner/register/complete',
   OwnerRegisterLoading = '/owner/register/loading',
 
-  OwnerStoreList ='/owner/storelist',
+  OwnerStoreList = '/owner/storelist',
 
   OwnerDashboard = '/owner/dashboard',
-  OwnerDashboardBasicInfo='/owner/dashboard/basic-info',
-  OwnerDashboardNotices='/owner/dashboard/notices'
+  OwnerDashboardBasicInfo = '/owner/dashboard/basic-info',
+  OwnerDashboardNotices = '/owner/dashboard/notices',
 }
