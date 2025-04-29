@@ -3,6 +3,7 @@ import LoginForm from './_components/LoginForm';
 import { SignUpLink } from './_components/SignUpLink';
 import { cn } from '@repo/ui/lib/utils';
 import KakaoSignInButton from './_components/KakaoSignInButton';
+import AppleSignInButton from './_components/AppleSignInButton';
 
 import { Logo } from '@/app/[lang]/_components/Logo';
 export default async function SignInPage() {
@@ -35,8 +36,9 @@ export default async function SignInPage() {
             </div>
           </div>
 
-          <div className="flex w-full justify-center">
+          <div className="grid w-full grid-cols-2 items-center justify-center gap-2">
             <KakaoSignInButton />
+            <AppleSignInButton />
           </div>
           <SignUpLink />
         </section>
