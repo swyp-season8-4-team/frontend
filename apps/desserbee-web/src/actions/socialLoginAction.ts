@@ -12,6 +12,7 @@ import AuthService from '@repo/usecase/src/authService';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { decodeJWT } from '@repo/utility/src/jwt';
+import type { OAuthSignInData } from '@repo/entity/src/auth';
 import { calculateTokenMaxAge } from '@/utils/token';
 import { HTTPError } from '@repo/api/src/error';
 
@@ -19,22 +20,33 @@ const authService = new AuthService({
   authRepository: new AuthAPIRepository(),
 });
 
-interface ActionData {
-  code: string;
-  provider: OAuthSocialProvider;
+interface ActionData extends OAuthSignInData {
   next?: string;
 }
 
 export default async function socialLoginAction({
   code,
   provider,
+  idToken, // 백엔드에서 안 받아도 된다고 하면 지우기
+  // user,
   // next,
 }: ActionData) {
   try {
-    const response = await authService.socialSignIn({ code, provider });
+    let response;
+
+    switch (data.provider) {
+      case OAuthSocialProvider.KAKAO:
+        response = await authService.socialSignIn({ code, provider });
+        break;
+      case OAuthSocialProvider.APPLE:
+        response = await authService.socialSignIn({ code, idToken, provider }); // idToken 백엔드에서 안 받아도 된다고 하면 지우고 통합하기
+        break;
+      default:
+        throw new Error(`Unsupported social login provider: ${data.provider}`);
+    }
 
     const { accessToken, refreshToken, userId, isPreferenceSet, deviceId } =
-      response;
+      response; // 만약 애플 로그인 응답값 바뀐다면 따로 수정하기 (지금은 service 에서 분기 처리)
 
     const cookieList = await cookies();
     const domain =
