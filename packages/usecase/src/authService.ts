@@ -75,7 +75,7 @@ export default class AuthService {
         return `${process.env.NEXT_PUBLIC_SOCIAL_REDIRECT_HOST}${NavigationLanguageGroup.ko}${NavigationPathGroup.OAuthCallback}${provider.toLowerCase()}`;
 
       case OAuthSocialProvider.APPLE:
-        return `${process.env.NEXT_PUBLIC_SOCIAL_REDIRECT_HOST}${NavigationLanguageGroup.ko}${NavigationPathGroup.AppleOAuthCallback}${provider.toLowerCase()}`;
+        return `${process.env.NEXT_PUBLIC_SOCIAL_REDIRECT_HOST}${NavigationLanguageGroup.ko}${NavigationPathGroup.AppleOAuthCallback}`;
 
       default:
         throw new Error('Invalid provider');
