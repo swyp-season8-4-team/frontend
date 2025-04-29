@@ -64,5 +64,17 @@ export default class AuthNextAppRouteRepository implements AuthRepository {
   }
   signUpWithProfileImage(data: BaseRequestData<SignUpData>): Promise<unknown> {
     throw new Error('Method not implemented.');
+  } // ... existing code ...
+  socialSignInWithKakao(
+    data: BaseRequestData<OAuthSignInData>,
+  ): Promise<SignInResponse> {
+    throw new Error('Method not implemented.');
   }
+
+  socialSignInWithApple(
+    data: BaseRequestData<OAuthSignInData>,
+  ): Promise<SignInResponse> {
+    throw new Error('Method not implemented.');
+  }
+  // ... existing code ...
 }

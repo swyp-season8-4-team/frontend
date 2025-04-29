@@ -93,4 +93,16 @@ export default class AuthDevAPIRepository
   }: BaseRequestData<SignUpData>): Promise<unknown> {
     throw new Error('Method not implemented.');
   }
+
+  socialSignInWithKakao(
+    data: BaseRequestData<OAuthSignInData>,
+  ): Promise<SignInResponse> {
+    throw new Error('Method not implemented.');
+  }
+
+  socialSignInWithApple(
+    data: BaseRequestData<OAuthSignInData>,
+  ): Promise<SignInResponse> {
+    throw new Error('Method not implemented.');
+  }
 }
