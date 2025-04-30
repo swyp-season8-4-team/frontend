@@ -9,7 +9,7 @@ interface HexagonConfig {
 
 interface HexagonProps {
   className: string;
-  content?: string;
+  content?: string[];
   imgSrc?: string;
   bgColor?: string;
 }
@@ -18,17 +18,17 @@ function Hexagon({ className, content, imgSrc }: HexagonProps) {
   return (
     <div
       className={cn(
-        'w-[36%] absolute ',
-        'before:content-[""] before:block before:pt-[86.6%]',
+        'absolute w-[36%]',
+        'before:block before:pt-[86.6%] before:content-[""]',
         'before:[clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)]',
         imgSrc ? 'before:bg-[#D2D2D2]' : 'before:bg-primary',
         className,
       )}
     >
       {content && (
-        <div className="absolute inset-0 flex-col justify-center items-center px-1 font-bold text-[10px] text-white md:text-[16.8px] text-center leading-none ">
-          <div className="flex flex-col justify-center items-center h-full">
-            {content.split(' ').map((word, index) => (
+        <div className="absolute inset-0 flex-col items-center justify-center px-1 text-center text-[10px] font-bold leading-none text-white md:text-[16.8px]">
+          <div className="flex h-full flex-col items-center justify-center">
+            {content.map((word, index) => (
               <span key={index} className="block w-full">
                 {word}
               </span>
@@ -38,10 +38,10 @@ function Hexagon({ className, content, imgSrc }: HexagonProps) {
       )}
 
       {imgSrc && (
-        <div className="absolute inset-0 w-full h-full overflow-hidden">
+        <div className="absolute inset-0 h-full w-full overflow-hidden">
           <img
             src={imgSrc}
-            className="[clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)] w-full h-full object-cover"
+            className="h-full w-full object-cover [clip-path:polygon(25%_0%,75%_0%,100%_50%,75%_100%,25%_100%,0%_50%)]"
           />
         </div>
       )}
@@ -66,21 +66,22 @@ export function HexagonGrid({
   ];
 
   // storeImages가 있을 때 이미지 배열 처리
-  const processedImages = storeImages && storeImages.length > 0
-    ? [
-        storeImages[0],
-        storeImages[1] || storeImages[0], // 두 번째 이미지가 없으면 첫 번째 이미지 사용
-        storeImages[2] || storeImages[0]  // 세 번째 이미지가 없으면 첫 번째 이미지 사용
-      ]
-    : undefined;
+  const processedImages =
+    storeImages && storeImages.length > 0
+      ? [
+          storeImages[0],
+          storeImages[1] || storeImages[0], // 두 번째 이미지가 없으면 첫 번째 이미지 사용
+          storeImages[2] || storeImages[0], // 세 번째 이미지가 없으면 첫 번째 이미지 사용
+        ]
+      : undefined;
 
   return (
-    <div className="relative w-[155px] md:w-[247.29px] md:max-w-[250px] aspect-square">
+    <div className="relative aspect-square w-[155px] md:w-[247.29px] md:max-w-[250px]">
       {hexagonConfig.map((config, index) => (
         <Hexagon
           key={index}
           className={config.position}
-          content={config.type === 'text' ? contents[index] : undefined}
+          content={config.type === 'text' ? [contents[index]] : undefined}
           imgSrc={
             config.type === 'image' && processedImages
               ? processedImages[index - 3]
