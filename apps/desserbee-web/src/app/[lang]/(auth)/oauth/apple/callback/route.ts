@@ -6,6 +6,7 @@ import { NavigationPathname } from '@repo/entity/src/navigation';
 import socialLoginAction from '@/actions/socialLoginAction';
 import { commonErrorHandler } from '@/error/commonErrorHandler';
 import { OAuthSocialProvider } from '@repo/entity/src/auth';
+import { HTTPError } from '@repo/api/src/error';
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
@@ -22,10 +23,24 @@ export async function POST(request: NextRequest) {
     return new NextResponse('Invalid form data', { status: 400 });
   }
 
-  await commonErrorHandler(
-    socialLoginAction({ code, idToken, provider: OAuthSocialProvider.APPLE }),
-  );
+  try {
+    await socialLoginAction({
+      code,
+      idToken,
+      provider: OAuthSocialProvider.APPLE,
+    });
 
-  // ✅ 로그인 성공 후 프론트 페이지로 리다이렉트
-  return NextResponse.redirect(NavigationPathname.Map);
+    return NextResponse.redirect(NavigationPathname.Map);
+  } catch (error) {
+    console.error('[Apple Login Error]', error);
+
+    if (error instanceof HTTPError) {
+      return new NextResponse(
+        `Apple login failed:\n${JSON.stringify(error.data, null, 2)}`, // 에러 디버깅
+        { status: 500 },
+      );
+    }
+
+    return new NextResponse('Apple login failed', { status: 500 });
+  }
 }
