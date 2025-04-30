@@ -13,7 +13,7 @@ export default function KakaoSignInButton() {
 
   return (
     <Link
-      className="flex w-full items-center justify-start rounded-[6px] bg-[#FEE500] p-4"
+      className="flex max-h-[60px] w-full items-center justify-center rounded-[6px] bg-[#FEE500] p-4"
       href={authService.getServerSideUrl(OAuthSocialProvider.KAKAO, state)}
     >
       <svg
@@ -47,7 +47,7 @@ export default function KakaoSignInButton() {
         </defs>
       </svg>
 
-      <div className="w-full grow text-center text-lg font-medium">
+      <div className="w-full grow text-center text-[17px] font-medium md:text-[24px]">
         카카오 로그인
       </div>
     </Link>

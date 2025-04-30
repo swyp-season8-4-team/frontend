@@ -9,6 +9,7 @@ export enum OAuthSocialErrorDescription {
 export enum OAuthSocialProvider {
   KAKAO = 'kakao',
   GOOGLE = 'google',
+  APPLE = 'apple',
 }
 
 export function isOAuthSocialProvider(

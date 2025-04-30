@@ -27,7 +27,7 @@ export default class AuthAPIRepository
 {
   private readonly authConverter = new AuthConverter();
 
-  async socialSignIn({
+  async socialSignInWithKakao({
     data,
   }: BaseRequestData<OAuthSignInData>): Promise<SignInResponse> {
     if (!data) {
@@ -38,6 +38,23 @@ export default class AuthAPIRepository
       data,
       method: 'POST',
       url: `${this.endpoint}/auth/oauth2/callback`,
+    });
+
+    return this.authConverter.convertRawSignInResponse(response);
+  }
+
+  async socialSignInWithApple({
+    data,
+  }: BaseRequestData<OAuthSignInData>): Promise<SignInResponse> {
+    //TODO: 백엔드 API 나오면 수정 해야 함 (응답타입도)
+    if (!data) {
+      throw new Error('data is not exist');
+    }
+
+    const response = await fetch<OAuthSignInData, RawSignInResponse>({
+      data, // code, idToken //TODO: 백엔드 API 나오면 수정 해야 함
+      method: 'POST',
+      url: `${this.endpoint}/auth/oauth2/callback`, //TODO: 백엔드 API 나오면 수정 해야 함
     });
 
     return this.authConverter.convertRawSignInResponse(response);
