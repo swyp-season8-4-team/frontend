@@ -47,6 +47,9 @@ import type {
   SavedStoresLocationRequest,
   RegisterStoreFromData,
   getOwnerStoreListResponse,
+  RegisterNoticeRequest,
+  NoticeListRequest,
+  NoticeListResponse,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -862,6 +865,62 @@ export default class StoreAPIRepository
       method: 'PATCH',
       url: url,
       formData,
+    });
+
+    return response;
+  }
+
+  // owner:notice
+  async createNotice({
+    authorization,
+    data,
+  }: BaseRequestData<RegisterNoticeRequest>): Promise<void> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { storeUuid, tag, title, content } = data || {};
+    const url = `${this.endpoint}/stores/${storeUuid}/notices`;
+
+    const response = await fetch<
+      {
+        tag: string;
+        title: string;
+        content: string;
+      },
+      void
+    >({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      data: { tag, title, content }, // 추가
+      method: 'POST',
+      url,
+    });
+
+    return response;
+  }
+
+  async getNoticeList({
+    authorization,
+    data,
+  }: BaseRequestData<NoticeListRequest>): Promise<NoticeListResponse[]> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { storeUuid } = data || {};
+
+    const response = await fetch<NoticeListRequest, NoticeListResponse[]>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      method: 'GET',
+      url: `${this.endpoint}/stores/${storeUuid}/notices`, 
     });
 
     return response;

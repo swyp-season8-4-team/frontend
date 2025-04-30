@@ -69,3 +69,14 @@ export async function getStoreDetail({ storeUuid }: { storeUuid: string }) {
   );
   return storeDetail;
 }
+
+export async function createNotice({ storeUuid, tag, title, content }: { storeUuid: string; tag: string; title: string; content: string }) {
+  await commonErrorHandler(storeService.createNotice({ storeUuid, tag, title, content }));
+}
+
+export async function getNoticeList({ storeUuid }: { storeUuid: string }) {
+  const noticeList = await commonErrorHandler(
+    storeService.getNoticeList({storeUuid})
+  );
+  return noticeList;
+}

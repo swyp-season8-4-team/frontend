@@ -659,6 +659,26 @@ export interface EditOnelineReviewRequest {
   newImages?: File[];
 }
 
+export interface RegisterNoticeRequest {
+  storeUuid:string;
+  tag: string;
+  title: string;
+  content: string;
+}
+
+export interface NoticeListRequest {
+  storeUuid: string;
+}
+
+export interface NoticeListResponse {
+  noticeId: number;
+  tag: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface StoreRepository {
   // preference
   getAllPreference(): Promise<PreferenceData[]>;
@@ -804,4 +824,14 @@ export interface StoreRepository {
   getOwnerStoreList({
     authorization,
   }: BaseRequestData<void>): Promise<getOwnerStoreListResponse[]>;
+
+  // owner:notice
+  createNotice({
+    authorization,
+    data
+  }:BaseRequestData<RegisterNoticeRequest>):Promise<void>;
+
+  getNoticeList({
+    authorization,
+  }:BaseRequestData<NoticeListRequest>):Promise<NoticeListResponse[]>;
 }

@@ -27,6 +27,7 @@ interface shopInfoProps {
   address: string;
   operatingTime: OperatingHoursItem[];
   sns?: string[];
+  storeUuid: string;
 }
 
 function getServiceName(url: string) {
@@ -51,7 +52,7 @@ export function ShopInfo(data: shopInfoProps) {
     <div className="m-auto flex w-[95%] flex-col items-center justify-center rounded-md bg-white p-2">
       <div className="w-[95%]">
         {/* 사진 */}
-        <div className="max-h-[400px] w-[80%] mx-auto mb-6 flex gap-3">
+        <div className="mx-auto mb-6 flex max-h-[400px] w-[80%] gap-3">
           {/* 왼쪽: 대표 사진 */}
           <div className="relative w-4/5 rounded-xl">
             {data.img && data.img[0] ? (
@@ -95,13 +96,17 @@ export function ShopInfo(data: shopInfoProps) {
           </div>
         </div>
         <Link
-          href={navigationService.getHref(
-            NavigationPathname.OwnerDashboardBasicInfo,
-          )}
-          className="mb-8 block w-[80%] mx-auto rounded-md border border-[#949494] bg-[#F5F5F5] px-4 py-2 text-center text-black hover:bg-[#C9C9C9]"
+          href={{
+            pathname: navigationService.getHref(
+              NavigationPathname.OwnerDashboardBasicInfo,
+            ),
+            query: { storeUuid: data.storeUuid },
+          }}
+          className="mx-auto mb-8 block w-[80%] rounded-md border border-[#949494] bg-[#F5F5F5] px-4 py-2 text-center text-black hover:bg-[#C9C9C9]"
         >
           가게 정보 수정
         </Link>
+
         <div>
           <p className="text-[20px] font-bold">{data.name}</p>
           <ShopInfoCard title="전화번호" content={data.phone} />
