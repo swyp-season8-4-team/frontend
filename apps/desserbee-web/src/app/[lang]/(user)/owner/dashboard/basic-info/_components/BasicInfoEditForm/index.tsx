@@ -1,9 +1,9 @@
 'use client';
 
 import { useForm, Controller } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
-import type { Store } from '@repo/entity/src/store';
+import type { Store, StoreDetailInfoData } from '@repo/entity/src/store';
 import Image from 'next/image';
 import IconXRound from '@repo/design-system/components/icons/IconXRound';
 import IconDirection from '@repo/design-system/components/icons/IconDirection';
@@ -32,7 +32,9 @@ import { ValidationError } from '../../../../register/_components/ValidationErro
 import IconPlusRound from '@repo/design-system/components/icons/IconPlusRound';
 import { ModalHeader } from '../../../../_components/ModalHeader';
 import { FEATURES } from '@/app/[lang]/(user)/_consts/store';
-
+import { getStoreDetail } from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
+import DatePicker from 'react-datepicker';
+import { LightOliveButton } from './../../../../../../../../../../../packages/design-system/src/components/buttons/FillButtons/LightOlive';
 // 깜빡하고 말씀 안 드렸는데, 아이콘은 재사용을 위해 정해진 양식으로 작성 후 따로 관리가 됩니다.
 // @repo/design-system/components/icons에서 확인 가능
 // 이 부분 설명 필요하면 따로 질문 주세요!
@@ -56,8 +58,8 @@ interface FormInputs
   > {
   detailAddress: string;
   tags: number[];
-  storeImageFiles: File[];
-  ownerPickImageFiles: File[];
+  storeImageFiles: Array<File | string>;
+  ownerPickImageFiles: Array<File | string>;
   features: {
     animalYn: boolean;
     tumblerYn: boolean;
@@ -74,12 +76,28 @@ export function BasicInfoEditForm() {
   const router = useRouter();
   const { push, pop } = useContext(PortalContext); // Portal을 사용해서 모달 열고 닫을 수 있음
 
+  const searchParams = useSearchParams();
+  const storeUuid = searchParams.get('storeUuid');
+  const [storeInfo, setStoreInfo] = useState<StoreDetailInfoData | null>(null);
+
+  useEffect(() => {
+    async function fetchStoreDetails() {
+      if (!storeUuid) return;
+      const detail = await getStoreDetail({ storeUuid });
+      setStoreInfo(detail);
+    }
+    fetchStoreDetails();
+  }, [storeUuid]);
+
+  console.log(storeInfo);
+
   const {
     control,
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    reset,
+    formState: { isValid, isDirty, errors },
     trigger,
   } = useForm<FormInputs>({
     defaultValues: {
@@ -88,6 +106,7 @@ export function BasicInfoEditForm() {
       phone: '',
       address: '',
       detailAddress: '',
+      holidays: [],
       storeLinks: [],
       description: '',
       tags: [],
@@ -101,6 +120,44 @@ export function BasicInfoEditForm() {
     },
     mode: 'onChange',
   });
+
+  // 초기값
+  const getInitialValues = (storeInfo: StoreDetailInfoData) => ({
+    name: storeInfo.name || '',
+    phone: storeInfo.phone || '',
+    address: storeInfo.address || '',
+    detailAddress: '',
+    holidays: (storeInfo.holidays || []).map((holiday) => ({
+      date: holiday.date ?? '',
+      reason: holiday.reason ?? '',
+    })),
+    storeLinks: (storeInfo.storeLinks as (string | { url: string })[]).map(
+      (link) => ({
+        url: typeof link === 'string' ? link : link.url,
+        isPrimary:
+          (typeof link === 'string' ? link : link.url) ===
+          storeInfo.primaryStoreLink,
+      }),
+    ),
+    description: storeInfo.description || '',
+    tags: (storeInfo.tags || []).map((tag) =>
+      typeof tag === 'number' ? tag : tag.id,
+    ),
+    storeImageFiles: [...(storeInfo.storeImages || [])],
+    ownerPickImageFiles: [...(storeInfo.ownerPickImages || [])],
+    features: {
+      animalYn: storeInfo.animalYn ?? false,
+      tumblerYn: storeInfo.tumblerYn ?? false,
+      parkingYn: storeInfo.parkingYn ?? false,
+    },
+  });
+
+  useEffect(() => {
+    if (storeInfo) {
+      reset(getInitialValues(storeInfo));
+      trigger();
+    }
+  }, [storeInfo, reset, trigger]);
 
   // 필수 필드들의 값을 watch로 구독
   const name = watch('name');
@@ -129,17 +186,18 @@ export function BasicInfoEditForm() {
 
   const handleAddLink = () => {
     const isFirstLink = storeLinks.length === 0;
-    setValue('storeLinks', [
-      ...storeLinks,
-      { url: '', isPrimary: isFirstLink },
-    ]);
+    setValue(
+      'storeLinks',
+      [...storeLinks, { url: '', isPrimary: isFirstLink }],
+      { shouldDirty: true },
+    );
   };
 
   const handleLinkChange = (index: number, url: string) => {
     const newLinks = storeLinks.map((link, i) =>
       i === index ? { ...link, url } : link,
     );
-    setValue('storeLinks', newLinks);
+    setValue('storeLinks', newLinks, { shouldDirty: true });
     trigger('storeLinks'); // 유효성 검사 트리거
   };
 
@@ -148,13 +206,14 @@ export function BasicInfoEditForm() {
       ...link,
       isPrimary: i === index,
     }));
-    setValue('storeLinks', newLinks);
+    setValue('storeLinks', newLinks, { shouldDirty: true });
   };
 
   const handleRemoveLink = (index: number) => {
     setValue(
       'storeLinks',
       storeLinks.filter((_, i) => i !== index),
+      { shouldDirty: true },
     );
     trigger('storeLinks'); // 삭제 후 유효성 검사 트리거
   };
@@ -177,15 +236,51 @@ export function BasicInfoEditForm() {
     new (window as any).daum.Postcode({
       oncomplete: function (data: any) {
         const addr = data.roadAddress || data.jibunAddress;
-        setValue('address', addr);
+        setValue('address', addr, { shouldDirty: true });
       },
     }).open();
+  };
+
+  // 스페셜 휴무일 관련
+  const holidays = watch('holidays') || [];
+
+  const getTodayStr = () => {
+    // 오늘 날짜 구하는 함수
+    const today = new Date();
+    return today.toISOString().slice(0, 10); // 'YYYY-MM-DD'
+  };
+
+  const handleAddHoliday = () => {
+    setValue('holidays', [...holidays, { date: '', reason: '' }], {
+      shouldDirty: true,
+    });
+  };
+
+  const handleHolidayChange = (
+    index: number,
+    field: 'date' | 'reason',
+    value: string,
+  ) => {
+    const newHolidays = holidays.map((holiday, i) =>
+      i === index ? { ...holiday, [field]: value } : holiday,
+    );
+    setValue('holidays', newHolidays, { shouldDirty: true });
+    trigger('holidays');
+  };
+
+  const handleRemoveHoliday = (index: number) => {
+    setValue(
+      'holidays',
+      holidays.filter((_, i) => i !== index),
+      { shouldDirty: true },
+    );
+    trigger('holidays'); // 삭제 후 유효성 검사 트리거
   };
 
   // 태그 관련
   const closeTagModal = (tags?: number[]) => {
     if (tags) {
-      setValue('tags', tags);
+      setValue('tags', tags, { shouldDirty: true });
     }
     pop('modal');
   };
@@ -218,57 +313,59 @@ export function BasicInfoEditForm() {
 
       const newFiles = files.slice(0, remainingSlots);
       const currentFiles = watch('storeImageFiles');
-      setValue('storeImageFiles', [...currentFiles, ...newFiles]);
+      setValue('storeImageFiles', [...currentFiles, ...newFiles], {
+        shouldDirty: true,
+      });
 
       e.target.value = '';
     },
     [watch, setValue],
   );
 
-  const handleRemoveStoreImageFiles = useCallback(
-    (index: number) => {
-      const currentFiles = watch('storeImageFiles');
-      setValue(
-        'storeImageFiles',
-        currentFiles.filter((_, i) => i !== index),
-      );
-    },
-    [watch, setValue],
-  );
+  const handleRemoveStoreImageFiles = (index: number) => {
+    const current = watch('storeImageFiles');
+    setValue(
+      'storeImageFiles',
+      current.filter((_, i) => i !== index),
+      { shouldDirty: true },
+    );
+  };
 
-  const handleOwnerPickImageFilesChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (e.target.files) {
-        const fileArray = Array.from(e.target.files);
-        const currentFiles = watch('ownerPickImageFiles');
-        setValue('ownerPickImageFiles', [...currentFiles, ...fileArray]);
-      }
-    },
-    [watch, setValue],
-  );
+  const handleOwnerPickImageFilesChange = (
+    e: ChangeEvent<HTMLInputElement>,
+  ) => {
+    const files = Array.from(e.target.files || []);
+    setValue(
+      'ownerPickImageFiles',
+      [...watch('ownerPickImageFiles'), ...files],
+      { shouldDirty: true },
+    );
+  };
 
-  const handleRemoveOwnerPickImageFiles = useCallback(
-    (index: number) => {
-      const currentFiles = watch('ownerPickImageFiles');
-      setValue(
-        'ownerPickImageFiles',
-        currentFiles.filter((_, i) => i !== index),
-      );
-    },
-    [watch, setValue],
-  );
+  const handleRemoveOwnerPickImageFiles = (index: number) => {
+    const current = watch('ownerPickImageFiles');
+    setValue(
+      'ownerPickImageFiles',
+      current.filter((_, i) => i !== index),
+      { shouldDirty: true },
+    );
+  };
 
   // 이미지 URL 메모이제이션
-  const storeImageUrls = useMemo(() => {
-    return watch('storeImageFiles').map((file) => URL.createObjectURL(file));
-  }, [watch('storeImageFiles')]);
-
-  const ownerPickImageUrls = useMemo(() => {
-    return watch('ownerPickImageFiles').map((file) =>
-      URL.createObjectURL(file),
-    );
-  }, [watch('ownerPickImageFiles')]);
-
+  const storeImageUrls = useMemo(
+    () =>
+      watch('storeImageFiles').map((file) =>
+        typeof file === 'string' ? file : URL.createObjectURL(file),
+      ),
+    [watch('storeImageFiles')],
+  );
+  const ownerPickImageUrls = useMemo(
+    () =>
+      watch('ownerPickImageFiles').map((file) =>
+        typeof file === 'string' ? file : URL.createObjectURL(file),
+      ),
+    [watch('ownerPickImageFiles')],
+  );
   // cleanup function for URLs
   useEffect(() => {
     return () => {
@@ -372,14 +469,18 @@ export function BasicInfoEditForm() {
                 }}
                 render={({ field: { value } }) => (
                   <>
-                    {value.map((_, index) => (
+                    {value.map((item, index) => (
                       <div key={index} className="relative">
                         <PhotoBox
                           image={
                             <Image
                               width={100}
                               height={100}
-                              src={storeImageUrls[index]}
+                              src={
+                                typeof item === 'string'
+                                  ? item
+                                  : URL.createObjectURL(item)
+                              }
                               alt={`가게 사진 ${index + 1}`}
                               className="h-full w-full object-cover"
                             />
@@ -428,20 +529,31 @@ export function BasicInfoEditForm() {
                   control={control}
                   render={({ field: { value } }) => (
                     <>
-                      {value.map((_, index) => (
+                      {value.map((item, index) => (
                         <div key={index} className="relative flex-shrink-0">
                           <PhotoBox
                             image={
-                              <Image
-                                width={100}
-                                height={100}
-                                src={ownerPickImageUrls[index]}
-                                alt={`홍보용 가게 사진 ${index + 1}`}
-                                className="h-full w-full object-cover"
-                              />
+                              typeof item === 'string' ? ( // 기존 이미지
+                                <Image
+                                  width={100}
+                                  height={100}
+                                  src={item} // URL 직접 사용
+                                  alt={`홍보용 가게 사진 ${index + 1}`}
+                                  className="h-full w-full object-cover"
+                                />
+                              ) : (
+                                // 새 이미지
+                                <Image
+                                  width={100}
+                                  height={100}
+                                  src={URL.createObjectURL(item)}
+                                  alt={`홍보용 가게 사진 ${index + 1}`}
+                                  className="h-full w-full object-cover"
+                                />
+                              )
                             }
-                            deleteFunction={() =>
-                              handleRemoveOwnerPickImageFiles(index)
+                            deleteFunction={
+                              () => handleRemoveOwnerPickImageFiles(index) // 수정: 통합 삭제 핸들러
                             }
                           />
                         </div>
@@ -579,9 +691,7 @@ export function BasicInfoEditForm() {
               <TitleLabel title="스페셜 휴무일" />
               <button
                 type="button"
-                onClick={() => {
-                  //스페셜 휴무일 추가 함수
-                }}
+                onClick={handleAddHoliday}
                 className="text-primary-60 flex items-center gap-[5px]"
               >
                 <div className="h-[13px] w-[13px]">
@@ -592,6 +702,96 @@ export function BasicInfoEditForm() {
             </div>
           </label>
           {/* 스페셜 휴무일 ui 구현 */}
+          <Controller
+            name="holidays"
+            control={control}
+            rules={{
+              validate: (holidays) => {
+                const todayStr = getTodayStr();
+
+                if (!holidays || holidays.length === 0) return true;
+
+                // 빈 날짜 체크
+                if (holidays.some((h) => !h.date.trim())) {
+                  return '날짜를 입력하거나 삭제해주세요';
+                }
+                // 빈 사유 체크
+                if (holidays.some((h) => !h.reason.trim())) {
+                  return '사유를 입력하거나 삭제해주세요';
+                }
+                // 날짜 형식 체크 (YYYY-MM-DD)
+                if (
+                  holidays.some(
+                    (h) => !/^\d{4}-\d{2}-\d{2}$/.test(h.date.trim()),
+                  )
+                ) {
+                  return '날짜 형식이 올바르지 않습니다 (예: 2025-01-01)';
+                }
+
+                if (holidays.some((h) => h.date.trim() < todayStr)) {
+                  return '오늘 날짜 이전은 선택할 수 없습니다';
+                }
+
+                return true;
+              },
+            }}
+            render={({ field }) => (
+              <div className="space-y-2">
+                {field.value && field.value.length > 0 ? (
+                  field.value.map((holiday, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <input
+                        type="date"
+                        value={holiday.date}
+                        onChange={(e) =>
+                          handleHolidayChange(index, 'date', e.target.value)
+                        }
+                        className={cn(
+                          'h-10 w-[140px] rounded-[5px] border p-[10px] text-sm font-medium',
+                          errors.holidays
+                            ? 'border-[#FF3B30]'
+                            : 'border-[#A6A6A6]',
+                        )}
+                        placeholder="날짜"
+                      />
+                      <div className="relative w-full">
+                        <input
+                          type="text"
+                          value={holiday.reason}
+                          onChange={(e) =>
+                            handleHolidayChange(index, 'reason', e.target.value)
+                          }
+                          className={cn(
+                            'h-10 w-full rounded-[5px] border p-[10px] text-sm font-medium',
+                            errors.holidays
+                              ? 'border-[#FF3B30]'
+                              : 'border-[#A6A6A6]',
+                          )}
+                          placeholder="사유 입력"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveHoliday(index)}
+                          className="absolute right-4 top-1/2 flex h-4 w-4 -translate-y-1/2 items-center justify-center"
+                        >
+                          <IconMinusRound className="text-neutral-30 h-full w-full" />
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-xs text-gray-400">
+                    휴무일을 추가해 주세요
+                  </div>
+                )}
+                {errors.holidays && (
+                  <div className="mt-2">
+                    <ValidationError errorMessage={errors.holidays.message} />
+                  </div>
+                )}
+              </div>
+            )}
+          />
         </div>
 
         {/* SNS 링크 */}
@@ -835,14 +1035,25 @@ export function BasicInfoEditForm() {
             ))}
           </div>
         </div>
-
-        {/* 초기화 버튼 구현 필요 */}
-        <OliveButton
-          type="submit"
-          className="font-semibold"
-          text="완료"
-          isDisabled={!isFormValid}
-        />
+        <div className="flex gap-5">
+          <LightOliveButton
+            type="button"
+            className="font-semibold"
+            text="초기화"
+            onClick={() => {
+              if (storeInfo) {
+                reset(getInitialValues(storeInfo));
+                trigger();
+              }
+            }}
+          />
+          <OliveButton
+            type="submit"
+            className="font-semibold"
+            text="완료"
+            isDisabled={!isValid || !isDirty}
+          />
+        </div>
       </form>
     </div>
   );

@@ -23,8 +23,6 @@ export default function DashBoardHomePage() {
     fetchStoreDetails();
   }, [storeUuid]);
 
-  console.log(storeInfo);
-
   return (
     <div className="h-full bg-[#EBEBEB]">
       <DashBoardHeader title="기본 정보 관리하기" />
@@ -36,6 +34,7 @@ export default function DashBoardHomePage() {
           address={storeInfo?.address || ''}
           operatingTime={storeInfo?.operatingHours || []}
           sns={storeInfo?.storeLinks || []}
+          storeUuid={storeUuid || ''}
         />
         <ShopDetail
           tags={storeInfo?.tags || []}
