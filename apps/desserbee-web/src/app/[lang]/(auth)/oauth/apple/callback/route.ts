@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       code,
       id_token,
       state,
-      user,
+      user: user || null,
       provider: OAuthSocialProvider.APPLE,
     });
 
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
               code,
               id_token,
               state,
-              user,
+              user: user || null,
               provider: OAuthSocialProvider.APPLE,
             },
           },
