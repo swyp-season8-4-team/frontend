@@ -46,15 +46,14 @@ export default class AuthAPIRepository
   async socialSignInWithApple({
     data,
   }: BaseRequestData<OAuthSignInData>): Promise<SignInResponse> {
-    //TODO: 백엔드 API 나오면 수정 해야 함 (응답타입도)
     if (!data) {
       throw new Error('data is not exist');
     }
 
     const response = await fetch<OAuthSignInData, RawSignInResponse>({
-      data, // code, idToken //TODO: 백엔드 API 나오면 수정 해야 함
+      data, // code, id_token, state, user(최초로그인시)
       method: 'POST',
-      url: `${this.endpoint}/auth/oauth2/callback`, //TODO: 백엔드 API 나오면 수정 해야 함
+      url: `${this.endpoint}/auth/oauth2/apple/callback`,
     });
 
     return this.authConverter.convertRawSignInResponse(response);

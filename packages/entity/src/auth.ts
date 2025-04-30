@@ -98,11 +98,24 @@ export interface KakaoOAuthSignInData {
 }
 
 export interface AppleOAuthSignInData {
-  provider: OAuthSocialProvider.APPLE;
+  // provider: OAuthSocialProvider.APPLE;
   code: string;
-  idToken: string;
+  id_token: string;
+  state: string;
   user?: { name: { firstName: string; lastName: string }; email: string };
 }
+// {
+//   "code": "abc123",
+//   "id_token": "eyJhbGciOi...",
+//   "state": "xyz789",
+//   "user": {
+//     "email": "user@example.com",
+//     "name": {
+//       "firstName": "이름",
+//       "lastName": "이름"
+//     }
+//   }
+// }
 
 export interface VerifyEmailRequestData {
   email: string;

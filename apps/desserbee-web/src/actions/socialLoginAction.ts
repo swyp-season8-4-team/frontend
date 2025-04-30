@@ -14,25 +14,29 @@ import { redirect } from 'next/navigation';
 import { decodeJWT } from '@repo/utility/src/jwt';
 import { calculateTokenMaxAge } from '@/utils/token';
 import { HTTPError } from '@repo/api/src/error';
+import type { OAuthSignInData } from '@repo/entity/src/auth';
 
 const authService = new AuthService({
   authRepository: new AuthAPIRepository(),
 });
 
 // ... existing code ...
-interface ActionData {
+type ActionData = {
   code: string;
   provider: OAuthSocialProvider;
-  idToken?: string;
+  id_token?: string;
+  user?: { name: { firstName: string; lastName: string }; email: string };
   next?: string;
-}
+  state: string;
+};
 // ... existing code ...
 
 export default async function socialLoginAction({
   code,
   provider,
-  idToken, // 백엔드에서 안 받아도 된다고 하면 지우기
-  // user,
+  id_token, // 백엔드에서 안 받아도 된다고 하면 지우기
+  user,
+  state,
   // next,
 }: ActionData) {
   try {
@@ -43,7 +47,13 @@ export default async function socialLoginAction({
         response = await authService.socialSignIn({ code, provider });
         break;
       case OAuthSocialProvider.APPLE:
-        response = await authService.socialSignIn({ code, idToken, provider }); // idToken 백엔드에서 안 받아도 된다고 하면 지우고 통합하기
+        response = await authService.socialSignIn({
+          code,
+          id_token,
+          state,
+          user,
+          provider,
+        });
         break;
       default:
         throw new Error(`Unsupported social login provider: ${provider}`);
