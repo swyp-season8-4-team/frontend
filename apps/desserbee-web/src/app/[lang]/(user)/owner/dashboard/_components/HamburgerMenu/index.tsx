@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import NavigationService from '@repo/usecase/src/navigationService';
 import { NavigationPathname } from '@repo/entity/src/navigation';
+import { usePathname } from 'next/navigation';
 
 const navigationService = new NavigationService({});
 
@@ -11,16 +12,18 @@ type HamburgerMenuProps = {
 };
 
 export function HamburgerMenu({ onClose }: HamburgerMenuProps) {
+  const pathname = usePathname(); // 현재 경로 가져오기
+
   type NavigationPathnameKey = keyof typeof NavigationPathname;
-  const data: { name: string; Link?: NavigationPathnameKey }[] = [
-    { name: '내 가게 홈', Link: undefined },
-    { name: '기본 정보 관리', Link: undefined },
-    { name: '운영 시간 관리', Link: undefined },
-    { name: '메뉴 관리', Link: undefined },
+  const data: { name: string; Link: NavigationPathnameKey }[] = [
+    { name: '내 가게 홈', Link: 'OwnerStoreList' },
+    { name: '기본 정보 관리', Link: 'OwnerDashboard' },
+    // { name: '운영 시간 관리', Link: undefined },
+    // { name: '메뉴 관리', Link: undefined },
     { name: '공지 관리', Link: 'OwnerDashboardNotices' },
-    { name: '쿠폰 등록', Link: undefined },
-    { name: '통계 대시보드', Link: undefined },
-    { name: '트렌드 리포트', Link: undefined },
+    // { name: '쿠폰 등록', Link: undefined },
+    // { name: '통계 대시보드', Link: undefined },
+    // { name: '트렌드 리포트', Link: undefined },
   ];
 
   useEffect(() => {
@@ -45,20 +48,31 @@ export function HamburgerMenu({ onClose }: HamburgerMenuProps) {
       </div>
       {/* 메뉴 리스트 */}
       <nav className="flex flex-1 flex-col gap-2 px-6 text-[#6D6D6D]">
-        {data.map((item, idx) => (
-          <Link
-            key={item.name}
-            href="/owner/dashboard/notices" // 변경 필요
-            className={`cursor-pointer rounded px-2 py-3 text-lg ${idx === 0 ? 'bg-[#ededed] font-semibold text-[#9F9F9F]' : ''} flex items-center hover:bg-[#f3f3f3]`}
-          >
-            {item.name}
-            {item.name === '트렌드 리포트' && (
-              <span className="ml-2 rounded-xl bg-[#6C4CE3] px-2 py-0.5 text-xs text-white">
-                유료
-              </span>
-            )}
-          </Link>
-        ))}
+        {data.map((item, idx) => {
+          // 각 메뉴의 href
+          const href = navigationService.getHref(NavigationPathname[item.Link]);
+          // 현재 경로와 href가 같으면 isActive가 true
+          const isActive = pathname === href;
+
+          return (
+            <Link
+              key={item.name}
+              href={href}
+              onClick={onClose}
+              // ④ isActive일 때만 선택 스타일 적용
+              className={`flex cursor-pointer items-center rounded px-2 py-3 text-lg hover:bg-[#f3f3f3] ${
+                isActive ? 'bg-[#ededed] font-semibold text-[#9F9F9F]' : ''
+              }`}
+            >
+              {item.name}
+              {item.name === '트렌드 리포트' && (
+                <span className="ml-2 rounded-xl bg-[#6C4CE3] px-2 py-0.5 text-xs text-white">
+                  유료
+                </span>
+              )}
+            </Link>
+          );
+        })}
       </nav>
       <div className="mt-auto h-[28px] w-full bg-[#EBEBEB]" />
     </div>

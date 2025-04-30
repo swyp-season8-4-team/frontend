@@ -1,10 +1,27 @@
+'use client';
+import NavigationService from '@repo/usecase/src/navigationService';
 import { DashBoardHeader } from '../_components/DashBoardHeader';
 import NoticeCard from './_components/NoticeCard';
-export default function notices() {
+import { useRouter, useSearchParams } from 'next/navigation';
+import { NavigationPathname } from '@repo/entity/src/navigation';
+export default function Notices() {
+  const router = useRouter();
+  const navigationService = new NavigationService({});
+  const searchParams = useSearchParams();
+  const storeUuid = searchParams.get('storeUuid');
+
   return (
     <div className="min-h-screen w-full bg-[#EBEBEB]">
       <DashBoardHeader title="공지 관리하기" />
-      <button className="mx-auto mb-[5px] block w-[95%] rounded-[10px] border border-solid border-[#949494] bg-[#F5F5F5] px-4 py-2 hover:bg-[#C9C9C9]">
+      <button
+        onClick={() =>
+          router.push(
+            navigationService.getHref(NavigationPathname.OwnerRegisterNotice) +
+              `?storeUuid=${storeUuid}`
+          )
+        }
+        className="mx-auto mb-[5px] block w-[95%] rounded-[10px] border border-solid border-[#949494] bg-[#F5F5F5] px-4 py-2 hover:bg-[#C9C9C9]"
+      >
         + 새 공지 추가하기
       </button>
 

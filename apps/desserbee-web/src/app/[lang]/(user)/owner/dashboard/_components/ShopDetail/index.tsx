@@ -7,7 +7,7 @@ interface tagProps {
 }
 interface detailProps {
   tags: tagProps[];
-  description: string;
+  description?: string;
   animalYn?: boolean;
   tumblerYn?: boolean;
   parkingYn?: boolean;
@@ -51,17 +51,19 @@ export function ShopDetail(data: detailProps) {
 
         <div>
           <p className="mb-2 text-[#4B4B4B]">한 줄 소개</p>
-          <div className="text-m rounded-[6px] border-[0.4px] border-[#A6A6A6] bg-white px-2 py-1">
-            {description}
-          </div>
+          {description && (
+            <div className="text-m rounded-[6px] border-[0.4px] border-[#A6A6A6] bg-white px-2 py-1">
+              {description}
+            </div>
+          )}
         </div>
 
-        <div className='w-full'>
+        <div className="w-full">
           <p className="mb-2 text-[#4B4B4B]">기타 정보</p>
           <div className="flex gap-7">
             {FEATURES.map((feature, idx) =>
               featureValues[idx] ? (
-                <div key={feature.title} className='w-[90px]'>
+                <div key={feature.title} className="w-[90px]">
                   <div>{feature.icon}</div>
                   <p className="text-center">{feature.title}</p>
                 </div>

@@ -47,6 +47,7 @@ export default function DashBoardHomePage() {
         <Notice
           title="최근 공지"
           notices={storeInfo?.notices || []}
+          storeUuid={storeUuid||''}
         />
       </div>
     </div>

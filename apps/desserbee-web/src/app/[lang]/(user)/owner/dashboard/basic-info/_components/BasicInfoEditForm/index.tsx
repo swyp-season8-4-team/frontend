@@ -89,7 +89,7 @@ export function BasicInfoEditForm() {
     fetchStoreDetails();
   }, [storeUuid]);
 
-  console.log(storeInfo);
+  // console.log(storeInfo);
 
   const {
     control,
@@ -386,7 +386,7 @@ export function BasicInfoEditForm() {
 
     // type=submit인 버튼 눌렀을 때 실행됨됨
     if (!isFormValid) return;
-
+    console.log(data);
     // router.push(`${NavigationPathname.OwnerRegisterOperatingHours}`); 이동할 경로는 NavigationPathname에서 작성 후 불러와서 사용하도록 관리중입니다.
   };
 

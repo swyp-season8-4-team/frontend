@@ -12,16 +12,20 @@ interface NoticeProps {
 interface props {
   title: string;
   notices: NoticeProps[];
+  storeUuid: string;
 }
-export function Notice({ title, notices }: props) {
+export function Notice({ title, notices, storeUuid }: props) {
   return (
     <div className="m-auto mb-3 h-fit w-[95%] rounded-md bg-white">
       <div className="flex w-full items-center justify-between p-[14px]">
         <p className="text-[20px] font-bold">{title}</p>
         <Link
-          href={navigationService.getHref(
-            NavigationPathname.OwnerDashboardNotices,
-          )}
+          href={{
+            pathname: navigationService.getHref(
+              NavigationPathname.OwnerDashboardNotices,
+            ),
+            query: { storeUuid: storeUuid },
+          }}
           className="hover:font-bold"
         >
           수정하기
