@@ -54,7 +54,12 @@ export default class AuthAPIRepository
     const { code, id_token, state, user, provider } = data;
 
     const response = await fetch<OAuthSignInData, RawSignInResponse>({
-      data: { code, id_token, state, user }, // code, id_token, state, user(최초로그인시)
+      data: {
+        code,
+        id_token,
+        state,
+        user: user || null,
+      },
       method: 'POST',
       url: `${this.endpoint}/auth/oauth2/apple/callback`,
     });

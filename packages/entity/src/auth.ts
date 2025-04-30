@@ -95,7 +95,10 @@ export interface OAuthSignInData {
   code: string;
   id_token?: string;
   state?: string;
-  user?: { name: { firstName: string; lastName: string }; email: string };
+  user?: {
+    name: { firstName: string; lastName: string };
+    email: string;
+  } | null;
 }
 
 export interface KakaoOAuthSignInData {
