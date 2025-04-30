@@ -36,6 +36,7 @@ export default function DashBoardHomePage() {
           address={storeInfo?.address || ''}
           operatingTime={storeInfo?.operatingHours || []}
           sns={storeInfo?.storeLinks || []}
+          storeUuid={storeUuid || ''}
         />
         <ShopDetail
           tags={storeInfo?.tags || []}
@@ -48,6 +49,7 @@ export default function DashBoardHomePage() {
         <Notice
           title="최근 공지"
           notices={storeInfo?.notices || []}
+          storeUuid={storeUuid||''}
         />
       </div>
     </div>
