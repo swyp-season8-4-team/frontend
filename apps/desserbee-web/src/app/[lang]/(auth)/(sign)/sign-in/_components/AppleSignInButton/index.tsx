@@ -21,25 +21,28 @@ export default function AppleSignInButton() {
     initState();
   }, []);
 
+  useEffect(() => {
+    if (!state) return;
+
+    if (typeof window !== 'undefined' && window.AppleID?.auth?.init) {
+      window.AppleID.auth.init({
+        clientId: process.env.NEXT_PUBLIC_APPLE_SERVICE_ID!,
+        scope: 'name email',
+        redirectURI: authService.getOAuthRedirectUri(
+          OAuthSocialProvider.APPLE,
+        )!,
+        state,
+        usePopup: false,
+      });
+    }
+  }, [state]);
+
   // response_type=form_post (강제)
   return (
     <>
       <Script
         src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/ko_KR/appleid.auth.js"
         strategy="afterInteractive"
-        onReady={() => {
-          if (window.AppleID?.auth?.init) {
-            window.AppleID.auth.init({
-              clientId: process.env.NEXT_PUBLIC_APPLE_SERVICE_ID as string,
-              scope: 'name email',
-              redirectURI: authService.getOAuthRedirectUri(
-                OAuthSocialProvider.APPLE,
-              ) as string,
-              state,
-              usePopup: false,
-            });
-          }
-        }}
       />
       <div
         id="appleid-signin"
