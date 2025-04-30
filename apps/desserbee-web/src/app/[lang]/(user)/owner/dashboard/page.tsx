@@ -23,6 +23,8 @@ export default function DashBoardHomePage() {
     fetchStoreDetails();
   }, [storeUuid]);
 
+  console.log(storeInfo);
+
   return (
     <div className="h-full bg-[#EBEBEB]">
       <DashBoardHeader title="기본 정보 관리하기" />

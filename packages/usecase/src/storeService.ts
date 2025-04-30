@@ -40,6 +40,9 @@ import type {
   SavedStoresLocationData,
   RegisterStoreFromData,
   getOwnerStoreListResponse,
+  RegisterNoticeRequest,
+  NoticeListRequest,
+  NoticeListResponse,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -276,6 +279,40 @@ export default class StoreService {
       authorization,
     };
     const response = await this.storeRepository.getOwnerStoreList(requestData);
+    return response;
+  }
+
+  async createNotice(params: RegisterNoticeRequest): Promise<void> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set'); 
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    // 이게 액세스 토큰 가져오는 메서드입니다. 이렇게 호출만 해주고
+    const authorization = await this.authRepository.getAuthorization();
+    const requestData = {
+      data: params,
+      authorization,
+    };
+    const response = await this.storeRepository.createNotice(requestData);
+    return response;
+  }
+
+  async getNoticeList(params: NoticeListRequest): Promise<NoticeListResponse[]> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set'); 
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    // 이게 액세스 토큰 가져오는 메서드입니다. 이렇게 호출만 해주고
+    const authorization = await this.authRepository.getAuthorization();
+    const requestData = {
+      data: params,
+      authorization,
+    };
+    const response = await this.storeRepository.getNoticeList(requestData);
     return response;
   }
 
