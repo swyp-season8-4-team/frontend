@@ -13,7 +13,8 @@ export async function POST(request: NextRequest) {
 
   const code = formData.get('code');
   const id_token = formData.get('id_token');
-  const userStr = formData.get('user');
+  const userRaw = formData.get('user');
+  const user = typeof userRaw === 'string' ? JSON.parse(userRaw) : undefined;
   const state = formData.get('state');
 
   if (
@@ -24,33 +25,12 @@ export async function POST(request: NextRequest) {
     return new NextResponse('Invalid form data', { status: 400 });
   }
 
-  let user;
-  if (userStr && typeof userStr === 'string') {
-    try {
-      const parsedUser = JSON.parse(userStr);
-      if (
-        parsedUser?.name?.firstName &&
-        parsedUser?.name?.lastName &&
-        parsedUser?.email
-      ) {
-        user = parsedUser;
-      }
-    } catch (error) {
-      if (error instanceof HTTPError) {
-        return new NextResponse(
-          `Apple login failed:\n${JSON.stringify(error.data, null, 2)}`, // 에러 디버깅
-          { status: 500 },
-        );
-      }
-    }
-  }
-
   try {
     await socialLoginAction({
       code,
       id_token,
       state,
-      ...(user && { user }),
+      user,
       provider: OAuthSocialProvider.APPLE,
     });
 
@@ -60,7 +40,20 @@ export async function POST(request: NextRequest) {
 
     if (error instanceof HTTPError) {
       return new NextResponse(
-        `Apple login failed:\n${JSON.stringify(error.data, null, 2)}`, // 에러 디버깅
+        `Apple login failed:\n${JSON.stringify(
+          {
+            error: error.data,
+            params: {
+              code,
+              id_token,
+              state,
+              user,
+              provider: OAuthSocialProvider.APPLE,
+            },
+          },
+          null,
+          2,
+        )}`,
         { status: 500 },
       );
     }

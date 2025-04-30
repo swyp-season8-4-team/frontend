@@ -20,16 +20,14 @@ const authService = new AuthService({
   authRepository: new AuthAPIRepository(),
 });
 
-// ... existing code ...
 type ActionData = {
   code: string;
   provider: OAuthSocialProvider;
   id_token?: string;
   user?: { name: { firstName: string; lastName: string }; email: string };
   next?: string;
-  state: string;
+  state?: string;
 };
-// ... existing code ...
 
 export default async function socialLoginAction({
   code,
@@ -47,6 +45,9 @@ export default async function socialLoginAction({
         response = await authService.socialSignIn({ code, provider });
         break;
       case OAuthSocialProvider.APPLE:
+        if (!id_token || !state) {
+          throw new Error('id_token and state are required for Apple login');
+        }
         response = await authService.socialSignIn({
           code,
           id_token,

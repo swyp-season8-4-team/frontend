@@ -1,22 +1,23 @@
 import { isServer } from '@repo/api';
 import fetch from '@repo/api/src/fetch';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type {
-  AuthRepository,
-  JWTRefreshTokens,
-  JWTTokens,
-  OAuthSignInData,
-  RawSignInResponse,
-  ResetPasswordData,
-  ResetPasswordResponse,
-  SignInData,
-  SignInResponse,
-  SignOutData,
-  SignUpData,
-  VerifyEmailData,
-  VerifyEmailRequestData,
-  VerifyEmailRequestResponse,
-  VerifyEmailResponse,
+import {
+  OAuthSocialProvider,
+  type AuthRepository,
+  type JWTRefreshTokens,
+  type JWTTokens,
+  type OAuthSignInData,
+  type RawSignInResponse,
+  type ResetPasswordData,
+  type ResetPasswordResponse,
+  type SignInData,
+  type SignInResponse,
+  type SignOutData,
+  type SignUpData,
+  type VerifyEmailData,
+  type VerifyEmailRequestData,
+  type VerifyEmailRequestResponse,
+  type VerifyEmailResponse,
 } from '@repo/entity/src/auth';
 import APIRepository from './apiRepository';
 import AuthConverter from '../mappers/authConverter';
@@ -50,8 +51,10 @@ export default class AuthAPIRepository
       throw new Error('data is not exist');
     }
 
+    const { code, id_token, state, user, provider } = data;
+
     const response = await fetch<OAuthSignInData, RawSignInResponse>({
-      data, // code, id_token, state, user(최초로그인시)
+      data: { code, id_token, state, user }, // code, id_token, state, user(최초로그인시)
       method: 'POST',
       url: `${this.endpoint}/auth/oauth2/apple/callback`,
     });
