@@ -61,7 +61,7 @@ export default async function socialLoginAction({
     }
 
     const { accessToken, refreshToken, userId, isPreferenceSet, deviceId } =
-      response; // 만약 애플 로그인 응답값 바뀐다면 따로 수정하기 (지금은 service 에서 분기 처리)
+      response;
 
     const cookieList = await cookies();
     const domain =
@@ -103,7 +103,7 @@ export default async function socialLoginAction({
         calculateTokenMaxAge(decodedRefreshToken?.exp) || refreshTokenMaxAge,
     });
 
-    if (!isPreferenceSet) {
+    if (isPreferenceSet) {
       redirect(
         `${NavigationLanguageGroup.ko}${NavigationPathGroup.Preference}${userId}`,
       );
