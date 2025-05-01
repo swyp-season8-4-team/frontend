@@ -63,13 +63,22 @@ export async function POST(request: NextRequest) {
       'digest' in error &&
       String(error.digest).startsWith('NEXT_REDIRECT')
     ) {
-      throw error;
+      // throw error; // 기존 코드 주석 처리
+      return new NextResponse(
+        `Apple login failed (NEXT_REDIRECT):\n${JSON.stringify(
+          { error },
+          null,
+          2,
+        )}`,
+        { status: 500 },
+      );
     }
 
     return new NextResponse(
       `Apple login failed:\n${JSON.stringify(
         {
-          error: error,
+          message: error instanceof Error ? error.message : String(error),
+          stack: error instanceof Error ? error.stack : undefined,
         },
         null,
         2,
