@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
     typeof id_token !== 'string' ||
     typeof state !== 'string'
   ) {
-    return new NextResponse('Invalid form data', { status: 400 });
+    return NextResponse.redirect(NavigationPathname.SignIn);
   }
 
   try {
