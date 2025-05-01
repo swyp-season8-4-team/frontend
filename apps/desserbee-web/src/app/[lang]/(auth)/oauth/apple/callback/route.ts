@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       provider: OAuthSocialProvider.APPLE,
     });
 
-    return NextResponse.redirect(NavigationPathname.Map);
+    return new NextResponse(null, { status: 200 });
   } catch (error) {
     if (error instanceof HTTPError) {
       return new NextResponse(
@@ -54,6 +54,16 @@ export async function POST(request: NextRequest) {
         )}`,
         { status: 500 },
       );
+    }
+
+    // Next.js redirect 예외인지 확인
+    if (
+      typeof error === 'object' &&
+      error !== null &&
+      'digest' in error &&
+      String(error.digest).startsWith('NEXT_REDIRECT')
+    ) {
+      throw error; // Next.js에게 넘겨야 함
     }
 
     return new NextResponse(
