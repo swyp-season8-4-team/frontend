@@ -41,13 +41,6 @@ export async function POST(request: NextRequest) {
         `Apple login failed:\n${JSON.stringify(
           {
             error: error.data,
-            params: {
-              code,
-              id_token,
-              state,
-              user: user || null,
-              provider: OAuthSocialProvider.APPLE,
-            },
           },
           null,
           2,
@@ -56,27 +49,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Next.js redirect 예외인지 확인
     if (
       typeof error === 'object' &&
       error !== null &&
       'digest' in error &&
       String(error.digest).startsWith('NEXT_REDIRECT')
     ) {
-      throw error; // Next.js에게 넘겨야 함
+      throw error;
     }
 
     return new NextResponse(
       `Apple login failed:\n${JSON.stringify(
         {
           error: error,
-          params: {
-            code,
-            id_token,
-            state,
-            user: user || null,
-            provider: OAuthSocialProvider.APPLE,
-          },
         },
         null,
         2,
