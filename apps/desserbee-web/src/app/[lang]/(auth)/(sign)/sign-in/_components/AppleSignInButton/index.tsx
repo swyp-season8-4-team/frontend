@@ -37,19 +37,6 @@ export default function AppleSignInButton() {
     }
   }, [state]);
 
-  if (!state) {
-    return (
-      <div
-        style={{
-          width: '100%',
-          height: '60px',
-          background: 'black',
-          borderRadius: '6px',
-        }}
-      />
-    );
-  }
-
   // response_type=form_post (강제)
   return (
     <>
@@ -57,16 +44,46 @@ export default function AppleSignInButton() {
         src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/ko_KR/appleid.auth.js"
         strategy="afterInteractive"
       />
-      <div
-        id="appleid-signin"
-        data-color="black" // 버튼 색상: black or white
-        data-border="false" // border 없애기
-        data-border-radius="6" // 공식 권장: 6px
-        data-type="sign-in" // 버튼 텍스트: "Sign in with Apple"
-        data-height="60" // 공식 권장: 60px
-        data-logo-size="medium" // 로고 크기 (small, medium, large)
-        data-mode="center-align" // 텍스트, 로고 중앙 정렬
-      ></div>
+      <div style={{ position: 'relative', width: '100%', height: '60px' }}>
+        {/* 항상 보이는 기본 버튼 디자인 */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '60px',
+            background: 'black',
+            borderRadius: '6px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontWeight: 600,
+            fontSize: '18px',
+            zIndex: 1,
+          }}
+        ></div>
+        {/* 실제 Apple 버튼이 올라올 자리 */}
+        <div
+          id="appleid-signin"
+          data-color="black"
+          data-border="false"
+          data-border-radius="6"
+          data-type="sign-in"
+          data-height="60"
+          data-logo-size="medium"
+          data-mode="center-align"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '60px',
+            zIndex: 2,
+          }}
+        ></div>
+      </div>
     </>
   );
 }
