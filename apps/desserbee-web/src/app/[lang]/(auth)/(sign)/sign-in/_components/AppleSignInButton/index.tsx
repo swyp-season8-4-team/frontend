@@ -37,6 +37,19 @@ export default function AppleSignInButton() {
     }
   }, [state]);
 
+  if (!state) {
+    return (
+      <div
+        style={{
+          width: '100%',
+          height: '60px',
+          background: 'black',
+          borderRadius: '6px',
+        }}
+      />
+    );
+  }
+
   // response_type=form_post (강제)
   return (
     <>
