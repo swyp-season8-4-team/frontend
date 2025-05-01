@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.redirect(
         `${baseUrl}${NavigationLanguageGroup.ko}${NavigationPathname.OAuthLoading}?next=${encodeURIComponent(result.redirectUrl)}`,
+        303,
       );
     }
 

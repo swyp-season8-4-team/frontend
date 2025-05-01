@@ -103,7 +103,7 @@ export default async function socialLoginAction({
         calculateTokenMaxAge(decodedRefreshToken?.exp) || refreshTokenMaxAge,
     });
 
-    if (isPreferenceSet) {
+    if (!isPreferenceSet) {
       if (provider === OAuthSocialProvider.APPLE) {
         return {
           redirectUrl: `${NavigationLanguageGroup.ko}${NavigationPathGroup.Preference}${userId}`,
