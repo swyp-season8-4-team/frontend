@@ -29,7 +29,7 @@ export enum NavigationPathname {
   CommunityDessertMateWrite = '/mate/write',
   CommunityDessertReview = '/community/dessert/review',
   CommunityReviewWrite = '/review/write',
-  OAuthAppleCallbackLoading = '/oauth/apple/callback/loading',
+  OAuthLoading = '/oauth/loading',
 
   MateWrite = '/mate/write',
 

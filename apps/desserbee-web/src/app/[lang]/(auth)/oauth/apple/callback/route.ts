@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
       //   request.nextUrl.pathname.split('/')[1] || NavigationLanguageGroup.ko;
 
       return NextResponse.redirect(
-        `${baseUrl}${NavigationLanguageGroup.ko}${NavigationPathname.OAuthAppleCallbackLoading}?next=${encodeURIComponent(result.redirectUrl)}`,
+        `${baseUrl}${NavigationLanguageGroup.ko}${NavigationPathname.OAuthLoading}?next=${encodeURIComponent(result.redirectUrl)}`,
       );
     }
 
