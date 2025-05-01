@@ -36,8 +36,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.redirect(NavigationPathname.Map);
   } catch (error) {
-    console.error('[Apple Login Error]', error);
-
     if (error instanceof HTTPError) {
       return new NextResponse(
         `Apple login failed:\n${JSON.stringify(
@@ -58,6 +56,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return new NextResponse('Apple login failed', { status: 500 });
+    return new NextResponse(
+      `Apple login failed:\n${JSON.stringify(
+        {
+          error: error,
+          params: {
+            code,
+            id_token,
+            state,
+            user: user || null,
+            provider: OAuthSocialProvider.APPLE,
+          },
+        },
+        null,
+        2,
+      )}`,
+      { status: 500 },
+    );
   }
 }
