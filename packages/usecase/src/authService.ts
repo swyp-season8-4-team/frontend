@@ -1,6 +1,8 @@
 import {
+  type AppleOAuthSignInData,
   type AuthRepository,
   type JWTRefreshTokens,
+  type KakaoOAuthSignInData,
   type OAuthSignInData,
   type ResetPasswordData,
   type ResetPasswordResponse,
@@ -27,13 +29,6 @@ export enum VerifyEmailPurpose {
 }
 
 export enum SignUpStep {
-  // EMAIL = 'email',
-  // EMAIL_CODE = 'email-code',
-  // PASSWORD = 'password',
-  // GENDER = 'gender',
-  // NICKNAME = 'nickname',
-  // AGREE = 'agree',
-  // TERMS_OF_SERVICE = 'terms-of-service',
   ONE = 'one',
   TWO = 'two',
   THREE = 'three',
@@ -126,14 +121,16 @@ export default class AuthService {
     return response;
   }
 
-  async socialSignIn(data: OAuthSignInData): Promise<SignInResponse> {
+  async socialSignIn(
+    data: KakaoOAuthSignInData | AppleOAuthSignInData,
+  ): Promise<SignInResponse> {
     if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }
 
     switch (data.provider) {
-      case OAuthSocialProvider.KAKAO:
-        return this.authRepository.socialSignInWithKakao({ data });
+      // case OAuthSocialProvider.KAKAO:
+      //   return this.authRepository.socialSignInWithKakao({ data });
       case OAuthSocialProvider.APPLE:
         return this.authRepository.socialSignInWithApple({ data });
       default:

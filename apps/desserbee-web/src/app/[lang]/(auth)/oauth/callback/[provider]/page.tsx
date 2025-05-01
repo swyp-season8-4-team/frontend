@@ -3,11 +3,11 @@ import { decrypt } from '@/utils/crypto';
 import { isOAuthSocialProvider } from '@repo/entity/src/signIn';
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
-import OAuthLoading from '../_components/OAuthLoading';
-import OAuthLoginCancel from '../_components/OAuthLoginCancel';
+import OAuthLoading from '../../_components/OAuthLoading';
+import OAuthLoginCancel from '../../_components/OAuthLoginCancel';
 
 const OAuthCallbackLoader = dynamic(
-  () => import('../_components/OAuthCallbackLoader'),
+  () => import('../../_components/OAuthCallbackLoader'),
 );
 
 interface Props extends WithParams, WithSearchParams {}
