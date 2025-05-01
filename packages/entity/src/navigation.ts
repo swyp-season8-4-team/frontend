@@ -29,6 +29,7 @@ export enum NavigationPathname {
   CommunityDessertMateWrite = '/mate/write',
   CommunityDessertReview = '/community/dessert/review',
   CommunityReviewWrite = '/review/write',
+  OAuthAppleCallbackLoading = '/oauth/apple/callback/loading',
 
   MateWrite = '/mate/write',
 
@@ -59,8 +60,7 @@ export enum NavigationPathname {
   OwnerStoreList = '/owner/storelist',
 
   OwnerDashboard = '/owner/dashboard',
-  OwnerDashboardBasicInfo='/owner/dashboard/basic-info',
-  OwnerDashboardNotices='/owner/dashboard/notices',
-  OwnerRegisterNotice ='/owner/dashboard/notices/register'
-
+  OwnerDashboardBasicInfo = '/owner/dashboard/basic-info',
+  OwnerDashboardNotices = '/owner/dashboard/notices',
+  OwnerRegisterNotice = '/owner/dashboard/notices/register',
 }

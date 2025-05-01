@@ -104,9 +104,18 @@ export default async function socialLoginAction({
     });
 
     if (isPreferenceSet) {
+      if (provider === OAuthSocialProvider.APPLE) {
+        return {
+          redirectUrl: `${NavigationLanguageGroup.ko}${NavigationPathGroup.Preference}${userId}`,
+        };
+      }
       redirect(
         `${NavigationLanguageGroup.ko}${NavigationPathGroup.Preference}${userId}`,
       );
+    }
+
+    if (provider === OAuthSocialProvider.APPLE) {
+      return { redirectUrl: NavigationPathname.Map };
     }
 
     redirect(NavigationPathname.Map);

@@ -2,9 +2,11 @@
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { NavigationPathname } from '@repo/entity/src/navigation';
+import {
+  NavigationLanguageGroup,
+  NavigationPathname,
+} from '@repo/entity/src/navigation';
 import socialLoginAction from '@/actions/socialLoginAction';
-import { commonErrorHandler } from '@/error/commonErrorHandler';
 import { OAuthSocialProvider } from '@repo/entity/src/auth';
 import { HTTPError } from '@repo/api/src/error';
 
@@ -26,7 +28,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    await socialLoginAction({
+    const result = await socialLoginAction({
       code,
       id_token,
       state,
@@ -34,7 +36,13 @@ export async function POST(request: NextRequest) {
       provider: OAuthSocialProvider.APPLE,
     });
 
-    return new NextResponse(null, { status: 200 });
+    if (result && result.redirectUrl) {
+      return NextResponse.redirect(
+        `${NavigationLanguageGroup.ko}${NavigationPathname.OAuthAppleCallbackLoading}?next=${encodeURIComponent(result.redirectUrl)}`,
+      );
+    }
+
+    return NextResponse.redirect(NavigationPathname.Map);
   } catch (error) {
     if (error instanceof HTTPError) {
       return new NextResponse(
