@@ -129,8 +129,8 @@ export default class AuthService {
     }
 
     switch (data.provider) {
-      // case OAuthSocialProvider.KAKAO:
-      //   return this.authRepository.socialSignInWithKakao({ data });
+      case OAuthSocialProvider.KAKAO:
+        return this.authRepository.socialSignInWithKakao({ data });
       case OAuthSocialProvider.APPLE:
         return this.authRepository.socialSignInWithApple({ data });
       default:
