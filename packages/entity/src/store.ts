@@ -26,6 +26,12 @@ export interface StoreTag {
   category: StoreTagCategory;
 }
 
+export interface TopPreference {
+  tagId: number;
+  name: string;
+  rank: number;
+}
+
 export interface Store {
   storeId: number;
   storeUuid: string;
@@ -51,7 +57,7 @@ export interface Store {
   updatedAt?: string;
   tagIds: number[];
   tags: StoreTag[];
-  topPreferences: string[];
+  topPreferences: TopPreference[];
   storeImages?: string[];
   ownerPickImages?: string[];
 }

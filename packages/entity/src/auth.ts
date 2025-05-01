@@ -5,6 +5,7 @@ import type { Gender } from './user';
 export enum OAuthSocialProvider {
   KAKAO = 'kakao',
   GOOGLE = 'google',
+  APPLE = 'apple',
 }
 
 // FIXME: sign-in entity로 이동
@@ -89,9 +90,18 @@ export interface SignUpData extends Omit<SignInData, 'keepLoggedIn'> {
   profileImage?: File;
 }
 
-export interface OAuthSignInData {
+export type OAuthSignInData = KakaoOAuthSignInData | AppleOAuthSignInData;
+
+export interface KakaoOAuthSignInData {
   provider: string;
   code: string;
+}
+
+export interface AppleOAuthSignInData {
+  provider: OAuthSocialProvider.APPLE;
+  code: string;
+  idToken: string;
+  user?: { name: { firstName: string; lastName: string }; email: string };
 }
 
 export interface VerifyEmailRequestData {
@@ -123,7 +133,12 @@ export interface ResetPasswordResponse {
 }
 
 export interface AuthRepository {
-  socialSignIn(data: BaseRequestData<OAuthSignInData>): Promise<SignInResponse>; // 소셜 로그인
+  socialSignInWithKakao(
+    data: BaseRequestData<OAuthSignInData>,
+  ): Promise<SignInResponse>; // 카카오 소셜 로그인
+  socialSignInWithApple(
+    data: BaseRequestData<OAuthSignInData>,
+  ): Promise<SignInResponse>;
   signIn(data: BaseRequestData<SignInData>): Promise<SignInResponse>; // 일반 로그인
   signUp(data: BaseRequestData<unknown>): Promise<unknown>; // 회원가입
   signUpWithProfileImage(data: BaseRequestData<unknown>): Promise<unknown>; // 회원가입

@@ -62,7 +62,9 @@ export function BottomSheetContainer({
   };
 
   const hexaGridProps = {
-    contents: storeSummary.topPreferences,
+    contents: storeSummary.topPreferences
+      .sort((a, b) => a.rank - b.rank)
+      .map((pref) => pref.name),
     storeImages: storeSummary.storeImages,
   };
   const storePreviewPicListProps = {

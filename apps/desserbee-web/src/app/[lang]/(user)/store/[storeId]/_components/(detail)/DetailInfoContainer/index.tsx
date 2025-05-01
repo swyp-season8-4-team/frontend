@@ -71,7 +71,9 @@ export function DetailInfoContainer({
   };
 
   const hexagonGridProps = {
-    contents: topPreferences,
+    contents: topPreferences
+      .sort((a, b) => a.rank - b.rank)
+      .map((pref) => pref.name),
     storeImages,
     ownerPickImages,
   };
