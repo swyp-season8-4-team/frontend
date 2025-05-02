@@ -90,17 +90,27 @@ export interface SignUpData extends Omit<SignInData, 'keepLoggedIn'> {
   profileImage?: File;
 }
 
-export type OAuthSignInData = KakaoOAuthSignInData | AppleOAuthSignInData;
+export interface OAuthSignInData {
+  provider?: string;
+  code: string;
+  id_token?: string;
+  state?: string;
+  user?: {
+    name: { firstName: string; lastName: string };
+    email: string;
+  } | null;
+}
 
 export interface KakaoOAuthSignInData {
-  provider: string;
+  provider: OAuthSocialProvider.KAKAO;
   code: string;
 }
 
 export interface AppleOAuthSignInData {
   provider: OAuthSocialProvider.APPLE;
   code: string;
-  idToken: string;
+  id_token: string;
+  state: string;
   user?: { name: { firstName: string; lastName: string }; email: string };
 }
 

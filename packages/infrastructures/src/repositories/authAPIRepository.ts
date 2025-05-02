@@ -1,22 +1,23 @@
 import { isServer } from '@repo/api';
 import fetch from '@repo/api/src/fetch';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
-import type {
-  AuthRepository,
-  JWTRefreshTokens,
-  JWTTokens,
-  OAuthSignInData,
-  RawSignInResponse,
-  ResetPasswordData,
-  ResetPasswordResponse,
-  SignInData,
-  SignInResponse,
-  SignOutData,
-  SignUpData,
-  VerifyEmailData,
-  VerifyEmailRequestData,
-  VerifyEmailRequestResponse,
-  VerifyEmailResponse,
+import {
+  OAuthSocialProvider,
+  type AuthRepository,
+  type JWTRefreshTokens,
+  type JWTTokens,
+  type OAuthSignInData,
+  type RawSignInResponse,
+  type ResetPasswordData,
+  type ResetPasswordResponse,
+  type SignInData,
+  type SignInResponse,
+  type SignOutData,
+  type SignUpData,
+  type VerifyEmailData,
+  type VerifyEmailRequestData,
+  type VerifyEmailRequestResponse,
+  type VerifyEmailResponse,
 } from '@repo/entity/src/auth';
 import APIRepository from './apiRepository';
 import AuthConverter from '../mappers/authConverter';
@@ -46,15 +47,21 @@ export default class AuthAPIRepository
   async socialSignInWithApple({
     data,
   }: BaseRequestData<OAuthSignInData>): Promise<SignInResponse> {
-    //TODO: 백엔드 API 나오면 수정 해야 함 (응답타입도)
     if (!data) {
       throw new Error('data is not exist');
     }
 
+    const { code, id_token, state, user, provider } = data;
+
     const response = await fetch<OAuthSignInData, RawSignInResponse>({
-      data, // code, idToken //TODO: 백엔드 API 나오면 수정 해야 함
+      data: {
+        code,
+        id_token,
+        state,
+        user: user || null,
+      },
       method: 'POST',
-      url: `${this.endpoint}/auth/oauth2/callback`, //TODO: 백엔드 API 나오면 수정 해야 함
+      url: `${this.endpoint}/auth/oauth2/apple/callback`,
     });
 
     return this.authConverter.convertRawSignInResponse(response);

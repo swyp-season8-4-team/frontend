@@ -14,25 +14,27 @@ import { redirect } from 'next/navigation';
 import { decodeJWT } from '@repo/utility/src/jwt';
 import { calculateTokenMaxAge } from '@/utils/token';
 import { HTTPError } from '@repo/api/src/error';
+import type { OAuthSignInData } from '@repo/entity/src/auth';
 
 const authService = new AuthService({
   authRepository: new AuthAPIRepository(),
 });
 
-// ... existing code ...
-interface ActionData {
+type ActionData = {
   code: string;
   provider: OAuthSocialProvider;
-  idToken?: string;
+  id_token?: string;
+  user?: { name: { firstName: string; lastName: string }; email: string };
   next?: string;
-}
-// ... existing code ...
+  state?: string;
+};
 
 export default async function socialLoginAction({
   code,
   provider,
-  idToken, // 백엔드에서 안 받아도 된다고 하면 지우기
-  // user,
+  id_token, // 백엔드에서 안 받아도 된다고 하면 지우기
+  user,
+  state,
   // next,
 }: ActionData) {
   try {
@@ -43,14 +45,23 @@ export default async function socialLoginAction({
         response = await authService.socialSignIn({ code, provider });
         break;
       case OAuthSocialProvider.APPLE:
-        response = await authService.socialSignIn({ code, idToken, provider }); // idToken 백엔드에서 안 받아도 된다고 하면 지우고 통합하기
+        if (!id_token || !state) {
+          throw new Error('id_token and state are required for Apple login');
+        }
+        response = await authService.socialSignIn({
+          code,
+          id_token,
+          state,
+          user,
+          provider,
+        });
         break;
       default:
         throw new Error(`Unsupported social login provider: ${provider}`);
     }
 
     const { accessToken, refreshToken, userId, isPreferenceSet, deviceId } =
-      response; // 만약 애플 로그인 응답값 바뀐다면 따로 수정하기 (지금은 service 에서 분기 처리)
+      response;
 
     const cookieList = await cookies();
     const domain =
@@ -93,9 +104,18 @@ export default async function socialLoginAction({
     });
 
     if (!isPreferenceSet) {
+      if (provider === OAuthSocialProvider.APPLE) {
+        return {
+          redirectUrl: `${NavigationLanguageGroup.ko}${NavigationPathGroup.Preference}${userId}`,
+        };
+      }
       redirect(
         `${NavigationLanguageGroup.ko}${NavigationPathGroup.Preference}${userId}`,
       );
+    }
+
+    if (provider === OAuthSocialProvider.APPLE) {
+      return { redirectUrl: NavigationPathname.Map };
     }
 
     redirect(NavigationPathname.Map);
