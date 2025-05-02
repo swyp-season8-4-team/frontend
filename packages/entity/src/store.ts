@@ -424,6 +424,56 @@ export interface DeleteStoreRequest {
   storeUuid: string;
 }
 
+//가게 기본정보 수정
+export interface updateStoreRequest { 
+  userUuid: string;
+  name: string;
+  phone: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  description:string;
+  animalYn:boolean;
+  tumblerYn:boolean;
+  parkingYn:boolean;
+  tagIds:number[];
+  holidays:HolidaysItem[];
+  storeLinks: StoreLink[];
+  storeImageDeleteIds:number[];
+  ownerPickImageDeleteIds:number[];
+}
+
+export interface updateStoreRequestFormData {
+  storeUuid:string;
+  requests:updateStoreRequest;
+  storeImageFiles?: (string | File)[];
+  ownerPickImageFiles?: (string | File)[];
+}
+
+export interface updateStoreResponse {
+  storeId: number;
+  storeUuid: string;
+  ownerId: number;
+  ownerUuid: string;
+  name: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  phone: string;
+  animalYn:boolean;
+  tumblerYn:boolean;
+  parkingYn:boolean;
+  description:string;
+  notice:Notice[];
+  menus:Menu[];
+  storeImages:string[];
+  ownerPickImages:string[];
+  primaryStoreLink:string;
+  storeLinks:string[];
+  tags:StoreTag[];
+  operatingHours:OperatingHoursItem[];
+  holidays:HolidaysItem[];
+}
 // saved list
 export interface SavedListRequest {
   userUuid: string;
@@ -824,6 +874,11 @@ export interface StoreRepository {
   getOwnerStoreList({
     authorization,
   }: BaseRequestData<void>): Promise<getOwnerStoreListResponse[]>;
+
+  updateStore({
+    authorization,
+    data
+  }:BaseRequestData<updateStoreRequestFormData>):Promise<updateStoreResponse>;
 
   // owner:notice
   createNotice({

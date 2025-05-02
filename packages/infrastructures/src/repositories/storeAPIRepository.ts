@@ -50,6 +50,9 @@ import type {
   RegisterNoticeRequest,
   NoticeListRequest,
   NoticeListResponse,
+  updateStoreRequest,
+  updateStoreResponse,
+  updateStoreRequestFormData,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -625,6 +628,49 @@ export default class StoreAPIRepository
     return response;
   }
 
+  async updateStore({
+    authorization,
+    data,
+  }: BaseRequestData<updateStoreRequestFormData>): Promise<updateStoreResponse> {
+    if (!data) {
+      throw Error('data required');
+    }
+  
+    const { storeUuid, requests, storeImageFiles, ownerPickImageFiles } = data || {};
+    const url = `${this.endpoint}/stores/${storeUuid}`;
+  
+    const formData = new FormData();
+    formData.append(
+      'request',
+      new Blob([JSON.stringify(requests)], { type: 'application/json' })
+    );
+  
+    if (storeImageFiles && storeImageFiles.length > 0) {
+      storeImageFiles.forEach((image) => {
+        formData.append('storeImageFiles', image); // 배열인 경우 각 파일 추가
+      });
+    }
+  
+    if (ownerPickImageFiles && ownerPickImageFiles.length > 0) {
+      ownerPickImageFiles.forEach((image) => {
+        formData.append('ownerPickImageFiles', image);
+      });
+    }
+  
+    const response = await fetch<updateStoreRequestFormData, updateStoreResponse>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      method: 'PATCH',
+      url,
+      formData
+    });
+  
+    return response;
+  }
+  
   // menu
   async createMenu({
     authorization,
@@ -920,7 +966,7 @@ export default class StoreAPIRepository
         },
       }),
       method: 'GET',
-      url: `${this.endpoint}/stores/${storeUuid}/notices`, 
+      url: `${this.endpoint}/stores/${storeUuid}/notices`,
     });
 
     return response;

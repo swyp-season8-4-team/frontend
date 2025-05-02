@@ -43,6 +43,9 @@ import type {
   RegisterNoticeRequest,
   NoticeListRequest,
   NoticeListResponse,
+  updateStoreRequest,
+  updateStoreResponse,
+  updateStoreRequestFormData,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -241,16 +244,6 @@ export default class StoreService {
     return response;
   }
 
-  async updateStore() {
-    if (!this.storeRepository) {
-      throw new Error('storeRepository is not set');
-    } else if (!this.authRepository) {
-      throw new Error('authRepository is not set');
-    }
-
-    //TODO: 구현 필요
-  }
-
   async deleteStore(params: DeleteStoreRequest): Promise<void> {
     if (!this.storeRepository) {
       throw new Error('storeRepository is not set');
@@ -281,6 +274,25 @@ export default class StoreService {
     const response = await this.storeRepository.getOwnerStoreList(requestData);
     return response;
   }
+
+  async updateStore(params:updateStoreRequestFormData): Promise<updateStoreResponse> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set');
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const authorization = await this.authRepository.getAuthorization();
+
+    const requestData = {
+      data: params,
+      authorization,
+    };
+
+    const response = await this.storeRepository.updateStore(requestData);
+    return response;
+  }
+
 
   async createNotice(params: RegisterNoticeRequest): Promise<void> {
     if (!this.storeRepository) {

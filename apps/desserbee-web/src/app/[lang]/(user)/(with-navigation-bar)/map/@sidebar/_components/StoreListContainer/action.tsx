@@ -1,6 +1,7 @@
 'use server';
 
 import { commonErrorHandler } from '@/error/commonErrorHandler';
+import type { updateStoreRequest, updateStoreRequestFormData, updateStoreResponse } from '@repo/entity/src/store';
 import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import StoreService from '@repo/usecase/src/storeService';
@@ -61,6 +62,11 @@ export async function getStoreSummary({ storeUuid }: { storeUuid: string }) {
 export async function getOwnerStoreList() {
   const storeLists = await commonErrorHandler(storeService.getOwnerStoreList());
   return storeLists;
+}
+
+export async function updateStore(params: updateStoreRequestFormData): Promise<updateStoreResponse> {
+  const updatedInfo = await commonErrorHandler(storeService.updateStore(params));
+  return updatedInfo;
 }
 
 export async function getStoreDetail({ storeUuid }: { storeUuid: string }) {

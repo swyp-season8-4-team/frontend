@@ -15,7 +15,7 @@ export default function NoticeForm() {
   const storeUuid = searchParams.get('storeUuid');
   const router = useRouter();
 
-  const { control, handleSubmit, watch, reset} = useForm({
+  const { control, handleSubmit, watch, reset } = useForm({
     defaultValues: {
       tag: 'ALERT',
       title: '',
@@ -124,13 +124,15 @@ export default function NoticeForm() {
       />
 
       {/* 제출 버튼 */}
-      <div className="flex gap-5">
-        <LightOliveButton
-          type="button"
-          className="font-semibold"
-          text="초기화"
-          onClick={onReset}
-        />
+      <div className="flex gap-2">
+        <div className="w-[40%]">
+          <LightOliveButton
+            type="button"
+            className="font-semibold"
+            text="초기화"
+            onClick={onReset}
+          />
+        </div>
         <OliveButton type="submit" className="font-semibold" text="완료" />
       </div>
     </form>

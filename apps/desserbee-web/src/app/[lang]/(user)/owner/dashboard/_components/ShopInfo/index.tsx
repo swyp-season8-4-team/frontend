@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import NavigationService from '@repo/usecase/src/navigationService';
 import Image from 'next/image';
+import type { HolidaysItem } from '@repo/entity/src/store';
 
 const navigationService = new NavigationService({});
 interface BreakTime {
@@ -28,6 +29,7 @@ interface shopInfoProps {
   operatingTime: OperatingHoursItem[];
   sns?: string[];
   storeUuid: string;
+  holidays?: HolidaysItem[];
 }
 
 function getServiceName(url: string) {
@@ -143,6 +145,16 @@ export function ShopInfo(data: shopInfoProps) {
                 </div>
               ))}
             </div>
+          </div>
+          {/* 휴무 */}
+          <div className="flex w-full gap-2 py-2">
+            <p className="w-[20%] text-[#4B4B4B]">휴무</p>
+            {data.holidays?.map((item, idx) => (
+              <div key={idx}>
+                <div>{item.date}</div>
+                <div>{item.reason}</div>
+              </div>
+            ))}
           </div>
           {/* SNS */}
           <div className="flex w-full gap-2 py-2">
