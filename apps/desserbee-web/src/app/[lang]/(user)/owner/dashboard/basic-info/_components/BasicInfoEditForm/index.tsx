@@ -436,11 +436,10 @@ export function BasicInfoEditForm() {
   // 날짜 포맷 변환 함수("2025-02-10" → "2025.02.10")
   const formatHolidayDate = (start: string, end: string) => {
     const startFormatted = start.replace(/-/g, '.');
-    if (start === end) return `${startFormatted}`;
-    else {
-      const endDay = end.split('-')[2]; // "14"
-      return `${startFormatted}-${endDay}`; // "2025.02.10-14"
-    }
+    const endFormatted = end.replace(/-/g, '.');
+
+    if (start === endFormatted) return `${startFormatted}`;
+    else return `${startFormatted}-${endFormatted}`; // "2025.02.10-2025.02.14"
   };
 
   const onSubmit = async (data: FormInputs) => {
@@ -491,6 +490,7 @@ export function BasicInfoEditForm() {
       date: formatHolidayDate(h.startDate, h.endDate),
       reason: h.reason,
     }));
+    console.log("변환된 날짜",formattedHolidays);
     const formData: updateStoreRequestFormData = {
       storeUuid: storeUuid!,
       requests: {

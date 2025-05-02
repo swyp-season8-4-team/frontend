@@ -15,7 +15,7 @@ export default function NoticeForm() {
   const storeUuid = searchParams.get('storeUuid');
   const router = useRouter();
 
-  const { control, handleSubmit, watch, reset } = useForm({
+  const { control, handleSubmit, watch, reset} = useForm({
     defaultValues: {
       tag: 'ALERT',
       title: '',
@@ -112,7 +112,7 @@ export default function NoticeForm() {
             <textarea
               {...field}
               placeholder="공지글을 입력해주세요"
-              className="mb-14 h-[300px] w-full resize-none rounded-[8px] border border-gray-300 px-2 py-2"
+              className="mb-4 h-[300px] w-full resize-none rounded-[8px] border border-gray-300 px-2 py-2"
             />
             {fieldState.error && (
               <span className="text-sm text-red-500">

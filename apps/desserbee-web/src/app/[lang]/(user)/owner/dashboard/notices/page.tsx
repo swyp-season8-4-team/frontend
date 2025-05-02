@@ -28,7 +28,6 @@ export default function Notices() {
       fetchNotices();
     }
   }, [storeUuid]);
-  console.log(notices);
 
   return (
     <div className="min-h-screen w-full bg-[#EBEBEB]">
@@ -62,6 +61,8 @@ export default function Notices() {
                 tag={item.tag}
                 title={item.title}
                 date={item.createdAt}
+                noticeId={item.noticeId}
+                storeId={storeUuid ?? ''}
               />
             ))
           ) : (
