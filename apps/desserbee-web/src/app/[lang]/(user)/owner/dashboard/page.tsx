@@ -37,6 +37,7 @@ export default function DashBoardHomePage() {
           operatingTime={storeInfo?.operatingHours || []}
           sns={storeInfo?.storeLinks || []}
           storeUuid={storeUuid || ''}
+          holidays={storeInfo?.holidays}
         />
         <ShopDetail
           tags={storeInfo?.tags || []}

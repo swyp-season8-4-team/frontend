@@ -3,7 +3,12 @@
 import { useForm, Controller } from 'react-hook-form';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
-import type { Store, StoreDetailInfoData } from '@repo/entity/src/store';
+import type {
+  storeImage,
+  Store,
+  StoreDetailInfoData,
+  updateStoreRequestFormData,
+} from '@repo/entity/src/store';
 import Image from 'next/image';
 import IconXRound from '@repo/design-system/components/icons/IconXRound';
 import IconDirection from '@repo/design-system/components/icons/IconDirection';
@@ -20,6 +25,7 @@ import {
   useMemo,
   useCallback,
   type ChangeEvent,
+  useRef,
 } from 'react';
 import { CheckButton } from '@repo/design-system/components/CheckButton';
 import { PhotoAddBox } from '@repo/design-system/components/PhotoAddBox';
@@ -32,12 +38,27 @@ import { ValidationError } from '../../../../register/_components/ValidationErro
 import IconPlusRound from '@repo/design-system/components/icons/IconPlusRound';
 import { ModalHeader } from '../../../../_components/ModalHeader';
 import { FEATURES } from '@/app/[lang]/(user)/_consts/store';
-import { getStoreDetail } from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
+import {
+  getStoreDetail,
+  updateStore,
+} from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
 import DatePicker from 'react-datepicker';
 import { LightOliveButton } from './../../../../../../../../../../../packages/design-system/src/components/buttons/FillButtons/LightOlive';
+import { UserContext } from '@/contexts/UserContext';
+import MapService from '@repo/usecase/src/mapService';
+import { KakaoMapAdapter } from '@repo/infrastructures/src/adapters/kakaoMapAdapter';
+import KakaoMapController from '@repo/infrastructures/src/controllers/kakaoMapController';
+import Script from 'next/script';
 // 깜빡하고 말씀 안 드렸는데, 아이콘은 재사용을 위해 정해진 양식으로 작성 후 따로 관리가 됩니다.
 // @repo/design-system/components/icons에서 확인 가능
 // 이 부분 설명 필요하면 따로 질문 주세요!
+
+// 변경 (폼 내부에서만 사용)
+interface HolidaysFormItem {
+  startDate: string; // YYYY-MM-DD
+  endDate: string; // YYYY-MM-DD
+  reason: string;
+}
 
 interface FormInputs
   extends Pick<
@@ -53,13 +74,14 @@ interface FormInputs
     | 'parkingYn'
     | 'averageRating'
     | 'status'
-    | 'holidays' //스페셜휴무일
+    // | 'holidays' //스페셜휴무일
     | 'description'
   > {
+  holidays: HolidaysFormItem[];
   detailAddress: string;
   tags: number[];
-  storeImageFiles: Array<File | string>;
-  ownerPickImageFiles: Array<File | string>;
+  storeImageFiles: Array<File | storeImage>;
+  ownerPickImageFiles: Array<File | storeImage>;
   features: {
     animalYn: boolean;
     tumblerYn: boolean;
@@ -72,6 +94,7 @@ const isValidURL = (url: string) => {
   return urlRegex.test(url);
 };
 
+const KAKAO_MAP_API_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&libraries=services,clusterer&autoload=false`;
 export function BasicInfoEditForm() {
   const router = useRouter();
   const { push, pop } = useContext(PortalContext); // Portal을 사용해서 모달 열고 닫을 수 있음
@@ -79,7 +102,18 @@ export function BasicInfoEditForm() {
   const searchParams = useSearchParams();
   const storeUuid = searchParams.get('storeUuid');
   const [storeInfo, setStoreInfo] = useState<StoreDetailInfoData | null>(null);
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+  const [mapService, setMapService] = useState<MapService | null>(null);
+  
+  // 삭제된 가게 정보를 저장하는 배열
+  const storeImageDeleteIds = useRef<number[]>([]);
+  const ownerPickImageDeleteIds = useRef<number[]>([]);
 
+  //유저 정보 가져오기
+  const { user } = useContext(UserContext);
+  const userUuid = user!.id;
+
+  // 원래 있던 가게 기본 정보 가져오기
   useEffect(() => {
     async function fetchStoreDetails() {
       if (!storeUuid) return;
@@ -89,7 +123,23 @@ export function BasicInfoEditForm() {
     fetchStoreDetails();
   }, [storeUuid]);
 
-  // console.log(storeInfo);
+  useEffect(() => {
+    if (isScriptLoaded && !mapService) {
+      kakao.maps.load(() => {
+        const tempDiv = document.createElement('div');
+        const map = new kakao.maps.Map(tempDiv, {
+          center: new kakao.maps.LatLng(37.566826, 126.9786567),
+          level: 3,
+        });
+
+        const adapter = new KakaoMapAdapter(map);
+        const controller = new KakaoMapController();
+        controller['map'] = adapter;
+
+        setMapService(new MapService({ mapController: controller }));
+      });
+    }
+  }, [isScriptLoaded, mapService]);
 
   const {
     control,
@@ -127,10 +177,15 @@ export function BasicInfoEditForm() {
     phone: storeInfo.phone || '',
     address: storeInfo.address || '',
     detailAddress: '',
-    holidays: (storeInfo.holidays || []).map((holiday) => ({
-      date: holiday.date ?? '',
-      reason: holiday.reason ?? '',
-    })),
+    holidays: (storeInfo.holidays || []).map((holiday) => {
+      // 예: "2025.02.10-14" → startDate: "2025-02-10", endDate: "2025-02-14"
+      const [start, end] = holiday.date.split('-');
+      return {
+        startDate: start.replace(/\./g, '-'), // "2025.02.10" → "2025-02-10"
+        endDate: start.slice(0, 8) + end, // "2025.02.10-14" → "2025.02.14" → "2025-02-14"
+        reason: holiday.reason ?? '',
+      };
+    }),
     storeLinks: (storeInfo.storeLinks as (string | { url: string })[]).map(
       (link) => ({
         url: typeof link === 'string' ? link : link.url,
@@ -251,14 +306,18 @@ export function BasicInfoEditForm() {
   };
 
   const handleAddHoliday = () => {
-    setValue('holidays', [...holidays, { date: '', reason: '' }], {
-      shouldDirty: true,
-    });
+    setValue(
+      'holidays',
+      [...holidays, { startDate: '', endDate: '', reason: '' }],
+      {
+        shouldDirty: true,
+      },
+    );
   };
 
   const handleHolidayChange = (
     index: number,
-    field: 'date' | 'reason',
+    field: 'startDate' | 'endDate' | 'reason',
     value: string,
   ) => {
     const newHolidays = holidays.map((holiday, i) =>
@@ -322,15 +381,31 @@ export function BasicInfoEditForm() {
     [watch, setValue],
   );
 
+  // const handleRemoveStoreImageFiles = (index: number) => {
+  //   const current = watch('storeImageFiles');
+  //   setValue(
+  //     'storeImageFiles',
+  //     current.filter((_, i) => i !== index),
+  //     { shouldDirty: true },
+  //   );
+  // };
+
   const handleRemoveStoreImageFiles = (index: number) => {
     const current = watch('storeImageFiles');
+    const removed = current[index];
+  
+    // File이 아니라면(storeImage 객체라면) id를 저장
+    if (!(removed instanceof File) && removed.id !== undefined) {
+      storeImageDeleteIds.current.push(removed.id);
+    }
+  
     setValue(
       'storeImageFiles',
       current.filter((_, i) => i !== index),
-      { shouldDirty: true },
+      { shouldDirty: true }
     );
   };
-
+    
   const handleOwnerPickImageFilesChange = (
     e: ChangeEvent<HTMLInputElement>,
   ) => {
@@ -342,30 +417,47 @@ export function BasicInfoEditForm() {
     );
   };
 
+  // const handleRemoveOwnerPickImageFiles = (index: number) => {
+  //   const current = watch('ownerPickImageFiles');
+  //   setValue(
+  //     'ownerPickImageFiles',
+  //     current.filter((_, i) => i !== index),
+  //     { shouldDirty: true },
+  //   );
+  // };
+
   const handleRemoveOwnerPickImageFiles = (index: number) => {
     const current = watch('ownerPickImageFiles');
+    const removed = current[index];
+  
+    if (!(removed instanceof File) && removed.id !== undefined) {
+      ownerPickImageDeleteIds.current.push(removed.id);
+    }
+  
     setValue(
       'ownerPickImageFiles',
       current.filter((_, i) => i !== index),
-      { shouldDirty: true },
+      { shouldDirty: true }
     );
   };
 
   // 이미지 URL 메모이제이션
   const storeImageUrls = useMemo(
     () =>
-      watch('storeImageFiles').map((file) =>
-        typeof file === 'string' ? file : URL.createObjectURL(file),
+      watch('storeImageFiles').map((item) =>
+        item instanceof File ? URL.createObjectURL(item) : item.url,
       ),
     [watch('storeImageFiles')],
   );
+
   const ownerPickImageUrls = useMemo(
     () =>
-      watch('ownerPickImageFiles').map((file) =>
-        typeof file === 'string' ? file : URL.createObjectURL(file),
+      watch('ownerPickImageFiles').map((item) =>
+        item instanceof File ? URL.createObjectURL(item) : item.url,
       ),
     [watch('ownerPickImageFiles')],
   );
+
   // cleanup function for URLs
   useEffect(() => {
     return () => {
@@ -379,19 +471,94 @@ export function BasicInfoEditForm() {
     return phoneRegex.test(phone);
   };
 
-  // 완료 버튼 클릭
-  const onSubmit = (data: FormInputs) => {
-    // data = 폼에 작성된 모든 항목
-    // data.name.. 등으로 접근 가능
+  // 날짜 포맷 변환 함수("2025-02-10" → "2025.02.10")
+  const formatHolidayDate = (start: string, end: string) => {
+    const startFormatted = start.replace(/-/g, '.');
+    const endFormatted = end.replace(/-/g, '.');
 
-    // type=submit인 버튼 눌렀을 때 실행됨됨
-    if (!isFormValid) return;
-    console.log(data);
-    // router.push(`${NavigationPathname.OwnerRegisterOperatingHours}`); 이동할 경로는 NavigationPathname에서 작성 후 불러와서 사용하도록 관리중입니다.
+    if (start === endFormatted) return `${startFormatted}`;
+    else return `${startFormatted}-${endFormatted}`; // "2025.02.10-2025.02.14"
+  };
+
+  const onSubmit = async (data: FormInputs) => {
+    if (!mapService || !isFormValid) {
+      console.log('필수 정보가 누락되었습니다');
+      return;
+    }
+
+    // 사진 중에 File 만 추출(새로 추가한 사진)
+    const storeImageFiles = data.storeImageFiles.filter(
+      (file): file is File => file instanceof File,
+    );
+
+    const ownerPickImageFiles = data.ownerPickImageFiles.filter(
+      (file): file is File => file instanceof File,
+    );
+
+    // 주소 변환
+    const coordinates = await mapService.convertAddressToCoordinates(
+      data.address,
+    );
+
+    if (!coordinates || !coordinates.latitude || !coordinates.longitude) {
+      console.error('주소를 좌표로 변환하는데 실패했습니다.');
+      alert('주소를 지도 좌표로 변환하는데 실패했습니다. 다시 시도해주세요.');
+      router.back();
+      return;
+    }
+
+    // holidays 변환
+    const formattedHolidays = data.holidays.map((h) => ({
+      date: formatHolidayDate(h.startDate, h.endDate),
+      reason: h.reason,
+    }));
+    console.log(formattedHolidays);
+    console.log('삭제된 가게 사진', storeImageDeleteIds.current);
+    console.log('삭제된 오너픽 사진', ownerPickImageDeleteIds.current);
+
+    const formData: updateStoreRequestFormData = {
+      storeUuid: storeUuid!,
+      requests: {
+        userUuid: userUuid,
+        name: data.name,
+        phone: data.phone,
+        address: `${data.address} ${data.detailAddress}`.trim(),
+        latitude: coordinates.latitude,
+        longitude: coordinates.longitude,
+        description: data.description || '',
+        animalYn: data.features.animalYn,
+        tumblerYn: data.features.tumblerYn,
+        parkingYn: data.features.parkingYn,
+        tagIds: data.tags,
+        holidays: formattedHolidays,
+        storeLinks: data.storeLinks,
+        storeImageDeleteIds: storeImageDeleteIds.current,
+        ownerPickImageDeleteIds: ownerPickImageDeleteIds.current,
+      },
+      storeImageFiles: storeImageFiles,
+      ownerPickImageFiles: ownerPickImageFiles,
+    };
+
+    try {
+      await updateStore(formData);
+      alert('수정 성공!');
+      console.log(data);
+      router.back();
+    } catch (error) {
+      console.error(error);
+      alert('수정 실패!');
+    }
   };
 
   return (
     <div>
+      <Script
+        src={KAKAO_MAP_API_URL}
+        strategy="afterInteractive"
+        onReady={() => {
+          setIsScriptLoaded(true);
+        }}
+      />
       <ModalHeader
         title="기본 정보 관리하기"
         isSub={true}
@@ -477,9 +644,9 @@ export function BasicInfoEditForm() {
                               width={100}
                               height={100}
                               src={
-                                typeof item === 'string'
-                                  ? item
-                                  : URL.createObjectURL(item)
+                                item instanceof File
+                                  ? URL.createObjectURL(item)
+                                  : item.url
                               }
                               alt={`가게 사진 ${index + 1}`}
                               className="h-full w-full object-cover"
@@ -533,16 +700,7 @@ export function BasicInfoEditForm() {
                         <div key={index} className="relative flex-shrink-0">
                           <PhotoBox
                             image={
-                              typeof item === 'string' ? ( // 기존 이미지
-                                <Image
-                                  width={100}
-                                  height={100}
-                                  src={item} // URL 직접 사용
-                                  alt={`홍보용 가게 사진 ${index + 1}`}
-                                  className="h-full w-full object-cover"
-                                />
-                              ) : (
-                                // 새 이미지
+                              item instanceof File ? (
                                 <Image
                                   width={100}
                                   height={100}
@@ -550,10 +708,18 @@ export function BasicInfoEditForm() {
                                   alt={`홍보용 가게 사진 ${index + 1}`}
                                   className="h-full w-full object-cover"
                                 />
+                              ) : (
+                                <Image
+                                  width={100}
+                                  height={100}
+                                  src={item.url}
+                                  alt={`홍보용 가게 사진 ${index + 1}`}
+                                  className="h-full w-full object-cover"
+                                />
                               )
                             }
-                            deleteFunction={
-                              () => handleRemoveOwnerPickImageFiles(index) // 수정: 통합 삭제 핸들러
+                            deleteFunction={() =>
+                              handleRemoveOwnerPickImageFiles(index)
                             }
                           />
                         </div>
@@ -712,24 +878,31 @@ export function BasicInfoEditForm() {
                 if (!holidays || holidays.length === 0) return true;
 
                 // 빈 날짜 체크
-                if (holidays.some((h) => !h.date.trim())) {
+                if (
+                  holidays.some((h) => !h.startDate.trim() || !h.endDate.trim())
+                ) {
                   return '날짜를 입력하거나 삭제해주세요';
                 }
                 // 빈 사유 체크
                 if (holidays.some((h) => !h.reason.trim())) {
                   return '사유를 입력하거나 삭제해주세요';
                 }
-                // 날짜 형식 체크 (YYYY-MM-DD)
                 if (
                   holidays.some(
-                    (h) => !/^\d{4}-\d{2}-\d{2}$/.test(h.date.trim()),
+                    (h) =>
+                      h.startDate.trim() < todayStr ||
+                      h.endDate.trim() < todayStr,
                   )
                 ) {
-                  return '날짜 형식이 올바르지 않습니다 (예: 2025-01-01)';
+                  return '오늘 날짜 이전은 선택할 수 없습니다';
                 }
 
-                if (holidays.some((h) => h.date.trim() < todayStr)) {
-                  return '오늘 날짜 이전은 선택할 수 없습니다';
+                if (
+                  holidays.some(
+                    (h) => new Date(h.startDate) > new Date(h.endDate),
+                  )
+                ) {
+                  return '시작일이 종료일보다 늦을 수 없습니다';
                 }
 
                 return true;
@@ -742,12 +915,30 @@ export function BasicInfoEditForm() {
                     <div key={index} className="flex items-center gap-2">
                       <input
                         type="date"
-                        value={holiday.date}
+                        value={holiday.startDate}
                         onChange={(e) =>
-                          handleHolidayChange(index, 'date', e.target.value)
+                          handleHolidayChange(
+                            index,
+                            'startDate',
+                            e.target.value,
+                          )
                         }
                         className={cn(
-                          'h-10 w-[140px] rounded-[5px] border p-[10px] text-sm font-medium',
+                          'h-10 w-[125px] rounded-[5px] border p-[10px] text-sm font-medium',
+                          errors.holidays
+                            ? 'border-[#FF3B30]'
+                            : 'border-[#A6A6A6]',
+                        )}
+                        placeholder="날짜"
+                      />
+                      <input
+                        type="date"
+                        value={holiday.endDate}
+                        onChange={(e) =>
+                          handleHolidayChange(index, 'endDate', e.target.value)
+                        }
+                        className={cn(
+                          'h-10 w-[125px] rounded-[5px] border p-[10px] text-sm font-medium',
                           errors.holidays
                             ? 'border-[#FF3B30]'
                             : 'border-[#A6A6A6]',
@@ -1035,18 +1226,20 @@ export function BasicInfoEditForm() {
             ))}
           </div>
         </div>
-        <div className="flex gap-5">
-          <LightOliveButton
-            type="button"
-            className="font-semibold"
-            text="초기화"
-            onClick={() => {
-              if (storeInfo) {
-                reset(getInitialValues(storeInfo));
-                trigger();
-              }
-            }}
-          />
+        <div className="flex gap-2">
+          <div className="w-[40%]">
+            <LightOliveButton
+              type="button"
+              className="font-semibold"
+              text="초기화"
+              onClick={() => {
+                if (storeInfo) {
+                  reset(getInitialValues(storeInfo));
+                  trigger();
+                }
+              }}
+            />
+          </div>
           <OliveButton
             type="submit"
             className="font-semibold"

@@ -57,7 +57,7 @@ export default function StoreList() {
             name={store.name}
             tag={store.details?.tags || []}
             description={store.details?.description || ''}
-            img={store.details?.storeImages?.[0] || ''}
+            img={store.details?.storeImages?.[0]?.url || undefined}
             storeUuid={store.storeUuid}
           />
         ))}

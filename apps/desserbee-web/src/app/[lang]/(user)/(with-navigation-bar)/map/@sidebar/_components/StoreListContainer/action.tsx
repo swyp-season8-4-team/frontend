@@ -1,6 +1,11 @@
 'use server';
 
 import { commonErrorHandler } from '@/error/commonErrorHandler';
+import type {
+  updateStoreRequest,
+  updateStoreRequestFormData,
+  updateStoreResponse,
+} from '@repo/entity/src/store';
 import AuthNextAppRouteRepository from '@repo/infrastructures/src/repositories/authNextAppRouteRepository';
 import StoreAPIRepository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import StoreService from '@repo/usecase/src/storeService';
@@ -63,20 +68,54 @@ export async function getOwnerStoreList() {
   return storeLists;
 }
 
+export async function updateStore(
+  params: updateStoreRequestFormData,
+): Promise<updateStoreResponse> {
+  const updatedInfo = await commonErrorHandler(
+    storeService.updateStore(params),
+  );
+  return updatedInfo;
+}
+
 export async function getStoreDetail({ storeUuid }: { storeUuid: string }) {
   const storeDetail = await commonErrorHandler(
-    storeService.getStoreDetail({storeUuid})
+    storeService.getStoreDetail({ storeUuid }),
   );
   return storeDetail;
 }
 
-export async function createNotice({ storeUuid, tag, title, content }: { storeUuid: string; tag: string; title: string; content: string }) {
-  await commonErrorHandler(storeService.createNotice({ storeUuid, tag, title, content }));
+export async function createNotice({
+  storeUuid,
+  tag,
+  title,
+  content,
+}: {
+  storeUuid: string;
+  tag: string;
+  title: string;
+  content: string;
+}) {
+  await commonErrorHandler(
+    storeService.createNotice({ storeUuid, tag, title, content }),
+  );
 }
 
 export async function getNoticeList({ storeUuid }: { storeUuid: string }) {
   const noticeList = await commonErrorHandler(
-    storeService.getNoticeList({storeUuid})
+    storeService.getNoticeList({ storeUuid }),
   );
   return noticeList;
+}
+
+export async function getNotice({
+  storeUuid,
+  noticeId,
+}: {
+  storeUuid: string;
+  noticeId: number;
+}) {
+  const notice = await commonErrorHandler(
+    storeService.getNotice({ storeUuid, noticeId }),
+  );
+  return notice;
 }

@@ -50,6 +50,11 @@ import type {
   RegisterNoticeRequest,
   NoticeListRequest,
   NoticeListResponse,
+  updateStoreRequest,
+  updateStoreResponse,
+  updateStoreRequestFormData,
+  NoticeRequest,
+  NoticeResponse,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -625,6 +630,59 @@ export default class StoreAPIRepository
     return response;
   }
 
+  async updateStore({
+    authorization,
+    data,
+  }: BaseRequestData<updateStoreRequestFormData>): Promise<updateStoreResponse> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { storeUuid, requests, storeImageFiles, ownerPickImageFiles } =
+      data || {};
+    const url = `${this.endpoint}/stores/${storeUuid}`;
+
+    const formData = new FormData();
+    formData.append(
+      'request',
+      new Blob([JSON.stringify(requests)], { type: 'application/json' }),
+    );
+
+    const isFile = (item: any): item is File => item instanceof File;
+
+    if (storeImageFiles && storeImageFiles.length > 0) {
+      storeImageFiles.forEach((image) => {
+        if (isFile(image)) {
+          formData.append('storeImageFiles', image);
+        }
+      });
+    }
+
+    if (ownerPickImageFiles && ownerPickImageFiles.length > 0) {
+      ownerPickImageFiles.forEach((image) => {
+        if (isFile(image)) {
+          formData.append('ownerPickImageFiles', image);
+        }
+      });
+    }
+
+    const response = await fetch<
+      updateStoreRequestFormData,
+      updateStoreResponse
+    >({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      method: 'PATCH',
+      url,
+      formData,
+    });
+
+    return response;
+  }
+
   // menu
   async createMenu({
     authorization,
@@ -920,9 +978,33 @@ export default class StoreAPIRepository
         },
       }),
       method: 'GET',
-      url: `${this.endpoint}/stores/${storeUuid}/notices`, 
+      url: `${this.endpoint}/stores/${storeUuid}/notices`,
+    });
+
+    return response;
+  }
+
+  async getNotice ({
+    authorization,
+    data,
+  }: BaseRequestData<NoticeRequest>): Promise<NoticeResponse> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { storeUuid, noticeId} = data || {};
+
+    const response = await fetch<NoticeRequest, NoticeResponse>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      method: 'GET',
+      url: `${this.endpoint}/stores/${storeUuid}/notices/${noticeId}`,
     });
 
     return response;
   }
 }
+
