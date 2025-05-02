@@ -5,9 +5,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm, Controller } from 'react-hook-form';
 
 const tags = [
-  { label: '알림', value: 'ALERT' },
-  { label: '긴급', value: 'EMERGENCY' },
-  { label: '일반', value: 'COMMON' },
+  { label: '알림', value: 'ALERT', bgColor: '#1D9EA2' },
+  { label: '긴급', value: 'EMERGENCY', bgColor: '#EF4444' },
+  { label: '일반', value: 'COMMON', bgColor: '#FFC858' },
 ];
 
 export default function NoticeForm() {
@@ -15,7 +15,7 @@ export default function NoticeForm() {
   const storeUuid = searchParams.get('storeUuid');
   const router = useRouter();
 
-  const { control, handleSubmit, watch, reset} = useForm({
+  const { control, handleSubmit, watch, reset } = useForm({
     defaultValues: {
       tag: 'ALERT',
       title: '',
@@ -65,9 +65,15 @@ export default function NoticeForm() {
                 type="button"
                 onClick={() => field.onChange(item.value)}
                 className={
+                  'h-[36px] w-[60px] rounded-[8px] border font-semibold transition ' +
+                  (field.value === item.value
+                    ? 'border-transparent text-white'
+                    : 'border-gray-300 bg-white text-[#635F59]')
+                }
+                style={
                   field.value === item.value
-                    ? 'h-[36px] w-[60px] rounded-[8px] border-[#1D9EA2] bg-[#1D9EA2] font-semibold text-white transition'
-                    : 'h-[36px] w-[60px] rounded-[8px] border border-gray-300 bg-white text-[#635F59] transition'
+                    ? { backgroundColor: item.bgColor }
+                    : {}
                 }
               >
                 {item.label}

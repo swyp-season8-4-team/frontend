@@ -53,6 +53,8 @@ import type {
   updateStoreRequest,
   updateStoreResponse,
   updateStoreRequestFormData,
+  NoticeRequest,
+  NoticeResponse,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -981,4 +983,28 @@ export default class StoreAPIRepository
 
     return response;
   }
+
+  async getNotice ({
+    authorization,
+    data,
+  }: BaseRequestData<NoticeRequest>): Promise<NoticeResponse> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { storeUuid, noticeId} = data || {};
+
+    const response = await fetch<NoticeRequest, NoticeResponse>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      method: 'GET',
+      url: `${this.endpoint}/stores/${storeUuid}/notices/${noticeId}`,
+    });
+
+    return response;
+  }
 }
+

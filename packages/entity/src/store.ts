@@ -733,6 +733,20 @@ export interface NoticeListResponse {
   updatedAt: string;
 }
 
+export interface NoticeRequest {
+  storeUuid: string;
+  noticeId: number;
+}
+
+export interface NoticeResponse {
+  noticeId: number;
+  tag: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface StoreRepository {
   // preference
   getAllPreference(): Promise<PreferenceData[]>;
@@ -893,4 +907,9 @@ export interface StoreRepository {
   getNoticeList({
     authorization,
   }:BaseRequestData<NoticeListRequest>):Promise<NoticeListResponse[]>;
+
+  getNotice ({
+    authorization,
+    data
+  }:BaseRequestData<NoticeRequest>):Promise<NoticeResponse>;
 }

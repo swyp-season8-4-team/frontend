@@ -46,6 +46,8 @@ import type {
   updateStoreRequest,
   updateStoreResponse,
   updateStoreRequestFormData,
+  NoticeRequest,
+  NoticeResponse,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -301,7 +303,6 @@ export default class StoreService {
       throw new Error('authRepository is not set');
     }
 
-    // 이게 액세스 토큰 가져오는 메서드입니다. 이렇게 호출만 해주고
     const authorization = await this.authRepository.getAuthorization();
     const requestData = {
       data: params,
@@ -318,13 +319,28 @@ export default class StoreService {
       throw new Error('authRepository is not set');
     }
 
-    // 이게 액세스 토큰 가져오는 메서드입니다. 이렇게 호출만 해주고
     const authorization = await this.authRepository.getAuthorization();
     const requestData = {
       data: params,
       authorization,
     };
     const response = await this.storeRepository.getNoticeList(requestData);
+    return response;
+  }
+
+  async getNotice(params: NoticeRequest): Promise<NoticeResponse> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set'); 
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const authorization = await this.authRepository.getAuthorization();
+    const requestData = {
+      data: params,
+      authorization,
+    };
+    const response = await this.storeRepository.getNotice(requestData);
     return response;
   }
 
