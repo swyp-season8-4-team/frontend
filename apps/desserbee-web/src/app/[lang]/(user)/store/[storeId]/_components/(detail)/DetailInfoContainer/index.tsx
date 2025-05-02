@@ -74,7 +74,7 @@ export function DetailInfoContainer({
     contents: topPreferences
       .sort((a, b) => a.rank - b.rank)
       .map((pref) => pref.name),
-    storeImages,
+    storeImages: storeImages?.map((img) => img.url),
     ownerPickImages,
   };
 
