@@ -993,7 +993,6 @@ export default class StoreAPIRepository
     if (!data) {
       throw Error('data required');
     }
-
     const { storeUuid, noticeId } = data || {};
 
     const response = await fetch<NoticeRequest, NoticeResponse>({
@@ -1038,3 +1037,4 @@ export default class StoreAPIRepository
     return response;
   }
 }
+
