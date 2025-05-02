@@ -635,29 +635,39 @@ export default class StoreAPIRepository
     if (!data) {
       throw Error('data required');
     }
-  
-    const { storeUuid, requests, storeImageFiles, ownerPickImageFiles } = data || {};
+
+    const { storeUuid, requests, storeImageFiles, ownerPickImageFiles } =
+      data || {};
     const url = `${this.endpoint}/stores/${storeUuid}`;
-  
+
     const formData = new FormData();
     formData.append(
       'request',
-      new Blob([JSON.stringify(requests)], { type: 'application/json' })
+      new Blob([JSON.stringify(requests)], { type: 'application/json' }),
     );
-  
+
+    const isFile = (item: any): item is File => item instanceof File;
+
     if (storeImageFiles && storeImageFiles.length > 0) {
       storeImageFiles.forEach((image) => {
-        formData.append('storeImageFiles', image); // 배열인 경우 각 파일 추가
+        if (isFile(image)) {
+          formData.append('storeImageFiles', image);
+        }
       });
     }
-  
+
     if (ownerPickImageFiles && ownerPickImageFiles.length > 0) {
       ownerPickImageFiles.forEach((image) => {
-        formData.append('ownerPickImageFiles', image);
+        if (isFile(image)) {
+          formData.append('ownerPickImageFiles', image);
+        }
       });
     }
-  
-    const response = await fetch<updateStoreRequestFormData, updateStoreResponse>({
+
+    const response = await fetch<
+      updateStoreRequestFormData,
+      updateStoreResponse
+    >({
       ...(authorization && {
         headers: {
           Authorization: authorization,
@@ -665,12 +675,12 @@ export default class StoreAPIRepository
       }),
       method: 'PATCH',
       url,
-      formData
+      formData,
     });
-  
+
     return response;
   }
-  
+
   // menu
   async createMenu({
     authorization,

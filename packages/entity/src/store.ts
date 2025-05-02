@@ -176,6 +176,11 @@ export interface StoreSummaryInfoRequest {
   storeUuid: string;
 }
 
+export interface storeImage {
+  id: number;
+  url: string;
+}
+
 export interface StoreSummaryInfoData
   extends Pick<
     Store,
@@ -191,10 +196,10 @@ export interface StoreSummaryInfoData
     | 'description'
     | 'operatingHours'
     | 'holidays'
-    | 'storeImages'
-    | 'ownerPickImages'
     | 'topPreferences'
   > {
+  storeImages?:storeImage[];
+  ownerPickImages?:storeImage[];
   tags: string[];
   storeLinks: string[];
 }
@@ -222,13 +227,12 @@ export interface StoreDetailInfoData
     | 'operatingHours'
     | 'holidays'
     | 'notices'
-    | 'storeImages'
     | 'tags'
     | 'topPreferences'
-    | 'ownerPickImages'
-    | 'storeImages'
     | 'primaryStoreLink'
   > {
+  storeImages?:storeImage[];
+  ownerPickImages?:storeImage[];
   userId: number | null;
   userUuid: string | null;
   ownerId: number;
@@ -446,8 +450,8 @@ export interface updateStoreRequest {
 export interface updateStoreRequestFormData {
   storeUuid:string;
   requests:updateStoreRequest;
-  storeImageFiles?: (string | File)[];
-  ownerPickImageFiles?: (string | File)[];
+  storeImageFiles?: (storeImage | File)[];
+  ownerPickImageFiles?: (storeImage | File)[];
 }
 
 export interface updateStoreResponse {
@@ -466,8 +470,8 @@ export interface updateStoreResponse {
   description:string;
   notice:Notice[];
   menus:Menu[];
-  storeImages:string[];
-  ownerPickImages:string[];
+  storeImages:storeImage[];
+  ownerPickImages:storeImage[];
   primaryStoreLink:string;
   storeLinks:string[];
   tags:StoreTag[];

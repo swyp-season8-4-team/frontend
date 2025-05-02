@@ -4,6 +4,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import type {
+  storeImage,
   Store,
   StoreDetailInfoData,
   updateStoreRequestFormData,
@@ -24,6 +25,7 @@ import {
   useMemo,
   useCallback,
   type ChangeEvent,
+  useRef,
 } from 'react';
 import { CheckButton } from '@repo/design-system/components/CheckButton';
 import { PhotoAddBox } from '@repo/design-system/components/PhotoAddBox';
@@ -78,8 +80,8 @@ interface FormInputs
   holidays: HolidaysFormItem[];
   detailAddress: string;
   tags: number[];
-  storeImageFiles: Array<File | string>;
-  ownerPickImageFiles: Array<File | string>;
+  storeImageFiles: Array<File | storeImage>;
+  ownerPickImageFiles: Array<File | storeImage>;
   features: {
     animalYn: boolean;
     tumblerYn: boolean;
@@ -93,7 +95,6 @@ const isValidURL = (url: string) => {
 };
 
 const KAKAO_MAP_API_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&libraries=services,clusterer&autoload=false`;
-
 export function BasicInfoEditForm() {
   const router = useRouter();
   const { push, pop } = useContext(PortalContext); // Portal을 사용해서 모달 열고 닫을 수 있음
@@ -103,6 +104,10 @@ export function BasicInfoEditForm() {
   const [storeInfo, setStoreInfo] = useState<StoreDetailInfoData | null>(null);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [mapService, setMapService] = useState<MapService | null>(null);
+  
+  // 삭제된 가게 정보를 저장하는 배열
+  const storeImageDeleteIds = useRef<number[]>([]);
+  const ownerPickImageDeleteIds = useRef<number[]>([]);
 
   //유저 정보 가져오기
   const { user } = useContext(UserContext);
@@ -312,7 +317,7 @@ export function BasicInfoEditForm() {
 
   const handleHolidayChange = (
     index: number,
-    field: 'startDate'|'endDate'| 'reason',
+    field: 'startDate' | 'endDate' | 'reason',
     value: string,
   ) => {
     const newHolidays = holidays.map((holiday, i) =>
@@ -376,15 +381,31 @@ export function BasicInfoEditForm() {
     [watch, setValue],
   );
 
+  // const handleRemoveStoreImageFiles = (index: number) => {
+  //   const current = watch('storeImageFiles');
+  //   setValue(
+  //     'storeImageFiles',
+  //     current.filter((_, i) => i !== index),
+  //     { shouldDirty: true },
+  //   );
+  // };
+
   const handleRemoveStoreImageFiles = (index: number) => {
     const current = watch('storeImageFiles');
+    const removed = current[index];
+  
+    // File이 아니라면(storeImage 객체라면) id를 저장
+    if (!(removed instanceof File) && removed.id !== undefined) {
+      storeImageDeleteIds.current.push(removed.id);
+    }
+  
     setValue(
       'storeImageFiles',
       current.filter((_, i) => i !== index),
-      { shouldDirty: true },
+      { shouldDirty: true }
     );
   };
-
+    
   const handleOwnerPickImageFilesChange = (
     e: ChangeEvent<HTMLInputElement>,
   ) => {
@@ -396,30 +417,47 @@ export function BasicInfoEditForm() {
     );
   };
 
+  // const handleRemoveOwnerPickImageFiles = (index: number) => {
+  //   const current = watch('ownerPickImageFiles');
+  //   setValue(
+  //     'ownerPickImageFiles',
+  //     current.filter((_, i) => i !== index),
+  //     { shouldDirty: true },
+  //   );
+  // };
+
   const handleRemoveOwnerPickImageFiles = (index: number) => {
     const current = watch('ownerPickImageFiles');
+    const removed = current[index];
+  
+    if (!(removed instanceof File) && removed.id !== undefined) {
+      ownerPickImageDeleteIds.current.push(removed.id);
+    }
+  
     setValue(
       'ownerPickImageFiles',
       current.filter((_, i) => i !== index),
-      { shouldDirty: true },
+      { shouldDirty: true }
     );
   };
 
   // 이미지 URL 메모이제이션
   const storeImageUrls = useMemo(
     () =>
-      watch('storeImageFiles').map((file) =>
-        typeof file === 'string' ? file : URL.createObjectURL(file),
+      watch('storeImageFiles').map((item) =>
+        item instanceof File ? URL.createObjectURL(item) : item.url,
       ),
     [watch('storeImageFiles')],
   );
+
   const ownerPickImageUrls = useMemo(
     () =>
-      watch('ownerPickImageFiles').map((file) =>
-        typeof file === 'string' ? file : URL.createObjectURL(file),
+      watch('ownerPickImageFiles').map((item) =>
+        item instanceof File ? URL.createObjectURL(item) : item.url,
       ),
     [watch('ownerPickImageFiles')],
   );
+
   // cleanup function for URLs
   useEffect(() => {
     return () => {
@@ -448,22 +486,6 @@ export function BasicInfoEditForm() {
       return;
     }
 
-    // 삭제할 이미지 ID 계산 (초기 이미지와 현재 이미지 비교)
-    const getDeletedIds = (initial: string[], current: Array<string | File>) =>
-      initial
-        .filter((url) => !current.includes(url))
-        .map((url) => Number(url.split('/').pop()));
-
-    // 예시: 초기 이미지 배열은 storeInfo에서 받아온다고 가정
-    const storeImageDeleteIds = getDeletedIds(
-      storeInfo?.storeImages || [],
-      data.storeImageFiles,
-    );
-    const ownerPickImageDeleteIds = getDeletedIds(
-      storeInfo?.ownerPickImages || [],
-      data.ownerPickImageFiles,
-    );
-
     // 사진 중에 File 만 추출(새로 추가한 사진)
     const storeImageFiles = data.storeImageFiles.filter(
       (file): file is File => file instanceof File,
@@ -490,7 +512,10 @@ export function BasicInfoEditForm() {
       date: formatHolidayDate(h.startDate, h.endDate),
       reason: h.reason,
     }));
-    console.log("변환된 날짜",formattedHolidays);
+    console.log(formattedHolidays);
+    console.log('삭제된 가게 사진', storeImageDeleteIds.current);
+    console.log('삭제된 오너픽 사진', ownerPickImageDeleteIds.current);
+
     const formData: updateStoreRequestFormData = {
       storeUuid: storeUuid!,
       requests: {
@@ -507,8 +532,8 @@ export function BasicInfoEditForm() {
         tagIds: data.tags,
         holidays: formattedHolidays,
         storeLinks: data.storeLinks,
-        storeImageDeleteIds: storeImageDeleteIds,
-        ownerPickImageDeleteIds: ownerPickImageDeleteIds,
+        storeImageDeleteIds: storeImageDeleteIds.current,
+        ownerPickImageDeleteIds: ownerPickImageDeleteIds.current,
       },
       storeImageFiles: storeImageFiles,
       ownerPickImageFiles: ownerPickImageFiles,
@@ -619,9 +644,9 @@ export function BasicInfoEditForm() {
                               width={100}
                               height={100}
                               src={
-                                typeof item === 'string'
-                                  ? item
-                                  : URL.createObjectURL(item)
+                                item instanceof File
+                                  ? URL.createObjectURL(item)
+                                  : item.url
                               }
                               alt={`가게 사진 ${index + 1}`}
                               className="h-full w-full object-cover"
@@ -675,16 +700,7 @@ export function BasicInfoEditForm() {
                         <div key={index} className="relative flex-shrink-0">
                           <PhotoBox
                             image={
-                              typeof item === 'string' ? ( // 기존 이미지
-                                <Image
-                                  width={100}
-                                  height={100}
-                                  src={item} // URL 직접 사용
-                                  alt={`홍보용 가게 사진 ${index + 1}`}
-                                  className="h-full w-full object-cover"
-                                />
-                              ) : (
-                                // 새 이미지
+                              item instanceof File ? (
                                 <Image
                                   width={100}
                                   height={100}
@@ -692,10 +708,18 @@ export function BasicInfoEditForm() {
                                   alt={`홍보용 가게 사진 ${index + 1}`}
                                   className="h-full w-full object-cover"
                                 />
+                              ) : (
+                                <Image
+                                  width={100}
+                                  height={100}
+                                  src={item.url}
+                                  alt={`홍보용 가게 사진 ${index + 1}`}
+                                  className="h-full w-full object-cover"
+                                />
                               )
                             }
-                            deleteFunction={
-                              () => handleRemoveOwnerPickImageFiles(index) // 수정: 통합 삭제 핸들러
+                            deleteFunction={() =>
+                              handleRemoveOwnerPickImageFiles(index)
                             }
                           />
                         </div>
@@ -893,7 +917,11 @@ export function BasicInfoEditForm() {
                         type="date"
                         value={holiday.startDate}
                         onChange={(e) =>
-                          handleHolidayChange(index, 'startDate', e.target.value)
+                          handleHolidayChange(
+                            index,
+                            'startDate',
+                            e.target.value,
+                          )
                         }
                         className={cn(
                           'h-10 w-[125px] rounded-[5px] border p-[10px] text-sm font-medium',

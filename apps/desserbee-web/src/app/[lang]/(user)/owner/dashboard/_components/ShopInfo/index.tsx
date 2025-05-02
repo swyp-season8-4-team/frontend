@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import NavigationService from '@repo/usecase/src/navigationService';
 import Image from 'next/image';
-import type { HolidaysItem } from '@repo/entity/src/store';
+import type { HolidaysItem, storeImage} from '@repo/entity/src/store';
 
 const navigationService = new NavigationService({});
 interface BreakTime {
@@ -22,7 +22,7 @@ interface OperatingHoursItem {
 }
 
 interface shopInfoProps {
-  img?: string[];
+  img?: storeImage[];
   name: string;
   phone: string;
   address: string;
@@ -60,7 +60,7 @@ export function ShopInfo(data: shopInfoProps) {
             {data.img && data.img[0] ? (
               <>
                 <Image
-                  src={data.img[0]}
+                  src={data.img[0].url}
                   alt="대표 사진"
                   fill
                   className="rounded-xl object-cover"
@@ -82,9 +82,9 @@ export function ShopInfo(data: shopInfoProps) {
                 key={idx}
                 className="relative aspect-square w-full overflow-hidden rounded-xl"
               >
-                {data.img && data.img[idx] ? (
+                {data.img && data.img[idx]? (
                   <Image
-                    src={data.img[idx]}
+                    src={data.img[idx].url}
                     alt={`추가 사진 ${idx}`}
                     fill
                     className="rounded-xl object-cover"
@@ -150,7 +150,7 @@ export function ShopInfo(data: shopInfoProps) {
           <div className="flex w-full gap-2 py-2">
             <p className="w-[20%] text-[#4B4B4B]">휴무</p>
             {data.holidays?.map((item, idx) => (
-              <div key={idx}>
+              <div key={idx} className='flex gap-2'>
                 <div>{item.date}</div>
                 <div>{item.reason}</div>
               </div>
