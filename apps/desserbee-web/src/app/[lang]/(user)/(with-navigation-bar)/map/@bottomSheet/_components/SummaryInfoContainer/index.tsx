@@ -5,9 +5,11 @@ import IconStar from '@repo/design-system/components/icons/IconStar';
 import { StoreInfo } from '../StoreInfo';
 import { StoreFeatureIconList } from '../StoreFeatureIconList';
 
-type StoreSummaryProps = Omit<StoreSummaryInfoData, 'storeImages' | 'storeId'>;
+type StoreSummaryProps = Omit<
+  StoreSummaryInfoData,
+  'storeImages' | 'storeId' | 'ownerPickImages'
+>;
 
-import IconDetail from '@repo/design-system/components/icons/IconDetail';
 import { useContext } from 'react';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { BeforeDetailJoinNowModal } from '../../../_modals/BeforeDetailJoinNowModal';
@@ -22,7 +24,6 @@ export function SummaryInfoContainer({
   tumblerYn,
   parkingYn,
   averageRating,
-  tags,
   address,
   operatingHours,
   phone,
