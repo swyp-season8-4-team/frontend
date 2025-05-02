@@ -2,6 +2,7 @@ import { createNotice } from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sid
 import { LightOliveButton } from '@repo/design-system/components/buttons/FillButtons/LightOlive';
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
 const tags = [
@@ -10,21 +11,47 @@ const tags = [
   { label: '일반', value: 'COMMON', bgColor: '#FFC858' },
 ];
 
-export default function NoticeForm() {
-  const searchParams = useSearchParams();
-  const storeUuid = searchParams.get('storeUuid');
-  const router = useRouter();
+type NoticeFormProps = {
+  mode: 'create' | 'edit';
+  defaultValues?: {
+    tag: string;
+    title: string;
+    content: string;
+  };
+  onSubmitNotice: (data: {
+    tag: string;
+    title: string;
+    content: string;
+  }) => Promise<void>;
+};
 
-  const { control, handleSubmit, watch, reset } = useForm({
-    defaultValues: {
+export default function NoticeForm({
+  mode,
+  defaultValues,
+  onSubmitNotice,
+}: NoticeFormProps) {
+  const { control, handleSubmit, watch, reset, formState} = useForm({
+    defaultValues: defaultValues || {
       tag: 'ALERT',
       title: '',
       content: '',
     },
   });
 
+  useEffect(() => {
+    if (defaultValues) {
+      reset(defaultValues);
+    }
+  }, [defaultValues, reset]);
+
   const onReset = () => {
-    reset();
+    reset(
+      defaultValues || {
+        tag: 'ALERT',
+        title: '',
+        content: '',
+      },
+    );
   };
 
   const selectedTag = watch('tag');
@@ -34,20 +61,7 @@ export default function NoticeForm() {
     title: string;
     content: string;
   }) => {
-    if (!storeUuid) {
-      alert('가게 정보가 없습니다.');
-      return;
-    }
-    try {
-      await createNotice({
-        storeUuid,
-        ...data,
-      });
-      alert('공지 등록이 완료되었습니다');
-      router.back();
-    } catch (e) {
-      alert('공지 등록에 실패했습니다');
-    }
+    await onSubmitNotice(data);
   };
 
   return (
@@ -118,7 +132,7 @@ export default function NoticeForm() {
             <textarea
               {...field}
               placeholder="공지글을 입력해주세요"
-              className="mb-4 h-[300px] w-full resize-none rounded-[8px] border border-gray-300 px-2 py-2"
+              className="h-[300px] w-full resize-none rounded-[8px] border border-gray-300 px-2 py-2"
             />
             {fieldState.error && (
               <span className="text-sm text-red-500">
@@ -130,7 +144,7 @@ export default function NoticeForm() {
       />
 
       {/* 제출 버튼 */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 mt-4">
         <div className="w-[40%]">
           <LightOliveButton
             type="button"
@@ -139,7 +153,12 @@ export default function NoticeForm() {
             onClick={onReset}
           />
         </div>
-        <OliveButton type="submit" className="font-semibold" text="완료" />
+        <OliveButton
+          type="submit"
+          className="font-semibold"
+          text={mode === 'edit' ? '수정 완료' : '등록 완료'}
+          isDisabled={!formState.isDirty}
+        />
       </div>
     </form>
   );

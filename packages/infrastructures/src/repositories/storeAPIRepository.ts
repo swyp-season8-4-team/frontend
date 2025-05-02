@@ -55,6 +55,8 @@ import type {
   updateStoreRequestFormData,
   NoticeRequest,
   NoticeResponse,
+  EditNoticeRequest,
+  EditNoticeResponse,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -984,7 +986,7 @@ export default class StoreAPIRepository
     return response;
   }
 
-  async getNotice ({
+  async getNotice({
     authorization,
     data,
   }: BaseRequestData<NoticeRequest>): Promise<NoticeResponse> {
@@ -992,7 +994,7 @@ export default class StoreAPIRepository
       throw Error('data required');
     }
 
-    const { storeUuid, noticeId} = data || {};
+    const { storeUuid, noticeId } = data || {};
 
     const response = await fetch<NoticeRequest, NoticeResponse>({
       ...(authorization && {
@@ -1006,5 +1008,33 @@ export default class StoreAPIRepository
 
     return response;
   }
-}
 
+  async editNotice({
+    authorization,
+    data,
+  }: BaseRequestData<EditNoticeRequest>): Promise<EditNoticeResponse> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { storeUuid, noticeId, ...rest } = data || {};
+
+    const url = `${this.endpoint}/stores/${storeUuid}/notices/${noticeId}`;
+
+    const response = await fetch<
+      Omit<EditNoticeRequest, 'storeUuid' | 'noticeId'>,
+      EditNoticeResponse
+    >({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      data: { ...rest },
+      method: 'PATCH',
+      url,
+    });
+
+    return response;
+  }
+}

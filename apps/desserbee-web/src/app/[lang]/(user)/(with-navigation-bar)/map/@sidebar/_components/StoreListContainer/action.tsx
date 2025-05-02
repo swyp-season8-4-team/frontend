@@ -2,6 +2,8 @@
 
 import { commonErrorHandler } from '@/error/commonErrorHandler';
 import type {
+  EditNoticeRequest,
+  EditNoticeResponse,
   updateStoreRequest,
   updateStoreRequestFormData,
   updateStoreResponse,
@@ -117,5 +119,12 @@ export async function getNotice({
   const notice = await commonErrorHandler(
     storeService.getNotice({ storeUuid, noticeId }),
   );
+  return notice;
+}
+
+export async function editNotice(
+  params: EditNoticeRequest,
+): Promise<EditNoticeResponse> {
+  const notice = await commonErrorHandler(storeService.editNotice(params));
   return notice;
 }
