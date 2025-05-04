@@ -764,6 +764,11 @@ export interface EditNoticeResponse {
   updatedAt: string;
 }
 
+export interface DeleteNoticeRequest {
+  storeUuid: string;
+  noticeId: number;
+}
+
 export interface StoreRepository {
   // preference
   getAllPreference(): Promise<PreferenceData[]>;
@@ -934,4 +939,9 @@ export interface StoreRepository {
     authorization,
     data
   }:BaseRequestData<EditNoticeRequest>):Promise<EditNoticeResponse>;
+
+  deleteNotice({
+    authorization,
+    data
+  }:BaseRequestData<DeleteNoticeRequest>):Promise<void>;
 }

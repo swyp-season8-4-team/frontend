@@ -57,6 +57,7 @@ import type {
   NoticeResponse,
   EditNoticeRequest,
   EditNoticeResponse,
+  DeleteNoticeRequest,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -650,6 +651,23 @@ export default class StoreAPIRepository
       new Blob([JSON.stringify(requests)], { type: 'application/json' }),
     );
 
+    if (
+      requests.storeImageDeleteIds &&
+      Array.isArray(requests.storeImageDeleteIds)
+    ) {
+      requests.storeImageDeleteIds.forEach((id) => {
+        formData.append('storeImageDeleteIds[]', id.toString());
+      });
+    }
+    if (
+      requests.ownerPickImageDeleteIds &&
+      Array.isArray(requests.ownerPickImageDeleteIds)
+    ) {
+      requests.ownerPickImageDeleteIds.forEach((id) => {
+        formData.append('ownerPickImageDeleteIds[]', id.toString());
+      });
+    }
+
     const isFile = (item: any): item is File => item instanceof File;
 
     if (storeImageFiles && storeImageFiles.length > 0) {
@@ -1032,6 +1050,31 @@ export default class StoreAPIRepository
       }),
       data: { ...rest },
       method: 'PATCH',
+      url,
+    });
+
+    return response;
+  }
+
+  async deleteNotice({
+    authorization,
+    data,
+  }: BaseRequestData<DeleteNoticeRequest>): Promise<void> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { storeUuid, noticeId } = data || {};
+
+    const url = `${this.endpoint}/stores/${storeUuid}/notices/${noticeId}`;
+
+    const response = await fetch<DeleteNoticeRequest, void>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      method: 'DELETE',
       url,
     });
 

@@ -4,7 +4,6 @@ import { commonErrorHandler } from '@/error/commonErrorHandler';
 import type {
   EditNoticeRequest,
   EditNoticeResponse,
-  updateStoreRequest,
   updateStoreRequestFormData,
   updateStoreResponse,
 } from '@repo/entity/src/store';
@@ -127,4 +126,11 @@ export async function editNotice(
 ): Promise<EditNoticeResponse> {
   const notice = await commonErrorHandler(storeService.editNotice(params));
   return notice;
+}
+
+export async function deleteNotice({ storeUuid, noticeId}: { storeUuid: string; noticeId:number;}) {
+  const deleted = await commonErrorHandler(
+    storeService.deleteNotice({ storeUuid, noticeId}),
+  );
+  return deleted;
 }

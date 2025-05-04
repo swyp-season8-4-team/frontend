@@ -381,15 +381,6 @@ export function BasicInfoEditForm() {
     [watch, setValue],
   );
 
-  // const handleRemoveStoreImageFiles = (index: number) => {
-  //   const current = watch('storeImageFiles');
-  //   setValue(
-  //     'storeImageFiles',
-  //     current.filter((_, i) => i !== index),
-  //     { shouldDirty: true },
-  //   );
-  // };
-
   const handleRemoveStoreImageFiles = (index: number) => {
     const current = watch('storeImageFiles');
     const removed = current[index];
@@ -416,15 +407,6 @@ export function BasicInfoEditForm() {
       { shouldDirty: true },
     );
   };
-
-  // const handleRemoveOwnerPickImageFiles = (index: number) => {
-  //   const current = watch('ownerPickImageFiles');
-  //   setValue(
-  //     'ownerPickImageFiles',
-  //     current.filter((_, i) => i !== index),
-  //     { shouldDirty: true },
-  //   );
-  // };
 
   const handleRemoveOwnerPickImageFiles = (index: number) => {
     const current = watch('ownerPickImageFiles');
@@ -512,9 +494,6 @@ export function BasicInfoEditForm() {
       date: formatHolidayDate(h.startDate, h.endDate),
       reason: h.reason,
     }));
-    console.log(formattedHolidays);
-    console.log('삭제된 가게 사진', storeImageDeleteIds.current);
-    console.log('삭제된 오너픽 사진', ownerPickImageDeleteIds.current);
 
     const formData: updateStoreRequestFormData = {
       storeUuid: storeUuid!,
@@ -537,7 +516,7 @@ export function BasicInfoEditForm() {
       },
       storeImageFiles: storeImageFiles,
       ownerPickImageFiles: ownerPickImageFiles,
-    };
+    };    
 
     try {
       await updateStore(formData);
