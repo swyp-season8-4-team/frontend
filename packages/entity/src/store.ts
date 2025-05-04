@@ -747,6 +747,23 @@ export interface NoticeResponse {
   updatedAt: string;
 }
 
+export interface EditNoticeRequest {
+  storeUuid: string;
+  noticeId: number;
+  tag: string;
+  title: string;
+  content: string;
+}
+
+export interface EditNoticeResponse {
+  noticeId: number;
+  tag: string;
+  title: string;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface StoreRepository {
   // preference
   getAllPreference(): Promise<PreferenceData[]>;
@@ -912,4 +929,9 @@ export interface StoreRepository {
     authorization,
     data
   }:BaseRequestData<NoticeRequest>):Promise<NoticeResponse>;
+
+  editNotice({
+    authorization,
+    data
+  }:BaseRequestData<EditNoticeRequest>):Promise<EditNoticeResponse>;
 }

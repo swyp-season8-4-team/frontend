@@ -48,6 +48,8 @@ import type {
   updateStoreRequestFormData,
   NoticeRequest,
   NoticeResponse,
+  EditNoticeRequest,
+  EditNoticeResponse,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -342,6 +344,26 @@ export default class StoreService {
     };
     const response = await this.storeRepository.getNotice(requestData);
     return response;
+  }
+
+  async editNotice(
+    params: EditNoticeRequest,
+  ): Promise<EditNoticeResponse> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set');
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const authorization = await this.authRepository.getAuthorization();
+
+    const requestData = {
+      data: params,
+      authorization,
+    };
+
+    const result = await this.storeRepository.editNotice(requestData);
+    return result;
   }
 
   async updateCouponCount() {
