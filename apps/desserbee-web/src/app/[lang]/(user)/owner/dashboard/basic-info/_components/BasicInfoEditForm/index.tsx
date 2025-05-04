@@ -512,9 +512,6 @@ export function BasicInfoEditForm() {
       date: formatHolidayDate(h.startDate, h.endDate),
       reason: h.reason,
     }));
-    console.log(formattedHolidays);
-    console.log('삭제된 가게 사진', storeImageDeleteIds.current);
-    console.log('삭제된 오너픽 사진', ownerPickImageDeleteIds.current);
 
     const formData: updateStoreRequestFormData = {
       storeUuid: storeUuid!,
@@ -537,7 +534,7 @@ export function BasicInfoEditForm() {
       },
       storeImageFiles: storeImageFiles,
       ownerPickImageFiles: ownerPickImageFiles,
-    };
+    };    
 
     try {
       await updateStore(formData);

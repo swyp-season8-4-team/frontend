@@ -50,6 +50,7 @@ import type {
   NoticeResponse,
   EditNoticeRequest,
   EditNoticeResponse,
+  DeleteNoticeRequest,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -363,6 +364,26 @@ export default class StoreService {
     };
 
     const result = await this.storeRepository.editNotice(requestData);
+    return result;
+  }
+
+  async deleteNotice(
+    params: DeleteNoticeRequest,
+  ): Promise<void> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set');
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const authorization = await this.authRepository.getAuthorization();
+
+    const requestData = {
+      data: params,
+      authorization,
+    };
+
+    const result = await this.storeRepository.deleteNotice(requestData);
     return result;
   }
 
