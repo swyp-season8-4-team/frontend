@@ -13,7 +13,7 @@ export default function DeleteModal({ open, content,onCancel,onConfirm }: modalP
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="flex w-[320px] flex-col items-center rounded-xl bg-white px-6 py-7 shadow-lg">
-        <h2 className="mb-7 text-lg font-medium text-gray-900">{content}</h2>
+        <h2 className="mb-7 text-lg">{content}</h2>
         <div className="flex w-full gap-2">
           <LightOliveButton
             type="button"
