@@ -4,6 +4,7 @@ import { commonErrorHandler } from '@/error/commonErrorHandler';
 import type {
   EditNoticeRequest,
   EditNoticeResponse,
+  updateStoreRequest,
   updateStoreRequestFormData,
   updateStoreResponse,
 } from '@repo/entity/src/store';

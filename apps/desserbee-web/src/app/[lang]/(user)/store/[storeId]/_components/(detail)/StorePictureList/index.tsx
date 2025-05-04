@@ -12,6 +12,11 @@ export function StorePictureList({
   ownerPickImages = [],
   menuImages = [],
 }: StorePictureListProps) {
+  // ownerPickImages가 storeImage[]일 경우 url만 추출
+  const ownerPickImageUrls = ownerPickImages.map((img) =>
+    typeof img === 'string' ? img : img.url,
+  );
+
   const { push, pop } = useContext(PortalContext);
 
   const closeModal = () => {
@@ -22,7 +27,7 @@ export function StorePictureList({
     push('modal', {
       component: (
         <StorePictureCarouselModal
-          images={[...ownerPickImages, ...menuImages]}
+          images={[...ownerPickImageUrls, ...menuImages]}
           onClose={closeModal}
         />
       ),
@@ -30,26 +35,26 @@ export function StorePictureList({
   };
 
   // 최대 4개의 이미지만 보여줌
-  const displayImages = [...ownerPickImages, ...menuImages].slice(0, 4);
+  const displayImages = [...ownerPickImageUrls, ...menuImages].slice(0, 4);
   // 빈 슬롯 계산 (항상 4개 슬롯을 채우기 위해)
   const emptySlots = Math.max(0, 4 - displayImages.length);
   // 4개 이상의 이미지가 있는지 확인
-  const hasMoreImages = ownerPickImages.length > 4 || menuImages.length > 0;
+  const hasMoreImages = ownerPickImageUrls.length > 4 || menuImages.length > 0;
 
   return (
-    <div className="flex gap-[9px] md:gap-[22px] py-3 md:py-7">
+    <div className="flex gap-[9px] py-3 md:gap-[22px] md:py-7">
       {displayImages.map((image, index) =>
         index === displayImages.length - 1 && hasMoreImages ? (
           <button
             onClick={handlePlusBtnClick}
             key={image}
-            className="relative w-full aspect-[77/69] overflow-hidden"
+            className="relative aspect-[77/69] w-full overflow-hidden"
           >
-            <div className="z-10 absolute flex justify-center items-center opacity-100 w-full h-full text-[4vw] text-black cursor-pointer">
+            <div className="absolute z-10 flex h-full w-full cursor-pointer items-center justify-center text-[4vw] text-black opacity-100">
               +
             </div>
             <Image
-              className="opacity-50 w-full h-full object-cover"
+              className="h-full w-full object-cover opacity-50"
               src={image}
               alt="가게 사진"
               width={190}
@@ -57,9 +62,9 @@ export function StorePictureList({
             />
           </button>
         ) : (
-          <div key={image} className="w-full aspect-[190/162]">
+          <div key={image} className="aspect-[190/162] w-full">
             <Image
-              className="w-full h-full object-cover"
+              className="h-full w-full object-cover"
               src={image}
               alt="가게 사진"
               width={190}
@@ -71,7 +76,7 @@ export function StorePictureList({
       {Array.from({ length: emptySlots }).map((_, index) => (
         <div
           key={`empty-${index}`}
-          className="w-full aspect-[190/162] bg-gray-100"
+          className="aspect-[190/162] w-full bg-gray-100"
         />
       ))}
     </div>

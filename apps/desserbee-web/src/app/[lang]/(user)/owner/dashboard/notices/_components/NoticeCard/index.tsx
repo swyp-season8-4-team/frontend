@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { deleteNotice } from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
 import DeleteModal from '../DeleteModal';
 
+
 interface CardProps {
   tag: string;
   title: string;

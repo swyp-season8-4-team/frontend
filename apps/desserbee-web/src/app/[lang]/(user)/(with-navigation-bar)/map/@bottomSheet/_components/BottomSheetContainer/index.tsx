@@ -58,17 +58,16 @@ export function BottomSheetContainer({
     description: storeSummary.description,
     holidays: storeSummary.holidays,
     topPreferences: storeSummary.topPreferences,
-    ownerPickImages: storeSummary.ownerPickImages,
   };
 
   const hexaGridProps = {
     contents: storeSummary.topPreferences
       .sort((a, b) => a.rank - b.rank)
       .map((pref) => pref.name),
-    storeImages: storeSummary.storeImages,
+    storeImages: storeSummary?.storeImages?.map((img) => img.url),
   };
   const storePreviewPicListProps = {
-    ownerPickImages: storeSummary.ownerPickImages,
+    ownerPickImages: storeSummary?.ownerPickImages,
   };
 
   return (

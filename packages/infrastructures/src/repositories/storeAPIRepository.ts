@@ -58,6 +58,7 @@ import type {
   EditNoticeRequest,
   EditNoticeResponse,
   DeleteNoticeRequest,
+
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -1081,3 +1082,4 @@ export default class StoreAPIRepository
     return response;
   }
 }
+
