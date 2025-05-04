@@ -134,3 +134,10 @@ export async function deleteNotice({ storeUuid, noticeId}: { storeUuid: string; 
   );
   return deleted;
 }
+
+export async function getMenuList({ storeUuid }: { storeUuid: string }) {
+  const menulist= await commonErrorHandler(
+    storeService.getMenuList(storeUuid),
+  );
+  return menulist;
+}
