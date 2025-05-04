@@ -33,18 +33,22 @@ export function MenuList({ title, storeUuid, menuLists }: MenuListprops) {
       </div>
       <div className="w-full border-b-[0.6px] border-b-[#B1B1B1]" />
       {/* 메뉴 카드 리스트에만 높이와 스크롤 적용 */}
-      <div className="max-h-56 overflow-y-auto">
-        {menuLists.map((item, idx) => (
-          <div key={idx}>
-            <MenuCard
-              img={item.images}
-              name={item.name}
-              description={item.description}
-              price={item.price}
-            />
-          </div>
-        ))}
-      </div>
+      {menuLists.length > 0 ? (
+        <div className="max-h-56 overflow-y-auto">
+          {menuLists.map((item, idx) => (
+            <div key={idx}>
+              <MenuCard
+                img={item.images}
+                name={item.name}
+                description={item.description}
+                price={item.price}
+              />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className='p-3'>메뉴가 없습니다</div>
+      )}
     </div>
   );
 }

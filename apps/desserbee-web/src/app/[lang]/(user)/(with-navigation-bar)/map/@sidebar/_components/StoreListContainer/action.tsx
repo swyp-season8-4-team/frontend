@@ -141,3 +141,10 @@ export async function getMenuList({ storeUuid }: { storeUuid: string }) {
   );
   return menulist;
 }
+
+export async function deleteMenu({ storeUuid, menuUuid}: { storeUuid: string; menuUuid:string;}) {
+  const deleted = await commonErrorHandler(
+    storeService.deleteMenu({ storeUuid, menuUuid}),
+  );
+  return deleted;
+}

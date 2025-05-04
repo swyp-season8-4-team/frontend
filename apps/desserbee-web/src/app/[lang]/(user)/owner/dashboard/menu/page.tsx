@@ -49,6 +49,8 @@ export default function MenuPage() {
               description={item.description}
               price={item.price}
               isDelete={true}
+              storeUuid={storeUuid||''}
+              menuUuid={item.menuUuid}
             />
           </div>
         ))}
