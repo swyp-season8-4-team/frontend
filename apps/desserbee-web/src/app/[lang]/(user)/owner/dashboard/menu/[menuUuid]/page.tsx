@@ -42,7 +42,7 @@ export default function MenuDetailPage() {
                 fill
                 src={menu.images[0]}
                 alt="메뉴 사진"
-                className="h-full w-full object-cover"
+                className="h-full w-full object-contain"
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-sm text-gray-400">

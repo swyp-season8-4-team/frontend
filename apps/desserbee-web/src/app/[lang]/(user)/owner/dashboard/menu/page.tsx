@@ -2,7 +2,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { DashBoardHeader } from '../_components/DashBoardHeader';
 import type { CreateMenuRequest, Menu } from '@repo/entity/src/store';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import {
   createMenu,
   getMenuList,
@@ -30,44 +30,49 @@ export default function MenuPage() {
   const closeMenuAddModal = async (menu?: Menu, imageFiles?: File[]) => {
     try {
       if (menu && storeUuid) {
-        const requests: CreateMenuRequest[]= [{
-          name: menu.name,
-          price: menu.price,
-          description: menu.description || '',
-          isPopular: menu.isPopular ?? false,
-          imageFileKey: imageFiles && imageFiles.length > 0 ? imageFiles[0].name : undefined
-        }];
-  
+        const requests: CreateMenuRequest[] = [
+          {
+            name: menu.name,
+            price: menu.price,
+            description: menu.description || '',
+            isPopular: menu.isPopular ?? false,
+            ...(imageFiles && imageFiles.length > 0
+              ? { imageFileKey: imageFiles[0].name }
+              : {}),
+          },
+        ];
+
         await createMenu({
           storeUuid,
           requests,
-          menuImages: imageFiles?.length ? imageFiles : undefined
+          menuImages: imageFiles || []
         });
-  
+
         alert('메뉴 등록 성공!');
+        await fetchMenuList();
       }
     } catch (error) {
       console.error(error);
       alert('메뉴 등록에 실패했습니다');
     }
+    router.refresh();
     pop('modal');
   };
-  
-  console.log(menulist);
 
-  useEffect(() => {
-    async function fetchMenuList() {
-      try {
-        const menulist = await getMenuList({ storeUuid: storeUuid! });
-        setMenulist(menulist);
-      } catch (error) {
-        console.log(error);
-      }
+  const fetchMenuList = useCallback(async () => { //useEffect의 의존성 배열 안에 들어가므로 useCallback 사용
+    try {
+      const menulist = await getMenuList({ storeUuid: storeUuid! });
+      setMenulist(menulist);
+    } catch (error) {
+      console.log(error);
     }
+  }, [storeUuid]);
+  
+  useEffect(() => {
     if (storeUuid) {
       fetchMenuList();
     }
-  }, [storeUuid]);
+  }, [storeUuid, fetchMenuList]);
 
   return (
     <div>

@@ -620,8 +620,8 @@ export type MenuRequests = CreateMenuRequest | CreateMenuRequest[];
 
 export interface CreateMenuRequestFormData {
   storeUuid: string;
-  requests: MenuRequests;
-  menuImages?: File | File[];
+  requests: CreateMenuRequest[];
+  menuImages?:File[];
 }
 
 export interface EditMenuRequest {

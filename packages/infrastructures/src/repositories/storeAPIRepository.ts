@@ -716,28 +716,28 @@ export default class StoreAPIRepository
     const url = `${this.endpoint}/stores/${storeUuid}/menus`;
 
     const formData = new FormData();
-    formData.append('requests', JSON.stringify(requests));
+    formData.append(
+      'requests', 
+      new Blob([JSON.stringify(requests)], { type: 'application/json' })
+    );
 
-    if (menuImages) {
-      if (Array.isArray(menuImages)) {
-        menuImages.forEach((file) => formData.append("menuImages[]", file));
-      } else {
-        formData.append("menuImages", menuImages);
-      }
+    if (menuImages?.length) {
+      menuImages.forEach((file) => {
+        if (file instanceof File) {
+          formData.append('menuImages', file, file.name);
+        }
+      });
     }
 
-    const response = await fetch<FormData,
-      void
-    >({
+    const response = await fetch<CreateMenuRequestFormData, void>({
       ...(authorization && {
         headers: {
           Authorization: authorization,
-          // 'Content-Type': 'multipart/form-data',
         },
       }),
-      data: formData,
       method: 'POST',
       url,
+      formData
     });
 
     return response;
@@ -1091,4 +1091,3 @@ export default class StoreAPIRepository
     return response;
   }
 }
-

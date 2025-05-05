@@ -40,7 +40,7 @@ export function MenuCard({
       alert('메뉴를 삭제하는데 실패했습니다.');
     }
   };
-  
+
   const router = useRouter();
   const handleCardClick = () => {
     if (!isDelete) return;
@@ -55,12 +55,12 @@ export function MenuCard({
         className={`${isDelete ? 'cursor-pointer' : 'cursor-default'} flex min-h-[60px] items-center gap-2 border-b-[0.6px] border-b-[#E9E9F1] p-3`}
       >
         <div className="relative h-20 w-20 flex-shrink-0">
-          {img ? (
+          {img && img.length > 0 ? (
             <Image
               src={img[0]}
               alt={name}
               fill
-              className="rounded-md object-cover"
+              className="rounded-md object-contain"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center rounded-md bg-gray-200 text-xs text-gray-400">
