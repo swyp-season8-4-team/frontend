@@ -27,6 +27,7 @@ export function MenuList({ title, storeUuid, menuLists }: MenuListprops) {
             ),
             query: { storeUuid: storeUuid },
           }}
+          className='hover:font-bold'
         >
           수정하기
         </Link>

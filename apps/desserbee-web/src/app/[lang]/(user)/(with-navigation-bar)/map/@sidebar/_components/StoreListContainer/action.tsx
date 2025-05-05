@@ -2,6 +2,7 @@
 
 import { commonErrorHandler } from '@/error/commonErrorHandler';
 import type {
+  CreateMenuRequestFormData,
   EditNoticeRequest,
   EditNoticeResponse,
   updateStoreRequestFormData,
@@ -142,9 +143,25 @@ export async function getMenuList({ storeUuid }: { storeUuid: string }) {
   return menulist;
 }
 
+export async function createMenu(
+  params: CreateMenuRequestFormData,
+): Promise<void> {
+  const created = await commonErrorHandler(
+    storeService.createMenu(params),
+  );
+  return created;
+}
+
 export async function deleteMenu({ storeUuid, menuUuid}: { storeUuid: string; menuUuid:string;}) {
   const deleted = await commonErrorHandler(
     storeService.deleteMenu({ storeUuid, menuUuid}),
   );
   return deleted;
+}
+
+export async function getMenu({ storeUuid,menuUuid}: { storeUuid: string; menuUuid:string; }) {
+  const menu = await commonErrorHandler(
+    storeService.getMenu({ storeUuid,menuUuid}),
+  );
+  return menu;
 }

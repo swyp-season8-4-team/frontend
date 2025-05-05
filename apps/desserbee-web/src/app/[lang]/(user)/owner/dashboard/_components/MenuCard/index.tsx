@@ -3,6 +3,7 @@ import { deleteMenu } from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sideb
 import Image from 'next/image';
 import { useState } from 'react';
 import DeleteModal from '../../notices/_components/DeleteModal';
+import { useRouter } from 'next/navigation';
 
 export interface MenuCardProps {
   img?: string[];
@@ -39,10 +40,20 @@ export function MenuCard({
       alert('메뉴를 삭제하는데 실패했습니다.');
     }
   };
+  
+  const router = useRouter();
+  const handleCardClick = () => {
+    if (!isDelete) return;
+    const url = `/owner/dashboard/menu/${menuUuid}/?storeUuid=${storeUuid}`;
+    router.push(url);
+  };
 
   return (
     <>
-      <div className="flex min-h-[60px] items-center gap-2 border-b-[0.6px] border-b-[#E9E9F1] p-3">
+      <div
+        onClick={handleCardClick}
+        className={`${isDelete ? 'cursor-pointer' : 'cursor-default'} flex min-h-[60px] items-center gap-2 border-b-[0.6px] border-b-[#E9E9F1] p-3`}
+      >
         <div className="relative h-20 w-20 flex-shrink-0">
           {img ? (
             <Image
@@ -70,7 +81,10 @@ export function MenuCard({
             <button
               className="text-xl text-[#9F9F9F] hover:text-[#7A7A7A]"
               aria-label="메뉴 닫기"
-              onClick={() => setShowDeleteModal(true)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowDeleteModal(true);
+              }}
             >
               ✕
             </button>

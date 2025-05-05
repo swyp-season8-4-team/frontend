@@ -715,17 +715,27 @@ export default class StoreAPIRepository
 
     const url = `${this.endpoint}/stores/${storeUuid}/menus`;
 
-    const response = await fetch<
-      { requests: MenuRequests; menuImages?: File | File[] },
+    const formData = new FormData();
+    formData.append('requests', JSON.stringify(requests));
+
+    if (menuImages) {
+      if (Array.isArray(menuImages)) {
+        menuImages.forEach((file) => formData.append("menuImages[]", file));
+      } else {
+        formData.append("menuImages", menuImages);
+      }
+    }
+
+    const response = await fetch<FormData,
       void
     >({
       ...(authorization && {
         headers: {
           Authorization: authorization,
-          'Content-Type': 'multipart/form-data',
+          // 'Content-Type': 'multipart/form-data',
         },
       }),
-      data: { requests, menuImages },
+      data: formData,
       method: 'POST',
       url,
     });
