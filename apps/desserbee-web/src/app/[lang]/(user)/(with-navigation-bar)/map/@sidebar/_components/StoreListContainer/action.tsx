@@ -2,9 +2,9 @@
 
 import { commonErrorHandler } from '@/error/commonErrorHandler';
 import type {
+  CreateMenuRequestFormData,
   EditNoticeRequest,
   EditNoticeResponse,
-  updateStoreRequest,
   updateStoreRequestFormData,
   updateStoreResponse,
 } from '@repo/entity/src/store';
@@ -134,4 +134,34 @@ export async function deleteNotice({ storeUuid, noticeId}: { storeUuid: string; 
     storeService.deleteNotice({ storeUuid, noticeId}),
   );
   return deleted;
+}
+
+export async function getMenuList({ storeUuid }: { storeUuid: string }) {
+  const menulist= await commonErrorHandler(
+    storeService.getMenuList(storeUuid),
+  );
+  return menulist;
+}
+
+export async function createMenu(
+  params: CreateMenuRequestFormData,
+): Promise<void> {
+  const created = await commonErrorHandler(
+    storeService.createMenu(params),
+  );
+  return created;
+}
+
+export async function deleteMenu({ storeUuid, menuUuid}: { storeUuid: string; menuUuid:string;}) {
+  const deleted = await commonErrorHandler(
+    storeService.deleteMenu({ storeUuid, menuUuid}),
+  );
+  return deleted;
+}
+
+export async function getMenu({ storeUuid,menuUuid}: { storeUuid: string; menuUuid:string; }) {
+  const menu = await commonErrorHandler(
+    storeService.getMenu({ storeUuid,menuUuid}),
+  );
+  return menu;
 }

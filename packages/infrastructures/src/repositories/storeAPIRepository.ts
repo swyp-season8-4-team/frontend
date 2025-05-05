@@ -58,7 +58,6 @@ import type {
   EditNoticeRequest,
   EditNoticeResponse,
   DeleteNoticeRequest,
-
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -716,19 +715,29 @@ export default class StoreAPIRepository
 
     const url = `${this.endpoint}/stores/${storeUuid}/menus`;
 
-    const response = await fetch<
-      { requests: MenuRequests; menuImages?: File | File[] },
-      void
-    >({
+    const formData = new FormData();
+    formData.append(
+      'requests', 
+      new Blob([JSON.stringify(requests)], { type: 'application/json' })
+    );
+
+    if (menuImages?.length) {
+      menuImages.forEach((file) => {
+        if (file instanceof File) {
+          formData.append('menuImages', file, file.name);
+        }
+      });
+    }
+
+    const response = await fetch<CreateMenuRequestFormData, void>({
       ...(authorization && {
         headers: {
           Authorization: authorization,
-          'Content-Type': 'multipart/form-data',
         },
       }),
-      data: { requests, menuImages },
       method: 'POST',
       url,
+      formData
     });
 
     return response;
@@ -1082,4 +1091,3 @@ export default class StoreAPIRepository
     return response;
   }
 }
-

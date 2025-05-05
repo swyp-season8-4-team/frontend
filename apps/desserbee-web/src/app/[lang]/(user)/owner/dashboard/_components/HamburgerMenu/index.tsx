@@ -19,9 +19,9 @@ export function HamburgerMenu({ onClose }: HamburgerMenuProps) {
     { name: '내 가게 홈', Link: 'OwnerStoreList' },
     { name: '기본 정보 관리', Link: 'OwnerDashboard' },
     // { name: '운영 시간 관리', Link: undefined },
-    // { name: '메뉴 관리', Link: undefined },
+    { name: '메뉴 관리', Link: 'OwnerMenuLists' },
     { name: '공지 관리', Link: 'OwnerDashboardNotices' },
-    // { name: '쿠폰 등록', Link: undefined },
+    { name: '쿠폰 등록', Link: 'OwnerRegisterCoupon' },
     // { name: '통계 대시보드', Link: undefined },
     // { name: '트렌드 리포트', Link: undefined },
   ];

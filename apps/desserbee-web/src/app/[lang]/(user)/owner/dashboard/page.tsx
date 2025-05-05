@@ -46,7 +46,7 @@ export default function DashBoardHomePage() {
           tumblerYn={storeInfo?.tumblerYn}
           parkingYn={storeInfo?.parkingYn}
         />
-        <MenuList title="메뉴리스트" menuLists={storeInfo?.menus || []} />
+        <MenuList title="메뉴리스트" storeUuid={storeUuid || ''} menuLists={storeInfo?.menus || []} />
         <Notice
           title="최근 공지"
           notices={storeInfo?.notices || []}

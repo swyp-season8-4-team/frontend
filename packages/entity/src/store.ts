@@ -614,14 +614,14 @@ export interface Id {
 }
 
 export interface CreateMenuRequest
-  extends Pick<Menu, 'name' | 'price' | 'isPopular' | 'description'> {}
+  extends Pick<Menu, 'name' | 'price' | 'isPopular' | 'description' |'imageFileKey'> {}
 
 export type MenuRequests = CreateMenuRequest | CreateMenuRequest[];
 
 export interface CreateMenuRequestFormData {
   storeUuid: string;
-  requests: MenuRequests;
-  menuImages?: File | File[];
+  requests: CreateMenuRequest[];
+  menuImages?:File[];
 }
 
 export interface EditMenuRequest {
