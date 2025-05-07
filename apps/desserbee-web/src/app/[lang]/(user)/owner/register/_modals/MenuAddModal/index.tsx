@@ -9,13 +9,14 @@ import { cn } from '@repo/ui/lib/utils';
 import { ValidationError } from '../../_components/ValidationError';
 
 interface MenuAddModalProps {
-  onClose: (menu?: Menu, imageFiles?: File[]) => void;
+  onClose: (menu?: Menu, imageFiles?: File[],deleteImage?: boolean) => void;
   menu?: Menu;
   mode?: 'add' | 'edit';
 }
 
 interface MenuInput extends Menu {
   menuImageFiles?: (File | string)[];
+  deleteImage?: boolean;
 }
 
 export function MenuAddModal({
@@ -55,6 +56,7 @@ export function MenuAddModal({
       const fileKey = file.name;
       setValue('menuImageFiles', [file]);
       setValue('imageFileKey', fileKey);
+      setValue('deleteImage', undefined); 
     }
   };
 
@@ -65,6 +67,7 @@ export function MenuAddModal({
       currentFiles.filter((_, i) => i !== index),
     );
     setValue('imageFileKey', '');
+    setValue('deleteImage', true);
   };
 
   const handleReset = () => {
@@ -102,8 +105,8 @@ export function MenuAddModal({
     const filesOnly = (data.menuImageFiles || []).filter(
       (file): file is File => typeof file !== 'string',
     );
-    
-    onClose(menu, filesOnly);
+
+    onClose(menu, filesOnly, data.deleteImage === true ? true : undefined);
   };
 
   return (

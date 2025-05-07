@@ -752,7 +752,7 @@ export default class StoreAPIRepository
       throw Error('data required');
     }
 
-    const { storeUuid, menuUuid, request, file } = data;
+    const { storeUuid, menuUuid, request, file, deleteImage } = data;
 
     const url = `${this.endpoint}/stores/${storeUuid}/menus/${menuUuid}`;
     const formData = new FormData();
@@ -762,8 +762,13 @@ export default class StoreAPIRepository
       new Blob([JSON.stringify(request)], { type: 'application/json' }),
     );
 
-    if (file instanceof File) {
-      formData.append('file', file, file.name); // 키를 'file'로 통일
+    if (deleteImage !== true && file instanceof File) {
+      formData.append('file', file, file.name);
+    }
+
+    if (deleteImage === true) {
+      formData.append('deleteImage', 'true');
+      formData.delete('file');
     }
 
     const response = await fetch<EditMenuRequestFormData, void>({

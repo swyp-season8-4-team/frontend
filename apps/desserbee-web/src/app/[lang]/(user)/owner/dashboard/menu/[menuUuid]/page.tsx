@@ -35,7 +35,6 @@ export default function MenuDetailPage() {
       fetchMenu();
     }
   }, [storeUuid, menuUuid]);
-  console.log(menu);
 
   const openMenuAddModal = () => {
     push('modal', {
@@ -49,7 +48,11 @@ export default function MenuDetailPage() {
     });
   };
 
-  const closeMenuAddModal = async (updatedMenu?: Menu, imageFiles?: File[]) => {
+  const closeMenuAddModal = async (
+    updatedMenu?: Menu,
+    imageFiles?: File[],
+    deleteImage?: boolean,
+  ) => {
     try {
       if (updatedMenu && storeUuid && menuUuid) {
         const request: EditMenuRequest = {
@@ -61,12 +64,17 @@ export default function MenuDetailPage() {
             ? { imageFileKey: imageFiles[0].name }
             : {}),
         };
-        await editMenu({
+
+        console.log(imageFiles);
+
+        await editMenu({  
           storeUuid,
           menuUuid,
           request,
-          file: imageFiles && imageFiles.length > 0 ? imageFiles[0] : undefined,
+          ...(imageFiles && imageFiles.length > 0 ? { file: imageFiles[0] } : {}),
+          deleteImage,
         });
+
         alert('메뉴 수정 성공!');
         router.back();
       }

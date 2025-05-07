@@ -640,6 +640,7 @@ export interface EditMenuRequestFormData {
   menuUuid: string;
   request:EditMenuRequest;
   file?: File;
+  deleteImage?:boolean;
 }
 
 export interface DeleteMenuRequest {
@@ -778,6 +779,46 @@ export interface EditNoticeResponse {
 export interface DeleteNoticeRequest {
   storeUuid: string;
   noticeId: number;
+}
+
+// owner: coupon
+export interface time {
+  hour:number;
+  minute:number;
+  second: number;
+  nano: number;
+}
+
+export interface couponCondition { // 쿠폰 사용 조건 
+  conditionType:string; // 정액 or 정률("FIXED" || "RATE")
+  minimumPurchaseAmount?: number; //결제 금액에 따라 선택했을 때
+  conditionStartTime?:time; //시간 선택적으로 사용 선택했을 때
+  conditionEndTime?:time;
+  conditionDays?:string[]; // 요일 선택적으로 사용 선택했을 때 (["MONDAY"])
+  customConditionText?:string; // 직접 조건 입력 선택했을 때
+  exclusiveOnly?:boolean; // 단독 사용 불가인지
+}
+
+export interface couponType {
+  type:string; // 쿠폰의 기능 ("DISCOUNT" || "GIFT")
+  discountType?:string; // 할인 방식("FIXED" || "RATE")
+  discountAmount?:number; // 할인 금액
+  giftMenuName?: string; // 증정 메뉴명
+}
+
+export interface RegisterCoupon {
+  name: string; // 쿠폰 이름
+  hasExposureDate:boolean; // 상시 노출 or 일시 노출 
+  exposureStartAt?: string;
+  exposureEndAt?:string;
+  couponCondition:couponCondition;
+  hasExpiryDate:boolean; //유효기간
+  expiryDate?:string; //유효기간 날짜
+  hasQuantity:boolean; // 제한 없이 or 수량 제한
+  quantity?:number; // 제한 수량
+  couponType:couponType;
+  couponTarget:string; //쿠폰 발행 대상 ("ALL" | "SUBSCRIBED" | "CUSTOM")
+  storeUuid:string;
 }
 
 export interface StoreRepository {
