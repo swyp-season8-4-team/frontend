@@ -74,7 +74,7 @@ export function DetailInfoContainer({
     contents: topPreferences
       .sort((a, b) => a.rank - b.rank)
       .map((pref) => pref.name),
-    storeImages: storeImages?.map((img) => img.url),
+    storeImages: storeImages,
     ownerPickImages,
   };
 
@@ -118,17 +118,17 @@ export function DetailInfoContainer({
             {name}
           </span>
           <StoreFeatureIconList {...storeFeatureIconListProps} />
-          <span className="ml-[5.55px] flex text-[10px] md:ml-[13px] md:text-base">
+          {/* <span className="ml-[5.55px] flex text-[10px] md:ml-[13px] md:text-base">
             {tags.map(({ category, id, name }, index) => (
               <span className="md:text-t20 font-medium text-[#6F6F6F]" key={id}>
                 {name}
                 {index < tags.length - 1 && ', '}&nbsp;
               </span>
             ))}
-          </span>
+          </span> */}
         </div>
         {saved ? (
-          <div className="mr-2 rounded-sm border-[0.5px] border-[#D5D5D5]">
+          <div className="mr-2 rounded-sm border-[0.5px] border-[#2a2626]">
             <div className="h-4 w-4 md:h-[37.71px] md:w-[37.71px]">
               <IconFlower
                 className={cn(
@@ -191,7 +191,7 @@ export function DetailInfoContainer({
         </div>
       </div>
       <div className="flex flex-col gap-[6px] md:gap-3">
-        {notices.map(
+        {/* {notices.map(
           ({ content, title, createdAt, noticeId, tag, updatedAt }, index) => (
             <div
               key={`${noticeId} - ${index}`}
@@ -200,7 +200,7 @@ export function DetailInfoContainer({
               {title}
             </div>
           ),
-        )}
+        )} */}
       </div>
     </div>
   );
