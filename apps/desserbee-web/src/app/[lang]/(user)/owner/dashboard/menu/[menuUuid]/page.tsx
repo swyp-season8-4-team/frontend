@@ -1,17 +1,24 @@
 'use client';
-import { getMenu } from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
+import {
+  editMenu,
+  getMenu,
+} from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
-import type { Menu } from '@repo/entity/src/store';
+import type { EditMenuRequest, Menu } from '@repo/entity/src/store';
+import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import Image from 'next/image';
-import { useParams, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useContext, useEffect, useState } from 'react';
+import { MenuAddModal } from '../../../register/_modals/MenuAddModal';
 
 export default function MenuDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const menuUuid = params.menuUuid as string;
   const storeUuid = searchParams.get('storeUuid');
+  const { push, pop } = useContext(PortalContext);
 
   const [menu, setMenu] = useState<Menu>();
 
@@ -28,8 +35,47 @@ export default function MenuDetailPage() {
       fetchMenu();
     }
   }, [storeUuid, menuUuid]);
-
   console.log(menu);
+
+  const openMenuAddModal = () => {
+    push('modal', {
+      component: (
+        <MenuAddModal
+          onClose={closeMenuAddModal}
+          menu={menu} // 기존 메뉴 데이터 전달
+          mode="edit" // 모드 지정
+        />
+      ),
+    });
+  };
+
+  const closeMenuAddModal = async (updatedMenu?: Menu, imageFiles?: File[]) => {
+    try {
+      if (updatedMenu && storeUuid && menuUuid) {
+        const request: EditMenuRequest = {
+          name: updatedMenu.name,
+          price: updatedMenu.price,
+          isPopular: updatedMenu.isPopular ?? false,
+          description: updatedMenu.description || '',
+          ...(imageFiles && imageFiles.length > 0
+            ? { imageFileKey: imageFiles[0].name }
+            : {}),
+        };
+        await editMenu({
+          storeUuid,
+          menuUuid,
+          request,
+          file: imageFiles && imageFiles.length > 0 ? imageFiles[0] : undefined,
+        });
+        alert('메뉴 수정 성공!');
+        router.back();
+      }
+    } catch (error) {
+      console.error(error);
+      alert('메뉴 수정에 실패했습니다');
+    }
+    pop('modal');
+  };
 
   if (!menu) return null;
   return (
@@ -67,6 +113,7 @@ export default function MenuDetailPage() {
         <OliveButton
           className="w-full py-3 text-lg"
           text="수정하기"
+          onClick={openMenuAddModal}
         />
       </div>
     </div>

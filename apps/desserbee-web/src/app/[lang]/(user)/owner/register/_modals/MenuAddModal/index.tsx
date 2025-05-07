@@ -10,29 +10,40 @@ import { ValidationError } from '../../_components/ValidationError';
 
 interface MenuAddModalProps {
   onClose: (menu?: Menu, imageFiles?: File[]) => void;
+  menu?: Menu;
+  mode?: 'add' | 'edit';
 }
 
 interface MenuInput extends Menu {
-  menuImageFiles?: File[];
+  menuImageFiles?: (File | string)[];
 }
 
-export function MenuAddModal({ onClose }: MenuAddModalProps) {
+export function MenuAddModal({
+  onClose,
+  menu,
+  mode = 'add',
+}: MenuAddModalProps) {
   const {
     control,
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors, isDirty },
     trigger,
     reset,
   } = useForm<MenuInput>({
-    defaultValues: {
-      name: '',
-      price: 0,
-      description: '',
-      imageFileKey: '',
-      menuImageFiles: [],
-    },
+    defaultValues: menu
+      ? {
+          ...menu,
+          menuImageFiles: menu.images ? [...menu.images] : [],
+        }
+      : {
+          name: '',
+          price: 0,
+          description: '',
+          imageFileKey: '',
+          menuImageFiles: [],
+        },
     mode: 'onChange',
   });
 
@@ -87,13 +98,18 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
         : {}),
     };
 
-    onClose(menu, data.menuImageFiles || []);
+    // menuImageFiles에서 File만 추출
+    const filesOnly = (data.menuImageFiles || []).filter(
+      (file): file is File => typeof file !== 'string',
+    );
+    
+    onClose(menu, filesOnly);
   };
 
   return (
     <div className="fixed bottom-0 left-0 right-0 top-0 z-10 h-full w-full overflow-y-auto bg-white">
       <StoreRegisterHeader
-        title="메뉴 추가"
+        title={mode === 'add' ? '메뉴 추가' : '메뉴 수정'}
         isSub={true}
         onClose={() => onClose()}
       />
@@ -141,7 +157,11 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
                             <Image
                               width={100}
                               height={100}
-                              src={URL.createObjectURL(image)}
+                              src={
+                                typeof image === 'string'
+                                  ? image
+                                  : URL.createObjectURL(image)
+                              }
                               alt={`가게 사진 ${index + 1}`}
                               className="h-full w-full object-cover"
                             />
@@ -302,19 +322,30 @@ export function MenuAddModal({ onClose }: MenuAddModalProps) {
         </div>
 
         <div className="flex w-full gap-x-2 font-semibold">
-          <button
-            type="button"
-            onClick={handleReset}
-            className="w-1/2 text-nowrap rounded-[6px] border border-[#B3B3B3] p-[10px]"
-          >
-            초기화
-          </button>
-          <button
-            onClick={handleSubmit(onSubmit)}
-            className="bg-primary-80 flex w-1/2 items-center justify-center rounded-[6px] p-[10px] text-[#412D00]"
-          >
-            <div>추가</div>
-          </button>
+          {mode === 'add' ? (
+            <>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="w-1/2 text-nowrap rounded-[6px] border border-[#B3B3B3] p-[10px]"
+              >
+                초기화
+              </button>
+              <button
+                onClick={handleSubmit(onSubmit)}
+                className="bg-primary-80 flex w-1/2 items-center justify-center rounded-[6px] p-[10px] text-[#412D00]"
+              >
+                <div>추가</div>
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={handleSubmit(onSubmit)}
+              className="bg-primary-80 flex w-full items-center justify-center rounded-[6px] p-[10px] text-[#412D00]"
+            >
+              <div>수정</div>
+            </button>
+          )}
         </div>
       </form>
     </div>

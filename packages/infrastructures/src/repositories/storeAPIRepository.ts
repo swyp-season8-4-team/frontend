@@ -58,6 +58,7 @@ import type {
   EditNoticeRequest,
   EditNoticeResponse,
   DeleteNoticeRequest,
+  EditMenuRequestFormData,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -717,8 +718,8 @@ export default class StoreAPIRepository
 
     const formData = new FormData();
     formData.append(
-      'requests', 
-      new Blob([JSON.stringify(requests)], { type: 'application/json' })
+      'requests',
+      new Blob([JSON.stringify(requests)], { type: 'application/json' }),
     );
 
     if (menuImages?.length) {
@@ -737,7 +738,7 @@ export default class StoreAPIRepository
       }),
       method: 'POST',
       url,
-      formData
+      formData,
     });
 
     return response;
@@ -746,25 +747,34 @@ export default class StoreAPIRepository
   async editMenu({
     authorization,
     data,
-  }: BaseRequestData<EditMenuRequest>): Promise<void> {
+  }: BaseRequestData<EditMenuRequestFormData>): Promise<void> {
     if (!data) {
       throw Error('data required');
     }
 
-    const { storeUuid, menuUuid, file } = data || {};
+    const { storeUuid, menuUuid, request, file } = data;
 
     const url = `${this.endpoint}/stores/${storeUuid}/menus/${menuUuid}`;
+    const formData = new FormData();
 
-    const response = await fetch<{ file: File }, void>({
+    formData.append(
+      'request',
+      new Blob([JSON.stringify(request)], { type: 'application/json' }),
+    );
+
+    if (file instanceof File) {
+      formData.append('file', file, file.name); // 키를 'file'로 통일
+    }
+
+    const response = await fetch<EditMenuRequestFormData, void>({
       ...(authorization && {
         headers: {
           Authorization: authorization,
-          'Content-Type': 'multipart/form-data', //TODO: content-type 테스트 해보기
         },
       }),
-      data: { file },
       method: 'PATCH',
       url,
+      formData,
     });
 
     return response;
