@@ -53,14 +53,6 @@ import type { Preference } from '@repo/entity/src/preference';
 import { SearchResultList } from '../SearchResultList';
 import IconLoadingSpinner from '@repo/design-system/components/icons/IconLoadingSpinner';
 
-import dynamic from 'next/dynamic';
-const GoOwnerPageModal = dynamic(
-  () => import('../../_modals/GoOwnerPageModal'),
-  {
-    ssr: false,
-  },
-);
-
 interface MapProps {
   preferenceCategories: PreferenceData[];
 }
@@ -936,7 +928,7 @@ export function Map({ preferenceCategories }: MapProps) {
       />
       <div
         ref={mapRef}
-        className="relative z-0 mb-[9px] h-[calc(100dvh-205px)] w-full overflow-x-hidden bg-[#E8E8E8]"
+        className="relative z-0 mb-[9px] h-[calc(100dvh-205px)] w-full overflow-x-hidden bg-neutral-200"
       >
         {error && (
           <div className="absolute left-1/2 top-1/2 z-20 w-[200px] -translate-x-1/2 transform rounded border border-red-400 bg-red-100 px-4 py-2 text-center text-red-700">
@@ -969,7 +961,6 @@ export function Map({ preferenceCategories }: MapProps) {
           onClose={handleResultListClose}
         />
       )}
-      <GoOwnerPageModal />
     </div>
   );
 }

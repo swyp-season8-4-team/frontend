@@ -1,12 +1,11 @@
 'use client';
 
-import ownerPopupImage from '@/assets/images/owner-popup-min.png';
 import IconXRound from '@repo/design-system/components/icons/IconXRound';
 import { NavigationPathname } from '@repo/entity/src/navigation';
-
 import Image from 'next/image';
+
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function GoOwnerPageModal() {
   const router = useRouter();
@@ -41,12 +40,11 @@ export default function GoOwnerPageModal() {
     <div className="z-modal animate-fadeIn fixed inset-0 flex items-center justify-center bg-black/10 opacity-0">
       <div className="relative h-[200px] w-[200px] shadow-md md:h-[300px] md:w-[300px]">
         <Image
-          src={ownerPopupImage}
-          alt="owner-popup-img"
+          src="/image/owner-popup.webp"
+          alt="팝업 이미지"
           width={300}
           height={300}
           priority
-          className="rounded-t-md object-cover"
         />
         <button
           onClick={() => setIsOpen(false)}
