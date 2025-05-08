@@ -23,8 +23,9 @@ import { NeedLoginModal } from '../../../_modals/NeedLoginModal';
 import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 interface DetailInfoContainerProps
-  extends Omit<StoreDetailInfoData, 'communityReviews'> {
+  extends Omit<StoreDetailInfoData, 'communityReviews' | 'tags'> {
   parentlistInfo?: ParentSavedListResponse;
+  tags: any[];
 }
 export function DetailInfoContainer({
   storeUuid,
@@ -74,7 +75,9 @@ export function DetailInfoContainer({
     contents: topPreferences
       .sort((a, b) => a.rank - b.rank)
       .map((pref) => pref.name),
-    storeImages: storeImages,
+    storeImages: storeImages?.map((image) =>
+      typeof image === 'object' && image.url ? image.url : image,
+    ),
     ownerPickImages,
   };
 
@@ -118,14 +121,21 @@ export function DetailInfoContainer({
             {name}
           </span>
           <StoreFeatureIconList {...storeFeatureIconListProps} />
-          {/* <span className="ml-[5.55px] flex text-[10px] md:ml-[13px] md:text-base">
-            {tags.map(({ category, id, name }, index) => (
-              <span className="md:text-t20 font-medium text-[#6F6F6F]" key={id}>
-                {name}
-                {index < tags.length - 1 && ', '}&nbsp;
-              </span>
-            ))}
-          </span> */}
+          <span className="ml-[5.55px] flex text-[10px] md:ml-[13px] md:text-base">
+            {tags.map((tag, index) => {
+              const tagName = typeof tag === 'object' ? tag.name : tag;
+              const tagId = typeof tag === 'object' ? tag.id : index;
+              return (
+                <span
+                  className="md:text-t20 font-medium text-[#6F6F6F]"
+                  key={tagId}
+                >
+                  {tagName}
+                  {index < tags.length - 1 && ', '}&nbsp;
+                </span>
+              );
+            })}
+          </span>
         </div>
         {saved ? (
           <div className="mr-2 rounded-sm border-[0.5px] border-[#2a2626]">

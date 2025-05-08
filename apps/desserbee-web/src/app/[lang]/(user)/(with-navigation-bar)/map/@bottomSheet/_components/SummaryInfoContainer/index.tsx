@@ -5,10 +5,13 @@ import IconStar from '@repo/design-system/components/icons/IconStar';
 import { StoreInfo } from '../StoreInfo';
 import { StoreFeatureIconList } from '../StoreFeatureIconList';
 
-type StoreSummaryProps = Omit<
-  StoreSummaryInfoData,
-  'storeImages' | 'storeId' | 'ownerPickImages'
->;
+interface StoreSummaryProps
+  extends Omit<
+    StoreSummaryInfoData,
+    'storeImages' | 'storeId' | 'ownerPickImages' | 'tags'
+  > {
+  tags: any[];
+}
 
 import { useContext } from 'react';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
@@ -27,6 +30,7 @@ export function SummaryInfoContainer({
   address,
   operatingHours,
   phone,
+  tags,
   storeLinks,
   description,
   holidays,
@@ -96,15 +100,19 @@ export function SummaryInfoContainer({
           {name}
         </span>
         <span className="flex flex-wrap">
-          {/* {tags.map((tag, index) => (
-            <span
-              className="font-medium text-[#6F6F6F] text-[10px] md:text-t20"
-              key={tag}
-            >
-              {tag}
-              {index < tags.length - 1 && ', '}&nbsp;
-            </span>
-          ))} */}
+          {tags.map((tag, index) => {
+            const tagName = typeof tag === 'object' ? tag.name : tag;
+            const tagId = typeof tag === 'object' ? tag.id : index;
+            return (
+              <span
+                className="md:text-t20 font-medium text-[#6F6F6F]"
+                key={tagId}
+              >
+                {tagName}
+                {index < tags.length - 1 && ', '}&nbsp;
+              </span>
+            );
+          })}
         </span>
       </div>
       <StoreInfo {...storeInfoProps} />

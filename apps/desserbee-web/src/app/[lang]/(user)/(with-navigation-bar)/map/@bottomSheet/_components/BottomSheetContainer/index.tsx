@@ -64,7 +64,9 @@ export function BottomSheetContainer({
     contents: storeSummary.topPreferences
       .sort((a, b) => a.rank - b.rank)
       .map((pref) => pref.name),
-    storeImages: storeSummary?.storeImages,
+    storeImages: storeSummary?.storeImages?.map((image) =>
+      typeof image === 'object' && image.url ? image.url : image,
+    ),
   };
   const storePreviewPicListProps = {
     ownerPickImages: storeSummary?.ownerPickImages,
