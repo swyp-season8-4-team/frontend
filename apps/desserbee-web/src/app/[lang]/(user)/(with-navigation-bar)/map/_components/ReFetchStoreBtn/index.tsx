@@ -4,7 +4,7 @@ interface RefetchStoreBtnProps {
   clearSelectedCategories: () => void;
 }
 
-export function ReFetchStoreBtn({
+export default function ReFetchStoreBtn({
   refetchStore,
   clearSelectedCategories,
 }: RefetchStoreBtnProps) {

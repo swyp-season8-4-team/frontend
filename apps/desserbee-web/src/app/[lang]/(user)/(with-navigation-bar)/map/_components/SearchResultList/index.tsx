@@ -28,7 +28,7 @@ const formatDistance = (distance: number | undefined): string => {
   }
 };
 
-export function SearchResultList({
+export default function SearchResultList({
   resultData,
   distances,
   onClose,
