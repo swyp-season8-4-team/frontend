@@ -44,8 +44,8 @@ export function SideBar({
 
   const handleTouchEnd = () => {
     setIsDragging(false);
-    if (offsetX > 100) {
-      // 100px 이상 드래그하면 닫기
+    if (offsetX > 50) {
+      // 50px 이상 드래그하면 닫기
       handleSideBarClose();
     } else {
       // 원위치로 돌아가기
@@ -62,12 +62,12 @@ export function SideBar({
         <div
           ref={sidebarRef}
           className={cn(
-            'bottom-0 overflow-hidden"',
-            'inset-1/2  relative h-full px-[13.05px] py-[10.88px] md:px-6 md:py-5 bg-white rounded-[10px] md:rounded-base z-sidebar overflow-hidden"',
+            'overflow-hidden" bottom-0',
+            'md:rounded-base z-sidebar overflow-hidden" relative inset-1/2 h-full rounded-[10px] bg-white px-[13.05px] py-[10.88px] md:px-6 md:py-5',
             'animate-slide-in transition-transform',
             isDragging
               ? 'transition-none'
-              : 'transition-transform duration-500',
+              : 'transition-transform duration-300',
             className,
           )}
           onClick={(e) => e.stopPropagation()}
@@ -81,10 +81,12 @@ export function SideBar({
         >
           {isCloseBtnShow && (
             <button
-              className="hidden md:block top-7 right-[26.19px] md:absolute"
+              className="absolute right-4 top-4 md:right-[26.19px] md:top-5"
               onClick={handleSideBarClose}
             >
-              <IconX />
+              <div className="h-4 w-4 md:h-6 md:w-6">
+                <IconX className="h-full w-full" />
+              </div>
             </button>
           )}
           {children}
