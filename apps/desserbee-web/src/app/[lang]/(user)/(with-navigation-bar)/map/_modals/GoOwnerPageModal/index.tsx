@@ -1,6 +1,6 @@
 'use client';
 
-import ownerPopupImage from '@/assets/images/owner-popup.png';
+import ownerPopupImage from '@/assets/images/owner-popup-min.png';
 import IconXRound from '@repo/design-system/components/icons/IconXRound';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 
@@ -45,7 +45,7 @@ export default function GoOwnerPageModal() {
           alt="owner-popup-img"
           width={300}
           height={300}
-          loading="lazy"
+          priority
           className="rounded-t-md object-cover"
         />
         <button
