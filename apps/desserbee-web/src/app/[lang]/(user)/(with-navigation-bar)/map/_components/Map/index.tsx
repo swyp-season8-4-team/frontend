@@ -19,9 +19,6 @@ import orangeMarkerImage from '@/app/[lang]/(user)/(with-navigation-bar)/map/_as
 import greenMarkerImage from '@/app/[lang]/(user)/(with-navigation-bar)/map/_assets/svg/green-marker.svg';
 import blueMarkerImage from '@/app/[lang]/(user)/(with-navigation-bar)/map/_assets/svg/blue-marker.svg';
 
-// import { PreferenceTags } from '../PreferenceTags';
-// import { MapPanel } from '../MapPanel';
-
 import type { MapPosition } from '@repo/entity/src/map';
 
 import GeolocationService from '@repo/usecase/src/geolocationService';
@@ -45,19 +42,19 @@ import {
 import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService';
-// import { ReFetchStoreBtn } from '../ReFetchStoreBtn';
 import { calculateDistance } from '../../_utils/distance';
 import { useTag } from '../../../../_hooks/useTag';
 import { getNearbyStores, getStoresLocationInSavedList } from './action';
+
 import type { Preference } from '@repo/entity/src/preference';
-// import { SearchResultList } from '../SearchResultList';
 import IconLoadingSpinner from '@repo/design-system/components/icons/IconLoadingSpinner';
 import dynamic from 'next/dynamic';
 
 const PreferenceTags = dynamic(() => import('../PreferenceTags'));
 const MapPanel = dynamic(() => import('../MapPanel'));
 const ReFetchStoreBtn = dynamic(() => import('../ReFetchStoreBtn'));
-const SearchResultList = dynamic(() => import('../SearchResultList'));
+import SearchResultList from '../SearchResultList';
+// const SearchResultList = dynamic(() => import('../SearchResultList'));
 
 interface MapProps {
   preferenceCategories: PreferenceData[];
