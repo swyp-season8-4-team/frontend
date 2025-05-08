@@ -39,12 +39,17 @@ const baseFetch = async <Q, R>(
     body = requestData.data ? JSON.stringify(requestData.data) : undefined;
   }
 
-  const requestInfo: RequestInit = {
+  const requestInfo: RequestInit & { next?: { revalidate: number } } = {
     body,
     credentials: 'include',
     method: requestData.method,
     headers,
     signal: controller?.signal,
+    ...(requestData.revalidate && {
+      next: {
+        revalidate: requestData.revalidate,
+      },
+    }),
   };
 
   // if (process.env.NEXT_PUBLIC_USE_API_LOG !== 'false') {
