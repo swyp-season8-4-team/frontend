@@ -53,6 +53,14 @@ import type { Preference } from '@repo/entity/src/preference';
 import { SearchResultList } from '../SearchResultList';
 import IconLoadingSpinner from '@repo/design-system/components/icons/IconLoadingSpinner';
 
+import dynamic from 'next/dynamic';
+const GoOwnerPageModal = dynamic(
+  () => import('../../_modals/GoOwnerPageModal'),
+  {
+    ssr: false,
+  },
+);
+
 interface MapProps {
   preferenceCategories: PreferenceData[];
 }
@@ -961,6 +969,7 @@ export function Map({ preferenceCategories }: MapProps) {
           onClose={handleResultListClose}
         />
       )}
+      <GoOwnerPageModal />
     </div>
   );
 }

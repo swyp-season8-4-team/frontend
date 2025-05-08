@@ -5,7 +5,6 @@ import { Map } from './_components/Map';
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import NotFound from '@/app/[lang]/[...not-found]/page';
-import { GoOwnerPageModal } from './_modals/GoOwnerPageModal';
 import { commonErrorHandler } from '@/error/commonErrorHandler';
 
 export default async function MapPage() {
@@ -31,7 +30,6 @@ export default async function MapPage() {
 
   return (
     <div className="scroll-none relative h-full overflow-hidden">
-      <GoOwnerPageModal />
       <Map {...mapProps} />
     </div>
   );
