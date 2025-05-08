@@ -906,7 +906,7 @@ export function Map({ preferenceCategories }: MapProps) {
           }
         }
 
-        console.log('모든 지도 리소스가 정리되었습니다.');
+        // console.log('모든 지도 리소스가 정리되었습니다.');
       } catch (error) {
         console.error('지도 리소스 정리 중 오류:', error);
       }

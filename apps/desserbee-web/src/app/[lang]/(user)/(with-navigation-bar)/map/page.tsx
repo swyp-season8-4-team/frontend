@@ -1,5 +1,6 @@
+export const revalidate = 60;
+
 import { Map } from './_components/Map';
-import { BannerCarousel } from './_components/BannerCarousel';
 
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
