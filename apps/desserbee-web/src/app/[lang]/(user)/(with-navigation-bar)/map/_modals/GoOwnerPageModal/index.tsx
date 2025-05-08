@@ -63,16 +63,16 @@ export function GoOwnerPageModal() {
             디저비에 가게 등록하러 가기
           </button>
         </div>
-        <button className="z-modal absolute -bottom-2 flex w-full items-center gap-1 rounded-b-md bg-white pl-1 md:-bottom-4">
+        <button className="z-modal absolute -bottom-3 flex w-full items-center gap-1 rounded-b-md bg-white pl-1 md:-bottom-4">
           <input
             type="checkbox"
             id="not-today"
-            className="h-2 w-2 md:h-[11px] md:w-[11px]"
+            className="h-[10px] w-[10px] md:h-[14px] md:w-[14px]"
             onChange={handleNotTodayClick}
           />
           <label
             htmlFor="not-today"
-            className="text-neutral-40 w-full cursor-pointer text-start text-[8px] md:text-[11px]"
+            className="text-neutral-40 w-full cursor-pointer text-start text-[10px] md:text-[14px]"
           >
             오늘 하루 다신 보지 않기
           </label>
