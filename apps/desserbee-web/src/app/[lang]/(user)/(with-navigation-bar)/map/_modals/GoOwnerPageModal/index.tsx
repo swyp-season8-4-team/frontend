@@ -1,5 +1,6 @@
 'use client';
 
+// import ownerPopupImage from '/public/images/owner-popup.webp';
 import ownerPopupImage from '@/assets/images/owner-popup.png';
 import IconXRound from '@repo/design-system/components/icons/IconXRound';
 import { NavigationPathname } from '@repo/entity/src/navigation';
@@ -10,18 +11,16 @@ import { useState, useEffect } from 'react';
 
 export function GoOwnerPageModal() {
   const router = useRouter();
-  const [isOpen, setIsOpen] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     const hideUntil = localStorage.getItem('hideOwnerModalUntil');
-    if (hideUntil && new Date().getTime() < parseInt(hideUntil)) {
-      setIsOpen(false);
+    if (!hideUntil || new Date().getTime() >= parseInt(hideUntil)) {
+      setIsOpen(true);
     }
-    setIsLoading(false);
   }, []);
 
-  if (isLoading || !isOpen) return null;
+  if (!isOpen) return null;
 
   const handleGoOwnerPageButtonClick = () => {
     router.push(NavigationPathname.Owner);
@@ -45,7 +44,9 @@ export function GoOwnerPageModal() {
         <Image
           src={ownerPopupImage}
           alt="owner-popup-img"
-          fill
+          width={300}
+          height={300}
+          priority
           className="rounded-t-md object-cover"
         />
         <button
