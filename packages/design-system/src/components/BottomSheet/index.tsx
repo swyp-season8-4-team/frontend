@@ -36,7 +36,7 @@ export function BottomSheet({
     setTimeout(() => {
       setIsVisible(false);
       onClose();
-    }, 500);
+    }, 100);
   };
 
   if (!isVisible && !isOpen) return null;
