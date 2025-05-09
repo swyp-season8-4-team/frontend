@@ -105,7 +105,7 @@ export function SummaryInfoContainer({
             const tagId = typeof tag === 'object' ? tag.id : index;
             return (
               <span
-                className="md:text-t20 font-medium text-[#6F6F6F]"
+                className="md:text-t20 text-[10px] font-medium text-[#6F6F6F]"
                 key={tagId}
               >
                 {tagName}
