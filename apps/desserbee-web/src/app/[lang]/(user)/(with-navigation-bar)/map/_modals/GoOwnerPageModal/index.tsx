@@ -38,21 +38,25 @@ export default function GoOwnerPageModal() {
 
   return (
     <div className="z-modal animate-fadeIn fixed inset-0 flex items-center justify-center bg-black/10 opacity-0">
-      <div className="relative h-[200px] w-[200px] shadow-md md:h-[300px] md:w-[300px]">
-        <Image
-          src="/image/owner-popup.webp"
-          alt="팝업 이미지"
-          width={300}
-          height={300}
-          priority
-        />
+      <div className="relative overflow-hidden rounded-md bg-white shadow-md">
+        <div className="h-[200px] w-[200px] md:h-[300px] md:w-[300px]">
+          <Image
+            src="/image/owner-popup.webp"
+            alt="팝업 이미지"
+            width={300}
+            height={300}
+            priority
+          />
+        </div>
+
         <button
           onClick={() => setIsOpen(false)}
           className="z-modal absolute right-3 top-3 h-4 w-4 md:right-4 md:top-4 md:h-5 md:w-5"
+          aria-label="닫기"
         >
           <IconXRound className="text-neutral-30 h-full w-full" />
         </button>
-        <div className="z-modal absolute bottom-2 right-1/2 flex w-full translate-x-1/2 flex-col items-center justify-center gap-1 md:bottom-4">
+        <div className="z-modal absolute bottom-7 right-1/2 flex w-full translate-x-1/2 flex-col items-center justify-center gap-1 md:bottom-10">
           <button
             className="h-[30px] w-[calc(100%-32px)] cursor-pointer rounded-[60px] bg-[#F28627] text-xs font-medium text-white md:h-[48px] md:text-lg"
             onClick={handleGoOwnerPageButtonClick}
@@ -60,11 +64,11 @@ export default function GoOwnerPageModal() {
             디저비에 가게 등록하러 가기
           </button>
         </div>
-        <button className="z-modal absolute -bottom-3 flex w-full items-center gap-1 rounded-b-md bg-white pl-1 md:-bottom-4">
+        <button className="flex w-full items-center gap-1 py-1 pl-2 md:-bottom-6 md:py-2 md:pl-4">
           <input
             type="checkbox"
             id="not-today"
-            className="h-[10px] w-[10px] md:h-[14px] md:w-[14px]"
+            className="h-[15px] w-[15px] md:h-5 md:w-5"
             onChange={handleNotTodayClick}
           />
           <label
