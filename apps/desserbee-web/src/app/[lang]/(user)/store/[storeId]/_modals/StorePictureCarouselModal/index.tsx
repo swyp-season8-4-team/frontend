@@ -45,23 +45,19 @@ export function StorePictureCarouselModal({
     <CustomModal
       isCloseBtnShow={false}
       onClose={onClose}
-      className="top-[50%] p-[13.5px] md:p-[46px] rounded-[6.91px] md:rounded-base w-[70%] md:w-[60%] aspect-[229.78/170]"
+      className="md:rounded-base top-[50%] aspect-[229.78/170] w-[60%] rounded-[6.91px] p-[13.5px] md:p-[46px]"
     >
-      <div className="flex flex-col h-full">
-        <div className="flex items-end">
-          <h2 className="font-semibold text-[8px] sm:text-base md:text-xl">
-            가게 사진 모아보기
-          </h2>
-        </div>
-        <Carousel setApi={setApi} className="relative flex-1 w-full">
+      <div className="flex h-full flex-col">
+        <div className="flex items-end"></div>
+        <Carousel setApi={setApi} className="relative w-full flex-1">
           <CarouselContent>
             {Array.from({ length: totalPages }).map((_, pageIndex) => (
-              <CarouselItem key={pageIndex} className="w-full">
-                <div className="justify-center gap-2 grid grid-cols-3">
+              <CarouselItem key={pageIndex} className="h-full w-full">
+                <div className="grid h-full grid-cols-3 justify-center gap-2 pt-3">
                   {getPageImages(pageIndex).map((image, imageIndex) => (
                     <div
                       key={`${pageIndex}-${imageIndex}`}
-                      className="relative bg-[#D2D2D2] max-w-1/3 aspect-[1/1] overflow-hidden"
+                      className="max-w-1/3 relative aspect-[1/1] overflow-hidden rounded-[3px] bg-[#D2D2D2]"
                     >
                       <Image
                         src={image}
@@ -75,20 +71,20 @@ export function StorePictureCarouselModal({
               </CarouselItem>
             ))}
           </CarouselContent>
-          <div className="top-1/2 left-[-19px] md:left-[-50px] z-modal absolute -translate-y-1/2">
+          <div className="z-modal absolute left-[-19px] top-1/2 -translate-y-1/2 md:left-[-50px]">
             <div
               onClick={() => api?.scrollPrev()}
-              className="w-6 md:w-14 h-7 md:h-14 cursor-pointer"
+              className="h-7 w-6 cursor-pointer md:h-14 md:w-14"
             >
-              <IconDirection className="w-full h-full text-[#9F9F9F] rotate-90 transfrom" />
+              <IconDirection className="transfrom h-full w-full rotate-90 text-[#9F9F9F]" />
             </div>
           </div>
-          <div className="top-1/2 right-[-19px] md:right-[-50px] z-modal absolute -translate-y-1/2">
+          <div className="z-modal absolute right-[-19px] top-1/2 -translate-y-1/2 md:right-[-50px]">
             <div
               onClick={() => api?.scrollNext()}
-              className="w-6 md:w-14 h-7 md:h-14 cursor-pointer"
+              className="h-7 w-6 cursor-pointer md:h-14 md:w-14"
             >
-              <IconDirection className="top-0 right-0 absolute w-full h-full text-[#9F9F9F] -rotate-90 transfrom" />
+              <IconDirection className="transfrom absolute right-0 top-0 h-full w-full -rotate-90 text-[#9F9F9F]" />
             </div>
           </div>
         </Carousel>
