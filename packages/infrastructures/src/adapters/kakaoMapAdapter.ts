@@ -89,7 +89,6 @@ export class KakaoMapAdapter implements ExternalMap {
                         padding: 1px 2px;
                         background-color: white;
                         border-radius: 8px;
-                        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
                         font-size: 13px;
                         font-weight: 600;
                         color: #333;
