@@ -5,7 +5,7 @@ import { cn } from '@repo/ui/lib/utils';
 import IconX from '@repo/design-system/components/icons/IconX';
 import { useRouter } from 'next/navigation';
 import { getOperationStatus } from '../../_utils/operatingStatus';
-import beeImg from '@/assets/svg/logo-bee.svg';
+import ReadyBee from '@/assets/images/bee_icon_ready.png';
 
 interface SearchResultListProps {
   resultData: NearByStoreData[];
@@ -144,7 +144,7 @@ export default function SearchResultList({
                       <div>
                         <div className="aspect-square h-[47px] w-[47px] overflow-hidden rounded-sm bg-white md:h-[98px] md:w-[98px]">
                           <Image
-                            src={store.storeImage ?? beeImg}
+                            src={store.storeImage ?? ReadyBee}
                             className="h-full w-full object-cover"
                             width={98}
                             height={98}
