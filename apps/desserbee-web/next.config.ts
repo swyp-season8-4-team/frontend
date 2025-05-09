@@ -3,6 +3,10 @@ import type { NextConfig } from 'next';
 const { NEXT_PUBLIC_USE_API_MOCKING, NEXT_PUBLIC_SERVICE_API_URL } =
   process.env;
 
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+});
+
 const NextFunctionConfig = async (phase: any) => {
   console.info(`phase = ${phase}`);
 
@@ -47,7 +51,7 @@ const NextFunctionConfig = async (phase: any) => {
     },
   };
 
-  return nextConfig;
+  return withBundleAnalyzer(nextConfig);
 };
 
 export default NextFunctionConfig;
