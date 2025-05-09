@@ -41,7 +41,6 @@ export default class SearchAPIRepository
       }),
       method: 'GET',
       url: `${this.endpoint}/search/recent`,
-      revalidate: 30,
     });
 
     return response;
