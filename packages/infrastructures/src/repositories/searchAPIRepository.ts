@@ -23,6 +23,7 @@ export default class SearchAPIRepository
       }),
       method: 'GET',
       url: `${this.endpoint}/search/popular`,
+      revalidate: 3600,
     });
 
     console.log(response);

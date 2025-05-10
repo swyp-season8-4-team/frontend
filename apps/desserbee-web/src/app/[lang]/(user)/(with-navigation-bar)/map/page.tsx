@@ -1,11 +1,12 @@
+export const revalidate = 60;
+
 import { Map } from './_components/Map';
-import { BannerCarousel } from './_components/BannerCarousel';
 
 import StoreService from '@repo/usecase/src/storeService';
 import StoreAPIReopository from '@repo/infrastructures/src/repositories/storeAPIRepository';
 import NotFound from '@/app/[lang]/[...not-found]/page';
-import { GoOwnerPageModal } from './_modals/GoOwnerPageModal';
 import { commonErrorHandler } from '@/error/commonErrorHandler';
+import { GoOwnerModalContainer } from './_modals/GoOwnerPageModal/container';
 
 export default async function MapPage() {
   const storeService = new StoreService({
@@ -30,7 +31,7 @@ export default async function MapPage() {
 
   return (
     <div className="scroll-none relative h-full overflow-hidden">
-      <GoOwnerPageModal />
+      <GoOwnerModalContainer />
       <Map {...mapProps} />
     </div>
   );

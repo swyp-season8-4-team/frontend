@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { cn } from '@repo/ui/lib/utils';
 import type { WithChildren, WithClassName } from '@repo/ui/index';
 import IconX from '../icons/IconX';
@@ -15,44 +15,69 @@ export function BottomSheet({
   className,
 }: BottomSheetProps) {
   const bottomSheetRef = useRef<HTMLDivElement>(null);
+  const [isClosing, setIsClosing] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isOpening, setIsOpening] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setIsVisible(true);
+      setIsClosing(false);
+      // 다음 프레임에서 애니메이션 시작
+      requestAnimationFrame(() => {
+        setIsOpening(true);
+      });
+    }
+  }, [isOpen]);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setIsOpening(false);
+    setTimeout(() => {
+      setIsVisible(false);
+      onClose();
+    }, 100);
+  };
+
+  if (!isVisible && !isOpen) return null;
 
   return (
-    <>
-      {isOpen && (
-        <div
-          className="z-bottomSheet fixed inset-0 flex justify-center w-full h-full"
-          onClick={onClose}
-        >
-          <div
-            ref={bottomSheetRef}
-            className={cn(
-              'bottom-0 z-bottomSheet pb-4 fixed select-none w-full',
-              'left-0 right-0 mx-auto',
-              'bg-white px-base pt-[10px] rounded-t-base max-w-[768px]',
-              'animate-slide-up transition-transform duration-500 ease-out',
-              isOpen ? 'translate-y-0' : 'translate-y-full',
-              className,
-            )}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="h-full">
-              <div className="mb-[21px] w-full flex items-center">
-                <div className="w-full flex justify-center">
-                  <div className="border-[#545454] border-[2.14px] md:border-[3px] rounded-[5px] w-[49.33px] md:w-[115.5px]"></div>
-                </div>
-                <button
-                  className="flex justify-center items-center w-8 h-8 text-gray-500 hover:text-gray-700 ml-auto"
-                  onClick={onClose}
-                  aria-label="닫기"
-                >
-                  <IconX />
-                </button>
-              </div>
-              {children}
+    <div
+      className="z-bottomSheet fixed inset-0 flex h-full w-full justify-center"
+      onClick={handleClose}
+    >
+      <div
+        ref={bottomSheetRef}
+        className={cn(
+          'z-bottomSheet fixed bottom-0 w-full select-none pb-4',
+          'left-0 right-0 mx-auto',
+          'px-base rounded-t-base max-w-[768px] bg-white pt-[10px]',
+          'transition-transform duration-500 ease-out',
+          isClosing
+            ? 'translate-y-full'
+            : isOpening
+              ? 'translate-y-0'
+              : 'translate-y-full',
+          className,
+        )}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="h-full">
+          <div className="mb-[21px] flex w-full items-center">
+            <div className="flex w-full justify-center">
+              <div className="w-[49.33px] rounded-[5px] border-[2.14px] border-[#545454] md:w-[115.5px] md:border-[3px]"></div>
             </div>
+            <button
+              className="ml-auto flex h-8 w-8 items-center justify-center text-gray-500 hover:text-gray-700"
+              onClick={handleClose}
+              aria-label="닫기"
+            >
+              <IconX />
+            </button>
           </div>
+          {children}
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 }

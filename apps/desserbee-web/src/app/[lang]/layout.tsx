@@ -13,7 +13,6 @@ import { initServerMSW } from '@/mocks';
 import { MockProvider } from '@/mocks/MockProvider';
 import { PortalProvider } from '@repo/ui/contexts/PortalContext';
 import { fontVariables } from '../fonts';
-import { MobileScreenProvider } from './_contexts/MobileScreenProvider';
 import { cn } from '@repo/ui/lib/utils';
 
 const metadataService = new MetadataService();

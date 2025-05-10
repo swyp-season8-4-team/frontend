@@ -19,9 +19,6 @@ import orangeMarkerImage from '@/app/[lang]/(user)/(with-navigation-bar)/map/_as
 import greenMarkerImage from '@/app/[lang]/(user)/(with-navigation-bar)/map/_assets/svg/green-marker.svg';
 import blueMarkerImage from '@/app/[lang]/(user)/(with-navigation-bar)/map/_assets/svg/blue-marker.svg';
 
-import { PreferenceTags } from '../PreferenceTags';
-import { MapPanel } from '../MapPanel';
-
 import type { MapPosition } from '@repo/entity/src/map';
 
 import GeolocationService from '@repo/usecase/src/geolocationService';
@@ -45,13 +42,19 @@ import {
 import { LocationPermissionModal } from '../../_modals/LocationPermissionModal';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
 import { GeolocationPermissionError } from '@repo/usecase/src/geolocationService';
-import { ReFetchStoreBtn } from '../ReFetchStoreBtn';
 import { calculateDistance } from '../../_utils/distance';
 import { useTag } from '../../../../_hooks/useTag';
 import { getNearbyStores, getStoresLocationInSavedList } from './action';
+
 import type { Preference } from '@repo/entity/src/preference';
-import { SearchResultList } from '../SearchResultList';
 import IconLoadingSpinner from '@repo/design-system/components/icons/IconLoadingSpinner';
+import dynamic from 'next/dynamic';
+
+const PreferenceTags = dynamic(() => import('../PreferenceTags'));
+const MapPanel = dynamic(() => import('../MapPanel'));
+const ReFetchStoreBtn = dynamic(() => import('../ReFetchStoreBtn'));
+import SearchResultList from '../SearchResultList';
+// const SearchResultList = dynamic(() => import('../SearchResultList'));
 
 interface MapProps {
   preferenceCategories: PreferenceData[];
@@ -906,7 +909,7 @@ export function Map({ preferenceCategories }: MapProps) {
           }
         }
 
-        console.log('모든 지도 리소스가 정리되었습니다.');
+        // console.log('모든 지도 리소스가 정리되었습니다.');
       } catch (error) {
         console.error('지도 리소스 정리 중 오류:', error);
       }
@@ -928,7 +931,7 @@ export function Map({ preferenceCategories }: MapProps) {
       />
       <div
         ref={mapRef}
-        className="relative z-0 mb-[9px] h-[calc(100dvh-205px)] w-full overflow-x-hidden bg-[#E8E8E8]"
+        className="relative z-0 mb-[9px] h-[calc(100dvh-205px)] w-full overflow-x-hidden bg-neutral-200"
       >
         {error && (
           <div className="absolute left-1/2 top-1/2 z-20 w-[200px] -translate-x-1/2 transform rounded border border-red-400 bg-red-100 px-4 py-2 text-center text-red-700">

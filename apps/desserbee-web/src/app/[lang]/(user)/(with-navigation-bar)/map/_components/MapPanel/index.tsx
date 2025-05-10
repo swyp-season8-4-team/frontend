@@ -11,7 +11,7 @@ interface MapPanelProps {
   moveToCurrentPosition: () => void;
 }
 
-export function MapPanel({ moveToCurrentPosition }: MapPanelProps) {
+export default function MapPanel({ moveToCurrentPosition }: MapPanelProps) {
   const router = useRouter();
 
   const { push, pop } = useContext(PortalContext);
@@ -33,7 +33,7 @@ export function MapPanel({ moveToCurrentPosition }: MapPanelProps) {
   };
   return (
     <div>
-      <div className="bottom-[28.05px] left-4 z-10 absolute flex flex-col gap-2 w-[47px] aspect-square">
+      <div className="absolute bottom-[28.05px] left-4 z-10 flex aspect-square w-[47px] flex-col gap-2">
         <button
           onClick={() => {
             if (user) {
@@ -42,15 +42,17 @@ export function MapPanel({ moveToCurrentPosition }: MapPanelProps) {
               handleOpenSideBarBtnClick();
             }
           }}
-          className="flex justify-center items-center bg-white p-1 rounded-sm w-8 h-8 aspect-square"
+          className="flex aspect-square h-8 w-8 items-center justify-center rounded-sm bg-white p-1"
+          aria-label="저장한 가게 리스트 사이드바 열기"
         >
-          <IconFlowerOutline className="w-full h-full text-[#6F6F6F]" />
+          <IconFlowerOutline className="h-full w-full text-[#6F6F6F]" />
         </button>
         <button
           onClick={moveToCurrentPosition}
-          className="flex justify-center items-center bg-white p-1 rounded-sm w-8 h-8 aspect-square"
+          className="flex aspect-square h-8 w-8 items-center justify-center rounded-sm bg-white p-1"
+          aria-label="내 위치로 돌아가기"
         >
-          <IconTarget className="w-full h-full text-[#6F6F6F]" />
+          <IconTarget className="h-full w-full text-[#6F6F6F]" />
         </button>
       </div>
     </div>
