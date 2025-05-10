@@ -198,8 +198,8 @@ export interface StoreSummaryInfoData
     | 'holidays'
     | 'topPreferences'
   > {
-  storeImages?:storeImage[];
-  ownerPickImages?:storeImage[];
+  storeImages?: storeImage[];
+  ownerPickImages?: storeImage[];
   tags: string[];
   storeLinks: string[];
 }
@@ -231,8 +231,8 @@ export interface StoreDetailInfoData
     | 'topPreferences'
     | 'primaryStoreLink'
   > {
-  storeImages?:storeImage[];
-  ownerPickImages?:storeImage[];
+  storeImages?: storeImage[];
+  ownerPickImages?: storeImage[];
   userId: number | null;
   userUuid: string | null;
   ownerId: number;
@@ -429,27 +429,27 @@ export interface DeleteStoreRequest {
 }
 
 //가게 기본정보 수정
-export interface updateStoreRequest { 
+export interface updateStoreRequest {
   userUuid: string;
   name: string;
   phone: string;
   address: string;
   latitude: number;
   longitude: number;
-  description:string;
-  animalYn:boolean;
-  tumblerYn:boolean;
-  parkingYn:boolean;
-  tagIds:number[];
-  holidays:HolidaysItem[];
+  description: string;
+  animalYn: boolean;
+  tumblerYn: boolean;
+  parkingYn: boolean;
+  tagIds: number[];
+  holidays: HolidaysItem[];
   storeLinks: StoreLink[];
-  storeImageDeleteIds:number[];
-  ownerPickImageDeleteIds:number[];
+  storeImageDeleteIds: number[];
+  ownerPickImageDeleteIds: number[];
 }
 
 export interface updateStoreRequestFormData {
-  storeUuid:string;
-  requests:updateStoreRequest;
+  storeUuid: string;
+  requests: updateStoreRequest;
   storeImageFiles?: (storeImage | File)[];
   ownerPickImageFiles?: (storeImage | File)[];
 }
@@ -464,19 +464,19 @@ export interface updateStoreResponse {
   latitude: number;
   longitude: number;
   phone: string;
-  animalYn:boolean;
-  tumblerYn:boolean;
-  parkingYn:boolean;
-  description:string;
-  notice:Notice[];
-  menus:Menu[];
-  storeImages:storeImage[];
-  ownerPickImages:storeImage[];
-  primaryStoreLink:string;
-  storeLinks:string[];
-  tags:StoreTag[];
-  operatingHours:OperatingHoursItem[];
-  holidays:HolidaysItem[];
+  animalYn: boolean;
+  tumblerYn: boolean;
+  parkingYn: boolean;
+  description: string;
+  notice: Notice[];
+  menus: Menu[];
+  storeImages: storeImage[];
+  ownerPickImages: storeImage[];
+  primaryStoreLink: string;
+  storeLinks: string[];
+  tags: StoreTag[];
+  operatingHours: OperatingHoursItem[];
+  holidays: HolidaysItem[];
 }
 // saved list
 export interface SavedListRequest {
@@ -614,21 +614,33 @@ export interface Id {
 }
 
 export interface CreateMenuRequest
-  extends Pick<Menu, 'name' | 'price' | 'isPopular' | 'description' |'imageFileKey'> {}
+  extends Pick<
+    Menu,
+    'name' | 'price' | 'isPopular' | 'description' | 'imageFileKey'
+  > {}
 
 export type MenuRequests = CreateMenuRequest | CreateMenuRequest[];
 
 export interface CreateMenuRequestFormData {
   storeUuid: string;
   requests: CreateMenuRequest[];
-  menuImages?:File[];
+  menuImages?: File[];
 }
 
 export interface EditMenuRequest {
+  name: string;
+  price: number;
+  isPopular?: boolean;
+  description?: string;
+  imageFileKey?: string;
+}
+
+export interface EditMenuRequestFormData {
   storeUuid: string;
   menuUuid: string;
-  imageFileKey: string;
-  file: File; // imageFileKey에  해당 파일 이름 담아 보내야함
+  request:EditMenuRequest;
+  file?: File;
+  deleteImage?:boolean;
 }
 
 export interface DeleteMenuRequest {
@@ -714,7 +726,7 @@ export interface EditOnelineReviewRequest {
 }
 
 export interface RegisterNoticeRequest {
-  storeUuid:string;
+  storeUuid: string;
   tag: string;
   title: string;
   content: string;
@@ -767,6 +779,46 @@ export interface EditNoticeResponse {
 export interface DeleteNoticeRequest {
   storeUuid: string;
   noticeId: number;
+}
+
+// owner: coupon
+export interface time {
+  hour:number;
+  minute:number;
+  second: number;
+  nano: number;
+}
+
+export interface couponCondition { // 쿠폰 사용 조건 
+  conditionType:string; // 정액 or 정률("FIXED" || "RATE")
+  minimumPurchaseAmount?: number; //결제 금액에 따라 선택했을 때
+  conditionStartTime?:time; //시간 선택적으로 사용 선택했을 때
+  conditionEndTime?:time;
+  conditionDays?:string[]; // 요일 선택적으로 사용 선택했을 때 (["MONDAY"])
+  customConditionText?:string; // 직접 조건 입력 선택했을 때
+  exclusiveOnly?:boolean; // 단독 사용 불가인지
+}
+
+export interface couponType {
+  type:string; // 쿠폰의 기능 ("DISCOUNT" || "GIFT")
+  discountType?:string; // 할인 방식("FIXED" || "RATE")
+  discountAmount?:number; // 할인 금액
+  giftMenuName?: string; // 증정 메뉴명
+}
+
+export interface RegisterCoupon {
+  name: string; // 쿠폰 이름
+  hasExposureDate:boolean; // 상시 노출 or 일시 노출 
+  exposureStartAt?: string;
+  exposureEndAt?:string;
+  couponCondition:couponCondition;
+  hasExpiryDate:boolean; //유효기간
+  expiryDate?:string; //유효기간 날짜
+  hasQuantity:boolean; // 제한 없이 or 수량 제한
+  quantity?:number; // 제한 수량
+  couponType:couponType;
+  couponTarget:string; //쿠폰 발행 대상 ("ALL" | "SUBSCRIBED" | "CUSTOM")
+  storeUuid:string;
 }
 
 export interface StoreRepository {
@@ -873,7 +925,7 @@ export interface StoreRepository {
   editMenu({
     authorization,
     data,
-  }: BaseRequestData<EditMenuRequest>): Promise<void>;
+  }: BaseRequestData<EditMenuRequestFormData>): Promise<void>;
 
   deleteMenu({
     authorization,
@@ -917,31 +969,31 @@ export interface StoreRepository {
 
   updateStore({
     authorization,
-    data
-  }:BaseRequestData<updateStoreRequestFormData>):Promise<updateStoreResponse>;
+    data,
+  }: BaseRequestData<updateStoreRequestFormData>): Promise<updateStoreResponse>;
 
   // owner:notice
   createNotice({
     authorization,
-    data
-  }:BaseRequestData<RegisterNoticeRequest>):Promise<void>;
+    data,
+  }: BaseRequestData<RegisterNoticeRequest>): Promise<void>;
 
   getNoticeList({
     authorization,
-  }:BaseRequestData<NoticeListRequest>):Promise<NoticeListResponse[]>;
+  }: BaseRequestData<NoticeListRequest>): Promise<NoticeListResponse[]>;
 
-  getNotice ({
+  getNotice({
     authorization,
-    data
-  }:BaseRequestData<NoticeRequest>):Promise<NoticeResponse>;
+    data,
+  }: BaseRequestData<NoticeRequest>): Promise<NoticeResponse>;
 
   editNotice({
     authorization,
-    data
-  }:BaseRequestData<EditNoticeRequest>):Promise<EditNoticeResponse>;
+    data,
+  }: BaseRequestData<EditNoticeRequest>): Promise<EditNoticeResponse>;
 
   deleteNotice({
     authorization,
-    data
-  }:BaseRequestData<DeleteNoticeRequest>):Promise<void>;
+    data,
+  }: BaseRequestData<DeleteNoticeRequest>): Promise<void>;
 }

@@ -58,6 +58,7 @@ import type {
   EditNoticeRequest,
   EditNoticeResponse,
   DeleteNoticeRequest,
+  EditMenuRequestFormData,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -752,25 +753,39 @@ export default class StoreAPIRepository
   async editMenu({
     authorization,
     data,
-  }: BaseRequestData<EditMenuRequest>): Promise<void> {
+  }: BaseRequestData<EditMenuRequestFormData>): Promise<void> {
     if (!data) {
       throw Error('data required');
     }
 
-    const { storeUuid, menuUuid, file } = data || {};
+    const { storeUuid, menuUuid, request, file, deleteImage } = data;
 
     const url = `${this.endpoint}/stores/${storeUuid}/menus/${menuUuid}`;
+    const formData = new FormData();
 
-    const response = await fetch<{ file: File }, void>({
+    formData.append(
+      'request',
+      new Blob([JSON.stringify(request)], { type: 'application/json' }),
+    );
+
+    if (deleteImage !== true && file instanceof File) {
+      formData.append('file', file, file.name);
+    }
+
+    if (deleteImage === true) {
+      formData.append('deleteImage', 'true');
+      formData.delete('file');
+    }
+
+    const response = await fetch<EditMenuRequestFormData, void>({
       ...(authorization && {
         headers: {
           Authorization: authorization,
-          'Content-Type': 'multipart/form-data', //TODO: content-type 테스트 해보기
         },
       }),
-      data: { file },
       method: 'PATCH',
       url,
+      formData,
     });
 
     return response;

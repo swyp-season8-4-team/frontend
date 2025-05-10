@@ -381,15 +381,6 @@ export function BasicInfoEditForm() {
     [watch, setValue],
   );
 
-  // const handleRemoveStoreImageFiles = (index: number) => {
-  //   const current = watch('storeImageFiles');
-  //   setValue(
-  //     'storeImageFiles',
-  //     current.filter((_, i) => i !== index),
-  //     { shouldDirty: true },
-  //   );
-  // };
-
   const handleRemoveStoreImageFiles = (index: number) => {
     const current = watch('storeImageFiles');
     const removed = current[index];
@@ -416,15 +407,6 @@ export function BasicInfoEditForm() {
       { shouldDirty: true },
     );
   };
-
-  // const handleRemoveOwnerPickImageFiles = (index: number) => {
-  //   const current = watch('ownerPickImageFiles');
-  //   setValue(
-  //     'ownerPickImageFiles',
-  //     current.filter((_, i) => i !== index),
-  //     { shouldDirty: true },
-  //   );
-  // };
 
   const handleRemoveOwnerPickImageFiles = (index: number) => {
     const current = watch('ownerPickImageFiles');

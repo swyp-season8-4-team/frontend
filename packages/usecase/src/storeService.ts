@@ -51,6 +51,7 @@ import type {
   EditNoticeRequest,
   EditNoticeResponse,
   DeleteNoticeRequest,
+  EditMenuRequestFormData,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -413,7 +414,7 @@ export default class StoreService {
     await this.storeRepository.createMenu(requestData);
   }
 
-  async editMenu(params: EditMenuRequest): Promise<void> {
+  async editMenu(params: EditMenuRequestFormData): Promise<void> {
     if (!this.storeRepository) {
       throw new Error('storeRepository is not set');
     } else if (!this.authRepository) {

@@ -78,12 +78,6 @@ export default function MenuPage() {
     <div>
       <DashBoardHeader title="메뉴 관리하기" />
       <button
-        // onClick={() =>
-        //   router.push(
-        //     navigationService.getHref(NavigationPathname.OwnerDashboardMenuRegister) +
-        //       `?storeUuid=${storeUuid}`,
-        //   )
-        // }
         onClick={openMenuAddModal}
         className="mx-auto mb-[5px] block w-[95%] rounded-[10px] border border-solid border-[#949494] bg-[#F5F5F5] px-4 py-2 hover:bg-[#C9C9C9]"
       >

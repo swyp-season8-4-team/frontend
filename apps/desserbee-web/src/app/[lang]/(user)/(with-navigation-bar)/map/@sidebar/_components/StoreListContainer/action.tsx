@@ -3,6 +3,8 @@
 import { commonErrorHandler } from '@/error/commonErrorHandler';
 import type {
   CreateMenuRequestFormData,
+  EditMenuRequest,
+  EditMenuRequestFormData,
   EditNoticeRequest,
   EditNoticeResponse,
   updateStoreRequestFormData,
@@ -129,15 +131,21 @@ export async function editNotice(
   return notice;
 }
 
-export async function deleteNotice({ storeUuid, noticeId}: { storeUuid: string; noticeId:number;}) {
+export async function deleteNotice({
+  storeUuid,
+  noticeId,
+}: {
+  storeUuid: string;
+  noticeId: number;
+}) {
   const deleted = await commonErrorHandler(
-    storeService.deleteNotice({ storeUuid, noticeId}),
+    storeService.deleteNotice({ storeUuid, noticeId }),
   );
   return deleted;
 }
 
 export async function getMenuList({ storeUuid }: { storeUuid: string }) {
-  const menulist= await commonErrorHandler(
+  const menulist = await commonErrorHandler(
     storeService.getMenuList(storeUuid),
   );
   return menulist;
@@ -146,22 +154,37 @@ export async function getMenuList({ storeUuid }: { storeUuid: string }) {
 export async function createMenu(
   params: CreateMenuRequestFormData,
 ): Promise<void> {
-  const created = await commonErrorHandler(
-    storeService.createMenu(params),
-  );
+  const created = await commonErrorHandler(storeService.createMenu(params));
   return created;
 }
 
-export async function deleteMenu({ storeUuid, menuUuid}: { storeUuid: string; menuUuid:string;}) {
-  const deleted = await commonErrorHandler(
-    storeService.deleteMenu({ storeUuid, menuUuid}),
-  );
-  return deleted;
-}
-
-export async function getMenu({ storeUuid,menuUuid}: { storeUuid: string; menuUuid:string; }) {
+export async function getMenu({
+  storeUuid,
+  menuUuid,
+}: {
+  storeUuid: string;
+  menuUuid: string;
+}) {
   const menu = await commonErrorHandler(
-    storeService.getMenu({ storeUuid,menuUuid}),
+    storeService.getMenu({ storeUuid, menuUuid }),
   );
   return menu;
+}
+
+export async function editMenu(params: EditMenuRequestFormData): Promise<void> {
+  const updated = await commonErrorHandler(storeService.editMenu(params));
+  return updated;
+}
+
+export async function deleteMenu({
+  storeUuid,
+  menuUuid,
+}: {
+  storeUuid: string;
+  menuUuid: string;
+}) {
+  const deleted = await commonErrorHandler(
+    storeService.deleteMenu({ storeUuid, menuUuid }),
+  );
+  return deleted;
 }
