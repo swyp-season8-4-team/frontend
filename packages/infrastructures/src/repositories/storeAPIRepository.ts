@@ -59,6 +59,7 @@ import type {
   EditNoticeResponse,
   DeleteNoticeRequest,
   EditMenuRequestFormData,
+  RegisterCouponRequest,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -851,6 +852,32 @@ export default class StoreAPIRepository
     const response = await fetch<void, void>({
       method: 'POST',
       url,
+    });
+
+    return response;
+  }
+
+   async createCoupon({
+    data,
+    authorization,
+  }: BaseRequestData<RegisterCouponRequest>): Promise<void> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { storeUuid } = data || {};
+
+    const url = `${this.endpoint}/coupons/create`;
+
+    const response = await fetch<RegisterCouponRequest, void>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      method: 'POST',
+      url,
+      data
     });
 
     return response;
