@@ -16,4 +16,5 @@ export interface RequestData<D = unknown> {
   query?: Queries;
   retry?: boolean;
   formData?: FormData;
+  revalidate?: number;
 }

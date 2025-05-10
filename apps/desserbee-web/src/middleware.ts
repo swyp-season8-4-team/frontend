@@ -159,7 +159,7 @@ export const config = {
      * - favicon.ico (favicon file)
      * - robots.txt (control crawler traffic)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|mockServiceWorker.js).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|mockServiceWorker.js|image).*)',
   ],
 };
 

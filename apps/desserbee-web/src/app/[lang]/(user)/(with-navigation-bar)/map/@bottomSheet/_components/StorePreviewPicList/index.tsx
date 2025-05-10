@@ -15,11 +15,14 @@ export function StorePreviewPicList({
 
   return (
     <div className="flex gap-[9.4px] md:gap-[22px]">
-      {displayImages.map(({ id, url }) => (
-        <div key={id} className="aspect-square w-full">
+      {displayImages.map((image: any) => (
+        <div
+          key={typeof image === 'object' && image.id ? image.id : image}
+          className="aspect-square w-full"
+        >
           <Image
             className="h-full w-full object-cover"
-            src={url}
+            src={typeof image === 'object' && image.url ? image.url : image}
             alt="가게 사진"
             width={190}
             height={162}

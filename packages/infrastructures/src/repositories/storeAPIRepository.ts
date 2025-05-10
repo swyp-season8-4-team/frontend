@@ -73,6 +73,7 @@ export default class StoreAPIRepository
     const response = await fetch<void, PreferenceData[]>({
       method: 'GET',
       url: `${this.endpoint}/preferences`,
+      revalidate: 86400,
     });
 
     return response;
@@ -110,6 +111,7 @@ export default class StoreAPIRepository
       }),
       method: 'GET',
       url,
+      revalidate: 60,
     });
 
     return response;
@@ -203,6 +205,7 @@ export default class StoreAPIRepository
     const response = await fetch<void, StoreSummaryInfoData>({
       method: 'GET',
       url: `${this.endpoint}/stores/${storeUuid}/summary`,
+      revalidate: 60,
     });
 
     return response;
@@ -227,6 +230,7 @@ export default class StoreAPIRepository
       method: 'GET',
       // url: `${this.endpoint}/stores/${storeUuid}/details${userUuid ? `?userUuid=${userUuid}` : ''}`,
       url: `${this.endpoint}/stores/${storeUuid}/details`,
+      revalidate: 120,
     });
 
     return response;
@@ -525,6 +529,7 @@ export default class StoreAPIRepository
       }),
       method: 'GET',
       url: `${this.endpoint}/user-store/lists/${listId}/stores`,
+      revalidate: 60,
     });
 
     return response;
@@ -576,6 +581,7 @@ export default class StoreAPIRepository
       }),
       method: 'GET',
       url: `${this.endpoint}/user-store/${userUuid}/lists`,
+      revalidate: 60,
     });
 
     return response;
@@ -717,8 +723,8 @@ export default class StoreAPIRepository
 
     const formData = new FormData();
     formData.append(
-      'requests', 
-      new Blob([JSON.stringify(requests)], { type: 'application/json' })
+      'requests',
+      new Blob([JSON.stringify(requests)], { type: 'application/json' }),
     );
 
     if (menuImages?.length) {
@@ -737,7 +743,7 @@ export default class StoreAPIRepository
       }),
       method: 'POST',
       url,
-      formData
+      formData,
     });
 
     return response;
@@ -848,6 +854,7 @@ export default class StoreAPIRepository
     const response = await fetch<void, StoreOnelineReivewData[]>({
       method: 'GET',
       url: url,
+      revalidate: 60,
     });
 
     return response;

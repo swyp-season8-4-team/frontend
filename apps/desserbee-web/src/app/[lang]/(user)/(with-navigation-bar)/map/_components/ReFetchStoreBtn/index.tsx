@@ -4,7 +4,7 @@ interface RefetchStoreBtnProps {
   clearSelectedCategories: () => void;
 }
 
-export function ReFetchStoreBtn({
+export default function ReFetchStoreBtn({
   refetchStore,
   clearSelectedCategories,
 }: RefetchStoreBtnProps) {
@@ -16,11 +16,11 @@ export function ReFetchStoreBtn({
         clearSelectedCategories();
       }}
     >
-      <div className="shadow-base flex items-center gap-1 rounded-[24px] bg-white p-2 md:gap-2 md:px-3 md:py-2">
-        <div className="h-3 w-3 md:h-4 md:w-4">
-          <IconRetry className="h-full w-full text-xs text-[#3374ff] md:text-lg" />
+      <div className="'shadow-base flex items-center gap-2 rounded-[24px] bg-white px-3 py-2 font-medium">
+        <div className="h-4 w-4">
+          <IconRetry className="h-full w-full text-[#3374ff]" />
         </div>
-        <div className="semi-bold text-nowrap text-xs text-[#3374ff] md:text-lg">
+        <div className="semi-bold text-nowrap text-[#3374ff]">
           현 위치에서 새로고침
         </div>
       </div>

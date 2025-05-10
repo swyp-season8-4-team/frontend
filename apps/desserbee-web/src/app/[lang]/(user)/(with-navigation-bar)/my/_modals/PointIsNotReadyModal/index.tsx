@@ -1,5 +1,6 @@
-import IconBee from '@repo/design-system/components/icons/IconBee';
+import ReadyBee from '@/assets/images/bee_icon_ready.png';
 import { CustomModal } from '@repo/design-system/components/Modal/custom';
+import Image from 'next/image';
 
 interface PointIsNotReadyModalProps {
   onClose: () => void;
@@ -9,13 +10,15 @@ export function PointIsNotReadyModal({ onClose }: PointIsNotReadyModalProps) {
   return (
     <CustomModal
       onClose={onClose}
-      className="text-nowrap flex justify-center items-center my-[50px] p-5 w-[214px] md:w-[308px] aspect-square"
+      className="my-[50px] flex aspect-square w-[214px] items-center justify-center text-nowrap p-5 md:w-[308px]"
     >
       <div className="flex flex-col items-center">
-        <div className="w-[62px] md:w-[94px] md:">
-          <IconBee className="w-full h-full" />
+        <div className="md: w-[62px] md:w-[94px]">
+          <div className="md: w-[62px] md:w-[94px]">
+            <Image src={ReadyBee} alt="logo" />
+          </div>
         </div>
-        <div className="font-semibold text-[14px] md:text-[18px]">
+        <div className="text-[14px] font-semibold md:text-[18px]">
           포인트 서비스는 아직 준비중입니다!
         </div>
       </div>

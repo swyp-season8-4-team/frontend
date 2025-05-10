@@ -21,7 +21,7 @@ interface PreferenceTagsProps {
   updateSelectedTag: (categoryName: Preference) => void;
 }
 
-export function PreferenceTags({
+export default function PreferenceTags({
   categories,
   isMyPreferSelected,
   updateSelectedTag,
@@ -59,7 +59,7 @@ export function PreferenceTags({
   return (
     <div>
       <Carousel
-        className="top-4 left-[18px] z-10 absolute w-full select-none"
+        className="absolute left-[18px] top-4 z-10 w-full select-none"
         opts={{
           align: 'start',
           dragFree: true,
@@ -67,12 +67,12 @@ export function PreferenceTags({
         }}
       >
         <CarouselContent className="-ml-1">
-          <div className="px-1 py-1 text-nowrap flex-shrink-0">
+          <div className="flex-shrink-0 text-nowrap px-1 py-1">
             <Tag
               className={cn(
                 // 'text-3 md:text-lg py-[6px] md:py-2 md:px-3 font-medium select-none text-nowrap text-[#DE8332]',
-                `basis-1/${categories.length} text-3 py-[6px] font-medium select-none text-nowrap text-[#DE8332]`,
-                isMyPreferSelected && 'text-white bg-[#DE8332]',
+                `basis-1/${categories.length} text-3 select-none text-nowrap py-[6px] font-medium text-[#DE8332]`,
+                isMyPreferSelected && 'bg-[#DE8332] text-white',
               )}
               onClick={() => {
                 handleMyPreferenceBtnClick();
@@ -84,14 +84,14 @@ export function PreferenceTags({
           {categories.map((category) => (
             <CarouselItem
               key={category.id}
-              className={`pl-2 basis-1/${categories.length} text-nowrap flex-shrink-0`}
+              className={`pl-2 basis-1/${categories.length} flex-shrink-0 text-nowrap`}
             >
               <div className="px-1 py-1">
                 <Tag
                   onClick={() => handleTagClick(category.preferenceName)}
                   className={cn(
                     // 'text-3 md:text-lg font-medium py-[6px] md:py-2 md:px-3',
-                    'text-3  font-medium py-[6px]',
+                    'text-3 py-[6px] font-medium',
                     selectedCategories.has(category.preferenceName) &&
                       'bg-primary text-white',
                   )}

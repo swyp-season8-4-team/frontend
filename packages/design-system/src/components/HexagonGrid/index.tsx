@@ -1,5 +1,4 @@
 import { cn } from '@repo/ui/lib/utils';
-
 type HexagonType = 'text' | 'image';
 
 interface HexagonConfig {
@@ -54,7 +53,7 @@ export function HexagonGrid({
   storeImages,
 }: {
   contents: string[];
-  storeImages?: string[];
+  storeImages?: any[];
 }) {
   const hexagonConfig: HexagonConfig[] = [
     { type: 'text', position: 'top-[10%] left-0' },
