@@ -1,6 +1,5 @@
 import React from "react";
 
-// 1. 타입을 string | boolean | string[]으로 확장
 interface SelectButtonProps {
   value: string | boolean | string[];
   options: { value: string | boolean; label: string }[];
@@ -12,7 +11,7 @@ export function SelectButton({
   options,
   onChange,
 }: SelectButtonProps) {
-  // 2. 다중 선택 로직 추가
+  // 다중 선택 로직 추가
   const handleToggle = (itemValue: string | boolean) => {
     if (Array.isArray(value)) {
       // 배열인 경우: 다중 선택 모드
@@ -26,7 +25,7 @@ export function SelectButton({
     }
   };
 
-  // 3. 선택 상태 체크 로직
+  // 선택 상태 체크 로직
   const isSelected = (itemValue: string | boolean) => {
     return Array.isArray(value)
       ? value.includes(itemValue as string)

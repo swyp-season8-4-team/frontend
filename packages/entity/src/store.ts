@@ -806,7 +806,7 @@ export interface couponType {
   giftMenuName?: string; // 증정 메뉴명
 }
 
-export interface RegisterCoupon {
+export interface RegisterCouponRequest {
   name: string; // 쿠폰 이름
   hasExposureDate:boolean; // 상시 노출 or 일시 노출 
   exposureStartAt?: string;
@@ -996,4 +996,10 @@ export interface StoreRepository {
     authorization,
     data,
   }: BaseRequestData<DeleteNoticeRequest>): Promise<void>;
+
+  // owner: coupon
+  createCoupon({
+    authorization,
+    data,
+  }: BaseRequestData<RegisterCouponRequest>): Promise<void>;
 }

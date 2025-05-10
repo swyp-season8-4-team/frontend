@@ -52,6 +52,7 @@ import type {
   EditNoticeResponse,
   DeleteNoticeRequest,
   EditMenuRequestFormData,
+  RegisterCouponRequest,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -386,6 +387,23 @@ export default class StoreService {
 
     const result = await this.storeRepository.deleteNotice(requestData);
     return result;
+  }
+
+  async createCoupon(params: RegisterCouponRequest): Promise<void> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set');
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const authorization = await this.authRepository.getAuthorization();
+
+    const requestData = {
+      data: params,
+      authorization,
+    };
+
+    await this.storeRepository.createCoupon(requestData);
   }
 
   async updateCouponCount() {
