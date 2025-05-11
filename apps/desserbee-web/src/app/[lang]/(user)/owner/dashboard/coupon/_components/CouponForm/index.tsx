@@ -1,25 +1,60 @@
 'use client';
 
-import type { couponCondition, RegisterCouponRequest } from '@repo/entity/src/store';
+import type {
+  couponCondition,
+  RegisterCouponRequest,
+} from '@repo/entity/src/store';
 import { Controller, useForm, type FieldError } from 'react-hook-form';
 import { SelectButton } from '../SelectedButton';
 import { LightOliveButton } from '@repo/design-system/components/buttons/FillButtons/LightOlive';
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
 import { cn } from '@repo/ui/lib/utils';
 import { ValidationError } from '../../../../register/_components/ValidationError';
+import { useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 
 interface CouponConditionForm extends couponCondition {
-  // 체크박스 상태 추가
-  isAmountEnabled: boolean;
-  isDayEnabled: boolean;
-  isTimeEnabled: boolean;
-  isSelfEnabled: boolean;
+  conditionType: ''|'AMOUNT' | 'TIME_DAY' | 'EXCLUSIVE' | 'CUSTOM';
 }
 
 interface FormInputs extends Omit<RegisterCouponRequest, 'couponCondition'> {
   couponCondition: CouponConditionForm;
 }
+
+const couponTypeOptions = [
+  { value: 'FIXED', label: '정액' },
+  { value: 'RATE', label: '정률' },
+];
+
+const couponTargetOptions = [
+  { value: 'ALL', label: '모든 고객' },
+  { value: 'SUBSCRIBED', label: '알림받기한 고객' },
+  { value: 'CUSTOM', label: '기타' },
+];
+
+const ExposureDateOptions = [
+  { value: false, label: '상시 노출' },
+  { value: true, label: '일시 노출' },
+];
+
+const DayOptions = [
+  { value: 'MONDAY', label: '월' },
+  { value: 'TUESDAY', label: '화' },
+  { value: 'WEDNESDAY', label: '수' },
+  { value: 'THURSDAY', label: '목' },
+  { value: 'FRIDAY', label: '금' },
+  { value: 'SATURDAY', label: '토' },
+  { value: 'SUNDAY', label: '일' },
+];
+
+const QuantityOptions = [
+  { value: false, label: '제한 없이 발행' },
+  { value: true, label: '수량 제한' },
+];
+
 export default function CouponForm() {
+  const searchParams = useSearchParams();
+  const storeUuid = searchParams.get('storeUuid');
   const {
     register,
     control,
@@ -35,17 +70,13 @@ export default function CouponForm() {
       exposureStartAt: '',
       exposureEndAt: '',
       couponCondition: {
-        isAmountEnabled: false, // 체크박스 초기값 추가
-        isDayEnabled: false,
-        isTimeEnabled: false,
-        isSelfEnabled: false,
         conditionType: '',
         minimumPurchaseAmount: undefined,
         conditionStartTime: undefined,
         conditionEndTime: undefined,
         conditionDays: [],
         customConditionText: '',
-        exclusiveOnly: undefined,
+        exclusiveOnly: false,
       },
       hasExpiryDate: undefined,
       expiryDate: '',
@@ -58,59 +89,23 @@ export default function CouponForm() {
         giftMenuName: '',
       },
       couponTarget: '',
-      storeUuid: '',
+      storeUuid: storeUuid || '',
     },
-    mode: 'onChange',
+    mode: 'onSubmit',
+    shouldUnregister: true,
   });
 
   const onSubmit = (data: FormInputs) => {
-    if (
-      !data.couponCondition.isAmountEnabled &&
-      !data.couponCondition.isDayEnabled &&
-      !data.couponCondition.isTimeEnabled &&
-      !data.couponCondition.isSelfEnabled &&
-      !data.couponCondition.exclusiveOnly
-    ) {
-      setError('couponCondition', {
+    // 쿠폰 사용 조건 중에 1개라도 선택했는지 확인
+    if (!data.couponCondition.conditionType) {
+      setError('couponCondition.conditionType', {
         type: 'manual',
-        message: '최소 1개 이상의 사용 조건을 선택해야 합니다',
+        message: '쿠폰 사용 조건을 선택하세요',
       });
       return;
     }
-
     console.log(data);
   };
-
-  const couponTypeOptions = [
-    { value: 'FIXED', label: '정액' },
-    { value: 'RATE', label: '정률' },
-  ];
-
-  const couponTargetOptions = [
-    { value: 'ALL', label: '모든 고객' },
-    { value: 'SUBSCRIBED', label: '알림받기한 고객' },
-    { value: 'CUSTOM', label: '기타' },
-  ];
-
-  const ExposureDateOptions = [
-    { value: false, label: '상시 노출' },
-    { value: true, label: '일시 노출' },
-  ];
-
-  const DayOptions = [
-    { value: 'MONDAY', label: '월' },
-    { value: 'TUESDAY', label: '화' },
-    { value: 'WEDNESDAY', label: '수' },
-    { value: 'THURSDAY', label: '목' },
-    { value: 'FRIDAY', label: '금' },
-    { value: 'SATURDAY', label: '토' },
-    { value: 'SUNDAY', label: '일' },
-  ];
-
-  const QuantityOptions = [
-    { value: false, label: '제한 없이 발행' },
-    { value: true, label: '수량 제한' },
-  ];
 
   const discountType = watch('couponType.discountType');
   const hasExposureDate = watch('hasExposureDate');
@@ -120,7 +115,7 @@ export default function CouponForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="mx-auto flex flex-col gap-y-6 p-4"
+      className="mx-auto flex flex-col gap-y-4 p-4"
     >
       <div>
         <div className="flex items-center gap-2">
@@ -266,117 +261,120 @@ export default function CouponForm() {
         )}
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="font-medium">쿠폰 노출 기간</label>
-        <Controller
-          name="hasExposureDate"
-          control={control}
-          rules={{
-            validate: (v) => v !== undefined || '쿠폰 노출 기간을 선택하세요',
-          }}
-          render={({ field }) => (
-            <SelectButton
-              value={field.value}
-              options={ExposureDateOptions}
-              onChange={(v) => {
-                field.onChange(v === true || v === 'true');
-              }}
-            />
-          )}
-        />
-        {errors.hasExposureDate && (
-          <div className="mt-2">
-            <ValidationError errorMessage={errors.hasExposureDate.message} />
-          </div>
-        )}
-        {hasExposureDate === true && (
-          <div className="flex w-full gap-2">
-            <div className="flex items-center gap-2">
-              <label className="text-[#635F59]">시작 날짜</label>
-              <input
-                {...register('exposureStartAt', {
-                  validate: (value, formValues) => {
-                    if (!hasExposureDate) return true;
-
-                    // 1. 값이 있는지 확인
-                    if (!value) return '시작 날짜를 선택하세요';
-
-                    // 2. 오늘 날짜보다 이전인지 확인
-                    const today = new Date().toISOString().split('T')[0];
-                    if (value < today) {
-                      return '시작 날짜는 오늘 이후로 설정해주세요';
-                    }
-
-                    // 3. 종료 날짜보다 이후인지 확인
-                    const endDate = formValues.exposureEndAt;
-                    if (endDate && value > endDate) {
-                      return '시작 날짜는 종료 날짜보다 이전이어야 합니다';
-                    }
-
-                    return true;
-                  },
-                })}
-                type="date"
-                className="min-w-0 flex-1"
+      <>
+        <div className="flex flex-col gap-2">
+          <label className="font-medium">쿠폰 노출 기간</label>
+          <Controller
+            name="hasExposureDate"
+            control={control}
+            rules={{
+              validate: (v) => v !== undefined || '쿠폰 노출 기간을 선택하세요',
+            }}
+            render={({ field }) => (
+              <SelectButton
+                value={field.value}
+                options={ExposureDateOptions}
+                onChange={(v) => {
+                  field.onChange(v === true || v === 'true');
+                }}
               />
+            )}
+          />
+          {errors.hasExposureDate && (
+            <div className="mt-2">
+              <ValidationError errorMessage={errors.hasExposureDate.message} />
             </div>
-            {errors.exposureStartAt && (
-              <div className="mt-2">
-                <ValidationError
-                  errorMessage={errors.exposureStartAt.message}
+          )}
+          {hasExposureDate === true && (
+            <div className="flex w-full gap-2">
+              <div className="flex items-center gap-2">
+                <label className="text-[#635F59]">시작 날짜</label>
+                <input
+                  {...register('exposureStartAt', {
+                    validate: (value, formValues) => {
+                      if (!hasExposureDate) return true;
+
+                      // 1. 값이 있는지 확인
+                      if (!value) return '시작 날짜를 선택하세요';
+
+                      // 2. 오늘 날짜보다 이전인지 확인
+                      const today = new Date().toISOString().split('T')[0];
+                      if (value < today) {
+                        return '시작 날짜는 오늘 이후로 설정해주세요';
+                      }
+
+                      // 3. 종료 날짜보다 이후인지 확인
+                      const endDate = formValues.exposureEndAt;
+                      if (endDate && value > endDate) {
+                        return '시작 날짜는 종료 날짜보다 이전이어야 합니다';
+                      }
+
+                      return true;
+                    },
+                  })}
+                  type="date"
+                  className="min-w-0 flex-1"
                 />
               </div>
-            )}
 
-            <div className="flex items-center gap-2">
-              <label className="text-[#635F59]">종료 날짜</label>
-              <input
-                {...register('exposureEndAt', {
-                  validate: (value, formValues) => {
-                    if (!hasExposureDate) return true;
+              <div className="flex items-center gap-2">
+                <label className="text-[#635F59]">종료 날짜</label>
+                <input
+                  {...register('exposureEndAt', {
+                    validate: (value, formValues) => {
+                      if (!hasExposureDate) return true;
 
-                    // 1. 값이 있는지 확인
-                    if (!value) return '종료 날짜를 선택하세요';
+                      // 1. 값이 있는지 확인
+                      if (!value) return '종료 날짜를 선택하세요';
 
-                    // 2. 시작 날짜보다 이전인지 확인
-                    const startDate = formValues.exposureStartAt;
-                    if (startDate && value < startDate) {
-                      return '종료 날짜는 시작 날짜보다 이후여야 합니다';
-                    }
+                      // 2. 시작 날짜보다 이전인지 확인
+                      const startDate = formValues.exposureStartAt;
+                      if (startDate && value < startDate) {
+                        return '종료 날짜는 시작 날짜보다 이후여야 합니다';
+                      }
 
-                    return true;
-                  },
-                })}
-                type="date"
-                className="min-w-0 flex-1"
-              />
-            </div>
-            {errors.exposureEndAt && (
-              <div className="mt-2">
-                <ValidationError errorMessage={errors.exposureEndAt.message} />
+                      return true;
+                    },
+                  })}
+                  type="date"
+                  className="min-w-0 flex-1"
+                />
               </div>
-            )}
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+        </div>
+        <div className="flex gap-2">
+          {errors.exposureStartAt && (
+            <div>
+              <ValidationError errorMessage={errors.exposureStartAt.message} />
+            </div>
+          )}
+          {errors.exposureEndAt && (
+            <div>
+              <ValidationError errorMessage={errors.exposureEndAt.message} />
+            </div>
+          )}
+        </div>
+      </>
 
       <div className="flex flex-col gap-2">
         <label className="font-medium">쿠폰 사용 조건</label>
         <div className="flex flex-col gap-1">
           <label>
             <input
-              type="checkbox"
-              {...register('couponCondition.isAmountEnabled')}
+              type="radio"
+              {...register('couponCondition.conditionType')}
               className="mr-1"
+              value="AMOUNT"
             />
             결제 금액에 따라 사용 가능함
           </label>
-          {watch('couponCondition.isAmountEnabled') && (
+          {watch('couponCondition.conditionType') === 'AMOUNT' && (
             <>
               <input
                 {...register('couponCondition.minimumPurchaseAmount', {
                   validate: (value, formValues) => {
-                    if (formValues.couponCondition?.isAmountEnabled) {
+                    if (formValues.couponCondition?.conditionType==='AMOUNT') {
                       if (!value) return '최소 결제 금액을 입력해주세요';
                       if (Number(value) <= 0) return '0원 이상 입력해주세요';
                     }
@@ -393,7 +391,7 @@ export default function CouponForm() {
                 )}
               />
               {errors.couponCondition?.minimumPurchaseAmount && (
-                <div className="mt-2">
+                <div>
                   <ValidationError
                     errorMessage={
                       errors.couponCondition?.minimumPurchaseAmount.message
@@ -406,21 +404,22 @@ export default function CouponForm() {
 
           <label>
             <input
-              type="checkbox"
-              {...register('couponCondition.isDayEnabled')}
+              type="radio"
+              {...register('couponCondition.conditionType')}
+              value="TIME_DAY"
               className="mr-1"
             />
-            요일 선택적으로 사용 가능
+            요일 / 시간 선택적으로 사용 가능
           </label>
-          {watch('couponCondition.isDayEnabled') && (
-            <>
+          {watch('couponCondition.conditionType') === 'TIME_DAY' && (
+            <div>
               <Controller
                 name="couponCondition.conditionDays"
                 control={control}
                 rules={{
                   validate: (value, formValues) => {
                     // 체크박스가 활성화된 경우만 검증
-                    if (formValues.couponCondition?.isDayEnabled) {
+                    if (formValues.couponCondition?.conditionType==='TIME_DAY') {
                       return (
                         (value?.length ?? 0) > 0 ||
                         '최소 1개 이상 선택해야 합니다'
@@ -438,25 +437,13 @@ export default function CouponForm() {
                 )}
               />
               {errors.couponCondition?.conditionDays && (
-                <div className="mt-2">
+                <div>
                   <ValidationError
                     errorMessage={errors.couponCondition.conditionDays.message}
                   />
                 </div>
               )}
-            </>
-          )}
 
-          <label>
-            <input
-              type="checkbox"
-              {...register('couponCondition.isTimeEnabled')}
-              className="mr-1"
-            />
-            시간 선택적으로 사용 가능
-          </label>
-          {watch('couponCondition.isTimeEnabled') && (
-            <>
               <div className="mb-2 flex w-full gap-2">
                 <div className="flex items-center gap-2">
                   <label className="text-[#635F59]">시작 시간</label>
@@ -464,8 +451,7 @@ export default function CouponForm() {
                     {...register('couponCondition.conditionStartTime', {
                       required: '시작 시간을 입력하세요',
                       validate: (value, formValues) => {
-                        // 체크박스가 꺼져 있으면 검증하지 않음
-                        if (!formValues.couponCondition?.isTimeEnabled)
+                        if (formValues.couponCondition?.conditionType !== 'TIME_DAY') 
                           return true;
                         if (!value) return '시작 시간을 입력하세요';
 
@@ -480,7 +466,6 @@ export default function CouponForm() {
                       },
                     })}
                     type="time"
-                    step="1" // 초 단위까지 입력받으려면 추가
                     className="min-w-0 flex-1"
                   />
                 </div>
@@ -491,7 +476,7 @@ export default function CouponForm() {
                     {...register('couponCondition.conditionEndTime', {
                       required: '종료 시간을 입력하세요',
                       validate: (value, formValues) => {
-                        if (!formValues.couponCondition?.isTimeEnabled)
+                        if (formValues.couponCondition?.conditionType !== 'TIME_DAY') 
                           return true;
                         if (!value) return '종료 시간을 입력하세요';
 
@@ -505,60 +490,64 @@ export default function CouponForm() {
                       },
                     })}
                     type="time"
-                    step="1"
                     className="min-w-0 flex-1"
                   />
                 </div>
               </div>
-              {errors.couponCondition?.conditionStartTime && (
-                <div className="mt-2">
-                  <ValidationError
-                    errorMessage={
-                      errors.couponCondition.conditionStartTime.message
-                    }
-                  />
-                </div>
-              )}
-              {errors.couponCondition?.conditionEndTime && (
-                <div className="mt-2">
-                  <ValidationError
-                    errorMessage={
-                      errors.couponCondition.conditionEndTime.message
-                    }
-                  />
-                </div>
-              )}
-            </>
+              <div className="flex gap-2">
+                {errors.couponCondition?.conditionStartTime && (
+                  <div>
+                    <ValidationError
+                      errorMessage={
+                        errors.couponCondition.conditionStartTime.message
+                      }
+                    />
+                  </div>
+                )}
+                {errors.couponCondition?.conditionEndTime && (
+                  <div>
+                    <ValidationError
+                      errorMessage={
+                        errors.couponCondition.conditionEndTime.message
+                      }
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
           )}
 
           <label>
             <input
-              type="checkbox"
-              {...register('couponCondition.exclusiveOnly')}
+              type="radio"
+              {...register('couponCondition.conditionType')}
               className="mr-1"
+              value="EXCLUSIVE"
             />
             쿠폰 단독 사용 불가능(다른 메뉴 주문시 사용 가능)
           </label>
 
           <label>
             <input
-              type="checkbox"
-              {...register('couponCondition.isSelfEnabled')}
+              type="radio"
+              {...register('couponCondition.conditionType')}
               className="mr-1"
+              value="CUSTOM"
             />
             직접 조건 입력
           </label>
-          {watch('couponCondition.isSelfEnabled') && (
+          {watch('couponCondition.conditionType') === 'CUSTOM' && (
             <>
               <input
                 {...register('couponCondition.customConditionText', {
-                  required: watch('couponCondition.isSelfEnabled')
-                    ? '조건을 입력해주세요'
-                    : false,
+                  required:
+                    watch('couponCondition.conditionType') === 'CUSTOM'
+                      ? '조건을 입력해주세요'
+                      : false,
                   validate: (value) => {
                     // 공백 입력까지 막고 싶은 경우
                     if (
-                      watch('couponCondition.isSelfEnabled') &&
+                      watch('couponCondition.conditionType') === 'CUSTOM' &&
                       !value?.trim()
                     ) {
                       return '조건을 입력해주세요';
@@ -587,6 +576,11 @@ export default function CouponForm() {
             </>
           )}
         </div>
+        {errors.couponCondition?.conditionType && (
+          <ValidationError
+            errorMessage={errors.couponCondition.conditionType.message}
+          />
+        )}
       </div>
 
       <div className="flex flex-col gap-2">
@@ -594,7 +588,9 @@ export default function CouponForm() {
         <Controller
           name="hasExpiryDate"
           control={control}
-          rules={{ required: '쿠폰 유효 기간을 선택하세요' }}
+          rules={{
+            validate: (v) => v !== undefined || '쿠폰 유효 기간을 선택하세요',
+          }}
           render={({ field }) => (
             <div className="flex flex-col gap-1">
               <label>
@@ -634,8 +630,27 @@ export default function CouponForm() {
                 validate: (value) => {
                   if (hasExpiryDate === true) {
                     if (!value) return '유효기간을 입력해주세요';
+                    // 형식 확인
                     if (!/^\d{4}\.\d{2}\.\d{2}$/.test(value)) {
                       return 'YYYY.MM.DD 형식으로 입력해주세요';
+                    }
+                    // 실제 날짜 유효성 체크
+                    const [year, month, day] = value.split('.').map(Number);
+                    const date = new Date(year, month - 1, day);
+
+                    if (
+                      date.getFullYear() !== year ||
+                      date.getMonth() !== month - 1 ||
+                      date.getDate() !== day
+                    ) {
+                      return '유효한 날짜를 입력해주세요';
+                    }
+                    // 현재 날짜와 비교
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0); // 시간 제거
+                    date.setHours(0, 0, 0, 0);
+                    if (date < today) {
+                      return '유효기간은 오늘 이후로 설정해주세요';
                     }
                   }
                   return true;
@@ -654,10 +669,6 @@ export default function CouponForm() {
             )}
           </>
         )}
-
-        {errors.couponCondition && (
-          <ValidationError errorMessage={errors.couponCondition.message} />
-        )}
       </div>
 
       <div className="flex flex-col gap-2">
@@ -665,7 +676,10 @@ export default function CouponForm() {
         <Controller
           name="hasQuantity"
           control={control}
-          rules={{ required: '쿠폰 발행 제한 여부를 선택하세요' }}
+          rules={{
+            validate: (v) =>
+              v !== undefined || '쿠폰 발행 제한 여부를 선택하세요',
+          }}
           render={({ field }) => (
             <SelectButton
               value={field.value}
@@ -709,9 +723,7 @@ export default function CouponForm() {
               )}
             />
             {errors.quantity && (
-              <div className="mt-2">
-                <ValidationError errorMessage={errors.quantity.message} />
-              </div>
+              <ValidationError errorMessage={errors.quantity.message} />
             )}
           </>
         )}
@@ -732,7 +744,7 @@ export default function CouponForm() {
           type="submit"
           className="font-semibold"
           text="완료"
-          isDisabled={!isValid || !isDirty}
+          // isDisabled={!isValid || !isDirty}
         />
       </div>
     </form>

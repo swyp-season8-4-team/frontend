@@ -5,6 +5,7 @@ import { recipeKorea } from '@/app/fonts';
 import IconHamburger from '@repo/design-system/components/icons/IconHamburger';
 import { useState } from 'react';
 import { HamburgerMenu } from '../HamburgerMenu';
+import { useParams, useSearchParams } from 'next/navigation';
 
 interface HeaderProps {
   title: string;
@@ -13,6 +14,9 @@ interface HeaderProps {
 
 export function DashBoardHeader({ title, num }: HeaderProps) {
   const [open, setOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const storeUuid = searchParams.get('storeUuid');
+
   return (
     <>
       <div className="flex h-[56px] w-full items-center">
@@ -35,7 +39,12 @@ export function DashBoardHeader({ title, num }: HeaderProps) {
             </div>
           </div>
         )}
-        {open && <HamburgerMenu onClose={() => setOpen(false)} />}
+        {open && (
+          <HamburgerMenu
+            onClose={() => setOpen(false)}
+            storeUuid={storeUuid || ''}
+          />
+        )}
       </div>
       <div className="mb-4 flex w-full items-center justify-center gap-3">
         <p className="text-center text-[18px] font-bold">{title}</p>
