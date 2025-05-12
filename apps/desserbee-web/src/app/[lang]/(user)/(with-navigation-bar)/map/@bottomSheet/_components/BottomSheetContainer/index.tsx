@@ -80,9 +80,7 @@ export function BottomSheetContainer({
             <HexagonGrid {...hexaGridProps} />
             <SummaryInfoContainer {...storeSummaryProps} />
           </div>
-          {(storeSummary?.ownerPickImages ?? []).length > 0 && (
-            <StorePreviewPicList {...storePreviewPicListProps} />
-          )}
+          <StorePreviewPicList {...storePreviewPicListProps} />
         </>
       ) : (
         <div className="flex h-[300px] items-center justify-center">
