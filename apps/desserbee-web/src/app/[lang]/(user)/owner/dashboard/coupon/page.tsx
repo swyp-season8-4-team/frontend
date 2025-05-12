@@ -1,13 +1,15 @@
-'use client'
-import { useRouter } from 'next/navigation';
+'use client';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { DashBoardHeader } from '../_components/DashBoardHeader';
 import CouponCard from './_components/CouponCard';
 
 export default function CouponPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const storeUuid = searchParams.get('storeUuid');
 
   const registerCouponClick = () => {
-    const url = `/owner/dashboard/coupon/register`;
+    const url = `/owner/dashboard/coupon/register${storeUuid ? `?storeUuid=${storeUuid}` : ''}`;
     router.push(url);
   };
 

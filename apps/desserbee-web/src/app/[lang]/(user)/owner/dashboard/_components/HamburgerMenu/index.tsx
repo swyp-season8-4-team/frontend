@@ -9,9 +9,10 @@ const navigationService = new NavigationService({});
 
 type HamburgerMenuProps = {
   onClose: () => void;
+  storeUuid: string;
 };
 
-export function HamburgerMenu({ onClose }: HamburgerMenuProps) {
+export function HamburgerMenu({ onClose, storeUuid }: HamburgerMenuProps) {
   const pathname = usePathname(); // 현재 경로 가져오기
 
   type NavigationPathnameKey = keyof typeof NavigationPathname;
@@ -49,17 +50,20 @@ export function HamburgerMenu({ onClose }: HamburgerMenuProps) {
       {/* 메뉴 리스트 */}
       <nav className="flex flex-1 flex-col gap-2 px-6 text-[#6D6D6D]">
         {data.map((item, idx) => {
-          // 각 메뉴의 href
-          const href = navigationService.getHref(NavigationPathname[item.Link]);
-          // 현재 경로와 href가 같으면 isActive가 true
-          const isActive = pathname === href;
+          const pathnameStr = navigationService.getHref(
+            NavigationPathname[item.Link],
+          );
+          const href = {
+            pathname: pathnameStr,
+            query: { storeUuid },
+          };
+          const isActive = pathname === pathnameStr; // 현재 경로와 href가 같으면 isActive가 true
 
           return (
             <Link
               key={item.name}
               href={href}
               onClick={onClose}
-              // ④ isActive일 때만 선택 스타일 적용
               className={`flex cursor-pointer items-center rounded px-2 py-3 text-lg hover:bg-[#f3f3f3] ${
                 isActive ? 'bg-[#ededed] font-semibold text-[#9F9F9F]' : ''
               }`}
