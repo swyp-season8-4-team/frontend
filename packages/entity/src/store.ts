@@ -781,19 +781,11 @@ export interface DeleteNoticeRequest {
   noticeId: number;
 }
 
-// owner: coupon
-export interface time {
-  hour:number;
-  minute:number;
-  second: number;
-  nano: number;
-}
-
 export interface couponCondition { // 쿠폰 사용 조건 
   conditionType:string; // 정액 or 정률("FIXED" || "RATE")
   minimumPurchaseAmount?: number; //결제 금액에 따라 선택했을 때
-  conditionStartTime?:time; //시간 선택적으로 사용 선택했을 때
-  conditionEndTime?:time;
+  conditionStartTime?:string; //시간 선택적으로 사용 선택했을 때
+  conditionEndTime?:string;
   conditionDays?:string[]; // 요일 선택적으로 사용 선택했을 때 (["MONDAY"])
   customConditionText?:string; // 직접 조건 입력 선택했을 때
   exclusiveOnly?:boolean; // 단독 사용 불가인지

@@ -864,9 +864,6 @@ export default class StoreAPIRepository
     if (!data) {
       throw Error('data required');
     }
-
-    const { storeUuid } = data || {};
-
     const url = `${this.endpoint}/coupons/create`;
 
     const response = await fetch<RegisterCouponRequest, void>({

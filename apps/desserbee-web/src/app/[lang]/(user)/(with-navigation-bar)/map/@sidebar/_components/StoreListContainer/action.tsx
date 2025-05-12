@@ -7,6 +7,7 @@ import type {
   EditMenuRequestFormData,
   EditNoticeRequest,
   EditNoticeResponse,
+  RegisterCouponRequest,
   updateStoreRequestFormData,
   updateStoreResponse,
 } from '@repo/entity/src/store';
@@ -188,3 +189,11 @@ export async function deleteMenu({
   );
   return deleted;
 }
+
+export async function createCoupon(
+  params: RegisterCouponRequest,
+): Promise<void> {
+  const created = await commonErrorHandler(storeService.createCoupon(params));
+  return created;
+}
+
