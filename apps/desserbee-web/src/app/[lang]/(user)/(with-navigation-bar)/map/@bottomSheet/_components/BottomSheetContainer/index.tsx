@@ -78,7 +78,7 @@ export function BottomSheetContainer({
         <HexagonGrid {...hexaGridProps} />
         <SummaryInfoContainer {...storeSummaryProps} />
       </div>
-      {(storeSummary?.storeImages ?? []).length > 0 && (
+      {(storeSummary?.ownerPickImages ?? []).length > 0 && (
         <StorePreviewPicList {...storePreviewPicListProps} />
       )}
     </BottomSheet>
