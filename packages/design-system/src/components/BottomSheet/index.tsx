@@ -23,7 +23,9 @@ export function BottomSheet({
     if (isOpen) {
       setIsVisible(true);
       setIsClosing(false);
-      // 다음 프레임에서 애니메이션 시작
+      setIsOpening(false); // 초기화
+
+      // 다음 프레임에서 translate-y-0 적용 (트랜지션 유도)
       requestAnimationFrame(() => {
         setIsOpening(true);
       });
@@ -52,7 +54,7 @@ export function BottomSheet({
           'z-bottomSheet fixed bottom-0 w-full select-none pb-4',
           'left-0 right-0 mx-auto',
           'px-base rounded-t-base max-w-[768px] bg-white pt-[10px]',
-          'transition-transform duration-500 ease-out',
+          'transition-transform duration-300 ease-out',
           isClosing
             ? 'translate-y-full'
             : isOpening
