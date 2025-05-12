@@ -939,16 +939,16 @@ export function Map({ preferenceCategories }: MapProps) {
           </div>
         )}
         {isSearching && (
-          // <div className="top-1/2 left-1/2 z-20 absolute -translate-x-1/2 -translate-y-1/2 transform bg-white/80 p-2 rounded-full shadow-md flex items-center justify-center">
-          //   <span className="w-12 h-12 border-4 border-[#F9C22E] border-b-transparent rounded-full inline-block box-border animate-spin"></span>
-          // </div>
-          <div className="flex h-full flex-col items-center justify-center">
-            <IconLoadingSpinner
-              className="animate-spin"
-              size={50}
-              viewBox="0 0 104 104"
-            />
+          <div className="absolute left-1/2 top-1/2 z-20 flex -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full bg-white/80 p-2 shadow-md">
+            <span className="box-border inline-block h-12 w-12 animate-spin rounded-full border-4 border-[#F9C22E] border-b-transparent"></span>
           </div>
+          // <div className="flex h-full flex-col items-center justify-center">
+          //   <IconLoadingSpinner
+          //     className="animate-spin"
+          //     size={50}
+          //     viewBox="0 0 104 104"
+          //   />
+          // </div>
         )}
         <MemoizedPreferenceTags {...preferenceTagsProps} />
         <MemoizedMapPanel {...mapPanelProps} />

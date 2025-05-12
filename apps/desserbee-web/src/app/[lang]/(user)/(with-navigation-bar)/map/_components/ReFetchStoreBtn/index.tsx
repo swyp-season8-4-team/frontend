@@ -16,7 +16,7 @@ export default function ReFetchStoreBtn({
         clearSelectedCategories();
       }}
     >
-      <div className="'shadow-base flex items-center gap-2 rounded-[24px] bg-white px-3 py-2 font-medium">
+      <div className="'shadow-base active:bg-neutral-80 flex items-center gap-2 rounded-[24px] bg-white px-3 py-2 font-medium">
         <div className="h-4 w-4">
           <IconRetry className="h-full w-full text-[#3374ff]" />
         </div>
