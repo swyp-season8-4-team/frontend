@@ -7,6 +7,7 @@ interface StorePictureListProps
   extends Pick<StoreSummaryInfoData, 'ownerPickImages'> {
   menuImages: string[];
 }
+import ReadyBee from '@/assets/images/bee_icon_ready.png';
 
 export function StorePictureList({
   ownerPickImages = [],
@@ -41,6 +42,11 @@ export function StorePictureList({
   // 4개 이상의 이미지가 있는지 확인
   const hasMoreImages = ownerPickImageUrls.length > 4 || menuImages.length > 0;
 
+  const placeholderImages =
+    !ownerPickImages || ownerPickImages.length === 0
+      ? Array(4).fill(ReadyBee)
+      : Array(emptySlots).fill(ReadyBee);
+
   return (
     <div className="flex gap-[9px] py-3 md:gap-[22px] md:py-7">
       {displayImages.map((image, index) =>
@@ -73,11 +79,22 @@ export function StorePictureList({
           </div>
         ),
       )}
-      {Array.from({ length: emptySlots }).map((_, index) => (
+      {placeholderImages.map((src, index) => (
         <div
-          key={`empty-${index}`}
-          className="aspect-[190/162] w-full bg-gray-100"
-        />
+          key={`placeholder-${index}`}
+          className="bg-neutral-80 flex aspect-square w-full flex-col items-center justify-center"
+        >
+          <Image
+            className="h-[50%] w-[50%] object-contain opacity-50"
+            src={src}
+            alt="준비중 이미지"
+            width={90}
+            height={90}
+          />
+          <span className="mt-2 text-[8px] text-gray-500 md:text-xs">
+            No Image
+          </span>
+        </div>
       ))}
     </div>
   );

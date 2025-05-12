@@ -42,14 +42,14 @@ export default function MapPanel({ moveToCurrentPosition }: MapPanelProps) {
               handleOpenSideBarBtnClick();
             }
           }}
-          className="flex aspect-square h-8 w-8 items-center justify-center rounded-sm bg-white p-1"
+          className="active:bg-neutral-80 flex aspect-square h-8 w-8 items-center justify-center rounded-sm bg-white p-1"
           aria-label="저장한 가게 리스트 사이드바 열기"
         >
           <IconFlowerOutline className="h-full w-full text-[#6F6F6F]" />
         </button>
         <button
           onClick={moveToCurrentPosition}
-          className="flex aspect-square h-8 w-8 items-center justify-center rounded-sm bg-white p-1"
+          className="active:bg-neutral-80 flex aspect-square h-8 w-8 items-center justify-center rounded-sm bg-white p-1"
           aria-label="내 위치로 돌아가기"
         >
           <IconTarget className="h-full w-full text-[#6F6F6F]" />
