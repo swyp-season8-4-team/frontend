@@ -11,7 +11,6 @@ import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/
 import { cn } from '@repo/ui/lib/utils';
 import { ValidationError } from '../../../../register/_components/ValidationError';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
 import { createCoupon } from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
 
 interface CouponConditionForm extends couponCondition {
@@ -119,6 +118,10 @@ export default function CouponForm() {
       const startTime = data.couponCondition.conditionStartTime ?? '';
       const endTime = data.couponCondition.conditionEndTime ?? '';
 
+      if(data.couponCondition.conditionType==='EXCLUSIVE'){
+        data.couponCondition.exclusiveOnly = false;
+      }
+
       if (startTime && endTime) {
         data.couponCondition.conditionStartTime = addSecondsToDate(startTime);
         data.couponCondition.conditionEndTime = addSecondsToDate(endTime);
@@ -139,6 +142,8 @@ export default function CouponForm() {
   const hasExpiryDate = watch('hasExpiryDate');
   const hasQuantity = watch('hasQuantity');
   const couponType = watch('couponType.type');
+
+  console.log('conditionType:', watch('couponCondition.conditionType'));
 
   return (
     <form

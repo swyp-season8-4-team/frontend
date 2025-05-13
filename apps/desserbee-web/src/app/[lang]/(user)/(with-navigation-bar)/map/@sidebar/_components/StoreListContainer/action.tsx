@@ -197,3 +197,9 @@ export async function createCoupon(
   return created;
 }
 
+export async function getCoupon({ storeUuid }: { storeUuid: string }) {
+  const coupons = await commonErrorHandler(
+    storeService.getCoupon({ storeUuid }),
+  );
+  return coupons;
+}
