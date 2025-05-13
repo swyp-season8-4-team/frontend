@@ -234,7 +234,6 @@ export default class StoreAPIRepository
       method: 'GET',
       // url: `${this.endpoint}/stores/${storeUuid}/details${userUuid ? `?userUuid=${userUuid}` : ''}`,
       url: `${this.endpoint}/stores/${storeUuid}/details`,
-      revalidate: 120,
     });
 
     return response;
@@ -533,7 +532,6 @@ export default class StoreAPIRepository
       }),
       method: 'GET',
       url: `${this.endpoint}/user-store/lists/${listId}/stores`,
-      revalidate: 60,
     });
 
     return response;
@@ -585,7 +583,6 @@ export default class StoreAPIRepository
       }),
       method: 'GET',
       url: `${this.endpoint}/user-store/${userUuid}/lists`,
-      revalidate: 60,
     });
 
     return response;
