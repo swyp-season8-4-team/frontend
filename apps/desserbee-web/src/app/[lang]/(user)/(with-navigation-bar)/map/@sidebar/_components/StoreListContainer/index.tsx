@@ -118,26 +118,26 @@ export function StoreListContainer({
     <>
       {showStoreList && (
         <div
-          className="fixed bottom-0 left-0 right-0 z-10 flex justify-center"
+          className="z-modal fixed bottom-0 left-0 right-0 flex justify-center"
           onClick={handleListClose}
         >
           <div
             ref={bottomSheetRef}
             className={cn(
-              'w-full max-w-[768px] bg-white rounded-t-base',
-              'h-[40vh] md:h-[50dvh] pb-4 pt-[10px] px-base',
+              'rounded-t-base w-full max-w-[768px] bg-white',
+              'px-base h-[40vh] pb-4 pt-[10px] md:h-[50dvh]',
               'animate-slide-up transition-transform duration-500 ease-out',
               showStoreList ? 'translate-y-0' : 'translate-y-full',
             )}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="h-full flex flex-col">
-              <div className=" w-full flex items-center">
-                <div className="w-full flex justify-center">
-                  <div className="border-[#545454] border-[2.14px] md:border-[3px] rounded-[5px] w-[49.33px] md:w-[115.5px]"></div>
+            <div className="flex h-full flex-col">
+              <div className="flex w-full items-center">
+                <div className="flex w-full justify-center">
+                  <div className="w-[49.33px] rounded-[5px] border-[2.14px] border-[#545454] md:w-[115.5px] md:border-[3px]"></div>
                 </div>
                 <button
-                  className="flex justify-center items-center w-8 h-8 text-gray-500 hover:text-gray-700 ml-auto"
+                  className="ml-auto flex h-8 w-8 items-center justify-center text-gray-500 hover:text-gray-700"
                   onClick={handleListClose}
                   aria-label="닫기"
                 >
@@ -145,24 +145,24 @@ export function StoreListContainer({
                 </button>
               </div>
 
-              <div className="flex gap-1 md:gap-2 pb-[5.41px] md:pb-[14px] border-b-[#BABABA] border-b-[0.32px] md:border-b-[0.75px] w-full text-xs md:text-xl text-start">
+              <div className="flex w-full gap-1 border-b-[0.32px] border-b-[#BABABA] pb-[5.41px] text-start text-xs md:gap-2 md:border-b-[0.75px] md:pb-[14px] md:text-xl">
                 <div className="flex items-center gap-[5.09px] md:gap-[11.97px]">
-                  <div className="border-[#D5D5D5] border-[0.5px] rounded-sm w-[11.93px] md:w-[28.07px] aspect-square">
+                  <div className="aspect-square w-[11.93px] rounded-sm border-[0.5px] border-[#D5D5D5] md:w-[28.07px]">
                     <IconFlower
                       className={cn(
                         getIconColor(parentListInfo.iconColorId),
-                        'w-full h-full',
+                        'h-full w-full',
                       )}
                     />
                   </div>
-                  <span className="font-semibold text-nowrap">
+                  <span className="text-nowrap font-semibold">
                     {parentListInfo.listName}
                   </span>
                 </div>
-                <div className="flex justify-between items-center w-full">
-                  <div className="flex items-center gap-[2.07px] text-[#BABABA] text-[8px] md:text-base">
-                    <div className="w-[5.09px] md:w-[11.97px] h-[5.09px] md:h-[11.97px]">
-                      <IconLocation className="w-full h-full" />
+                <div className="flex w-full items-center justify-between">
+                  <div className="flex items-center gap-[2.07px] text-[8px] text-[#BABABA] md:text-base">
+                    <div className="h-[5.09px] w-[5.09px] md:h-[11.97px] md:w-[11.97px]">
+                      <IconLocation className="h-full w-full" />
                     </div>
                     <div>{storeData.length ? storeData.length : 0}개</div>
                   </div>
@@ -170,12 +170,12 @@ export function StoreListContainer({
                     <button
                       onClick={handleEditBtnClick}
                       className={cn(
-                        isEditing ? 'bg-primary' : 'bg-[#9F9F9F] ',
-                        'flex justify-center items-center px-[3.62px] md:px-[13px] md:py-[6px] rounded-[42.5px] text-[8px] md:text-base',
+                        isEditing ? 'bg-primary' : 'bg-[#9F9F9F]',
+                        'flex items-center justify-center rounded-[42.5px] px-[3.62px] text-[8px] md:px-[13px] md:py-[6px] md:text-base',
                       )}
                     >
-                      <div className="w-[7.65px] md:w-[18px] h-[7.65px] md:h-[18px]">
-                        <IconWriting className="w-full h-full text-white" />
+                      <div className="h-[7.65px] w-[7.65px] md:h-[18px] md:w-[18px]">
+                        <IconWriting className="h-full w-full text-white" />
                       </div>
                       <div className="text-white">
                         {isEditing ? '편집 중' : '편집하기'}
@@ -185,15 +185,15 @@ export function StoreListContainer({
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+              <div className="flex-1 overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 {Array.isArray(storeData) && storeData.length > 0 ? (
                   storeData.map((store, index) => (
                     <div
                       onClick={() => handleStoreSelectBtnClick(store.storeUuid)}
                       key={store.storeName}
                       className={cn(
-                        'flex items-center justify-between px-base py-[5.52px] md:py-[22.96px] cursor-pointer',
-                        index !== 0 && 'border-t-[#BABABA] border-t-[0.5px] ',
+                        'px-base flex cursor-pointer items-center justify-between py-[5.52px] md:py-[22.96px]',
+                        index !== 0 && 'border-t-[0.5px] border-t-[#BABABA]',
                       )}
                     >
                       <div>
@@ -204,26 +204,26 @@ export function StoreListContainer({
                                 selectedStoreUuId === store.storeUuid
                                   ? 'bg-[#DE8332]'
                                   : 'bg-[#E8E8E8]',
-                                'flex justify-center items-center rounded-full w-[9px] md:w-[21px] h-[9px] md:h-[21px] aspect-square',
+                                'flex aspect-square h-[9px] w-[9px] items-center justify-center rounded-full md:h-[21px] md:w-[21px]',
                               )}
                             >
-                              <div className="w-1 md:w-[11px] h-1 md:h-[11px]">
+                              <div className="h-1 w-1 md:h-[11px] md:w-[11px]">
                                 <IconCheck
                                   className={cn(
                                     selectedStoreUuId === store.storeUuid
                                       ? 'text-white'
                                       : 'text-[#9F9F9F]',
-                                    'w-full h-full',
+                                    'h-full w-full',
                                   )}
                                 />
                               </div>
                             </button>
                           )}
-                          <div className="font-semibold text-[10px] md:text-lg leading-tight">
+                          <div className="text-[10px] font-semibold leading-tight md:text-lg">
                             {store.storeName}
                           </div>
                         </div>
-                        <div className="md:mb-[17.2px] text-[8px] md:text-base leading-tight">
+                        <div className="text-[8px] leading-tight md:mb-[17.2px] md:text-base">
                           {store.storeAddress}
                         </div>
                       </div>
@@ -236,7 +236,7 @@ export function StoreListContainer({
                                 index === 0 && 'rounded-l-sm md:rounded-l-lg',
                                 index === store.imageUrls.length - 1 &&
                                   'rounded-r-sm md:rounded-r-lg',
-                                'w-[43.24px] md:w-[101.73px] aspect-square overflow-hidden bg-slate-300',
+                                'aspect-square w-[43.24px] overflow-hidden bg-slate-300 md:w-[101.73px]',
                               )}
                             >
                               <Image
@@ -244,7 +244,7 @@ export function StoreListContainer({
                                 alt={image}
                                 width={70}
                                 height={70}
-                                className="w-full h-full object-cover"
+                                className="h-full w-full object-cover"
                               />
                             </div>
                           ))}
@@ -253,20 +253,20 @@ export function StoreListContainer({
                     </div>
                   ))
                 ) : (
-                  <div className="text-[10px] md:text-base w-full h-full flex justify-center items-center p-5 md:p-10"></div>
+                  <div className="flex h-full w-full items-center justify-center p-5 text-[10px] md:p-10 md:text-base"></div>
                 )}
               </div>
 
               {isEditing && (
-                <div className="py-[6px] md:py-[12.02px] w-full flex justify-center items-center bg-white">
+                <div className="flex w-full items-center justify-center bg-white py-[6px] md:py-[12.02px]">
                   <button
                     onClick={handleStoreDeleteBtnClick}
                     disabled={!selectedStoreUuId}
                     className={cn(
                       selectedStoreUuId
                         ? 'bg-primary cursor-pointer'
-                        : 'bg-[#9F9F9F] cursor-not-allowed',
-                      'py-1 rounded-[54.71px] md:w-[170px] w-[93px] h-full text-[10px] text-white md:text-lg',
+                        : 'cursor-not-allowed bg-[#9F9F9F]',
+                      'h-full w-[93px] rounded-[54.71px] py-1 text-[10px] text-white md:w-[170px] md:text-lg',
                     )}
                   >
                     삭제

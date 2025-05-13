@@ -74,12 +74,18 @@ export function BottomSheetContainer({
 
   return (
     <BottomSheet isOpen={isBottomSheetOpen} onClose={handleBottomSheetClose}>
-      <div className="mb-2 grid grid-cols-[0.5fr_2fr] md:mb-[37px] md:grid-cols-[0.3fr_2fr]">
-        <HexagonGrid {...hexaGridProps} />
-        <SummaryInfoContainer {...storeSummaryProps} />
-      </div>
-      {(storeSummary?.storeImages ?? []).length > 0 && (
-        <StorePreviewPicList {...storePreviewPicListProps} />
+      {storeSummary ? (
+        <>
+          <div className="mb-2 grid grid-cols-[0.5fr_2fr] md:mb-[37px] md:grid-cols-[0.3fr_2fr]">
+            <HexagonGrid {...hexaGridProps} />
+            <SummaryInfoContainer {...storeSummaryProps} />
+          </div>
+          <StorePreviewPicList {...storePreviewPicListProps} />
+        </>
+      ) : (
+        <div className="flex h-[300px] items-center justify-center">
+          불러오는 중...
+        </div>
       )}
     </BottomSheet>
   );

@@ -63,7 +63,9 @@ export default function SearchResultList({
     <>
       {isOpen && (
         <div
-          className={cn('fixed inset-0 z-10 flex h-full w-full justify-center')}
+          className={cn(
+            'fixed inset-0 z-[24] flex h-full w-full justify-center',
+          )}
           onClick={handleClose}
         >
           <div

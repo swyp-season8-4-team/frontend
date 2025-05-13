@@ -180,7 +180,7 @@ export function StoreInfo({
         </div>
       )}
       {/* 디자인 나오는대로 수정필요 */}
-      {storeLinks && (
+      {storeLinks && storeLinks.length > 0 && (
         <div className="flex items-start gap-[6px]">
           <div className="mt-[3px] w-[10px] flex-shrink-0 md:mt-[5px] md:w-4">
             <IconBaseball className="h-full w-full text-[#BABABA]" />
