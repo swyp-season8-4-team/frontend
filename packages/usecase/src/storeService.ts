@@ -53,6 +53,8 @@ import type {
   DeleteNoticeRequest,
   EditMenuRequestFormData,
   RegisterCouponRequest,
+  getCouponRequest,
+  getCouponResponse,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -282,7 +284,9 @@ export default class StoreService {
     return response;
   }
 
-  async updateStore(params:updateStoreRequestFormData): Promise<updateStoreResponse> {
+  async updateStore(
+    params: updateStoreRequestFormData,
+  ): Promise<updateStoreResponse> {
     if (!this.storeRepository) {
       throw new Error('storeRepository is not set');
     } else if (!this.authRepository) {
@@ -300,10 +304,9 @@ export default class StoreService {
     return response;
   }
 
-
   async createNotice(params: RegisterNoticeRequest): Promise<void> {
     if (!this.storeRepository) {
-      throw new Error('storeRepository is not set'); 
+      throw new Error('storeRepository is not set');
     } else if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }
@@ -317,9 +320,11 @@ export default class StoreService {
     return response;
   }
 
-  async getNoticeList(params: NoticeListRequest): Promise<NoticeListResponse[]> {
+  async getNoticeList(
+    params: NoticeListRequest,
+  ): Promise<NoticeListResponse[]> {
     if (!this.storeRepository) {
-      throw new Error('storeRepository is not set'); 
+      throw new Error('storeRepository is not set');
     } else if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }
@@ -335,7 +340,7 @@ export default class StoreService {
 
   async getNotice(params: NoticeRequest): Promise<NoticeResponse> {
     if (!this.storeRepository) {
-      throw new Error('storeRepository is not set'); 
+      throw new Error('storeRepository is not set');
     } else if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }
@@ -349,9 +354,7 @@ export default class StoreService {
     return response;
   }
 
-  async editNotice(
-    params: EditNoticeRequest,
-  ): Promise<EditNoticeResponse> {
+  async editNotice(params: EditNoticeRequest): Promise<EditNoticeResponse> {
     if (!this.storeRepository) {
       throw new Error('storeRepository is not set');
     } else if (!this.authRepository) {
@@ -369,9 +372,7 @@ export default class StoreService {
     return result;
   }
 
-  async deleteNotice(
-    params: DeleteNoticeRequest,
-  ): Promise<void> {
+  async deleteNotice(params: DeleteNoticeRequest): Promise<void> {
     if (!this.storeRepository) {
       throw new Error('storeRepository is not set');
     } else if (!this.authRepository) {
@@ -404,6 +405,24 @@ export default class StoreService {
     };
 
     await this.storeRepository.createCoupon(requestData);
+  }
+
+  async getCoupon(params: getCouponRequest): Promise<getCouponResponse[]> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set');
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const authorization = await this.authRepository.getAuthorization();
+
+    const requestData = {
+      data: params,
+      authorization,
+    };
+
+    const result = await this.storeRepository.getCoupon(requestData);
+    return result;
   }
 
   async updateCouponCount() {

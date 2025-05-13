@@ -638,9 +638,9 @@ export interface EditMenuRequest {
 export interface EditMenuRequestFormData {
   storeUuid: string;
   menuUuid: string;
-  request:EditMenuRequest;
+  request: EditMenuRequest;
   file?: File;
-  deleteImage?:boolean;
+  deleteImage?: boolean;
 }
 
 export interface DeleteMenuRequest {
@@ -781,36 +781,63 @@ export interface DeleteNoticeRequest {
   noticeId: number;
 }
 
-export interface couponCondition { // 쿠폰 사용 조건 
-  conditionType:string; // 정액 or 정률("FIXED" || "RATE")
+export interface couponCondition {
+  // 쿠폰 사용 조건
+  conditionType: string; // "AMOUNT" "TIME_DAY" "EXCLUSIVE" "CUSTOM"
   minimumPurchaseAmount?: number; //결제 금액에 따라 선택했을 때
-  conditionStartTime?:string; //시간 선택적으로 사용 선택했을 때
-  conditionEndTime?:string;
-  conditionDays?:string[]; // 요일 선택적으로 사용 선택했을 때 (["MONDAY"])
-  customConditionText?:string; // 직접 조건 입력 선택했을 때
-  exclusiveOnly?:boolean; // 단독 사용 불가인지
+  conditionStartTime?: string; //시간 선택적으로 사용 선택했을 때
+  conditionEndTime?: string;
+  conditionDays?: string[]; // 요일 선택적으로 사용 선택했을 때 (["MONDAY"])
+  customConditionText?: string; // 직접 조건 입력 선택했을 때
+  exclusiveOnly?: boolean; // 단독 사용 불가인지
 }
 
 export interface couponType {
-  type:string; // 쿠폰의 기능 ("DISCOUNT" || "GIFT")
-  discountType?:string; // 할인 방식("FIXED" || "RATE")
-  discountAmount?:number; // 할인 금액
+  type: string; // 쿠폰의 기능 ("DISCOUNT" || "GIFT")
+  discountType?: string; // 할인 방식("FIXED" || "RATE")
+  discountAmount?: number; // 할인 금액
   giftMenuName?: string; // 증정 메뉴명
 }
 
 export interface RegisterCouponRequest {
   name: string; // 쿠폰 이름
-  hasExposureDate:boolean; // 상시 노출 or 일시 노출 
+  hasExposureDate: boolean; // 상시 노출 or 일시 노출
   exposureStartAt?: string;
-  exposureEndAt?:string;
-  couponCondition:couponCondition;
-  hasExpiryDate:boolean; //유효기간
-  expiryDate?:string; //유효기간 날짜
-  hasQuantity:boolean; // 제한 없이 or 수량 제한
-  quantity?:number; // 제한 수량
-  couponType:couponType;
-  couponTarget:string; //쿠폰 발행 대상 ("ALL" | "SUBSCRIBED" | "CUSTOM")
-  storeUuid:string;
+  exposureEndAt?: string;
+  couponCondition: couponCondition;
+  hasExpiryDate: boolean; //유효기간
+  expiryDate?: string; //유효기간 날짜
+  hasQuantity: boolean; // 제한 없이 or 수량 제한
+  quantity?: number; // 제한 수량
+  couponType: couponType;
+  couponTarget: string; //쿠폰 발행 대상 ("ALL" | "SUBSCRIBED" | "CUSTOM")
+  storeUuid: string;
+}
+
+export interface getCouponRequest {
+  storeUuid: string;
+}
+
+export interface getCouponResponse
+  extends Pick<
+    RegisterCouponRequest,
+    | 'storeUuid'
+    | 'name'
+    | 'hasExposureDate'
+    | 'exposureStartAt'
+    | 'exposureEndAt'
+    | 'hasExpiryDate'
+    | 'expiryDate'
+    | 'hasQuantity'
+    | 'quantity'
+    | 'couponType'
+  > {
+  couponId: number;
+  couponUuid: string;
+  status: string;
+  target: string;
+  condition: couponCondition;
+  createdAt: string;
 }
 
 export interface StoreRepository {
@@ -994,4 +1021,9 @@ export interface StoreRepository {
     authorization,
     data,
   }: BaseRequestData<RegisterCouponRequest>): Promise<void>;
+
+  getCoupon({
+    authorization,
+    data,
+  }: BaseRequestData<getCouponRequest>): Promise<getCouponResponse[]>;
 }
