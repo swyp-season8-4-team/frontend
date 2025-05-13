@@ -18,11 +18,11 @@ import { cn } from '@repo/ui/lib/utils';
 const metadataService = new MetadataService();
 
 export const viewport: Viewport = {
-  initialScale: 1,
-  maximumScale: 1.0,
-  minimumScale: 1.0,
-  userScalable: false,
   width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  minimumScale: 1,
+  userScalable: false,
 };
 
 export const metadata: Metadata = {
