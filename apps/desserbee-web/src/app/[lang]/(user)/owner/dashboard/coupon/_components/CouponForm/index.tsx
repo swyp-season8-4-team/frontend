@@ -14,6 +14,7 @@ import { ValidationError } from '../../../../register/_components/ValidationErro
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createCoupon } from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
 import { ModalHeader } from '../../../../_components/ModalHeader';
+import { useEffect } from 'react';
 
 interface CouponConditionForm extends couponCondition {
   conditionType: '' | 'AMOUNT' | 'TIME_DAY' | 'EXCLUSIVE' | 'CUSTOM';
@@ -27,7 +28,7 @@ interface CouponFormProps {
   mode: 'create' | 'edit';
   coupon?: getCouponResponse;
   onClose?: () => void;
-  onSuccess?: () => void; //등록 성공시 호출 
+  onSuccess?: () => void; //등록 성공시 호출
 }
 
 const couponTypeOptions = [
@@ -61,7 +62,60 @@ const QuantityOptions = [
   { value: true, label: '수량 제한' },
 ];
 
-export default function CouponForm({ mode, coupon, onClose,onSuccess }: CouponFormProps) {
+// 쿠폰 객체를 FormInputs 형태로 변환
+function mapCouponToFormInputs(coupon: getCouponResponse): FormInputs {
+  return {
+    name: coupon.name ?? '',
+    hasExposureDate: coupon.hasExposureDate ?? undefined,
+    exposureStartAt: coupon.exposureStartAt ?? '',
+    exposureEndAt: coupon.exposureEndAt ?? '',
+    couponCondition: coupon.condition
+      ? {
+          ...coupon.condition,
+          conditionType: coupon.condition.conditionType as
+            | ''
+            | 'AMOUNT'
+            | 'TIME_DAY'
+            | 'EXCLUSIVE'
+            | 'CUSTOM',
+          minimumPurchaseAmount:
+            coupon.condition.minimumPurchaseAmount ?? undefined,
+          conditionStartTime: coupon.condition.conditionStartTime ?? undefined,
+          conditionEndTime: coupon.condition.conditionEndTime ?? undefined,
+          conditionDays: coupon.condition.conditionDays ?? [],
+          customConditionText: coupon.condition.customConditionText ?? '',
+          exclusiveOnly: coupon.condition.exclusiveOnly ?? false,
+        }
+      : {
+          conditionType: '',
+          minimumPurchaseAmount: undefined,
+          conditionStartTime: undefined,
+          conditionEndTime: undefined,
+          conditionDays: [],
+          customConditionText: '',
+          exclusiveOnly: false,
+        },
+    hasExpiryDate: coupon.hasExpiryDate ?? undefined,
+    expiryDate: coupon.expiryDate ?? '',
+    hasQuantity: coupon.hasQuantity ?? undefined,
+    quantity: coupon.quantity ?? undefined,
+    couponType: {
+      type: coupon.couponType?.type ?? '',
+      discountType: coupon.couponType?.discountType ?? '',
+      discountAmount: coupon.couponType?.discountAmount ?? undefined,
+      giftMenuName: coupon.couponType?.giftMenuName ?? '',
+    },
+    couponTarget: coupon.target ?? '',
+    storeUuid: coupon.storeUuid ?? '',
+  };
+}
+
+export default function CouponForm({
+  mode,
+  coupon,
+  onClose,
+  onSuccess,
+}: CouponFormProps) {
   const searchParams = useSearchParams();
   const storeUuid = searchParams.get('storeUuid');
   const router = useRouter();
@@ -73,35 +127,39 @@ export default function CouponForm({ mode, coupon, onClose,onSuccess }: CouponFo
     setError,
     watch,
     reset,
-    formState: { isValid, isDirty, errors },
+    formState: { dirtyFields, errors },
   } = useForm<FormInputs>({
-    defaultValues: {
-      name: '',
-      hasExposureDate: undefined,
-      exposureStartAt: '',
-      exposureEndAt: '',
-      couponCondition: {
-        conditionType: '',
-        minimumPurchaseAmount: undefined,
-        conditionStartTime: undefined,
-        conditionEndTime: undefined,
-        conditionDays: [],
-        customConditionText: '',
-        exclusiveOnly: false,
+    defaultValues:
+      mode === 'edit' && coupon
+        ? mapCouponToFormInputs(coupon)
+        :
+      {
+        name: '',
+        hasExposureDate: undefined,
+        exposureStartAt: '',
+        exposureEndAt: '',
+        couponCondition: {
+          conditionType: '',
+          minimumPurchaseAmount: undefined,
+          conditionStartTime: undefined,
+          conditionEndTime: undefined,
+          conditionDays: [],
+          customConditionText: '',
+          exclusiveOnly: false,
+        },
+        hasExpiryDate: undefined,
+        expiryDate: '',
+        hasQuantity: undefined,
+        quantity: undefined,
+        couponType: {
+          type: '',
+          discountType: '',
+          discountAmount: undefined,
+          giftMenuName: '',
+        },
+        couponTarget: '',
+        storeUuid: storeUuid || '',
       },
-      hasExpiryDate: undefined,
-      expiryDate: '',
-      hasQuantity: undefined,
-      quantity: undefined,
-      couponType: {
-        type: '',
-        discountType: '',
-        discountAmount: undefined,
-        giftMenuName: '',
-      },
-      couponTarget: '',
-      storeUuid: storeUuid || '',
-    },
     mode: 'onChange',
     shouldUnregister: true,
   });
@@ -112,6 +170,8 @@ export default function CouponForm({ mode, coupon, onClose,onSuccess }: CouponFo
     return dateStr.length === 5 ? `${dateStr}:00` : dateStr;
   };
 
+  // dirtyFields에 값이 하나라도 있으면 true
+  const isDirty = Object.keys(dirtyFields).length > 0;
   const onSubmit = async (data: FormInputs) => {
     // 쿠폰 사용 조건 중에 1개라도 선택했는지 확인
     try {
@@ -137,13 +197,17 @@ export default function CouponForm({ mode, coupon, onClose,onSuccess }: CouponFo
       }
       console.log(data);
 
-      await createCoupon(data as RegisterCouponRequest);
-      alert('쿠폰 등록이 완료되었습니다.');
-      if (onSuccess) onSuccess(); 
-      if (onClose) onClose(); // 성공시 모달 닫기
+      if (mode === 'create') {
+        await createCoupon(data as RegisterCouponRequest);
+        alert('쿠폰 등록이 완료되었습니다.');
+        if (onSuccess) onSuccess();
+        if (onClose) onClose(); // 성공시 모달 닫기
+      }
     } catch (error) {
-      console.error('쿠폰 등록 실패:', error);
-      alert('쿠폰 등록에 실패했습니다. 다시 시도해주세요.');
+      if (mode === 'create') {
+        console.error('쿠폰 등록 실패:', error);
+        alert('쿠폰 등록에 실패했습니다. 다시 시도해주세요.');
+      }
     }
   };
 
@@ -787,15 +851,19 @@ export default function CouponForm({ mode, coupon, onClose,onSuccess }: CouponFo
               className="font-semibold"
               text="초기화"
               onClick={() => {
-                reset();
+                if (mode === 'edit' && coupon) {
+                  reset(mapCouponToFormInputs(coupon));
+                } else {
+                  reset();
+                }
               }}
             />
           </div>
           <OliveButton
             type="submit"
             className="font-semibold"
-            text="완료"
-            // isDisabled={!isValid || !isDirty}
+            text={mode === 'create' ? '완료' : '수정하기'}
+            isDisabled={!isDirty}
           />
         </div>
       </form>
