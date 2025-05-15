@@ -2,10 +2,11 @@
 
 import IconXRound from '@repo/design-system/components/icons/IconXRound';
 import { NavigationPathname } from '@repo/entity/src/navigation';
+import { cn } from '@repo/ui/lib/utils';
 import Image from 'next/image';
 
 import { useRouter } from 'next/navigation';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function GoOwnerPageModal() {
   const router = useRouter();
@@ -37,17 +38,19 @@ export default function GoOwnerPageModal() {
   };
 
   return (
-    <div className="z-modal animate-fadeIn fixed inset-0 mx-auto flex max-w-screen-md items-center justify-center bg-black/10 opacity-0">
+    <div
+      className={cn(
+        isOpen ? 'fixed' : 'hidden',
+        'z-modal animate-fadeIn inset-0 mx-auto flex max-w-screen-md items-center justify-center bg-black/10 opacity-0',
+      )}
+    >
       <div className="relative overflow-hidden rounded-md bg-white shadow-md">
-        <div className="h-[200px] w-[200px] md:h-[300px] md:w-[300px]">
-          <Image
-            src="/image/owner-popup.webp"
-            alt="팝업 이미지"
-            width={300}
-            height={300}
-          />
-        </div>
-
+        <div
+          className="aspect-[1/1] w-[200px] bg-cover bg-center md:w-[300px]"
+          style={{ backgroundImage: `url('/image/owner-popup.webp')` }}
+          role="img"
+          aria-label="팝업 이미지"
+        />
         <button
           onClick={() => setIsOpen(false)}
           className="z-modal absolute right-3 top-3 h-4 w-4 md:right-4 md:top-4 md:h-5 md:w-5"
@@ -63,16 +66,16 @@ export default function GoOwnerPageModal() {
             디저비에 가게 등록하러 가기
           </button>
         </div>
-        <button className="flex w-full items-center gap-1 py-1 pl-2 md:-bottom-6 md:py-2 md:pl-4">
+        <button className="flex w-full items-center gap-1 py-1 pl-2 md:-bottom-6 md:gap-2 md:py-2 md:pl-4">
           <input
             type="checkbox"
             id="not-today"
-            className="h-[15px] w-[15px] md:h-5 md:w-5"
+            className="h-3 w-3 md:h-5 md:w-5"
             onChange={handleNotTodayClick}
           />
           <label
             htmlFor="not-today"
-            className="text-neutral-40 w-full cursor-pointer text-start text-[10px] md:text-[14px]"
+            className="text-neutral-40 w-full cursor-pointer text-start text-[10px] md:text-sm"
           >
             오늘 하루 다신 보지 않기
           </label>
