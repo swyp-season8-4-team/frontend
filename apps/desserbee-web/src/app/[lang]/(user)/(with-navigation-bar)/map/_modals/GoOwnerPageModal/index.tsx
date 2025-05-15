@@ -45,7 +45,6 @@ export default function GoOwnerPageModal() {
             alt="팝업 이미지"
             width={300}
             height={300}
-            priority
           />
         </div>
 
