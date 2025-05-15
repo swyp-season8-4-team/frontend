@@ -37,7 +37,7 @@ export default function GoOwnerPageModal() {
   };
 
   return (
-    <div className="z-modal animate-fadeIn fixed inset-0 flex items-center justify-center bg-black/10 opacity-0">
+    <div className="z-modal animate-fadeIn fixed inset-0 mx-auto flex max-w-screen-md items-center justify-center bg-black/10 opacity-0">
       <div className="relative overflow-hidden rounded-md bg-white shadow-md">
         <div className="h-[200px] w-[200px] md:h-[300px] md:w-[300px]">
           <Image
