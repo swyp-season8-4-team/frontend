@@ -1,7 +1,7 @@
 import '@repo/ui/styles/globals.css';
 
 import type { Metadata, Viewport } from 'next';
-import { Fragment } from 'react';
+import { Fragment, Suspense } from 'react';
 
 import type { WithParams } from '@/app';
 import type { WithChildren } from '@repo/ui';

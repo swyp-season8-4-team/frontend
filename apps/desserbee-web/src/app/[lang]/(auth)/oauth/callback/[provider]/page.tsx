@@ -3,8 +3,8 @@ import { decrypt } from '@/utils/crypto';
 import { isOAuthSocialProvider } from '@repo/entity/src/signIn';
 import dynamic from 'next/dynamic';
 import { notFound } from 'next/navigation';
-import OAuthLoading from '../../_components/OAuthLoading';
 import OAuthLoginCancel from '../../_components/OAuthLoginCancel';
+import LoadingUI from '@/app/[lang]/_components/LoadingUI';
 
 const OAuthCallbackLoader = dynamic(
   () => import('../../_components/OAuthCallbackLoader'),
@@ -49,10 +49,10 @@ export default async function OAuthCallbackProviderPage({
   }
 
   return (
-    <OAuthLoading>
+    <LoadingUI description="열심히 로그인 중입니다!">
       {!error && (
         <OAuthCallbackLoader next={next} code={code} provider={provider} />
       )}
-    </OAuthLoading>
+    </LoadingUI>
   );
 }

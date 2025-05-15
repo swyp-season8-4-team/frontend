@@ -48,20 +48,20 @@ export function MenuOnePictureCarouselModal({
 
   return (
     <div className="z-modal relative">
-      <div className="fixed inset-0 bg-neutral-800/60 animate-fadeIn" />
+      <div className="animate-fadeIn fixed inset-0 bg-neutral-800/60" />
       <div
         className={cn(
-          'top-[50%] left-1/2 fixed bg-white border border-[#6F6F6F] rounded-[10px] -translate-x-1/2 -translate-y-1/2 transform animate-fadeIn',
-          'p-4 md:p-4 md:rounded-base w-[90vw] h-[90vh] max-w-[1200px] max-h-[800px]',
+          'animate-fadeIn fixed left-1/2 top-[50%] -translate-x-1/2 -translate-y-1/2 transform rounded-[10px] border border-[#6F6F6F] bg-white',
+          'md:rounded-base h-[90vh] max-h-[800px] w-[90vw] max-w-[700px] p-4 md:p-4',
         )}
       >
-        <div className="h-full relative">
+        <div className="relative h-full">
           <button
             onClick={onClose}
-            className="absolute right-0 top-0 z-50 w-8 h-8 flex items-center justify-center rounded-full bg-white/80 hover:bg-white"
+            className="absolute right-0 top-0 z-50 flex h-8 w-8 items-center justify-center rounded-full bg-white/80 hover:bg-white"
           >
             <svg
-              className="w-5 h-5"
+              className="h-5 w-5"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -78,7 +78,7 @@ export function MenuOnePictureCarouselModal({
 
           <Carousel
             setApi={setApi}
-            className="relative flex flex-col justify-center w-full h-full"
+            className="relative flex h-full w-full flex-col justify-center"
             opts={{
               skipSnaps: true,
               duration: 0,
@@ -88,35 +88,35 @@ export function MenuOnePictureCarouselModal({
               {filteredMenus.map((menu, index) => (
                 <CarouselItem
                   key={index}
-                  className="w-full h-full flex items-center justify-center"
+                  className="flex h-full w-full items-center justify-center"
                 >
-                  <div className="relative h-[calc(90vh-120px)] max-h-[700px] flex items-center justify-center">
+                  <div className="relative flex h-[calc(90vh-120px)] max-h-[700px] select-none items-center justify-center">
                     <Image
                       src={menu.images![0]}
                       alt={menu.name}
                       width={1200}
                       height={800}
-                      className="max-w-full max-h-full w-auto h-auto object-contain"
+                      className="h-auto max-h-full w-auto max-w-full object-contain"
                       priority
                     />
                   </div>
                 </CarouselItem>
               ))}
             </CarouselContent>
-            <div className="top-1/2 left-[-19px] md:left-[-20px] z-modal absolute -translate-y-1/2">
+            <div className="z-modal absolute left-[-19px] top-1/2 -translate-y-1/2 md:left-[-20px]">
               <div
                 onClick={() => api?.scrollPrev()}
-                className="w-6 md:w-14 h-7 md:h-14 cursor-pointer"
+                className="h-7 w-6 cursor-pointer md:h-14 md:w-14"
               >
-                <IconDirection className="w-full h-full text-[#9F9F9F] rotate-90 transfrom" />
+                <IconDirection className="transfrom h-full w-full rotate-90 text-[#9F9F9F]" />
               </div>
             </div>
-            <div className="top-1/2 right-[-19px] md:right-[-20px] z-modal absolute -translate-y-1/2">
+            <div className="z-modal absolute right-[-19px] top-1/2 -translate-y-1/2 md:right-[-20px]">
               <div
                 onClick={() => api?.scrollNext()}
-                className="w-6 md:w-14 h-7 md:h-14 cursor-pointer"
+                className="h-7 w-6 cursor-pointer md:h-14 md:w-14"
               >
-                <IconDirection className="top-0 right-0 absolute w-full h-full text-[#9F9F9F] -rotate-90 transfrom" />
+                <IconDirection className="transfrom absolute right-0 top-0 h-full w-full -rotate-90 text-[#9F9F9F]" />
               </div>
             </div>
           </Carousel>
