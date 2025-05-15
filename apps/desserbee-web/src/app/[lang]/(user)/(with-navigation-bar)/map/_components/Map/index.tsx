@@ -54,10 +54,6 @@ const MapPanel = dynamic(() => import('../MapPanel'));
 const ReFetchStoreBtn = dynamic(() => import('../ReFetchStoreBtn'));
 import SearchResultList from '../SearchResultList';
 
-interface MapProps {
-  preferenceCategories: PreferenceData[];
-}
-
 // 서비스가 모두 초기화되었는지 확인하는 헬퍼 함수
 const areServicesInitialized = (services: {
   mapService: MapService | null;
@@ -71,7 +67,17 @@ const MemoizedMapPanel = React.memo(MapPanel);
 const MemoizedReFetchStoreBtn = React.memo(ReFetchStoreBtn);
 const MemoizedSearchResultList = React.memo(SearchResultList);
 
-export function Map({ preferenceCategories }: MapProps) {
+interface MapProps {
+  preferenceCategories: PreferenceData[];
+  isMapLoaded: boolean;
+  handleMapLoad: () => void;
+}
+
+export function Map({
+  preferenceCategories,
+  isMapLoaded,
+  handleMapLoad,
+}: MapProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const mapRef = useRef<HTMLDivElement>(null);
@@ -86,7 +92,6 @@ export function Map({ preferenceCategories }: MapProps) {
   });
 
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   const [isFetchRequired, setIsFetchRequired] = useState(false);
   const [showingSavedList, setShowingSavedList] = useState(false);
@@ -550,12 +555,12 @@ export function Map({ preferenceCategories }: MapProps) {
             try {
               loadMap(initializedServices, lastPosition)
                 .then(() => {
-                  setIsMapLoaded(true);
-                  setIsInitialized(true);
                   if (lastPosition) {
                     setMapCenter(lastPosition);
                   }
                   setIsFetchRequired(true);
+                  handleMapLoad();
+                  setIsInitialized(true);
                 })
                 .catch((err) => {
                   console.error('지도 로드 실패:', err);
@@ -928,47 +933,50 @@ export function Map({ preferenceCategories }: MapProps) {
         }}
         onError={() => setError('카카오 지도 스크립트 로딩에 실패했습니다.')}
       />
-
-      {!isScriptLoaded ? (
-        <div className="flex h-[calc(100dvh-205px)] w-full items-center justify-center bg-neutral-100">
-          <div className="flex flex-col items-center justify-center">
-            <div className="h-12 w-12 animate-spin rounded-full border-4 border-yellow-400 border-b-transparent" />
-            <p className="mt-3 text-sm text-neutral-600">
-              지도를 불러오는 중입니다...
-            </p>
+      <div
+        ref={mapRef}
+        className="relative z-0 mb-[9px] h-[calc(100dvh-205px)] w-full overflow-x-hidden bg-white"
+      >
+        {!isMapLoaded ? (
+          <div className="flex h-full w-full items-center justify-center bg-white">
+            <div className="flex flex-col items-center justify-center">
+              <div className="h-12 w-12 animate-spin rounded-full border-4 border-yellow-400 border-b-transparent" />
+              <p className="mt-3 text-sm text-neutral-600">
+                지도를 불러오는 중입니다
+              </p>
+            </div>
           </div>
-        </div>
-      ) : (
-        <div
-          ref={mapRef}
-          className="relative z-0 mb-[9px] h-[calc(100dvh-205px)] w-full overflow-x-hidden bg-neutral-200"
-        >
-          {error && (
-            <div className="absolute left-1/2 top-1/2 z-20 w-[200px] -translate-x-1/2 transform rounded border border-red-400 bg-red-100 px-4 py-2 text-center text-red-700">
-              {error}
-            </div>
-          )}
-          {isSearching && (
-            <div className="absolute left-1/2 top-1/2 z-20 flex -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full bg-white/80 p-2 shadow-md">
-              <span className="box-border inline-block h-12 w-12 animate-spin rounded-full border-4 border-[#F9C22E] border-b-transparent" />
-            </div>
-          )}
-          <MemoizedPreferenceTags {...preferenceTagsProps} />
-          <MemoizedMapPanel {...mapPanelProps} />
-          <MemoizedReFetchStoreBtn
-            clearSelectedCategories={clearSelectedCategories}
-            refetchStore={handleRefetchBtnClick}
-          />
-        </div>
-      )}
-
-      {isResultListOpen && isScriptLoaded && !isSearching && (
-        <MemoizedSearchResultList
-          distances={distances}
-          resultData={nearByStores}
-          onClose={handleResultListClose}
-        />
-      )}
+        ) : (
+          <div>
+            <MemoizedPreferenceTags {...preferenceTagsProps} />
+            <MemoizedMapPanel {...mapPanelProps} />
+            <MemoizedReFetchStoreBtn
+              clearSelectedCategories={clearSelectedCategories}
+              refetchStore={handleRefetchBtnClick}
+            />
+            {error && (
+              <div className="absolute left-1/2 top-1/2 z-20 w-[200px] -translate-x-1/2 transform rounded border border-red-400 bg-red-100 px-4 py-2 text-center text-red-700">
+                {error}
+              </div>
+            )}
+            {isSearching && (
+              <div className="absolute left-1/2 top-1/2 z-20 flex -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full p-2">
+                <span className="relative inline-block h-12 w-12">
+                  <span className="absolute inset-0 rounded-full bg-white" />
+                  <span className="border-primary-80 absolute inset-1 box-border h-10 w-10 animate-spin rounded-full border-4 border-b-transparent bg-transparent" />
+                </span>
+              </div>
+            )}
+            {isResultListOpen && isScriptLoaded && !isSearching && (
+              <MemoizedSearchResultList
+                distances={distances}
+                resultData={nearByStores}
+                onClose={handleResultListClose}
+              />
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
