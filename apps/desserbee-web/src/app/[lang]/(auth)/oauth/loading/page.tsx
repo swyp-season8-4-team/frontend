@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import OAuthLoading from '../_components/OAuthLoading';
 import { HeaderContainer } from '@/app/[lang]/(user)/_components/HeaderContainer';
+import LoadingUI from '@/app/[lang]/_components/LoadingUI';
 
 export default function OAuthCallbackLoadingPage() {
   const searchParams = useSearchParams();
@@ -21,7 +21,7 @@ export default function OAuthCallbackLoadingPage() {
   return (
     <div className="flex w-full flex-col items-center justify-center">
       <HeaderContainer />
-      <OAuthLoading />
+      <LoadingUI description="열심히 로그인 중입니다!" />
     </div>
   );
 }

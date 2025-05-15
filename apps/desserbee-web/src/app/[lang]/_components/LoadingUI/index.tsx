@@ -5,11 +5,15 @@ import { motion } from 'framer-motion';
 import ReadyBee from '@/assets/images/bee_icon_ready.png';
 import type { WithChildren } from '@repo/ui/index';
 
-export default function OAuthLoading({ children }: WithChildren) {
+interface LoadingProps extends WithChildren {
+  description: string;
+}
+
+export default function LoadingUI({ children, description }: LoadingProps) {
   return (
-    <main className="flex min-h-[calc(100vh-56px)] flex-col items-center justify-center">
+    <div className="flex min-h-[calc(100vh-56px)] flex-col items-center justify-center">
       <div className="mb-16 space-y-2 text-center">
-        <h2 className="text-xl font-medium">열심히 로그인 중입니다!</h2>
+        <h2 className="text-xl font-medium">{description}</h2>
         <p className="text-gray-600">잠시만 기다려주세요.</p>
       </div>
 
@@ -98,7 +102,7 @@ export default function OAuthLoading({ children }: WithChildren) {
         </div>
       </div>
       {children}
-    </main>
+    </div>
   );
 }
 
