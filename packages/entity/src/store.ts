@@ -840,6 +840,15 @@ export interface getCouponResponse
   createdAt: string;
 }
 
+export interface EditCouponRequest extends RegisterCouponRequest {
+  couponId: number;
+}
+
+export interface DeleteCouponRequest {
+  storeUuid: string;
+  couponId: number;
+}
+
 export interface StoreRepository {
   // preference
   getAllPreference(): Promise<PreferenceData[]>;
@@ -1026,4 +1035,14 @@ export interface StoreRepository {
     authorization,
     data,
   }: BaseRequestData<getCouponRequest>): Promise<getCouponResponse[]>;
+
+  editCoupon({
+    authorization,
+    data,
+  }: BaseRequestData<EditCouponRequest>): Promise<void>;
+
+  deleteCoupon({
+    authorization,
+    data,
+  }: BaseRequestData<DeleteCouponRequest>): Promise<void>;
 }

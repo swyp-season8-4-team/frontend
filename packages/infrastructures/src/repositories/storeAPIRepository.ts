@@ -62,6 +62,8 @@ import type {
   RegisterCouponRequest,
   getCouponRequest,
   getCouponResponse,
+  EditCouponRequest,
+  DeleteCouponRequest,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -901,6 +903,60 @@ export default class StoreAPIRepository
       }),
       method: 'GET',
       url: `${this.endpoint}/coupons/${storeUuid}`,
+    });
+
+    return response;
+  }
+
+  async editCoupon({
+    authorization,
+    data,
+  }: BaseRequestData<EditCouponRequest>): Promise<void> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { storeUuid, couponId, ...rest } = data || {};
+
+    const url = `${this.endpoint}/coupons/${storeUuid}/${couponId}`;
+
+    const response = await fetch<
+      Omit<EditCouponRequest, 'storeUuid' | 'couponId'>,
+     void
+    >({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      data: { ...rest },
+      method: 'PUT',
+      url,
+    });
+
+    return response;
+  }
+
+  async deleteCoupon({
+    authorization,
+    data,
+  }: BaseRequestData<DeleteCouponRequest>): Promise<void> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { storeUuid, couponId } = data || {};
+
+    const url = `${this.endpoint}/coupons/${storeUuid}/${couponId}`;
+
+    const response = await fetch<DeleteCouponRequest, void>({
+      ...(authorization && {
+        headers: {
+          Authorization: authorization,
+        },
+      }),
+      method: 'DELETE',
+      url
     });
 
     return response;

@@ -2,6 +2,7 @@
 
 import type {
   couponCondition,
+  EditCouponRequest,
   getCouponResponse,
   RegisterCouponRequest,
 } from '@repo/entity/src/store';
@@ -12,9 +13,14 @@ import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/
 import { cn } from '@repo/ui/lib/utils';
 import { ValidationError } from '../../../../register/_components/ValidationError';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { createCoupon } from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
+import {
+  createCoupon,
+  deleteCoupon,
+  editCoupon,
+} from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
 import { ModalHeader } from '../../../../_components/ModalHeader';
-import { useEffect } from 'react';
+import { useState } from 'react';
+import DeleteModal from '../../../notices/_components/DeleteModal';
 
 interface CouponConditionForm extends couponCondition {
   conditionType: '' | 'AMOUNT' | 'TIME_DAY' | 'EXCLUSIVE' | 'CUSTOM';
@@ -22,6 +28,7 @@ interface CouponConditionForm extends couponCondition {
 
 interface FormInputs extends Omit<RegisterCouponRequest, 'couponCondition'> {
   couponCondition: CouponConditionForm;
+  couponId?: number;
 }
 
 interface CouponFormProps {
@@ -118,7 +125,10 @@ export default function CouponForm({
 }: CouponFormProps) {
   const searchParams = useSearchParams();
   const storeUuid = searchParams.get('storeUuid');
+  const couponId = coupon?.couponId;
+
   const router = useRouter();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const {
     register,
@@ -132,34 +142,33 @@ export default function CouponForm({
     defaultValues:
       mode === 'edit' && coupon
         ? mapCouponToFormInputs(coupon)
-        :
-      {
-        name: '',
-        hasExposureDate: undefined,
-        exposureStartAt: '',
-        exposureEndAt: '',
-        couponCondition: {
-          conditionType: '',
-          minimumPurchaseAmount: undefined,
-          conditionStartTime: undefined,
-          conditionEndTime: undefined,
-          conditionDays: [],
-          customConditionText: '',
-          exclusiveOnly: false,
-        },
-        hasExpiryDate: undefined,
-        expiryDate: '',
-        hasQuantity: undefined,
-        quantity: undefined,
-        couponType: {
-          type: '',
-          discountType: '',
-          discountAmount: undefined,
-          giftMenuName: '',
-        },
-        couponTarget: '',
-        storeUuid: storeUuid || '',
-      },
+        : {
+            name: '',
+            hasExposureDate: undefined,
+            exposureStartAt: '',
+            exposureEndAt: '',
+            couponCondition: {
+              conditionType: '',
+              minimumPurchaseAmount: undefined,
+              conditionStartTime: undefined,
+              conditionEndTime: undefined,
+              conditionDays: [],
+              customConditionText: '',
+              exclusiveOnly: false,
+            },
+            hasExpiryDate: undefined,
+            expiryDate: '',
+            hasQuantity: undefined,
+            quantity: undefined,
+            couponType: {
+              type: '',
+              discountType: '',
+              discountAmount: undefined,
+              giftMenuName: '',
+            },
+            couponTarget: '',
+            storeUuid: storeUuid || '',
+          },
     mode: 'onChange',
     shouldUnregister: true,
   });
@@ -202,12 +211,36 @@ export default function CouponForm({
         alert('쿠폰 등록이 완료되었습니다.');
         if (onSuccess) onSuccess();
         if (onClose) onClose(); // 성공시 모달 닫기
+      
+      } else if (mode === 'edit') {
+        data.couponId = couponId;
+        await editCoupon(data as EditCouponRequest);
+        alert('쿠폰 수정이 완료되었습니다.');
+        if (onClose) onClose();
       }
+
     } catch (error) {
       if (mode === 'create') {
         console.error('쿠폰 등록 실패:', error);
         alert('쿠폰 등록에 실패했습니다. 다시 시도해주세요.');
       }
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!storeUuid || !couponId) {
+      alert('필수 정보가 없습니다.');
+      return;
+    }
+    try {
+      await deleteCoupon({ storeUuid, couponId});
+      setShowDeleteModal(false);
+      alert('쿠폰이 삭제되었습니다.');
+      if (onClose) onClose();
+      
+    } catch (error) {
+      console.log(error);
+      alert('쿠폰을 삭제하는데 실패했습니다.');
     }
   };
 
@@ -866,7 +899,20 @@ export default function CouponForm({
             isDisabled={!isDirty}
           />
         </div>
+        {mode === 'edit' && (
+          <OliveButton
+            className="font-semibold"
+            text="삭제하기"
+            onClick={() => setShowDeleteModal(true)}
+          />
+        )}
       </form>
+      <DeleteModal
+        open={showDeleteModal}
+        content="쿠폰을 삭제하시겠어요?"
+        onCancel={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 }

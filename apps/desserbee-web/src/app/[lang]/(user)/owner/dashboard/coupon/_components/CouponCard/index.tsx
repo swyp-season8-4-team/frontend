@@ -1,5 +1,5 @@
 import type { getCouponResponse } from '@repo/entity/src/store';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useContext, useState } from 'react';
 import CouponForm from '../CouponForm';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
@@ -43,13 +43,23 @@ function formatTime(timeStr: string) {
 export default function CouponCard({ coupon }: CouponCardProps) {
   const router = useRouter();
   const { push, pop } = useContext(PortalContext); // Portal을 사용해서 모달 열고 닫을 수 있음
-  
+   const pathname = usePathname(); // ✅ 현재 경로 가져오기
+  const searchParams = useSearchParams(); 
+
   const handleCloseForm = () => { // 모달 닫기 핸들러 
+    // const params = new URLSearchParams(searchParams);
+    // params.delete('couponId');
+    // router.replace(`${pathname}?${params.toString()}`); 
+
     pop('modal');
   };
 
     // 카드 클릭 시 CouponForm을 모달로 띄움
   const handleCardClick = () => {
+    // const params = new URLSearchParams(searchParams);
+    // params.set('couponId', coupon.couponId.toString());
+    // router.push(`${pathname}?${params.toString()}`);
+
     push('modal', {
       component: (
         <CouponForm
