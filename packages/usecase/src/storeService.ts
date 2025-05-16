@@ -55,6 +55,8 @@ import type {
   RegisterCouponRequest,
   getCouponRequest,
   getCouponResponse,
+  EditCouponRequest,
+  DeleteCouponRequest,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -422,6 +424,41 @@ export default class StoreService {
     };
 
     const result = await this.storeRepository.getCoupon(requestData);
+    return result;
+  }
+
+  async editCoupon(params: EditCouponRequest): Promise<void> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set');
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const authorization = await this.authRepository.getAuthorization();
+
+    const requestData = {
+      data: params,
+      authorization,
+    };
+
+    await this.storeRepository.editCoupon(requestData);
+  }
+
+  async deleteCoupon(params: DeleteCouponRequest): Promise<void> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set');
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const authorization = await this.authRepository.getAuthorization();
+
+    const requestData = {
+      data: params,
+      authorization,
+    };
+
+    const result = await this.storeRepository.deleteCoupon(requestData);
     return result;
   }
 

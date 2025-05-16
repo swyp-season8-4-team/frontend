@@ -3,6 +3,7 @@
 import { commonErrorHandler } from '@/error/commonErrorHandler';
 import type {
   CreateMenuRequestFormData,
+  EditCouponRequest,
   EditMenuRequest,
   EditMenuRequestFormData,
   EditNoticeRequest,
@@ -202,4 +203,22 @@ export async function getCoupon({ storeUuid }: { storeUuid: string }) {
     storeService.getCoupon({ storeUuid }),
   );
   return coupons;
+}
+
+export async function editCoupon(params: EditCouponRequest): Promise<void> {
+  const updated = await commonErrorHandler(storeService.editCoupon(params));
+  return updated;
+}
+
+export async function deleteCoupon({
+  storeUuid,
+  couponId,
+}: {
+  storeUuid: string;
+  couponId: number;
+}) {
+  const deleted = await commonErrorHandler(
+    storeService.deleteCoupon({ storeUuid, couponId }),
+  );
+  return deleted;
 }
