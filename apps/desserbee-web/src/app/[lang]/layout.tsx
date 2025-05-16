@@ -1,7 +1,7 @@
 import '@repo/ui/styles/globals.css';
 
-import type { Metadata } from 'next';
-import { Fragment } from 'react';
+import type { Metadata, Viewport } from 'next';
+import { Fragment, Suspense } from 'react';
 
 import type { WithParams } from '@/app';
 import type { WithChildren } from '@repo/ui';
@@ -16,6 +16,14 @@ import { fontVariables } from '../fonts';
 import { cn } from '@repo/ui/lib/utils';
 
 const metadataService = new MetadataService();
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  minimumScale: 1,
+  userScalable: false,
+};
 
 export const metadata: Metadata = {
   title: metadataService.title,

@@ -45,7 +45,7 @@ export function StorePictureCarouselModal({
     <CustomModal
       isCloseBtnShow={false}
       onClose={onClose}
-      className="md:rounded-base top-[50%] aspect-[229.78/170] w-[60%] rounded-[6.91px] p-[13.5px] md:p-[46px]"
+      className="md:rounded-base top-[50%] aspect-[229.78/170] w-[60%] max-w-[700px] rounded-[6.91px] p-[13.5px] md:p-[46px]"
     >
       <div className="flex h-full flex-col">
         <div className="flex items-end"></div>
@@ -57,7 +57,7 @@ export function StorePictureCarouselModal({
                   {getPageImages(pageIndex).map((image, imageIndex) => (
                     <div
                       key={`${pageIndex}-${imageIndex}`}
-                      className="max-w-1/3 relative aspect-[1/1] overflow-hidden rounded-[3px] bg-[#D2D2D2]"
+                      className="max-w-1/3 relative aspect-[1/1] select-none overflow-hidden rounded-[3px] bg-[#D2D2D2]"
                     >
                       <Image
                         src={image}

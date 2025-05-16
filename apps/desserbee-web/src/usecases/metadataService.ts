@@ -1,5 +1,4 @@
 export default class MetadataService {
-  
   private get permissionsPolicy() {
     const domain = process.env.NEXT_PUBLIC_APP_HOST;
 
@@ -18,5 +17,9 @@ export default class MetadataService {
     return {
       'permissions-policy': this.permissionsPolicy,
     };
+  }
+
+  get viewport() {
+    return 'width=device-width, initial-scale=1.0, maximum-scale=1.0,  minimum-scale=1.0, user-scalable=no';
   }
 }

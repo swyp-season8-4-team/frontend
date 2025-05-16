@@ -22,7 +22,7 @@ export function Header({
   return (
     <header className="h-full w-full">
       <div className="bg-primary-80 flex max-h-[56px] w-full items-center justify-between px-[16px] py-4 text-[22px]">
-        <div className="flex items-center gap-1">
+        <a href={'/map'} className="flex cursor-pointer items-center gap-1">
           {backButton}
           {logo}
           <h1
@@ -33,7 +33,7 @@ export function Header({
           >
             {title}
           </h1>
-        </div>
+        </a>
         {searchIcon}
       </div>
       {children}

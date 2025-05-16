@@ -1,16 +1,12 @@
-import IconLoadingSpinner from '@repo/design-system/components/icons/IconLoadingSpinner';
-import { MobileScreenProvider } from './_contexts/MobileScreenProvider';
+'use client';
 
-export default async function Loading() {
+import { MobileScreenProvider } from './_contexts/MobileScreenProvider';
+import LoadingUI from './_components/LoadingUI';
+
+export default function Loading() {
   return (
     <MobileScreenProvider>
-      <main className="flex flex-col items-center justify-center h-full min-h-screen">
-        <IconLoadingSpinner
-          className="animate-spin"
-          size={104}
-          viewBox="0 0 104 104"
-        />
-      </main>
+      <LoadingUI description="페이지 로딩 중..." />
     </MobileScreenProvider>
   );
 }
