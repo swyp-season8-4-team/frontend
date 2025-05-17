@@ -1,5 +1,5 @@
 import type { getCouponResponse } from '@repo/entity/src/store';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import { useContext, useState } from 'react';
 import CouponForm from '../CouponForm';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
@@ -8,6 +8,7 @@ import DeleteModal from '../../../notices/_components/DeleteModal';
 
 type CouponCardProps = {
   coupon: getCouponResponse;
+  onRefresh?:() => void;
 };
 
 const couponTargetMap: Record<string, string> = {
@@ -42,8 +43,7 @@ function formatTime(timeStr: string) {
   return timeStr.slice(0, 5);
 }
 
-export default function CouponCard({ coupon }: CouponCardProps) {
-  const router = useRouter();
+export default function CouponCard({ coupon, onRefresh}: CouponCardProps) {
   const { push, pop } = useContext(PortalContext); // Portal을 사용해서 모달 열고 닫을 수 있음
   const storeUuid = coupon.storeUuid;
   const couponId = coupon.couponId;
@@ -58,7 +58,7 @@ export default function CouponCard({ coupon }: CouponCardProps) {
   const handleCardClick = () => {
     push('modal', {
       component: (
-        <CouponForm mode="edit" coupon={coupon} onClose={handleCloseForm} />
+        <CouponForm mode="edit" coupon={coupon} onClose={handleCloseForm} onSuccess={onRefresh}/>
       ),
     });
   };
@@ -72,7 +72,8 @@ export default function CouponCard({ coupon }: CouponCardProps) {
       await deleteCoupon({ storeUuid, couponId });
       setShowDeleteModal(false);
       alert('쿠폰이 삭제되었습니다.');
-      handleCloseForm();
+      if (onRefresh) onRefresh();
+
     } catch (error) {
       console.log(error);
       alert('쿠폰을 삭제하는데 실패했습니다.');
