@@ -203,15 +203,15 @@ export default function CouponForm({
       if (mode === 'create') {
         await createCoupon(data as RegisterCouponRequest);
         alert('쿠폰 등록이 완료되었습니다.');
-        
+
       } else if (mode === 'edit') {
         data.couponId = couponId;
         await editCoupon(data as EditCouponRequest);
         alert('쿠폰 수정이 완료되었습니다.');
       }
 
-      if (onClose) onClose();
       if (onSuccess) onSuccess();
+      if (onClose) onClose();
     } catch (error) {
       if (mode === 'create') {
         console.error('쿠폰 등록 실패:', error);
