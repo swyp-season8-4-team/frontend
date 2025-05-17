@@ -10,6 +10,7 @@ import Image from 'next/image';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useContext, useEffect, useState } from 'react';
 import { MenuAddModal } from '../../../register/_modals/MenuAddModal';
+import IconDirection from '@repo/design-system/components/icons/IconDirection';
 
 export default function MenuDetailPage() {
   const params = useParams();
@@ -67,11 +68,13 @@ export default function MenuDetailPage() {
 
         console.log(imageFiles);
 
-        await editMenu({  
+        await editMenu({
           storeUuid,
           menuUuid,
           request,
-          ...(imageFiles && imageFiles.length > 0 ? { file: imageFiles[0] } : {}),
+          ...(imageFiles && imageFiles.length > 0
+            ? { file: imageFiles[0] }
+            : {}),
           deleteImage,
         });
 
@@ -87,42 +90,50 @@ export default function MenuDetailPage() {
 
   if (!menu) return null;
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="mx-auto w-full p-6 md:w-[768px]">
-        <div className="mb-6 flex items-center justify-center">
-          <div className="relative h-96 w-96 flex-shrink-0 overflow-hidden">
-            {menu?.images && menu.images.length > 0 && menu.images[0] ? (
-              <Image
-                fill
-                src={menu.images[0]}
-                alt="메뉴 사진"
-                className="h-full w-full object-contain"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center text-sm text-gray-400">
-                No Image
-              </div>
+    <div className="relative">
+      <button
+        onClick={() => router.back()}
+        className="absolute left-2 top-2 rotate-90" 
+      >
+        <IconDirection size={28}/>
+      </button>
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="mx-auto w-full p-6 md:w-[768px]">
+          <div className="mb-6 flex items-center justify-center">
+            <div className="relative h-96 w-96 flex-shrink-0 overflow-hidden">
+              {menu?.images && menu.images.length > 0 && menu.images[0] ? (
+                <Image
+                  fill
+                  src={menu.images[0]}
+                  alt="메뉴 사진"
+                  className="h-full w-full object-contain"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-sm text-gray-400">
+                  No Image
+                </div>
+              )}
+            </div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-gray-900">{menu.name}</div>
+            <div className="mt-1 text-lg font-semibold text-green-600">
+              {menu.price.toLocaleString()}{' '}
+              <span className="text-base text-gray-700">원</span>
+            </div>
+          </div>
+          <hr className="mb-4 mt-2" />
+          <div className="mb-6 min-h-[48px] whitespace-pre-line text-base leading-relaxed text-gray-700">
+            {menu.description || (
+              <span className="text-gray-400">설명이 없습니다.</span>
             )}
           </div>
+          <OliveButton
+            className="w-full py-3 text-lg"
+            text="수정하기"
+            onClick={openMenuAddModal}
+          />
         </div>
-        <div>
-          <div className="text-2xl font-bold text-gray-900">{menu.name}</div>
-          <div className="mt-1 text-lg font-semibold text-green-600">
-            {menu.price.toLocaleString()}{' '}
-            <span className="text-base text-gray-700">원</span>
-          </div>
-        </div>
-        <hr className="mb-4 mt-2" />
-        <div className="mb-6 min-h-[48px] whitespace-pre-line text-base leading-relaxed text-gray-700">
-          {menu.description || (
-            <span className="text-gray-400">설명이 없습니다.</span>
-          )}
-        </div>
-        <OliveButton
-          className="w-full py-3 text-lg"
-          text="수정하기"
-          onClick={openMenuAddModal}
-        />
       </div>
     </div>
   );

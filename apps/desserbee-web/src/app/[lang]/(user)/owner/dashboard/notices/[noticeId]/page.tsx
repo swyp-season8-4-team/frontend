@@ -1,14 +1,16 @@
 'use client';
 import { getNotice } from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
 import type { NoticeResponse } from '@repo/entity/src/store';
-import { useParams, useSearchParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import NoticeTag from '../_components/Tag';
 import { formatDate } from './../../../../../../../../../../packages/utility/src/date';
+import IconDirection from '@repo/design-system/components/icons/IconDirection';
 
 export default function NoticeDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const noticeId = Number(params.noticeId);
   const storeUuid = searchParams.get('storeUuid');
@@ -37,22 +39,32 @@ export default function NoticeDetailPage() {
   const { title, content, createdAt } = notice;
 
   return (
-    <div className="p-5 mx-auto w-full md:w-[768px]">
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-[80px]">
-            <NoticeTag name={convertedTag || ''} />
+    <div className="relative">
+      <div className='relative flex flex-1'>
+      <button
+        onClick={() => router.back()}
+        className="rotate-90 p-2"
+      >
+        <IconDirection size={28} />
+      </button>
+      </div>
+      <div className="mx-auto w-full px-5 md:w-[768px]">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-[80px]">
+              <NoticeTag name={convertedTag || ''} />
+            </div>
+            <span className="text-lg font-bold">{title}</span>
           </div>
-          <span className="font-bold text-lg">{title}</span>
         </div>
-      </div>
-      <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-        <p>등록일</p>
-        <span>{formatDate(createdAt)}</span>
-      </div>
-      <hr className="mb-4" />
-      <div className="whitespace-pre-line text-base leading-relaxed">
-        {content}
+        <div className="mb-2 flex items-center gap-2 text-sm text-gray-500">
+          <p>등록일</p>
+          <span>{formatDate(createdAt)}</span>
+        </div>
+        <hr className="mb-4" />
+        <div className="whitespace-pre-line text-base leading-relaxed">
+          {content}
+        </div>
       </div>
     </div>
   );
