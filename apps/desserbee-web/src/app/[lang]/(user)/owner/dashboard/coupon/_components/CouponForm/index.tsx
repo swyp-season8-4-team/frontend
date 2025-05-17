@@ -12,15 +12,12 @@ import { LightOliveButton } from '@repo/design-system/components/buttons/FillBut
 import { OliveButton } from '@repo/design-system/components/buttons/FillButtons/Olive';
 import { cn } from '@repo/ui/lib/utils';
 import { ValidationError } from '../../../../register/_components/ValidationError';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import {
   createCoupon,
-  deleteCoupon,
   editCoupon,
 } from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
 import { ModalHeader } from '../../../../_components/ModalHeader';
-import { useState } from 'react';
-import DeleteModal from '../../../notices/_components/DeleteModal';
 
 interface CouponConditionForm extends couponCondition {
   conditionType: '' | 'AMOUNT' | 'TIME_DAY' | 'EXCLUSIVE' | 'CUSTOM';
@@ -127,9 +124,6 @@ export default function CouponForm({
   const storeUuid = searchParams.get('storeUuid');
   const couponId = coupon?.couponId;
 
-  const router = useRouter();
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-
   const {
     register,
     control,
@@ -209,38 +203,23 @@ export default function CouponForm({
       if (mode === 'create') {
         await createCoupon(data as RegisterCouponRequest);
         alert('쿠폰 등록이 완료되었습니다.');
-        if (onSuccess) onSuccess();
-        if (onClose) onClose(); // 성공시 모달 닫기
-      
+
       } else if (mode === 'edit') {
         data.couponId = couponId;
         await editCoupon(data as EditCouponRequest);
         alert('쿠폰 수정이 완료되었습니다.');
-        if (onClose) onClose();
       }
 
+      if (onSuccess) onSuccess();
+      if (onClose) onClose();
     } catch (error) {
       if (mode === 'create') {
         console.error('쿠폰 등록 실패:', error);
         alert('쿠폰 등록에 실패했습니다. 다시 시도해주세요.');
+      } else if (mode === 'edit') {
+        console.error('쿠폰 수정 실패:', error);
+        alert('쿠폰 수정에 실패했습니다. 다시 시도해주세요.');
       }
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!storeUuid || !couponId) {
-      alert('필수 정보가 없습니다.');
-      return;
-    }
-    try {
-      await deleteCoupon({ storeUuid, couponId});
-      setShowDeleteModal(false);
-      alert('쿠폰이 삭제되었습니다.');
-      if (onClose) onClose();
-      
-    } catch (error) {
-      console.log(error);
-      alert('쿠폰을 삭제하는데 실패했습니다.');
     }
   };
 
@@ -442,7 +421,7 @@ export default function CouponForm({
                   <label className="text-[#635F59]">시작 날짜</label>
                   <input
                     {...register('exposureStartAt', {
-                      validate: (value, formValues) => {
+                      validate: (value) => {
                         if (!hasExposureDate) return true;
 
                         // 1. 값이 있는지 확인
@@ -899,20 +878,7 @@ export default function CouponForm({
             isDisabled={!isDirty}
           />
         </div>
-        {mode === 'edit' && (
-          <OliveButton
-            className="font-semibold"
-            text="삭제하기"
-            onClick={() => setShowDeleteModal(true)}
-          />
-        )}
       </form>
-      <DeleteModal
-        open={showDeleteModal}
-        content="쿠폰을 삭제하시겠어요?"
-        onCancel={() => setShowDeleteModal(false)}
-        onConfirm={handleDelete}
-      />
     </div>
   );
 }

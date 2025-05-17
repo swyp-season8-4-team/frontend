@@ -72,13 +72,30 @@ const baseFetch = async <Q, R>(
         }, duration = ${Date.now() - startTime}`,
       );
 
-      const { status, code, message } = await response.json();
+      // const { status, code, message } = await response.json();
 
-      throw new HTTPError({
-        status,
-        code,
-        message,
-      });
+      const contentType = response.headers.get('Content-Type');
+      const contentLength = response.headers.get('Content-Length');
+      let status, code, message;
+
+      if (
+        contentType &&
+        contentType.includes('application/json') &&
+        contentLength !== '0'
+      ) {
+        ({ status, code, message } = await response.json());
+      } else {
+        status = response.status;
+        code = '';
+        message = await response.text(); 
+      }
+
+      // throw new HTTPError({
+      //   status,
+      //   code,
+      //   message,
+      // });
+      return { error: true, status, code, message } as unknown as R;
     }
 
     const contents: R =

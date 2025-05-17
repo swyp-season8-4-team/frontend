@@ -48,14 +48,12 @@ export default function CouponPage() {
     if (storeUuid) fetchCoupons();
   }, [storeUuid]);
 
-  console.log(coupons);
-
   return (
     <div className="min-h-screen bg-[#EBEBEB]">
       <DashBoardHeader title="쿠폰 등록하기" />
       <div className="flex flex-col gap-3">
         {coupons.map((coupon) => (
-          <CouponCard key={coupon.couponId} coupon={coupon} />
+          <CouponCard key={coupon.couponId} coupon={coupon} onRefresh={handleRegisterSuccess} />
         ))}
       </div>
 
