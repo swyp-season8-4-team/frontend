@@ -3,6 +3,8 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useContext, useState } from 'react';
 import CouponForm from '../CouponForm';
 import { PortalContext } from '@repo/ui/contexts/PortalContext';
+import { deleteCoupon } from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
+import DeleteModal from '../../../notices/_components/DeleteModal';
 
 type CouponCardProps = {
   coupon: getCouponResponse;
@@ -43,32 +45,38 @@ function formatTime(timeStr: string) {
 export default function CouponCard({ coupon }: CouponCardProps) {
   const router = useRouter();
   const { push, pop } = useContext(PortalContext); // Portal을 사용해서 모달 열고 닫을 수 있음
-   const pathname = usePathname(); // ✅ 현재 경로 가져오기
-  const searchParams = useSearchParams(); 
+  const storeUuid = coupon.storeUuid;
+  const couponId = coupon.couponId;
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const handleCloseForm = () => { // 모달 닫기 핸들러 
-    // const params = new URLSearchParams(searchParams);
-    // params.delete('couponId');
-    // router.replace(`${pathname}?${params.toString()}`); 
-
+  const handleCloseForm = () => {
+    // 모달 닫기 핸들러
     pop('modal');
   };
 
-    // 카드 클릭 시 CouponForm을 모달로 띄움
+  // 카드 클릭 시 CouponForm을 모달로 띄움
   const handleCardClick = () => {
-    // const params = new URLSearchParams(searchParams);
-    // params.set('couponId', coupon.couponId.toString());
-    // router.push(`${pathname}?${params.toString()}`);
-
     push('modal', {
       component: (
-        <CouponForm
-          mode="edit"
-          coupon={coupon}
-          onClose={handleCloseForm}
-        />
+        <CouponForm mode="edit" coupon={coupon} onClose={handleCloseForm} />
       ),
     });
+  };
+
+  const handleDelete = async () => {
+    if (!storeUuid || !couponId) {
+      alert('필수 정보가 없습니다.');
+      return;
+    }
+    try {
+      await deleteCoupon({ storeUuid, couponId });
+      setShowDeleteModal(false);
+      alert('쿠폰이 삭제되었습니다.');
+      handleCloseForm();
+    } catch (error) {
+      console.log(error);
+      alert('쿠폰을 삭제하는데 실패했습니다.');
+    }
   };
 
   return (
@@ -79,8 +87,17 @@ export default function CouponCard({ coupon }: CouponCardProps) {
       >
         {/* 점선 테두리와 배경 */}
         <div className="relative flex items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-gray-100 p-6 pb-12 text-center">
+          <button
+            className="absolute right-4 top-2 text-xl text-[#9F9F9F] hover:text-[#7A7A7A]"
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowDeleteModal(true);
+            }}
+          >
+            ✕
+          </button>
           <div className="text-gray-700">
-            <div className="text-nowrap">
+            <div className="text-nowrap mt-3">
               {couponTargetMap[coupon.target] || '기타'} /{' '}
               <span className="text-lg font-bold text-black">
                 {coupon.name}
@@ -129,6 +146,12 @@ export default function CouponCard({ coupon }: CouponCardProps) {
           </div>
         </div>
       </div>
+      <DeleteModal
+        open={showDeleteModal}
+        content="쿠폰을 삭제하시겠어요?"
+        onCancel={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+      />
     </>
   );
 }
