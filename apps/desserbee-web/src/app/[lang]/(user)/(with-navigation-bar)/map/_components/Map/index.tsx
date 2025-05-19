@@ -978,7 +978,7 @@ export function Map({
                   </div>
                 )}
                 {error && (
-                  <div className="absolute left-1/2 top-1/2 z-20 w-[200px] -translate-x-1/2 transform rounded border border-red-400 bg-red-100 px-4 py-2 text-center text-red-700">
+                  <div className="border-error-60 bg-error-90 text-error-50 absolute left-1/2 top-1/2 z-20 w-[200px] -translate-x-1/2 transform rounded border px-4 py-2 text-center">
                     {error}
                   </div>
                 )}
