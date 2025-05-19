@@ -250,7 +250,7 @@ export default class MateService {
     const authorization = await this.authRepository?.getAuthorization();
     const response = await this.mateRepository.edit({ data, authorization });
 
-    return response;
+    return response as Mate;
   }
 
   async createReply(data: MateReplyRequest) {

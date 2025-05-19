@@ -316,8 +316,6 @@ export default class MateAPIRepository
       throw new Error('data is required');
     }
 
-    console.log('data', data);
-
     const response = await fetch<MateCreateRequest, RawMate>({
       ...(authorization && {
         headers: {

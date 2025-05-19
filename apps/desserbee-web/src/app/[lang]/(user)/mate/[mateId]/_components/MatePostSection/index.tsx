@@ -70,7 +70,7 @@ export default async function MatePostSection({ mate, replyCount }: Props) {
                 {nickname}
               </span>
               <span className="text-[12px] leading-normal tracking-[-0.24px] text-[#9f9f9f]">
-                {formatDate(updatedAt)}
+                {updatedAt ? formatDate(updatedAt) : ''}
               </span>
             </div>
           </div>
