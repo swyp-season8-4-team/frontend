@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { HeaderContainer } from '@/app/[lang]/(user)/_components/HeaderContainer';
 import LoadingUI from '@/app/[lang]/_components/LoadingUI';
+import { MobileScreenProvider } from '@/app/[lang]/_contexts/MobileScreenProvider';
 
 export default function OAuthCallbackLoadingPage() {
   const searchParams = useSearchParams();
@@ -19,9 +20,11 @@ export default function OAuthCallbackLoadingPage() {
   }, [next]);
 
   return (
-    <div className="flex w-full flex-col items-center justify-center">
-      <HeaderContainer />
-      <LoadingUI description="열심히 로그인 중입니다!" />
-    </div>
+    <MobileScreenProvider>
+      <div className="flex w-full flex-col items-center justify-center">
+        <HeaderContainer />
+        <LoadingUI description="열심히 로그인 중입니다!" />
+      </div>
+    </MobileScreenProvider>
   );
 }
