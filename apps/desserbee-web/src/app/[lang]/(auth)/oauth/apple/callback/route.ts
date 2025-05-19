@@ -38,8 +38,6 @@ export async function POST(request: NextRequest) {
 
     if (result && result.redirectUrl) {
       const baseUrl = process.env.NEXT_PUBLIC_APP_HOST;
-      // const lang =
-      //   request.nextUrl.pathname.split('/')[1] || NavigationLanguageGroup.ko;
 
       return NextResponse.redirect(
         `${baseUrl}${NavigationLanguageGroup.ko}${NavigationPathname.OAuthLoading}?next=${encodeURIComponent(result.redirectUrl)}`,

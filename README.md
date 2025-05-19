@@ -1,6 +1,6 @@
 # 🐝 프로젝트 개요
 
-### [디저비(Desserbee)](https://test.desserbee.com/ko/map)는
+### [디저비(Desserbee)](https://desserbee.com/ko/map)는
 
 **지도를 통해 주변 가게를 탐색하고, 개인 취향에 맞는 가게 필터링을 제공하는 플랫폼**입니다.
 

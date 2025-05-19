@@ -53,6 +53,7 @@ const PreferenceTags = dynamic(() => import('../PreferenceTags'));
 const MapPanel = dynamic(() => import('../MapPanel'));
 const ReFetchStoreBtn = dynamic(() => import('../ReFetchStoreBtn'));
 import SearchResultList from '../SearchResultList';
+import { Logo } from '@/app/[lang]/_components/Logo';
 
 // 서비스가 모두 초기화되었는지 확인하는 헬퍼 함수
 const areServicesInitialized = (services: {
@@ -97,6 +98,8 @@ export function Map({
   const [showingSavedList, setShowingSavedList] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
+  const [locationPermissionDenied, setLocationPermissionDenied] =
+    useState(true);
 
   const [currentPosition, setCurrentPosition] = useState<MapPosition>({
     latitude: 0,
@@ -127,25 +130,18 @@ export function Map({
     clearSelectedCategories,
   } = useTag();
 
-  // 위치 권한 요청 모달
-  const { push, pop } = useContext(PortalContext);
-
-  const closeModal = useCallback(() => {
-    pop('modal');
-  }, [pop]);
-
-  const openPermissionModal = useCallback(() => {
-    push('modal', {
-      component: <LocationPermissionModal onClose={closeModal} />,
-    });
-  }, [closeModal, push]);
-
   const handleResultListClose = useCallback(() => {
     setIsResultListOpen(false);
   }, []);
 
   const handleRefetchBtnClick = useCallback(() => {
     setIsFetchRequired(true);
+  }, []);
+
+  const handleRetry = useCallback(() => {
+    setLocationPermissionDenied(false);
+    setError(null);
+    window.location.reload();
   }, []);
 
   //  서비스 초기화
@@ -179,7 +175,7 @@ export function Map({
     const lastPosition =
       servicesRef.current.mapService.getLastPosition() as MapPosition;
 
-    // lastPosition이 없으면 더 넓은 반경 (500km) 반환
+    // lastPosition이 없으면 더 넓은 반경 (50km) 반환
     if (!lastPosition) {
       return 500000;
     }
@@ -215,6 +211,8 @@ export function Map({
       preferenceTagNames?: Preference[],
       searchKeyword?: string,
     ) => {
+      if (locationPermissionDenied) return null;
+
       try {
         if (!servicesRef.current.storeService) {
           return null;
@@ -251,13 +249,10 @@ export function Map({
             '가게 정보를 불러오는데 실패했습니다. 잠시 후 다시 시도해주세요.',
           );
         }
-        console.log(
-          'fetchNearbyStores: 가게 정보 재시도에도 불러오기 실패, 주변 가게 불러오기 중지 🛑',
-        );
         return null;
       }
     },
-    [calculateFetchRadius],
+    [calculateFetchRadius, locationPermissionDenied],
   );
 
   // 각 마커 클릭 - 바텀시트 열리고, 클릭한 마커 storeId 업데이트
@@ -311,26 +306,24 @@ export function Map({
 
   const updateCurrentMarker = useCallback(
     async (position: MapPosition) => {
+      if (locationPermissionDenied) return;
+
       try {
         if (!areServicesInitialized(servicesRef.current)) {
           return;
         }
 
-        // 이미 마커가 있으면 제거하지 말고 위치만 업데이트
         if (currentPositionMarkerRef.current) {
-          // 마커 위치 업데이트만 수행 (제거하지 않음)
           await servicesRef.current.mapService?.updateCurrentPositionMarker(
             position,
             currentPositionMarkerRef.current,
           );
         } else {
-          // 마커가 없는 경우만 새로 추가
           const marker =
             await servicesRef.current.mapService?.addCurrentPositionMarker(
               position,
               userMarkerImage.src,
             );
-          // 마커 참조 저장
           currentPositionMarkerRef.current = marker;
         }
 
@@ -345,32 +338,26 @@ export function Map({
           error instanceof GeolocationPermissionError &&
           error.message === 'PERMISSION_DENIED'
         ) {
-          console.log(
-            'updateCurrentMarker: 위치 권한 거부됨, 권한 요청 모달 표시 🪧',
-          );
-          openPermissionModal();
+          setLocationPermissionDenied(true);
         } else {
           console.error('updateCurrentMarker: 위치 권한 외 오류 발생', error);
         }
         return;
       }
     },
-    [openPermissionModal, hasUpdatedPosition],
+    [hasUpdatedPosition, locationPermissionDenied],
   );
 
   // 첫 위치 가져오기(현재 위치)
-  const handleInitialGeoPositonFetch = async (
-    initializedServices: {
-      geoService: GeolocationService;
-    },
-    openPermissionModal: () => void,
-  ) => {
+  const handleInitialGeoPositonFetch = async (initializedServices: {
+    geoService: GeolocationService;
+  }) => {
     const permissionStatus = await navigator.permissions.query({
       name: 'geolocation',
     });
 
     if (permissionStatus.state === 'denied') {
-      openPermissionModal();
+      setLocationPermissionDenied(true);
       return null;
     }
 
@@ -381,19 +368,10 @@ export function Map({
         message: result.errorMessage,
         type: result.errorType,
       });
-      console.log(
-        'handleInitialGeoPositonFetch: 현재 위치 권한 상태 다시 확인:',
-        {
-          state: permissionStatus.state,
-          errorType: result.errorType,
-        },
-      );
 
       if (result.errorType === 'POSITION_UNAVAILABLE') {
-        console.log('handleInitialGeoPositonFetch: GPS 사용 불가');
         setError('GPS를 활성화하고 다시 시도해주세요.');
       } else if (result.errorType === 'TIMEOUT') {
-        console.log('handleInitialGeoPositonFetch: 위치 정보 요청 시간 초과');
         setError('위치 정보를 가져오는데 시간이 너무 오래 걸립니다.');
       } else {
         setError('위치 정보를 가져오는데 실패했습니다.');
@@ -401,8 +379,8 @@ export function Map({
       return null;
     }
 
+    setLocationPermissionDenied(false);
     setCurrentPosition(result);
-
     return result;
   };
 
@@ -416,10 +394,12 @@ export function Map({
 
   // 현재 유저 위치로 이동
   const handleMoveToCurrentPosition = useCallback(() => {
+    if (locationPermissionDenied) return;
+
     if (servicesRef.current.mapService && isMapLoaded) {
       servicesRef.current.mapService.setMapCenter(currentPosition);
     }
-  }, [isMapLoaded, currentPosition]);
+  }, [isMapLoaded, currentPosition, locationPermissionDenied]);
 
   const mapCenterRef = useRef(mapCenter);
 
@@ -452,10 +432,8 @@ export function Map({
 
       try {
         // 현재 위치 가져오기 (실제 사용자 위치)
-        const actualPosition = await handleInitialGeoPositonFetch(
-          initializedServices,
-          openPermissionModal,
-        );
+        const actualPosition =
+          await handleInitialGeoPositonFetch(initializedServices);
 
         // 지도 초기화 위치 결정 (저장된 위치 우선)
         const mapCenterPosition = lastPosition || actualPosition;
@@ -510,7 +488,7 @@ export function Map({
       } catch (err) {
         if (err instanceof GeolocationPermissionError) {
           if (err.message === 'PERMISSION_DENIED') {
-            openPermissionModal();
+            setLocationPermissionDenied(true);
           }
         } else {
           setError('지도 로딩에 실패했습니다. 잠시 후 다시 시도해주세요.');
@@ -521,7 +499,6 @@ export function Map({
       handleMapCenterChange,
       handleStoreMarkerClick,
       nearByStores,
-      openPermissionModal,
       updateCurrentMarker,
     ],
   );
@@ -818,7 +795,7 @@ export function Map({
         setIsSearching(false);
       } catch (error) {
         console.error('저장 리스트 마커 표시 중 오류:', error);
-        setError('저장 리스트 표시에 실패했습니다');
+        setError('저장 가게 로드 중 오류가 발생했습니다.');
         setIsSearching(false);
       }
     },
@@ -919,6 +896,23 @@ export function Map({
     };
   }, [isInitialized]);
 
+  // 위치 권한이 거부된 경우 에러 화면 렌더링
+
+  // 일반 에러 화면 렌더링
+  // if (error) {
+  //   return (
+  //     <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-4 text-center">
+  //       <div className="text-lg font-medium text-gray-800">{error}</div>
+  //       <button
+  //         onClick={() => window.location.reload()}
+  //         className="bg-primary hover:bg-primary/90 rounded-full px-6 py-2 text-white"
+  //       >
+  //         다시 시도
+  //       </button>
+  //     </div>
+  //   );
+  // }
+
   return (
     <div>
       <Script
@@ -933,6 +927,7 @@ export function Map({
         }}
         onError={() => setError('카카오 지도 스크립트 로딩에 실패했습니다.')}
       />
+
       <div
         ref={mapRef}
         className="relative z-0 mb-[9px] h-[calc(100dvh-205px)] w-full overflow-x-hidden bg-white"
@@ -947,32 +942,54 @@ export function Map({
             </div>
           </div>
         ) : (
-          <div>
-            <MemoizedPreferenceTags {...preferenceTagsProps} />
-            <MemoizedMapPanel {...mapPanelProps} />
-            <MemoizedReFetchStoreBtn
-              clearSelectedCategories={clearSelectedCategories}
-              refetchStore={handleRefetchBtnClick}
-            />
-            {error && (
-              <div className="absolute left-1/2 top-1/2 z-20 w-[200px] -translate-x-1/2 transform rounded border border-red-400 bg-red-100 px-4 py-2 text-center text-red-700">
-                {error}
+          <div className="h-full">
+            {locationPermissionDenied ? (
+              <div className="flex h-full w-full flex-col items-center justify-center gap-4 p-4 text-center">
+                <Logo width={80.77} height={80.77} />
+                <div></div>
+                <div className="text-lg font-medium text-gray-800">
+                  위치 정보 접근 권한이 필요합니다.
+                </div>
+
+                <div className="flex flex-col gap-2 text-sm text-gray-600">
+                  <p>브라우저 설정에서 위치 정보 접근을 허용해주세요.</p>
+                </div>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="bg-primary hover:bg-primary/90 rounded-full px-6 py-2 text-white"
+                >
+                  권한 변경 후 새로고침
+                </button>
               </div>
-            )}
-            {isSearching && (
-              <div className="absolute left-1/2 top-1/2 z-20 flex -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full p-2">
-                <span className="relative inline-block h-12 w-12">
-                  <span className="absolute inset-0 rounded-full bg-white" />
-                  <span className="border-primary-80 absolute inset-1 box-border h-10 w-10 animate-spin rounded-full border-4 border-b-transparent bg-transparent" />
-                </span>
-              </div>
-            )}
-            {isResultListOpen && isScriptLoaded && !isSearching && (
-              <MemoizedSearchResultList
-                distances={distances}
-                resultData={nearByStores}
-                onClose={handleResultListClose}
-              />
+            ) : (
+              <>
+                <MemoizedPreferenceTags {...preferenceTagsProps} />
+                <MemoizedMapPanel {...mapPanelProps} />
+                <MemoizedReFetchStoreBtn
+                  clearSelectedCategories={clearSelectedCategories}
+                  refetchStore={handleRefetchBtnClick}
+                />
+                {isSearching && (
+                  <div className="absolute left-1/2 top-1/2 z-20 flex -translate-x-1/2 -translate-y-1/2 transform items-center justify-center rounded-full p-2">
+                    <span className="relative inline-block h-12 w-12">
+                      <span className="absolute inset-0 rounded-full bg-white" />
+                      <span className="border-primary-80 absolute inset-1 box-border h-10 w-10 animate-spin rounded-full border-4 border-b-transparent bg-transparent" />
+                    </span>
+                  </div>
+                )}
+                {error && (
+                  <div className="border-error-60 bg-error-90 text-error-50 absolute left-1/2 top-1/2 z-20 w-[200px] -translate-x-1/2 transform rounded border px-4 py-2 text-center">
+                    {error}
+                  </div>
+                )}
+                {isResultListOpen && isScriptLoaded && !isSearching && (
+                  <MemoizedSearchResultList
+                    distances={distances}
+                    resultData={nearByStores}
+                    onClose={handleResultListClose}
+                  />
+                )}
+              </>
             )}
           </div>
         )}
