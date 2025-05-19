@@ -145,22 +145,28 @@ export function StoreInfo({
                   );
                 },
               )}
-              <div>
-                <div className="flex">
-                  <div className="flex gap-[6px]">
-                    <span className="w-4"></span>
-                    {holidays.map((holiday, index) => (
-                      <div key={holiday.date}>
-                        <span>{holiday.date} &nbsp;</span>
-                        <span>{holiday.reason}</span>
-                        {index !== holidays.length - 1 && <span>, </span>}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
             </div>
           )}
+        </div>
+        <div>
+          <div className="flex">
+            <div className="flex flex-col">
+              <span className="w-4"></span>
+              {holidays.map((holiday, index) => (
+                <div
+                  key={holiday.reason + index}
+                  className="flex gap-[10px] pl-[10px] md:pl-10"
+                >
+                  <div className="text-secondary-50 text-[10px] font-medium md:text-sm">
+                    <span>{holiday.startDate} &nbsp;</span>
+                    <span> - </span>
+                    <span>{holiday.endDate} &nbsp;</span>
+                    <span>{holiday.reason} </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       {phone && (
