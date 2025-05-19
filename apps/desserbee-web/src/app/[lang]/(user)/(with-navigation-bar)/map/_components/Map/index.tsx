@@ -175,9 +175,9 @@ export function Map({
     const lastPosition =
       servicesRef.current.mapService.getLastPosition() as MapPosition;
 
-    // lastPosition이 없으면 더 넓은 반경 (500km) 반환
+    // lastPosition이 없으면 더 넓은 반경 (50km) 반환
     if (!lastPosition) {
-      return 4000;
+      return 500000;
     }
 
     const bounds = servicesRef.current.mapService.getMapBound();
