@@ -229,10 +229,14 @@ export default class AuthAPIRepository
       throw new Error('data is not exist');
     }
 
+    const { deviceId } = data;
+
     const response = await fetch<void, void>({
       headers: {
         authorization: `${data.authorization}`,
+        Cookie: `deviceId=${deviceId}`,
       },
+
       method: 'POST',
       url: `${this.endpoint}/auth/logout`,
     });

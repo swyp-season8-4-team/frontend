@@ -168,13 +168,13 @@ export default class AuthService {
     }
   }
 
-  async signOut(authorization: string): Promise<void> {
+  async signOut(authorization: string, deviceId?: string): Promise<void> {
     if (!this.authRepository) {
       throw new Error('authRepository is not set');
     }
 
     const response = await this.authRepository.signOut({
-      data: { authorization },
+      data: { authorization, deviceId },
     });
 
     return response;

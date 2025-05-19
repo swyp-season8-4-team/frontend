@@ -70,6 +70,7 @@ export interface SignInResponse
 
 export interface SignOutData {
   authorization: string;
+  deviceId?: string;
 }
 
 export interface SignInData {
@@ -152,7 +153,7 @@ export interface AuthRepository {
   signIn(data: BaseRequestData<SignInData>): Promise<SignInResponse>; // 일반 로그인
   signUp(data: BaseRequestData<unknown>): Promise<unknown>; // 회원가입
   signUpWithProfileImage(data: BaseRequestData<unknown>): Promise<unknown>; // 회원가입
-  signOut(data: BaseRequestData<SignOutData>): Promise<void>;
+  signOut(data: BaseRequestData<SignOutData>, deviceId?: string): Promise<void>;
   resetPassword(
     data: BaseRequestData<ResetPasswordData>,
   ): Promise<ResetPasswordResponse>;
