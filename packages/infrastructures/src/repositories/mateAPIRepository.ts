@@ -316,6 +316,8 @@ export default class MateAPIRepository
       throw new Error('data is required');
     }
 
+    console.log('data', data);
+
     const response = await fetch<MateCreateRequest, RawMate>({
       ...(authorization && {
         headers: {
@@ -603,18 +605,20 @@ export default class MateAPIRepository
       throw new Error('data is required');
     }
 
-    const { imageFile, ...rest } = data;
+    const { mateImage, ...rest } = data;
 
     const formData = new FormData();
 
     // request 필드에 JSON 데이터 추가
     const requestData = {
-      userUuid: rest.userId,
+      userUuid: rest.userUuid,
       title: rest.title,
       content: rest.content,
-      recruitYn: rest.recruit,
+      recruitYn: rest.recruitYn,
       mateCategoryId: rest.mateCategoryId,
-      place: rest.place,
+      capacity: rest.capacity,
+      ...(rest.storeId && { storeId: rest.storeId }),
+      ...(rest.place && { place: rest.place }),
     };
 
     // JSON 데이터를 문자열로 변환하여 FormData에 추가
@@ -623,8 +627,8 @@ export default class MateAPIRepository
       new Blob([JSON.stringify(requestData)], { type: 'application/json' }),
     );
 
-    if (!!imageFile) {
-      formData.append('mateImage', imageFile);
+    if (!!mateImage) {
+      formData.append('mateImage', mateImage);
     }
 
     const response = await fetch<RawMateWriteReuqest, RawMate>({
@@ -643,7 +647,7 @@ export default class MateAPIRepository
   async edit({
     data,
     authorization,
-  }: BaseRequestData<MateEditRequest>): Promise<unknown> {
+  }: BaseRequestData<MateEditRequest>): Promise<Mate> {
     if (!data) {
       throw new Error('data is required');
     }
@@ -651,24 +655,24 @@ export default class MateAPIRepository
     const { id, ...rest } = data;
 
     const {
-      userId,
       title,
       content,
-      recruit,
+      recruitYn,
       mateCategoryId,
-      place,
-      imageFile,
+      capacity,
+      storeId,
+      mateImage,
     } = rest;
 
     const formData = new FormData();
 
     const requestData = {
-      userUuid: userId,
       title,
       content,
-      recruitYn: recruit,
+      recruitYn,
       mateCategoryId,
-      place,
+      capacity,
+      storeId,
     };
 
     formData.append(
@@ -676,11 +680,11 @@ export default class MateAPIRepository
       new Blob([JSON.stringify(requestData)], { type: 'application/json' }),
     );
 
-    if (!!imageFile) {
-      formData.append('mateImage', imageFile);
+    if (!!mateImage) {
+      formData.append('mateImage', mateImage);
     }
 
-    const response = await fetch<RawMateWriteReuqest, unknown>({
+    const response = await fetch<RawMateWriteReuqest, RawMate>({
       method: 'PATCH',
       url: `${this.endpoint}/mates/${id}`,
       headers: {
@@ -690,6 +694,6 @@ export default class MateAPIRepository
       formData,
     });
 
-    return response;
+    return this.mateConverter.convertRawToMate(response);
   }
 }

@@ -242,7 +242,7 @@ export default class MateService {
     return response;
   }
 
-  async edit(data: MateEditRequest): Promise<unknown> {
+  async edit(data: MateEditRequest): Promise<Mate> {
     if (!this.mateRepository) {
       throw new Error('mateRepository is not set');
     }

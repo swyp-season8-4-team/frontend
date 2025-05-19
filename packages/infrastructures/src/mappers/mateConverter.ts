@@ -12,21 +12,24 @@ export default class MateConverter {
   convertRawToMate(rawMate: RawMate): Mate {
     const result = {
       id: rawMate.mateUuid,
-      recruit: rawMate.recruitYn,
       userId: rawMate.userUuid,
+      mateImage: rawMate.mateImage,
+      recruit: rawMate.recruitYn,
       title: rawMate.title,
       content: rawMate.content,
       nickname: rawMate.nickname,
-      mateImage: rawMate.mateImage,
       mateCategory: rawMate.mateCategory,
       place: rawMate.place,
       profileImage: rawMate.profileImage,
       applyStatus: rawMate.applyStatus,
-      ...(rawMate.appliedYn && { applied: rawMate.appliedYn }),
-      ...(rawMate.storeId && { storeId: rawMate.storeId }),
+      storeId: rawMate.storeId,
       gender: rawMate.gender,
       createdAt: rawMate.createdAt,
       updatedAt: rawMate.updatedAt,
+      capacity: rawMate.capacity,
+      currentMemberCount: rawMate.currentMemberCount,
+      saved: rawMate.saved,
+      blockedByAuthorYn: rawMate.blockedByAuthorYn,
     };
 
     return result;
@@ -48,17 +51,18 @@ export default class MateConverter {
 
   convertMateWriteToRaw(mateWrite: MateWriteRequest): RawMateWriteReuqest {
     return {
-      userUuid: mateWrite.userId,
+      userUuid: mateWrite.userUuid,
       title: mateWrite.title,
       content: mateWrite.content,
-      recruitYn: mateWrite.recruit,
+      recruitYn: mateWrite.recruitYn,
       mateCategoryId: mateWrite.mateCategoryId,
-      place: {
-        placeName: mateWrite.place.placeName,
-        address: mateWrite.place.address,
-        latitude: mateWrite.place.latitude,
-        longitude: mateWrite.place.longitude,
-      },
+      capacity: mateWrite.capacity,
+      // place: {
+      //   placeName: mateWrite.place.placeName,
+      //   address: mateWrite.place.address,
+      //   latitude: mateWrite.place.latitude,
+      //   longitude: mateWrite.place.longitude,
+      // },
     };
   }
 
