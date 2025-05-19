@@ -57,7 +57,10 @@ export default class AuthDevAPIRepository
   async signUp(data: BaseRequestData<unknown>): Promise<unknown> {
     throw new Error('Method not implemented.');
   }
-  signOut(data: BaseRequestData<SignOutData>): Promise<void> {
+  signOut(
+    data: BaseRequestData<SignOutData>,
+    deviceId?: string,
+  ): Promise<void> {
     throw new Error('Method not implemented.');
   }
   resetPassword(
