@@ -152,7 +152,11 @@ export function ShopInfo(data: shopInfoProps) {
             <div className="flex flex-col">
               {data.holidays?.map((item, idx) => (
                 <div key={idx} className="flex gap-2">
-                  <div>{item.date}</div>
+                  <div>
+                    {item.startDate === item.endDate || !item.endDate
+                      ? item.startDate
+                      : `${item.startDate} ~ ${item.endDate}`}
+                  </div>
                   <div>{item.reason}</div>
                 </div>
               ))}
