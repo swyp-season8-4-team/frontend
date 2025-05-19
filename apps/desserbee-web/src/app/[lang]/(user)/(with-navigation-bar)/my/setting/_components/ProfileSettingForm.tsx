@@ -5,8 +5,12 @@ import { useState, useRef, useContext, useMemo } from 'react';
 import Image, { type StaticImageData } from 'next/image';
 import IconCamera from '@repo/design-system/components/icons/IconCamera';
 import type { Preference } from '@repo/entity/src/preference';
+import { uploadProfileImage } from '../../_components/ProfileSection/action';
+import { useRouter } from 'next/navigation';
 
 export default function ProfileSettingForm() {
+  const router = useRouter();
+
   const { user, updateUserProfile, realProfileImageUrl } =
     useContext(UserContext);
 
@@ -65,11 +69,38 @@ export default function ProfileSettingForm() {
     fileInputRef.current?.click();
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    // 파일 타입 검증
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+
+    // 파일 크기 제한 (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('이미지 크기는 5MB 이하여야 합니다.');
+      return;
+    }
+
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setProfileImage(imageUrl);
+
+      try {
+        const { profileImageUrl } = await uploadProfileImage({ file });
+        if (profileImageUrl) {
+          router.refresh();
+          setProfileImage(profileImageUrl);
+          alert('이미지가 변경되었습니다.');
+        }
+      } catch (error) {
+        console.error('이미지 업로드 실패:', error);
+        alert('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
+      }
     }
   };
 
