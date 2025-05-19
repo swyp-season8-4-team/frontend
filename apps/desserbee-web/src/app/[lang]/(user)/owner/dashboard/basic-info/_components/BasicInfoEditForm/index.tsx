@@ -2,7 +2,6 @@
 
 import { useForm, Controller } from 'react-hook-form';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { NavigationPathname } from '@repo/entity/src/navigation';
 import type {
   storeImage,
   Store,
@@ -42,7 +41,6 @@ import {
   getStoreDetail,
   updateStore,
 } from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
-import DatePicker from 'react-datepicker';
 import { LightOliveButton } from './../../../../../../../../../../../packages/design-system/src/components/buttons/FillButtons/LightOlive';
 import { UserContext } from '@/contexts/UserContext';
 import MapService from '@repo/usecase/src/mapService';
@@ -104,7 +102,7 @@ export function BasicInfoEditForm() {
   const [storeInfo, setStoreInfo] = useState<StoreDetailInfoData | null>(null);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [mapService, setMapService] = useState<MapService | null>(null);
-  
+
   // 삭제된 가게 정보를 저장하는 배열
   const storeImageDeleteIds = useRef<number[]>([]);
   const ownerPickImageDeleteIds = useRef<number[]>([]);
@@ -178,11 +176,9 @@ export function BasicInfoEditForm() {
     address: storeInfo.address || '',
     detailAddress: '',
     holidays: (storeInfo.holidays || []).map((holiday) => {
-      // 예: "2025.02.10-14" → startDate: "2025-02-10", endDate: "2025-02-14"
-      const [start, end] = holiday.date.split('-');
       return {
-        startDate: start.replace(/\./g, '-'), // "2025.02.10" → "2025-02-10"
-        endDate: start.slice(0, 8) + end, // "2025.02.10-14" → "2025.02.14" → "2025-02-14"
+        startDate: holiday.startDate.replace(/\./g, '-'), // "2025.01.01" → "2025-01-01"
+        endDate: holiday.endDate?.replace(/\./g, '-'), // "2025.01.03" → "2025-01-03"
         reason: holiday.reason ?? '',
       };
     }),
@@ -384,19 +380,19 @@ export function BasicInfoEditForm() {
   const handleRemoveStoreImageFiles = (index: number) => {
     const current = watch('storeImageFiles');
     const removed = current[index];
-  
+
     // File이 아니라면(storeImage 객체라면) id를 저장
     if (!(removed instanceof File) && removed.id !== undefined) {
       storeImageDeleteIds.current.push(removed.id);
     }
-  
+
     setValue(
       'storeImageFiles',
       current.filter((_, i) => i !== index),
-      { shouldDirty: true }
+      { shouldDirty: true },
     );
   };
-    
+
   const handleOwnerPickImageFilesChange = (
     e: ChangeEvent<HTMLInputElement>,
   ) => {
@@ -411,15 +407,15 @@ export function BasicInfoEditForm() {
   const handleRemoveOwnerPickImageFiles = (index: number) => {
     const current = watch('ownerPickImageFiles');
     const removed = current[index];
-  
+
     if (!(removed instanceof File) && removed.id !== undefined) {
       ownerPickImageDeleteIds.current.push(removed.id);
     }
-  
+
     setValue(
       'ownerPickImageFiles',
       current.filter((_, i) => i !== index),
-      { shouldDirty: true }
+      { shouldDirty: true },
     );
   };
 
@@ -454,12 +450,9 @@ export function BasicInfoEditForm() {
   };
 
   // 날짜 포맷 변환 함수("2025-02-10" → "2025.02.10")
-  const formatHolidayDate = (start: string, end: string) => {
-    const startFormatted = start.replace(/-/g, '.');
-    const endFormatted = end.replace(/-/g, '.');
-
-    if (start === endFormatted) return `${startFormatted}`;
-    else return `${startFormatted}-${endFormatted}`; // "2025.02.10-2025.02.14"
+  const formatHolidayDate = (date: string) => {
+    const Formatted = date.replace(/-/g, '.');
+    return Formatted;
   };
 
   const onSubmit = async (data: FormInputs) => {
@@ -491,7 +484,8 @@ export function BasicInfoEditForm() {
 
     // holidays 변환
     const formattedHolidays = data.holidays.map((h) => ({
-      date: formatHolidayDate(h.startDate, h.endDate),
+      startDate: formatHolidayDate(h.startDate),
+      endDate: h.endDate ? formatHolidayDate(h.endDate) : undefined,
       reason: h.reason,
     }));
 
@@ -516,7 +510,7 @@ export function BasicInfoEditForm() {
       },
       storeImageFiles: storeImageFiles,
       ownerPickImageFiles: ownerPickImageFiles,
-    };    
+    };
 
     try {
       await updateStore(formData);
@@ -833,7 +827,10 @@ export function BasicInfoEditForm() {
         <div className="flex flex-col gap-2">
           <label htmlFor="holiday" className="flex flex-col gap-[5px]">
             <div className="flex items-center justify-between">
-              <TitleLabel title="스페셜 휴무일" />
+              <TitleLabel
+                title="스페셜 휴무일"
+                description="휴무가 하루라면 시작일만 선택해 주세요."
+              />
               <button
                 type="button"
                 onClick={handleAddHoliday}
@@ -857,10 +854,8 @@ export function BasicInfoEditForm() {
                 if (!holidays || holidays.length === 0) return true;
 
                 // 빈 날짜 체크
-                if (
-                  holidays.some((h) => !h.startDate.trim() || !h.endDate.trim())
-                ) {
-                  return '날짜를 입력하거나 삭제해주세요';
+                if (holidays.some((h) => !h.startDate.trim())) {
+                  return '시작일을 입력하거나 삭제해주세요';
                 }
                 // 빈 사유 체크
                 if (holidays.some((h) => !h.reason.trim())) {
@@ -870,7 +865,7 @@ export function BasicInfoEditForm() {
                   holidays.some(
                     (h) =>
                       h.startDate.trim() < todayStr ||
-                      h.endDate.trim() < todayStr,
+                      (h.endDate && h.endDate.trim() < todayStr),
                   )
                 ) {
                   return '오늘 날짜 이전은 선택할 수 없습니다';
@@ -878,7 +873,8 @@ export function BasicInfoEditForm() {
 
                 if (
                   holidays.some(
-                    (h) => new Date(h.startDate) > new Date(h.endDate),
+                    (h) =>
+                      h.endDate && new Date(h.startDate) > new Date(h.endDate),
                   )
                 ) {
                   return '시작일이 종료일보다 늦을 수 없습니다';
