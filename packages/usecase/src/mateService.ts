@@ -242,7 +242,7 @@ export default class MateService {
     return response;
   }
 
-  async edit(data: MateEditRequest): Promise<unknown> {
+  async edit(data: MateEditRequest): Promise<Mate> {
     if (!this.mateRepository) {
       throw new Error('mateRepository is not set');
     }
@@ -250,7 +250,7 @@ export default class MateService {
     const authorization = await this.authRepository?.getAuthorization();
     const response = await this.mateRepository.edit({ data, authorization });
 
-    return response;
+    return response as Mate;
   }
 
   async createReply(data: MateReplyRequest) {

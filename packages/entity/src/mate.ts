@@ -10,40 +10,66 @@ export type MateApplyStatus =
   | 'BANNED';
 
 // FIXME: Raw Data 파일 분리
+
+// export interface RawMate {
+//   applyStatus: MateApplyStatus;
+//   mateUuid: string;
+//   storeId?: string;
+//   userUuid: string;
+//   title: string;
+//   content: string;
+//   nickname: string;
+//   recruitYn: boolean;
+//   appliedYn?: boolean;
+//   mateImage: string;
+//   profileImage: string;
+//   mateCategory: CommunityCategory;
+//   place?: {
+//     placeName: string;
+//     address: string | null;
+//     latitude: number | null;
+//     longitude: number | null;
+//   };
+//   gender: Gender;
+//   createdAt: string;
+//   updatedAt: string;
+// }
+
 export interface RawMate {
-  applyStatus: MateApplyStatus;
   mateUuid: string;
-  storeId?: string;
+  storeId: number | null;
   userUuid: string;
+  capacity: number;
+  currentMemberCount: number;
+  nickname: string;
   title: string;
   content: string;
-  nickname: string;
   recruitYn: boolean;
-  appliedYn?: boolean;
   mateImage: string;
   profileImage: string;
-  mateCategory: CommunityCategory;
   place?: {
-    placeName: string;
+    placeName: string | null;
     address: string | null;
     latitude: number | null;
     longitude: number | null;
-  };
-  gender: Gender;
+  } | null;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
+  saved: boolean;
+  applyStatus: MateApplyStatus;
+  gender: string;
+  mateCategory: string;
+  blockedByAuthorYn?: boolean;
 }
 
 export interface Mate
-  extends Omit<
-    RawMate,
-    'mateUuid' | 'userUuid' | 'mateImage' | 'recruitYn' | 'appliedYn'
-  > {
+  extends Omit<RawMate, 'mateUuid' | 'userUuid' | 'mateImage' | 'recruitYn'> {
   id: string;
   userId: string;
   mateImage: string;
   recruit: boolean;
   applied?: boolean;
+  capacity: number;
   //TODO: 유저프로필사진, 주소 필드, createdAt 추가되어야함 (디자인에 있지만 API 반영안됨)
 }
 
@@ -83,10 +109,20 @@ export interface GetMateReplyListResponse {
 }
 
 export interface MateCreateRequest {
+  userUuid: string;
+  mateCategoryId: number;
+  capacity: number;
+  storeId: number | null;
   title: string;
   content: string;
-  recruit: boolean;
-  mateCategoryId: string;
+  recruitYn: boolean;
+  place?: {
+    placeName: string | null;
+    address: string | null;
+    latitude: number | null;
+    longitude: number | null;
+  } | null;
+  mateImage?: string;
 }
 
 export interface RawMateApplyRequest {
@@ -196,36 +232,39 @@ export interface RawMateWriteReuqest {
   content: string;
   recruitYn: boolean;
   mateCategoryId: number;
-  place: {
-    placeName: string;
+  capacity: number;
+  place?: {
+    placeName: string | null;
     address: string | null;
     latitude: number | null;
     longitude: number | null;
-  };
+  } | null;
 }
 
 export interface MateWriteRequest {
-  userId: string;
+  userUuid: string;
   title: string;
   content: string;
-  recruit: boolean;
+  recruitYn: boolean;
   mateCategoryId: number;
-  place: {
-    placeName: string;
+  capacity: number;
+  storeId: number | null;
+  mateImage?: File;
+  place?: {
+    placeName: string | null;
     address: string | null;
     latitude: number | null;
     longitude: number | null;
-  };
-  imageFile?: File;
+  } | null;
 }
 
-export interface MateEditRequest extends MateWriteRequest {
+export interface MateEditRequest extends Omit<MateWriteRequest, 'userUuid'> {
   id: string;
 }
 
 export interface SavedMate {
   mateUuid: string;
-  storeId: number;
+  storeId: number | null;
   userUuid: string;
   nickname: string;
   title: string;
@@ -234,11 +273,11 @@ export interface SavedMate {
   mateImage: string;
   profileImage: string;
   place: {
-    placeName: string;
-    address: string;
-    latitude: number;
-    longitude: number;
-  };
+    placeName: string | null;
+    address: string | null;
+    latitude: number | null;
+    longitude: number | null;
+  } | null;
   createdAt: string;
   updatedAt: string;
   saved: boolean;

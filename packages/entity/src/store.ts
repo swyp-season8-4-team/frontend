@@ -106,7 +106,7 @@ export interface OperatingHoursItem {
 }
 
 export interface HolidaysItem {
-  startDate:string;
+  startDate: string;
   endDate?: string;
   reason: string;
 }

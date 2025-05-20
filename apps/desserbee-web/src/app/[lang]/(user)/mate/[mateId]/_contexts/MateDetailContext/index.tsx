@@ -32,6 +32,10 @@ const defaultState: State = {
     updatedAt: '',
     gender: 'MALE',
     applyStatus: 'PENDING',
+    capacity: 0,
+    storeId: null,
+    currentMemberCount: 0,
+    saved: false,
   },
   updateMateStatus: () => {},
 };
