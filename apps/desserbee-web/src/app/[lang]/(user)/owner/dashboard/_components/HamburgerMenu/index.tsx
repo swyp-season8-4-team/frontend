@@ -23,7 +23,7 @@ export function HamburgerMenu({ onClose, storeUuid }: HamburgerMenuProps) {
     { name: '메뉴 관리', Link: 'OwnerMenuLists' },
     { name: '공지 관리', Link: 'OwnerDashboardNotices' },
     { name: '쿠폰 등록', Link: 'OwnerRegisterCoupon' },
-    // { name: '통계 대시보드', Link: undefined },
+    { name: '통계 대시보드', Link: 'OwnerStatistics' },
     // { name: '트렌드 리포트', Link: undefined },
   ];
 
