@@ -4,6 +4,8 @@ import { DashBoardHeader } from '../_components/DashBoardHeader';
 import DatePicker from 'react-datepicker';
 import CustomButton from './_components/CustomCalendarButton';
 import { ko } from 'date-fns/locale';
+import { format, startOfWeek, endOfWeek } from 'date-fns';
+import VisitAnalysis from './_components/VisitAnalysis';
 
 const TAB_LIST = [
   { label: '방문 분석', value: 'visit' },
@@ -16,6 +18,24 @@ const periods = [
   { label: '주간', value: 'weekly' },
   { label: '월간', value: 'monthly' },
 ];
+
+function getFormattedPeriod(date: Date | null, period: string) {
+  if (!date) return '';
+  switch (period) {
+    case 'daily':
+      return format(date, 'yyyy.MM.dd', { locale: ko });
+    case 'weekly': {
+      // 주의 시작(월요일)과 끝(일요일) 구하기
+      const weekStart = startOfWeek(date, { weekStartsOn: 1, locale: ko }); // 월요일 시작
+      const weekEnd = endOfWeek(date, { weekStartsOn: 1, locale: ko }); // 일요일 끝
+      return `${format(weekStart, 'yyyy.MM.dd', { locale: ko })} ~ ${format(weekEnd, 'yyyy.MM.dd', { locale: ko })}`;
+    }
+    case 'monthly':
+      return format(date, 'yyyy.MM', { locale: ko });
+    default:
+      return '';
+  }
+}
 
 export default function StatisticsPage() {
   const [activeTab, setActiveTab] = useState('visit');
@@ -43,14 +63,14 @@ export default function StatisticsPage() {
         ))}
       </div>
 
-      <div className="mb-6 mt-6 flex justify-center gap-5">
+      <div className="mb-3 mt-6 flex justify-center gap-5 px-3">
         {periods.map((period) => (
           <button
             key={period.value}
             onClick={() => setActivePeriod(period.value)}
             className={`transition-colors ${
-              activePeriod === period.value ? 'bg-[#F2F1ED]' : 'bg-white'
-            } h-10 w-20 border-2 border-[#E9E6DE] text-[#635F59]`}
+              activePeriod === period.value ? 'bg-[#ffc858]' : 'bg-white'
+            } h-12 w-24 border-2 border-[#E9E6DE] text-[#635F59] rounded-lg font-semibold`}
           >
             {period.label}
           </button>
@@ -74,7 +94,13 @@ export default function StatisticsPage() {
       </div>
 
       <div>
-        {activeTab === 'visit' && <div>방문 분석 내용</div>}
+        {activeTab === 'visit' && (
+          <VisitAnalysis
+            period={activePeriod}
+            date={selectedDate}
+            formattedPeriod={getFormattedPeriod(selectedDate, activePeriod)}
+          />
+        )}
         {activeTab === 'trend' && <div>트렌드 파악 내용</div>}
         {activeTab === 'review' && <div>리뷰 유형 내용</div>}
       </div>

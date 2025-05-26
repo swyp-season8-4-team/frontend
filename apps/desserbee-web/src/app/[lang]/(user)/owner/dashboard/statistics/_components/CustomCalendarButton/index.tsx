@@ -10,7 +10,7 @@ interface CustomButtonProps {
 const CustomButton = forwardRef<HTMLDivElement, CustomButtonProps>(
   ({ value, onClick }, ref) => (
     <div
-      className="w-[38px] h-10 bg-[#FFC803] p-2 flex items-center justify-center cursor-pointer"
+      className="w-16 h-12 bg-[#FFC803] p-2 flex items-center justify-center cursor-pointer rounded-lg"
       onClick={onClick}
       ref={ref}
     >
