@@ -74,10 +74,19 @@ export default class AuthAPIRepository
       throw new Error('data is not exist');
     }
 
+    const { email, newPassword, confirmNewPassword, verificationToken } = data;
+
+    if (!verificationToken) {
+      throw new Error('verificationToken is not exist in cookies');
+    }
+
     const response = await fetch<ResetPasswordData, ResetPasswordResponse>({
-      data,
+      data: { email, newPassword, confirmNewPassword, verificationToken },
       method: 'POST',
       url: `${this.endpoint}/auth/password/reset`,
+      headers: {
+        'X-Email-Verification-Token': verificationToken,
+      },
     });
 
     return response;
