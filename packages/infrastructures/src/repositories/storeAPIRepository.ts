@@ -64,6 +64,8 @@ import type {
   getCouponResponse,
   EditCouponRequest,
   DeleteCouponRequest,
+  getPeriodStatsRequest,
+  getPeriodStatsResponse,
 } from '@repo/entity/src/store';
 import type { BaseRequestData } from '@repo/entity/src/appMetadata';
 import fetch from '@repo/api/src/fetch';
@@ -919,7 +921,7 @@ export default class StoreAPIRepository
 
     const response = await fetch<
       Omit<EditCouponRequest, 'storeUuid' | 'couponId'>,
-     void
+      void
     >({
       ...(authorization && {
         headers: {
@@ -953,7 +955,7 @@ export default class StoreAPIRepository
         },
       }),
       method: 'DELETE',
-      url
+      url,
     });
 
     return response;
@@ -1212,6 +1214,32 @@ export default class StoreAPIRepository
       method: 'DELETE',
       url,
     });
+
+    return response;
+  }
+
+  async getPeriodStats({
+    authorization,
+    data,
+  }: BaseRequestData<getPeriodStatsRequest>): Promise<getPeriodStatsResponse> {
+    if (!data) {
+      throw Error('data required');
+    }
+
+    const { storeUuid, period, date } = data || {};
+
+    const response = await fetch<getPeriodStatsRequest, getPeriodStatsResponse>(
+      {
+        ...(authorization && {
+          headers: {
+            Authorization: authorization,
+          },
+        }),
+        method: 'GET',
+        url: `${this.endpoint}/stores/${storeUuid}/statistics`,
+        query: { period, date },
+      },
+    );
 
     return response;
   }

@@ -850,6 +850,23 @@ export interface DeleteCouponRequest {
   couponId: number;
 }
 
+export interface getPeriodStatsRequest {
+  storeUuid: string;
+  period: 'DAILY' | 'WEEKLY' |'MONTHLY'
+  date: string;
+}
+
+export interface getPeriodStatsResponse {
+  totalViews:number; // 전체 조회수
+  totalSaves:number; //전체 저장수
+  totalStoreReviewCount:number; // 전체 리뷰수
+  totalCommunityReviewCount:number;
+  totalReviewCount:number;
+  totalCouponUsedCount:number;
+  totalMateCount:number; //디저트 메이트 수
+  averageRating?:number;
+}
+
 export interface StoreRepository {
   // preference
   getAllPreference(): Promise<PreferenceData[]>;
@@ -1046,4 +1063,9 @@ export interface StoreRepository {
     authorization,
     data,
   }: BaseRequestData<DeleteCouponRequest>): Promise<void>;
+
+  getPeriodStats({
+    authorization,
+    data,
+  }: BaseRequestData<getPeriodStatsRequest>): Promise<getPeriodStatsResponse>;
 }

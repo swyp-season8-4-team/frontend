@@ -6,6 +6,7 @@ import CustomButton from './_components/CustomCalendarButton';
 import { ko } from 'date-fns/locale';
 import { format, startOfWeek, endOfWeek } from 'date-fns';
 import VisitAnalysis from './_components/VisitAnalysis';
+import { useSearchParams } from 'next/navigation';
 
 const TAB_LIST = [
   { label: '방문 분석', value: 'visit' },
@@ -14,23 +15,23 @@ const TAB_LIST = [
 ];
 
 const periods = [
-  { label: '일간', value: 'daily' },
-  { label: '주간', value: 'weekly' },
-  { label: '월간', value: 'monthly' },
+  { label: '일간', value: 'DAILY' },
+  { label: '주간', value: 'WEEKLY' },
+  { label: '월간', value: 'MONTHLY' },
 ];
 
 function getFormattedPeriod(date: Date | null, period: string) {
   if (!date) return '';
   switch (period) {
-    case 'daily':
+    case 'DAILY':
       return format(date, 'yyyy.MM.dd', { locale: ko });
-    case 'weekly': {
+    case 'WEEKLY': {
       // 주의 시작(월요일)과 끝(일요일) 구하기
       const weekStart = startOfWeek(date, { weekStartsOn: 1, locale: ko }); // 월요일 시작
       const weekEnd = endOfWeek(date, { weekStartsOn: 1, locale: ko }); // 일요일 끝
       return `${format(weekStart, 'yyyy.MM.dd', { locale: ko })} ~ ${format(weekEnd, 'yyyy.MM.dd', { locale: ko })}`;
     }
-    case 'monthly':
+    case 'MONTHLY':
       return format(date, 'yyyy.MM', { locale: ko });
     default:
       return '';
@@ -39,9 +40,11 @@ function getFormattedPeriod(date: Date | null, period: string) {
 
 export default function StatisticsPage() {
   const [activeTab, setActiveTab] = useState('visit');
-  const [activePeriod, setActivePeriod] = useState('daily');
+  const [activePeriod, setActivePeriod] = useState('DAILY');
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [open, setOpen] = useState(false);
+  const searchParams = useSearchParams();
+  const storeUuid = searchParams.get('storeUuid');
 
   return (
     <>
@@ -63,7 +66,7 @@ export default function StatisticsPage() {
         ))}
       </div>
 
-      <div className="mb-3 mt-6 flex justify-center gap-5 px-3">
+      <div className="mb-3 mt-6 flex justify-center gap-2 px-3">
         {periods.map((period) => (
           <button
             key={period.value}
@@ -96,6 +99,7 @@ export default function StatisticsPage() {
       <div>
         {activeTab === 'visit' && (
           <VisitAnalysis
+            storeUuid={storeUuid||''}
             period={activePeriod}
             date={selectedDate}
             formattedPeriod={getFormattedPeriod(selectedDate, activePeriod)}

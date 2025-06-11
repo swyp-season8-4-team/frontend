@@ -8,6 +8,8 @@ import type {
   EditMenuRequestFormData,
   EditNoticeRequest,
   EditNoticeResponse,
+  getPeriodStatsRequest,
+  getPeriodStatsResponse,
   RegisterCouponRequest,
   updateStoreRequestFormData,
   updateStoreResponse,
@@ -221,4 +223,13 @@ export async function deleteCoupon({
     storeService.deleteCoupon({ storeUuid, couponId }),
   );
   return deleted;
+}
+
+export async function getPeriodStats(
+  params: getPeriodStatsRequest,
+): Promise<getPeriodStatsResponse> {
+  const response = await commonErrorHandler(
+    storeService.getPeriodStats(params),
+  );
+  return response;
 }
