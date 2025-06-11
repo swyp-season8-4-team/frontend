@@ -28,6 +28,7 @@
     "@repo/usecase": "workspace:*",
     "@repo/utility": "workspace:*",
     "cross-env": "^7.0.3",
+    "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.5.2",
     "env-cmd": "^10.1.0",
     "framer-motion": "^12.0.11",
@@ -39,7 +40,8 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",
     "react-hot-toast": "^2.5.2",
-    "react-use": "^17.6.0"
+    "react-use": "^17.6.0",
+    "recharts": "^2.15.3"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "3.2.4",

@@ -57,6 +57,8 @@ import type {
   getCouponResponse,
   EditCouponRequest,
   DeleteCouponRequest,
+  getPeriodStatsRequest,
+  getPeriodStatsResponse,
 } from '@repo/entity/src/store';
 export default class StoreService {
   private readonly storeRepository: StoreRepository | null;
@@ -558,6 +560,26 @@ export default class StoreService {
 
     const response = await this.storeRepository.getMenuList(requestData);
 
+    return response;
+  }
+
+   async getPeriodStats(
+    params: getPeriodStatsRequest,
+  ): Promise<getPeriodStatsResponse> {
+    if (!this.storeRepository) {
+      throw new Error('storeRepository is not set');
+    } else if (!this.authRepository) {
+      throw new Error('authRepository is not set');
+    }
+
+    const authorization = await this.authRepository.getAuthorization();
+
+    const requestData = {
+      data: params,
+      authorization,
+    };
+
+    const response = await this.storeRepository.getPeriodStats(requestData);
     return response;
   }
 
