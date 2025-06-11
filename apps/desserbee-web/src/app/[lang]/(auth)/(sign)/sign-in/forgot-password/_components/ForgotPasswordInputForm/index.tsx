@@ -2,8 +2,6 @@
 
 import { useCallback, useContext, useState } from 'react';
 import { ForgotPasswordContext } from '../../_contexts/ForgotPasswordContext';
-import AuthService from '@repo/usecase/src/authService';
-import AuthAPIRepository from '@repo/infrastructures/src/repositories/authAPIRepository';
 import { useRouter } from 'next/navigation';
 import { NavigationPathname } from '@repo/entity/src/navigation';
 import { HoneyButton } from '@repo/design-system/components/buttons/FillButtons/Honey';
@@ -11,22 +9,16 @@ import { ResetButton } from '@repo/design-system/components/buttons/ResetButton'
 import IconEye from '@repo/design-system/components/icons/IconEye';
 import IconEyeBan from '@repo/design-system/components/icons/IconEyeBan';
 import IconWarn from '@repo/design-system/components/icons/IconWarn';
-
-const authService = new AuthService({
-  authRepository: new AuthAPIRepository(),
-});
+import { resetPasswordAction } from './action';
 
 export function ForgotPasswordInputForm() {
   const router = useRouter();
-
   const { email } = useContext(ForgotPasswordContext);
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const [error, setError] = useState('');
 
   const isValid =
@@ -58,24 +50,23 @@ export function ForgotPasswordInputForm() {
 
   const handleSubmit = useCallback(async () => {
     if (!isValid) {
-      setError('비밀번호가 조건에 맞지 않습니다.'); //TODO: API 에러로 수정
+      setError('비밀번호가 조건에 맞지 않습니다.');
       return;
     }
 
-    try {
-      // API 호출 로직 구현 필요
-      const { message } = await authService.resetPassword({
-        email: email,
-        password: password,
-      });
+    const result = await resetPasswordAction({
+      email,
+      newPassword: password,
+      confirmNewPassword: confirmPassword,
+    });
 
+    if (result.success) {
+      alert('비밀번호가 변경되었습니다.');
       router.replace(NavigationPathname.SignIn);
-    } catch (error) {
-      if (error instanceof Error) {
-        setError(error.message);
-      }
+    } else {
+      setError(result.message);
     }
-  }, [isValid, email, password]);
+  }, [isValid, email, password, confirmPassword, router]);
 
   return (
     <div className="h-full space-y-2 px-4 py-[45px]">
@@ -87,7 +78,6 @@ export function ForgotPasswordInputForm() {
       <div className="flex h-full flex-col justify-between">
         <div className="space-y-4">
           <div className="space-y-1">
-            {/* <label className="block text-sm font-medium">비밀번호 입력</label> */}
             <div className="relative w-full">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -123,7 +113,6 @@ export function ForgotPasswordInputForm() {
           </div>
 
           <div className="">
-            {/* <label className="block text-sm font-medium">비밀번호 확인</label> */}
             <div className="relative">
               <input
                 type={showConfirmPassword ? 'text' : 'password'}

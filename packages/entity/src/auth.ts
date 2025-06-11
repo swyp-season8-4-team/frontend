@@ -136,7 +136,9 @@ export interface VerifyEmailResponse {
 
 export interface ResetPasswordData {
   email: string;
-  password: string;
+  newPassword: string;
+  confirmNewPassword: string;
+  verificationToken: string;
 }
 
 export interface ResetPasswordResponse {
