@@ -4,6 +4,7 @@ import Chart from "../Chart";
 import StatisticsTitle from "../StatisticsTitle";
 import type { getPeriodStatsResponse } from "@repo/entity/src/store";
 import { getPeriodStats } from "@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action";
+import { format } from 'date-fns';
 
 interface VisitAnalysisProps {
   storeUuid:string;
@@ -20,7 +21,7 @@ export default function VisitAnalysis(data: VisitAnalysisProps) {
       if(storeUuid && period && date){
         const statistics = await getPeriodStats({storeUuid,
           period: period as 'DAILY' | 'WEEKLY' | 'MONTHLY',
-          date:date.toISOString().slice(0,10),
+          date: format(date, 'yyyy-MM-dd'),
         });
         setStats(statistics);
       }

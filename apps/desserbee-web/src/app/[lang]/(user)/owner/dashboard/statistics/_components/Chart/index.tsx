@@ -51,7 +51,7 @@ const CustomCursor: React.FC<CustomCursorProps> = ({
 
 export default function Chart() {
   return (
-    <div className="h-[300px] w-full p-2">
+    <div className="h-[300px] p-2">
       <ResponsiveContainer>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
