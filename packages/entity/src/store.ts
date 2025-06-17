@@ -867,6 +867,18 @@ export interface getPeriodStatsResponse {
   averageRating?:number;
 }
 
+export interface getPeriodTrendStatsResponse{
+  displayKey: string;
+  viewCount:number; // 조회수 
+  saveCount : number; // 저장수
+  reviewStoreCount:number; // 한줄 리뷰 수
+  reviewCommCount:number; // 커뮤니티 리뷰 수
+  couponUsedCount:number; // 쿠폰 사용 수
+  mateCount:number; // 디저트 메이트 수
+  averageRating:number; // 구간 기준 평균 평점
+  totalReviewCount:number; // 해당 구간의 총 리뷰 수
+}
+
 export interface StoreRepository {
   // preference
   getAllPreference(): Promise<PreferenceData[]>;
@@ -1068,4 +1080,9 @@ export interface StoreRepository {
     authorization,
     data,
   }: BaseRequestData<getPeriodStatsRequest>): Promise<getPeriodStatsResponse>;
+
+  getPeriodTrendStats({
+    authorization,
+    data,
+  }: BaseRequestData<getPeriodStatsRequest>): Promise<getPeriodTrendStatsResponse[]>;
 }

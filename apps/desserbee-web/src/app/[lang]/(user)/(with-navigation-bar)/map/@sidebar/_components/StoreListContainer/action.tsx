@@ -10,6 +10,7 @@ import type {
   EditNoticeResponse,
   getPeriodStatsRequest,
   getPeriodStatsResponse,
+  getPeriodTrendStatsResponse,
   RegisterCouponRequest,
   updateStoreRequestFormData,
   updateStoreResponse,
@@ -230,6 +231,15 @@ export async function getPeriodStats(
 ): Promise<getPeriodStatsResponse> {
   const response = await commonErrorHandler(
     storeService.getPeriodStats(params),
+  );
+  return response;
+}
+
+export async function getPeriodTrendStats(
+  params: getPeriodStatsRequest,
+): Promise<getPeriodTrendStatsResponse[]> {
+  const response = await commonErrorHandler(
+    storeService.getPeriodTrendStats(params),
   );
   return response;
 }
