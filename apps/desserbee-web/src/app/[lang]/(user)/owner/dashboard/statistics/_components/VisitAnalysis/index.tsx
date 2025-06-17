@@ -24,6 +24,11 @@ export default function VisitAnalysis(data: VisitAnalysisProps) {
   const [trendStats, setTrendStats] = useState<
     getPeriodTrendStatsResponse[] | []
   >([]);
+  const chartItems = [
+    { title: '가게 상세 페이지 조회수', key: 'viewCount' },
+    { title: '가게 저장 수', key: 'saveCount' },
+    { title: '디저트 메이트 수', key: 'mateCount' },
+  ];
 
   useEffect(() => {
     async function fetchStats() {
@@ -74,12 +79,18 @@ export default function VisitAnalysis(data: VisitAnalysisProps) {
         </div>
       </div>
 
-      <StatisticsTitle title="가게 상세 페이지 조회수" />
-      <Chart />
-      <StatisticsTitle title="가게 저장 수" />
-      <Chart />
-      <StatisticsTitle title="디저트 메이트 수" />
-      <Chart />
+      {chartItems.map((item, idx) => (
+        <div key={item.key}>
+          <StatisticsTitle title={item.title} />
+          <Chart
+            subject={item.key as 'viewCount' | 'saveCount' | 'mateCount'}
+            period={period}
+            trendStats={trendStats}
+            date={date}
+            formattedPeriod={formattedPeriod}
+          />
+        </div>
+      ))}
     </>
   );
 }
