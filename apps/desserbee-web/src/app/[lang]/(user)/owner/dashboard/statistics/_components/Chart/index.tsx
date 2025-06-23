@@ -41,6 +41,7 @@ export default function Chart({
 }: ChartProps) {
   let labels: string[] = [];
 
+  // 일간 주간 월간별 라벨 구하기
   if (period === 'DAILY') {
     labels = getDailyLabels();
   } else if (period === 'WEEKLY' && date) {
@@ -51,11 +52,40 @@ export default function Chart({
     labels = getMonthlyLabels(date.getFullYear(), date.getMonth());
   }
 
-  const data = labels.map((label, idx) => ({
-    name: label,
-    value: trendStats[idx]?.[subject] ?? 0,
-  }));
+  // 일간 주간 월간별 데이터 매핑
+  let data: { name: string; value: number }[] = [];
+  const weekDaysEng = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
 
+  if (period === 'DAILY') {
+    data = labels.map((label) => {
+      const hourStr = label.replace('시', '').padStart(2, '0') + ':00';
+      const stat = trendStats.find((item) =>
+        item.displayKey.startsWith(hourStr),
+      );
+      return { name: label, value: stat ? stat[subject] : 0 };
+    });
+  } else if (period === 'WEEKLY') {
+    data = labels.map((label, idx) => {
+      const engDay = weekDaysEng[idx];
+      const stat = trendStats.find((item) => item.displayKey === engDay);
+      return { name: label, value: stat ? stat[subject] : 0 };
+    });
+  } else if (period === 'MONTHLY') {
+    data = labels.map((label) => {
+      const stat = trendStats.find((item) => item.displayKey === label);
+      return { name: label, value: stat ? stat[subject] : 0 };
+    });
+  }
+
+  // 그래프 cursor 가 올라갔을 때 배경
   const CustomCursor: React.FC<CustomCursorProps> = ({
     points,
     width = 0,
@@ -78,16 +108,15 @@ export default function Chart({
   };
 
   return (
-    <div className="h-[300px] w-full overflow-x-auto">
+    <div className="h-[300px] w-full overflow-x-auto overflow-y-hidden">
       <div className="h-full min-w-[1200px]">
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={data} margin={{ left: 15, right: 15}}>
+          <LineChart
+            data={data}
+            margin={{ top: 5, right: 16, left: 16, bottom: 5 }}
+          >
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis
-              dataKey="name"
-              tickLine={false}
-              interval={0}
-            />
+            <XAxis dataKey="name" tickLine={false} interval={0} />
             <YAxis />
             <Tooltip formatter={(value) => [value]} cursor={<CustomCursor />} />
             <Line type="linear" dataKey="value" stroke="#3ECA61" />
