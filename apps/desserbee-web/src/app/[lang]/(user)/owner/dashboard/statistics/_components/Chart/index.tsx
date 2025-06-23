@@ -78,16 +78,22 @@ export default function Chart({
   };
 
   return (
-    <div className="h-[300px] p-2">
-      <ResponsiveContainer>
-        <LineChart data={data}>
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="name" tickLine={false} />
-          <YAxis />
-          <Tooltip formatter={(value) => [value]} cursor={<CustomCursor />} />
-          <Line type="linear" dataKey="value" stroke="#3ECA61" />
-        </LineChart>
-      </ResponsiveContainer>
+    <div className="h-[300px] w-full overflow-x-auto">
+      <div className="h-full min-w-[1200px]">
+        <ResponsiveContainer width="100%" height={300}>
+          <LineChart data={data} margin={{ left: 15, right: 15}}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <XAxis
+              dataKey="name"
+              tickLine={false}
+              interval={0}
+            />
+            <YAxis />
+            <Tooltip formatter={(value) => [value]} cursor={<CustomCursor />} />
+            <Line type="linear" dataKey="value" stroke="#3ECA61" />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 }
