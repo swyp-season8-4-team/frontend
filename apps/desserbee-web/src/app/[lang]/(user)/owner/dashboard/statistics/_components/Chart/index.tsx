@@ -1,5 +1,6 @@
+'use client';
 import type { getPeriodTrendStatsResponse } from '@repo/entity/src/store';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   LineChart,
   Line,
@@ -14,8 +15,10 @@ import {
   getMonthlyLabels,
   getWeeklyLabels,
 } from '../../../../_utils/chartLabels';
+import ChartDetail from '../ChartDetail';
 
 interface ChartProps {
+  title: string;
   subject: 'viewCount' | 'saveCount' | 'mateCount';
   period: string;
   trendStats: getPeriodTrendStatsResponse[] | [];
@@ -30,9 +33,16 @@ interface CustomCursorProps {
   height?: number;
 }
 
+// e: 이벤트 정보 객체 타입 정의
+type ChartMouseEvent = {
+  activeTooltipIndex?: number;
+  activeLabel?: string;
+};
+
 const CHART_MARGIN = { top: 5, right: 5, left: 5, bottom: 5 };
 
 export default function Chart({
+  title,
   subject,
   period,
   trendStats,
@@ -106,23 +116,55 @@ export default function Chart({
       />
     );
   };
+  const [selectedData, setSelectedData] = useState<{
+    name: string;
+    value: number;
+  } | null>(null);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  console.log(selectedData);
 
   return (
-    <div className="h-[300px] w-full overflow-x-auto overflow-y-hidden">
-      <div className="h-full min-w-[1200px]">
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart
-            data={data}
-            margin={{ top: 5, right: 16, left: 16, bottom: 5 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="name" tickLine={false} interval={0} />
-            <YAxis />
-            <Tooltip formatter={(value) => [value]} cursor={<CustomCursor />} />
-            <Line type="linear" dataKey="value" stroke="#3ECA61" />
-          </LineChart>
-        </ResponsiveContainer>
+    <>
+      <div className="h-[300px] w-full overflow-x-auto overflow-y-hidden">
+        <div className="h-full min-w-[1200px]">
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart
+              data={data}
+              margin={{ top: 5, right: 16, left: 16, bottom: 5 }}
+              onMouseMove={(e: ChartMouseEvent) => {
+                if (e && e.activeTooltipIndex !== undefined) {
+                  setHoveredIndex(e.activeTooltipIndex);
+                }
+              }}
+              onClick={() => {
+                if (hoveredIndex !== null) {
+                  setSelectedData(data[hoveredIndex]);
+                }
+              }}
+            >
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="name" tickLine={false} interval={0} />
+              <YAxis />
+              <Tooltip
+                formatter={(value) => [value]}
+                cursor={<CustomCursor />}
+              />
+              <Line
+                type="linear"
+                dataKey="value"
+                stroke="#3ECA61"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
-    </div>
+      {selectedData && (
+        <ChartDetail
+          detailTitle={title}
+          name={selectedData.name}
+          value={selectedData.value}
+        />
+      )}
+    </>
   );
 }

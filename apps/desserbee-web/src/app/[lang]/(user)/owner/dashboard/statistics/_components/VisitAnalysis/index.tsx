@@ -74,7 +74,12 @@ export default function VisitAnalysis(data: VisitAnalysisProps) {
         </div>
 
         <div className="flex flex-col items-center justify-center p-3">
-          <p>{formattedPeriod}</p>
+          {period === 'DAILY' ? (
+            <p>{formattedPeriod} (01-24시)</p>
+          ) : (
+            <p>{formattedPeriod}</p>
+          )}
+
           <p className="text-[#CDC8C3]">(업데이트 {updatedDate})</p>
         </div>
       </div>
@@ -83,6 +88,7 @@ export default function VisitAnalysis(data: VisitAnalysisProps) {
         <div key={item.key}>
           <StatisticsTitle title={item.title} />
           <Chart
+            title={item.title}
             subject={item.key as 'viewCount' | 'saveCount' | 'mateCount'}
             period={period}
             trendStats={trendStats}
