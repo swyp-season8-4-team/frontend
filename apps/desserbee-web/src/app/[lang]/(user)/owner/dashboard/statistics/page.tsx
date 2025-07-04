@@ -8,6 +8,7 @@ import { format, startOfWeek, endOfWeek } from 'date-fns';
 import VisitAnalysis from './_components/VisitAnalysis';
 import { useSearchParams } from 'next/navigation';
 import WeeklyPicker from './_components/WeeklyPicker';
+import ReviewAnalysis from './_components/ReviewAnalysis';
 
 const TAB_LIST = [
   { label: '방문 분석', value: 'visit' },
@@ -148,7 +149,14 @@ export default function StatisticsPage() {
           />
         )}
         {activeTab === 'trend' && <div>트렌드 파악 내용</div>}
-        {activeTab === 'review' && <div>리뷰 유형 내용</div>}
+        {activeTab === 'review' && (
+          <ReviewAnalysis
+            storeUuid={storeUuid || ''}
+            period={activePeriod}
+            date={baseDate}
+            formattedPeriod={getFormattedPeriod(baseDate, activePeriod)}
+          />
+        )}
       </div>
     </div>
   );

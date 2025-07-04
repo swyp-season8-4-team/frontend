@@ -1,34 +1,29 @@
 'use client';
-import { useEffect, useState } from 'react';
-import Chart from '../Chart';
-import StatisticsTitle from '../StatisticsTitle';
-import type {
-  getPeriodStatsResponse,
-  getPeriodTrendStatsResponse,
-} from '@repo/entity/src/store';
 import {
   getPeriodStats,
   getPeriodTrendStats,
 } from '@/app/[lang]/(user)/(with-navigation-bar)/map/@sidebar/_components/StoreListContainer/action';
+import type {
+  getPeriodStatsResponse,
+  getPeriodTrendStatsResponse,
+} from '@repo/entity/src/store';
+import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
+import StatisticsTitle from '../StatisticsTitle';
+import Chart from '../Chart';
 
-interface VisitAnalysisProps {
+interface ReviewAnalysisProps {
   storeUuid: string;
   period: string;
   date: Date | null;
   formattedPeriod: string;
 }
-export default function VisitAnalysis(data: VisitAnalysisProps) {
+export default function ReviewAnalysis(data: ReviewAnalysisProps) {
   const { storeUuid, period, date, formattedPeriod } = data;
   const [stats, setStats] = useState<getPeriodStatsResponse | null>(null);
   const [trendStats, setTrendStats] = useState<
     getPeriodTrendStatsResponse[] | []
   >([]);
-  const chartItems = [
-    { title: '가게 상세 페이지 조회수', key: 'viewCount' },
-    { title: '가게 저장 수', key: 'saveCount' },
-    { title: '디저트 메이트 수', key: 'mateCount' },
-  ];
 
   useEffect(() => {
     async function fetchStats() {
@@ -56,24 +51,25 @@ export default function VisitAnalysis(data: VisitAnalysisProps) {
     fetchTrendStats();
   }, [storeUuid, period, date]);
 
-  console.log(stats);
-  console.log('추이:', trendStats);
   const updatedDate = date ? format(date, 'yyyy.MM.dd') : '';
 
   return (
     <>
       <div className="flex w-full justify-center text-nowrap">
-        <div className="flex flex-col items-center border-r-2 border-r-[#EFEDEB] p-3">
-          <p>전체 조회수</p>
-          <p className="font-semibold">{stats?.totalViews}</p>
+        <div className="flex flex-col items-center border-r-2 border-r-[#EFEDEB] px-5 py-3">
+          <p>평균 평점</p>
+          <div className="flex gap-2 font-semibold">
+            <p className="text-[#FFC803]">★</p>
+            <p>{Number(stats?.averageRating)} / 5</p>
+          </div>
         </div>
 
-        <div className="flex flex-col items-center border-r-2 border-r-[#EFEDEB] p-3">
-          <p>전체 저장수</p>
-          <p className="font-semibold">{stats?.totalSaves}</p>
+        <div className="flex flex-col items-center border-r-2 border-r-[#EFEDEB] px-5 py-3">
+          <p>리뷰 수</p>
+          <p className="font-semibold">{stats?.totalReviewCount}</p>
         </div>
 
-        <div className="flex flex-col items-center justify-center p-3">
+        <div className="flex flex-col items-center justify-center px-5 py-3">
           {period === 'DAILY' ? (
             <p>{formattedPeriod} (01-24시)</p>
           ) : (
@@ -84,20 +80,28 @@ export default function VisitAnalysis(data: VisitAnalysisProps) {
         </div>
       </div>
 
-      {chartItems.map((item, idx) => (
-        <div key={item.key}>
-          <StatisticsTitle title={item.title} />
-          <Chart
-            type='line'
-            title={item.title}
-            subject={item.key as 'viewCount' | 'saveCount' | 'mateCount'}
-            period={period}
-            trendStats={trendStats}
-            date={date}
-            formattedPeriod={formattedPeriod}
-          />
+      <div className="flex items-center justify-between px-2">
+        <StatisticsTitle title="리뷰 수 + 평점 추이" />
+        <div className="flex gap-2">
+          <div className="flex gap-1">
+            <p className="text-[#3ECA61]">■</p>
+            <p className="font-semibold text-[#635F59]">리뷰 수</p>
+          </div>
+
+          <div className="flex gap-1">
+            <p className="text-[#544429]">■</p>
+            <p className="font-semibold text-[#635F59]">평점 추이</p>
+          </div>
         </div>
-      ))}
+      </div>
+
+      <Chart
+        type="combined"
+        period={period}
+        trendStats={trendStats}
+        date={date}
+        formattedPeriod={formattedPeriod}
+      />
     </>
   );
 }
