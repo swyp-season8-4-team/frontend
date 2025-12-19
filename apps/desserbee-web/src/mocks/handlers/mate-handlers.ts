@@ -18,10 +18,10 @@ export const mateHandlers = [
       content: "Join us for a refreshing mountain hike this weekend!",
       recruitYn: true,
       mateImage: [
-        "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/10/a1b2c3d4-e5f6-7890-ab12-cd34ef56gh78-"
+        "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/10/a1b2c3d4-e5f6-7890-ab12-cd34ef56gh78-"
       ],
       profileImage: [
-        "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
+        "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
       ],
       mateCategory: "친목도모",
       place: {
@@ -51,10 +51,10 @@ export const mateHandlers = [
           content: "Join us for a refreshing mountain hike this weekend!",
           recruit: true,
           mateImage: [
-            "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/10/a1b2c3d4-e5f6-7890-ab12-cd34ef56gh78-"
+            "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/10/a1b2c3d4-e5f6-7890-ab12-cd34ef56gh78-"
           ],
           profileImage: [
-            "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
+            "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
           ],
           nickname: "John",
           mateCategory: "친목도모"
@@ -66,10 +66,10 @@ export const mateHandlers = [
           content: "Let's study Java together and prepare for coding interviews!",
           recruit: true,
           profileImage: [
-            "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
+            "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
           ],
           mateImage: [
-            "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/11/b2c3d4e5-f6g7-8901-bc23-de45fg67hi89-"
+            "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/11/b2c3d4e5-f6g7-8901-bc23-de45fg67hi89-"
           ],
           mateCategory: "인생사진"
         },
@@ -80,10 +80,10 @@ export const mateHandlers = [
           content: "Looking for players to join our casual football match on Sunday!",
           recruit: false,
           profileImage: [
-            "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
+            "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
           ],
           mateImage: [
-            "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/12/c3d4e5f6-g7h8-9012-cd34-ef56gh78ij90-"
+            "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/12/c3d4e5f6-g7h8-9012-cd34-ef56gh78ij90-"
           ],
           mateCategory: "빵지순례"
         },
@@ -94,10 +94,10 @@ export const mateHandlers = [
           content: "Discussing this month's book over coffee. Everyone's welcome!",
           recruit: true,
           profileImage: [
-            "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
+            "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
           ],
           mateImage: [
-            "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/13/d4e5f6g7-h8i9-0123-de45-fg67hi89jk01-"
+            "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/13/d4e5f6g7-h8i9-0123-de45-fg67hi89jk01-"
           ],
           mateCategory: "건강맛집"
         },
@@ -108,10 +108,10 @@ export const mateHandlers = [
           content: "Who’s up for some delicious Korean BBQ this Friday night?",
           recruit: false,
           profileImage: [
-            "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
+            "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
           ],
           mateImage: [
-            "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/14/e5f6g7h8-i9j0-1234-ef56-gh78ij90kl12-"
+            "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/14/e5f6g7h8-i9j0-1234-ef56-gh78ij90kl12-"
           ],
           mateCategory: "친목도모"
         },
@@ -122,10 +122,10 @@ export const mateHandlers = [
           content: "Explore the city and capture amazing photos together!",
           recruit: true,
           profileImage: [
-            "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
+            "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
           ],
           mateImage: [
-            "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/15/f6g7h8i9-j0k1-2345-fg67-hi89jk01lm23-"
+            "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/15/f6g7h8i9-j0k1-2345-fg67-hi89jk01lm23-"
           ],
           mateCategory: "카공모임"
         },
@@ -136,10 +136,10 @@ export const mateHandlers = [
           content: "Meet fellow entrepreneurs and exchange ideas!",
           recruit: true,
           profileImage: [
-            "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
+            "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/2/d15b7f54-9288-49f3-a8b6-368bf075e284-IMG_0743.jpeg"
           ],
           mateImage: [
-            "https://desserbee-bucket.s3.ap-northeast-2.amazonaws.com/mate/16/g7h8i9j0-k1l2-3456-gh78-ij90kl12mn34-"
+            "https://desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com/mate/16/g7h8i9j0-k1l2-3456-gh78-ij90kl12mn34-"
           ],
           mateCategory: '인생사진',
         },

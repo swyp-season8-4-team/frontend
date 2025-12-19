@@ -43,7 +43,7 @@ const NextFunctionConfig = async (phase: any) => {
         },
         {
           protocol: 'https',
-          hostname: 'desserbee-bucket.s3.ap-northeast-2.amazonaws.com',
+          hostname: 'desserbee-bucket-new.s3.ap-northeast-2.amazonaws.com',
           port: '',
           pathname: '/**',
         },
