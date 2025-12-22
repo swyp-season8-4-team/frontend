@@ -169,12 +169,22 @@ export const config = {
  * @returns 언어
  */
 function getLocale(request: NextRequest): SupportISO639Language {
-  const negotiatorHeaders: Record<string, string> = {};
-  request.headers.forEach((value, key) => (negotiatorHeaders[key] = value));
-
-  const locales: string[] = Object.values(SupportISO639Language);
-  const languages = new Negotiator({ headers: negotiatorHeaders }).languages();
-
   const defaultLocale = SupportISO639Language.ko; // 기본 언어를 ko로 설정
-  return match(languages, locales, defaultLocale) as SupportISO639Language;
+
+  try {                                                                                                                                             
+      const negotiatorHeaders: Record<string, string> = {};                                                                                           
+      request.headers.forEach((value, key) => (negotiatorHeaders[key] = value));
+
+      const locales: string[] = Object.values(SupportISO639Language);
+      const languages = new Negotiator({ headers: negotiatorHeaders }).languages();
+
+      if (!languages || languages.length === 0) {
+        return defaultLocale;
+      }
+      return match(languages, locales, defaultLocale) as SupportISO639Language;
+      } catch (error) {
+        // locale 파싱 에러 시 기본 locale 반환
+        console.error('Failed to parse locale:', error);
+        return defaultLocale;
+      }
 }
