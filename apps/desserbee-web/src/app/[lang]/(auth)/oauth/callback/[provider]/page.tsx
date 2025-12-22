@@ -59,12 +59,6 @@ export default async function OAuthCallbackProviderPage({
     }
   }
 
-  const [, ...rest] = state ? decrypt(state)?.split(':') ?? [''] : [''];
-
-  if (!rest) {
-    throw new Error('state value decrypt error');
-  }
-
   return (
     <LoadingUI description="열심히 로그인 중입니다!">
       {!error && (
