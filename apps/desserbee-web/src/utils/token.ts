@@ -37,7 +37,7 @@ export async function getTokenInfo(
   const refreshKey = `${refreshToken}_${deviceId ?? 'no-device'}`;
 
   // 이미 진행 중인 refresh 요청이 있으면 재사용
-  if (pendingRefreshRequests[refreshKey]) {
+  if (pendingRefreshRequests[refreshKey] !== undefined) {
     return pendingRefreshRequests[refreshKey];
   }
 
