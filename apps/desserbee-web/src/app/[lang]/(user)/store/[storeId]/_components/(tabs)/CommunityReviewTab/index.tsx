@@ -14,11 +14,17 @@ export function CommunityReviewTab({
   const handleGoCommunityReviewBtnClick = () => {
     router.push(`${NavigationPathname.CommunityDessertReview}`);
   };
+
+  // communityReviews가 undefined이거나 배열이 아닌 경우 빈 배열로 처리
+  const safeCommunityReviews = communityReviews && Array.isArray(communityReviews)
+    ? communityReviews
+    : [];
+
   return (
     <div className="w-full">
       <div className="text-[10px] font-semibold md:text-lg">커뮤니티 리뷰</div>
-      {communityReviews.length > 0 ? (
-        communityReviews.map((review) => (
+      {safeCommunityReviews.length > 0 ? (
+        safeCommunityReviews.map((review) => (
           <div
             key={review.reviewUuid}
             className="flex items-center bg-[#F6F6F6] p-[8px] md:px-[14px] md:py-3 w-full"

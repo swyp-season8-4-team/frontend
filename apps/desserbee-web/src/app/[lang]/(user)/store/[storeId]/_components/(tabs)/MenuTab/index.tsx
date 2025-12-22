@@ -9,7 +9,9 @@ interface MenuTabProps {
 
 export function MenuTab({ menus }: MenuTabProps) {
   const [showAll] = useState(false);
-  const displayedMenus = showAll ? menus : menus.slice(0, 6);
+  // menus가 undefined이거나 배열이 아닌 경우 빈 배열로 처리
+  const safeMenus = menus && Array.isArray(menus) ? menus : [];
+  const displayedMenus = showAll ? safeMenus : safeMenus.slice(0, 6);
   const { push, pop } = useContext(PortalContext);
 
   const closeModal = () => {
@@ -19,7 +21,7 @@ export function MenuTab({ menus }: MenuTabProps) {
   const handleMoreBtnClick = () => {
     push('modal', {
       component: (
-        <MenuPictureCarouselModal menus={menus} onClose={closeModal} />
+        <MenuPictureCarouselModal menus={safeMenus} onClose={closeModal} />
       ),
     });
   };
@@ -30,9 +32,9 @@ export function MenuTab({ menus }: MenuTabProps) {
         <div className="flex md:mb-[18px] w-fit font-semibold text-[10px] md:text-lg">
           <div></div>
           <span>메뉴 &nbsp;</span>
-          <span className="text-[#898989]">{menus.length}</span>
+          <span className="text-[#898989]">{safeMenus.length}</span>
         </div>
-        {menus.length > 0 && (
+        {safeMenus.length > 0 && (
           <button
             onClick={handleMoreBtnClick}
             className="text-[10px] md:text-base"

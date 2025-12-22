@@ -21,15 +21,19 @@ export function DetailContainer({
   parentlistInfo,
 }: DetailContainerProps) {
   if (!storeDetail) throw Error('store 상세 정보 불러오기 실패');
-  const getAllMenuImages = (menus: Menu[]): string[] => {
+  const getAllMenuImages = (menus: Menu[] | undefined): string[] => {
+    // menus가 undefined이거나 배열이 아닌 경우 빈 배열 반환
+    if (!menus || !Array.isArray(menus)) {
+      return [];
+    }
     return menus.reduce((allImages: string[], menu) => {
-      const menuImages = menu.images || [];
+      const menuImages = menu?.images || [];
       return [...allImages, ...menuImages];
     }, []);
   };
 
   const storePicureListProps = {
-    ownerPickImages: storeDetail.ownerPickImages,
+    ownerPickImages: storeDetail.ownerPickImages ?? [],
     menuImages: getAllMenuImages(storeDetail.menus),
   };
 

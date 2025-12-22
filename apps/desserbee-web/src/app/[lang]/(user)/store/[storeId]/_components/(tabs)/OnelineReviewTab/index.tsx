@@ -26,7 +26,11 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
   const { user } = useContext(UserContext);
   const { push, pop } = useContext(PortalContext);
 
-  const displayedReviews = onelineReviews.storeReviews.slice(0, 4);
+  // storeReviews가 undefined이거나 배열이 아닌 경우 빈 배열로 처리
+  const safeStoreReviews = onelineReviews?.storeReviews && Array.isArray(onelineReviews.storeReviews)
+    ? onelineReviews.storeReviews
+    : [];
+  const displayedReviews = safeStoreReviews.slice(0, 4);
   const [isReviewing, setIsReviewing] = useState(false);
 
   const closeModal = () => {
@@ -51,9 +55,9 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
   const handleOnelineReviewItemClick = async () => {
     const reviewData = {
       storeUuid: storeId,
-      totalReviewCount: onelineReviews.totalReviewCount,
-      averageRating: onelineReviews.averageRating,
-      storeReviews: onelineReviews.storeReviews,
+      totalReviewCount: onelineReviews?.totalReviewCount ?? 0,
+      averageRating: onelineReviews?.averageRating ?? 0,
+      storeReviews: safeStoreReviews,
     };
 
     await saveReviewPageData(reviewData);
@@ -71,12 +75,12 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
   return (
     <div className="pb-[15.73px] md:pb-[27px]">
       <OneLineReviewHeader
-        averageRating={onelineReviews.averageRating}
+        averageRating={onelineReviews?.averageRating ?? 0}
         handleWriteReviewBtnClick={handleWriteReviewBtnClick}
-        totalReviewCount={onelineReviews.totalReviewCount}
+        totalReviewCount={onelineReviews?.totalReviewCount ?? 0}
       />
       <div className="flex flex-col gap-1 md:gap-3">
-        {onelineReviews.storeReviews.length !== 0 ? (
+        {safeStoreReviews.length !== 0 ? (
           <div className="flex flex-col gap-1 md:gap-3">
             {displayedReviews.map((review) => (
               <OneLineReviewItem
@@ -96,7 +100,7 @@ export function OnelineReviewTab({ onelineReviews }: OnelineReviewTabProps) {
               onClick={handleOnelineReviewItemClick}
               className="w-full flex justify-end text-[8px] md:text-base"
             >
-              {onelineReviews.storeReviews.length > 4 && (
+              {safeStoreReviews.length > 4 && (
                 <div className="text-[10px] md:text-base">리뷰 더보기</div>
               )}
             </div>

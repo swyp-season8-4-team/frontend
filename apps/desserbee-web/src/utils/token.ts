@@ -7,6 +7,9 @@ import { HTTPError } from '@repo/api/src/error';
 // 토큰 캐시 저장소
 const savedTokens: { [key: string]: TokenInfo } = {};
 
+// 진행 중인 refresh 요청을 추적하는 저장소
+const pendingRefreshRequests: { [key: string]: Promise<TokenInfo> } = {};
+
 // 토큰 정보 조회
 export async function getTokenInfo(
   accessToken: string | undefined,
@@ -30,12 +33,28 @@ export async function getTokenInfo(
     }
   }
 
-  // accessToken이 없거나 만료된 경우 refreshToken으로 재발급 시도
-  return await refreshTokenIfNeeded(
+  // refreshToken을 키로 사용하여 중복 요청 방지
+  const refreshKey = `${refreshToken}_${deviceId ?? 'no-device'}`;
+
+  // 이미 진행 중인 refresh 요청이 있으면 재사용
+  if (pendingRefreshRequests[refreshKey]) {
+    return pendingRefreshRequests[refreshKey];
+  }
+
+  // 새로운 refresh 요청 시작
+  const refreshPromise = refreshTokenIfNeeded(
     accessToken ?? null,
     refreshToken,
     deviceId,
-  );
+  ).finally(() => {
+    // 완료되면 pending 목록에서 제거
+    delete pendingRefreshRequests[refreshKey];
+  });
+
+  // pending 목록에 추가
+  pendingRefreshRequests[refreshKey] = refreshPromise;
+
+  return refreshPromise;
 }
 
 // 토큰 갱신 처리

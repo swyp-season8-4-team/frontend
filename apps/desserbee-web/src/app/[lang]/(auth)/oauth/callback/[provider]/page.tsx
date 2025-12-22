@@ -38,11 +38,28 @@ export default async function OAuthCallbackProviderPage({
     throw new Error('Invalid authorization code');
   }
 
-  if (typeof state !== 'string') {
-    throw new Error('Invalid state');
+  // Kakao는 state 필수, Apple은 선택적
+  if (provider === 'kakao' && typeof state !== 'string') {
+    throw new Error('Invalid state parameter for Kakao');
   }
 
-  const [next, ...rest] = decrypt(state).split(':');
+  // state가 없거나 decrypt 실패 시 방어 처리
+  let next = '/';
+  if (state && typeof state === 'string') {
+    try {
+      const decrypted = decrypt(state);
+      if (decrypted) {
+        const [decryptedNext] = decrypted.split(':');
+        if (decryptedNext) {
+          next = decryptedNext;
+        }
+      }
+    } catch (error) {
+      console.error('Failed to decrypt state:', error);
+    }
+  }
+
+  const [, ...rest] = state ? decrypt(state)?.split(':') ?? [''] : [''];
 
   if (!rest) {
     throw new Error('state value decrypt error');

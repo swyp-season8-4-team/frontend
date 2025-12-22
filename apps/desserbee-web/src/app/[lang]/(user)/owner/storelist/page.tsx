@@ -24,21 +24,36 @@ export default function StoreList() {
 
   useEffect(() => {
     async function fetchStoresWithDetails() {
-      // 1. 가게 목록 가져오기
-      const storesList = await getOwnerStoreList();
-      setStores(storesList);
+      try {
+        // 1. 가게 목록 가져오기
+        const storesList = await getOwnerStoreList();
 
-      // 2. 각 가게마다 상세정보 병렬로 가져오기
-      const detailsPromises = storesList.map(async (store) => {
-        const summaryInfo = await getStoreSummary({
-          storeUuid: store.storeUuid,
+        // storesList가 undefined이거나 배열이 아닌 경우 빈 배열로 처리
+        const safeStoresList = storesList && Array.isArray(storesList) ? storesList : [];
+        setStores(safeStoresList);
+
+        // 2. 각 가게마다 상세정보 병렬로 가져오기
+        const detailsPromises = safeStoresList.map(async (store) => {
+          try {
+            const summaryInfo = await getStoreSummary({
+              storeUuid: store.storeUuid,
+            });
+
+            // 각 가게 정보와 상세 정보 합치기
+            return { ...store, details: summaryInfo };
+          } catch (error) {
+            console.error(`Failed to fetch summary for ${store.storeUuid}:`, error);
+            // 에러 발생 시 상세 정보 없이 반환
+            return { ...store, details: undefined };
+          }
         });
-
-        // 각 가게 정보와 상세 정보 합치기
-        return { ...store, details: summaryInfo };
-      });
-      const fullStoreData = await Promise.all(detailsPromises);
-      setStoresWithDetails(fullStoreData);
+        const fullStoreData = await Promise.all(detailsPromises);
+        setStoresWithDetails(fullStoreData);
+      } catch (error) {
+        console.error('Failed to fetch stores:', error);
+        setStores([]);
+        setStoresWithDetails([]);
+      }
     }
 
     fetchStoresWithDetails();

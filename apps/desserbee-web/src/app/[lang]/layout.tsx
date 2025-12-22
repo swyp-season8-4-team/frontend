@@ -14,6 +14,7 @@ import { MockProvider } from '@/mocks/MockProvider';
 import { PortalProvider } from '@repo/ui/contexts/PortalContext';
 import { fontVariables } from '../fonts';
 import { cn } from '@repo/ui/lib/utils';
+import { isProd } from '@/utils/env';
 
 const metadataService = new MetadataService();
 
@@ -31,7 +32,8 @@ export const metadata: Metadata = {
   other: metadataService.other,
 };
 
-if (process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true') {
+// 프로덕션에서는 MSW 비활성화
+if (!isProd && process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true') {
   initServerMSW();
 }
 
@@ -52,7 +54,8 @@ export default async function LangLayout({
   const lang = i18nService.getLang();
   const fontCofig = i18nService.getFontConfig(fontVariables);
 
-  const isMocking = process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true';
+  // 프로덕션에서는 MSW 비활성화
+  const isMocking = !isProd && process.env.NEXT_PUBLIC_USE_API_MOCKING === 'true';
 
   const Wrapper = isMocking ? MockProvider : Fragment;
 
